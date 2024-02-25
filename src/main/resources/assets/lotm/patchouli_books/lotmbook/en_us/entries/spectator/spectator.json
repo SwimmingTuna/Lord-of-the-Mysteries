@@ -1,0 +1,13 @@
+{
+  "name": "Spectator",
+  "category": "lotm:spectator",
+  "icon": "icon_here",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Spectator",
+      "text": "Info: Info info info$(br)More Info: blah blah blah$(br)Hi: Hello There $(br)General Kenobi$(br)yeahhh buddy $(br2)",
+    }
+  ],
+  "advancement": "lotm:use_spectator_9_potion"
+}

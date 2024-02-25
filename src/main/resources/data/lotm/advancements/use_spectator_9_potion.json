@@ -1,0 +1,35 @@
+{
+  "criteria": {
+    "use_spectator_9_potion": {
+      "conditions": {
+        "item": {
+          "items": [
+            "lotm:spectator_9_potion"
+          ]
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "text": ""
+    },
+    "frame": "goal",
+    "hidden": true,
+    "icon": {
+      "item": "minecraft:air"
+    },
+    "show_toast": false,
+    "title": {
+      "text": ""
+    }
+  },
+  "requirements": [
+    [
+      "use_spectator_9_potion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
