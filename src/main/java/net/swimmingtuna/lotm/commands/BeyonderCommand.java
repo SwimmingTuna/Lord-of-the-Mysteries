@@ -10,6 +10,8 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+
 
 public class BeyonderCommand {
     public static final DynamicCommandExceptionType ERROR_UNKNOWN_BEYONDER_CLASS = new DynamicCommandExceptionType(arg1 -> Component.translatable("argument.lotm.beyonder_class.id.invalid", arg1));
@@ -32,6 +34,13 @@ public class BeyonderCommand {
                                             context.getSource().getPlayerOrException().sendSystemMessage(Component.translatable("item.lotm.beholder_potion.alert", result.sequenceNames().get(level)).withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD));
                                             return 1;
                                         })
+                                )
+                        )
+                        .then(Commands.literal("remove").executes(
+                                        context -> {
+                                            BeyonderHolderAttacher.getHolder(context.getSource().getPlayerOrException()).ifPresent(BeyonderHolder::removeClass);
+                                            return 1;
+                                        }
                                 )
                         )
         );

@@ -58,5 +58,23 @@
   "argument.lotm.beyonder_class.id.invalid": "Unknown Beyonder Class type '%s'",
   "container.lotm.abilities": "Abilities",
 
-  "lotm.beyonder.spectator9": "Spectator"
+  "lotm.beyonder.spectator9": "Spectator",
+  "lotm.beyonder.spectator8": "Telepathist",
+  "lotm.beyonder.spectator7": "Psychiatrist",
+  "lotm.beyonder.spectator6": "Hypnotist",
+  "lotm.beyonder.spectator5": "Dream Walker",
+  "lotm.beyonder.spectator4": "Manipulator",
+  "lotm.beyonder.spectator3": "Dream Weaver",
+  "lotm.beyonder.spectator2": "Discerner",
+  "lotm.beyonder.spectator1": "Author",
+  "lotm.beyonder.spectator0": "Visionary"
+
+
+
+
+
+
+
+
+
 }

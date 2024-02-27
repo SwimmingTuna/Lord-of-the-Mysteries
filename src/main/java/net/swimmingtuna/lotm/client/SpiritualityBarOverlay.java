@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
@@ -50,8 +51,8 @@ public class SpiritualityBarOverlay implements IGuiOverlay {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if(holder == null)
             return;
-        int maxSpirituality = holder.getMaxSpirituality();
-        int spirituality = holder.getSpirituality();
+        double maxSpirituality = holder.getMaxSpirituality();
+        double spirituality = holder.getSpirituality();
         int barX, barY;
         int configOffsetY = ClientConfigs.SPIRITUALITY_BAR_Y_OFFSET.get();
         int configOffsetX = ClientConfigs.SPIRITUALITY_BAR_X_OFFSET.get();
@@ -72,14 +73,13 @@ public class SpiritualityBarOverlay implements IGuiOverlay {
         guiGraphics.blit(TEXTURE, barX, barY, spriteX, spriteY + IMAGE_HEIGHT, (int) (imageWidth * Math.min((spirituality / (double) maxSpirituality), 1)), IMAGE_HEIGHT);
 
         int textX, textY;
-        String spiritualityFraction = (spirituality) + "/" + maxSpirituality;
+        String spiritualityFraction = (Mth.floor(spirituality)) + "/" + Mth.floor(maxSpirituality);
 
-        textX = barX + imageWidth / 2 - (int) ((("" + spirituality).length() + 0.5) * CHAR_WIDTH);
+        textX = barX + imageWidth / 2;
         textY = barY + (anchor == Anchor.XP ? ICON_ROW_HEIGHT / 3  : ICON_ROW_HEIGHT);
 
         if (ClientConfigs.SPIRITUALITY_BAR_TEXT_VISIBLE.get()) {
-            guiGraphics.drawString(gui.getFont(), spiritualityFraction, textX, textY, TEXT_COLOR);
-        }
+            guiGraphics.drawCenteredString(gui.getFont(), spiritualityFraction, textX, textY, TEXT_COLOR);        }
     }
         public static boolean shouldShowSpiritualityBar(Player pPlayer) {
         var display = ClientConfigs.SPIRITUALITY_BAR_DISPLAY.get();

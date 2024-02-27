@@ -6,8 +6,11 @@ import dev._100media.capabilitysyncer.network.SimpleEntityCapabilityStatusPacket
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -15,7 +18,10 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.custom.BeyonderAbilities.PsychologicalInvisibility;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
+
+import java.util.List;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = LOTM.MOD_ID)
 public class BeyonderHolder extends PlayerCapability {
@@ -23,12 +29,14 @@ public class BeyonderHolder extends PlayerCapability {
     public static final int SEQUENCE_MAX = 9;
     private int currentSequence = -1;
     private BeyonderClass currentClass = null;
-    private int spirituality = 100;
-    private int maxSpirituality = 100;
-    private int spiritualityRegen = 1;
+    private double spirituality = 100;
+    private double maxSpirituality = 100;
+    private double spiritualityRegen = 1;
+    private final RandomSource random;
 
     protected BeyonderHolder(Player entity) {
         super(entity);
+        random = RandomSource.create();
     }
 
     public void removeClass() {
@@ -39,17 +47,18 @@ public class BeyonderHolder extends PlayerCapability {
         this.spiritualityRegen = 1;
         updateTracking();
     }
-
     public void setClassAndSequence(BeyonderClass newClass, int sequence) {
         this.currentClass = newClass;
         this.currentSequence = sequence;
         maxSpirituality = currentClass.spiritualityLevels().get(currentSequence);
         spirituality = maxSpirituality;
         spiritualityRegen = currentClass.spiritualityRegen().get(currentSequence);
+        player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(currentClass.maxHealth().get(sequence));
+        player.setHealth(player.getMaxHealth());
         updateTracking();
     }
 
-    public int getMaxSpirituality() {
+    public double getMaxSpirituality() {
         return maxSpirituality;
     }
 
@@ -58,7 +67,7 @@ public class BeyonderHolder extends PlayerCapability {
         updateTracking();
     }
 
-    public int getSpiritualityRegen() {
+    public double getSpiritualityRegen() {
         return spiritualityRegen;
     }
 
@@ -67,29 +76,24 @@ public class BeyonderHolder extends PlayerCapability {
         updateTracking();
     }
 
-    public int getSpirituality() {
+    public double getSpirituality() {
         return spirituality;
     }
 
     public BeyonderClass getCurrentClass() {
         return currentClass;
     }
-
-
     public void setCurrentClass(BeyonderClass newClass) {
         this.currentClass = newClass;
         updateTracking();
     }
-
     public void removeCurrentClass() {
         this.currentClass = null;
         updateTracking();
     }
-
     public int getCurrentSequence() {
         return currentSequence;
     }
-
     public void setCurrentSequence(int currentSequence) {
         this.currentSequence = currentSequence;
         maxSpirituality = currentClass.spiritualityLevels().get(currentSequence);
@@ -97,7 +101,6 @@ public class BeyonderHolder extends PlayerCapability {
         spirituality = maxSpirituality;
         updateTracking();
     }
-
     public void incrementSequence() {
         if (currentSequence > SEQUENCE_MIN) {
             currentSequence--;
@@ -107,7 +110,6 @@ public class BeyonderHolder extends PlayerCapability {
             updateTracking();
         }
     }
-
     public void decrementSequence() {
         if (currentSequence < SEQUENCE_MAX) {
             currentSequence++;
@@ -117,12 +119,10 @@ public class BeyonderHolder extends PlayerCapability {
             updateTracking();
         }
     }
-
     public void setSpirituality(int spirituality) {
         this.spirituality = Mth.clamp(spirituality,0, maxSpirituality);
         updateTracking();
     }
-
     public boolean useSpirituality(int amount) {
         if(this.spirituality-amount < 0) {
             return false;
@@ -131,19 +131,18 @@ public class BeyonderHolder extends PlayerCapability {
         updateTracking();
         return true;
     }
-
     public void increaseSpirituality(int amount) {
         this.spirituality = Mth.clamp(spirituality + amount, 0, maxSpirituality);
         updateTracking();
     }
-
     @Override
     public CompoundTag serializeNBT(boolean savingToDisk) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("currentSequence", currentSequence);
         tag.putString("currentClass", currentClass == null ? "" : BeyonderClassInit.getRegistry().getKey(currentClass).toString());
-        tag.putInt("spirituality", spirituality);
-        tag.putInt("maxSpirituality", maxSpirituality);
+        tag.putDouble("spirituality", spirituality);
+        tag.putDouble("maxSpirituality", maxSpirituality);
+        tag.putDouble("spiritualityRegen", spiritualityRegen);
         return tag;
     }
 
@@ -154,8 +153,9 @@ public class BeyonderHolder extends PlayerCapability {
         if (!className.isEmpty()) {
             currentClass = BeyonderClassInit.getRegistry().getValue(new ResourceLocation(className));
         }
-        spirituality = nbt.getInt("spirituality");
-        maxSpirituality = nbt.getInt("maxSpirituality");
+        spirituality = nbt.getDouble("spirituality");
+        maxSpirituality = nbt.getDouble("maxSpirituality");
+        spiritualityRegen = nbt.getDouble("spiritualityRegen");
     }
 
     @Override
@@ -171,7 +171,8 @@ public class BeyonderHolder extends PlayerCapability {
     public void regenSpirituality(Entity pEntity) {
         if (pEntity instanceof Player) {
             if (spirituality < maxSpirituality) {
-                spirituality = Mth.clamp(Mth.floor(Math.max((spirituality + (Math.random() * (spiritualityRegen * 1.5)) / 45), maxSpirituality)), 0, maxSpirituality);
+                double increase = (Mth.nextDouble(random,0.1,1.0) * (spiritualityRegen * 1.5f)) / 5;
+                spirituality = Mth.clamp(spirituality + increase,0, maxSpirituality);
                 updateTracking();
             }
         }

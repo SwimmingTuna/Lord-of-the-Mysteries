@@ -49,7 +49,6 @@ public class SpectatorClass implements BeyonderClass {
         if (player.level().getGameTime() % 80 == 0) {
             if (sequenceLevel >= 0) {
                 player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, -1,false,false));
-
                 if (player.isCrouching()) {
                     player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 60, -1,false,false));
                 }
@@ -105,6 +104,7 @@ public class SpectatorClass implements BeyonderClass {
         items.put(7, ItemInit.Frenzy.get());
         items.put(7, ItemInit.Placate.get());
         items.put(6, ItemInit.BattleHypnotism.get());
+        items.put(6, ItemInit.PsychologicalInvisibility.get());
         return items;
     }
 

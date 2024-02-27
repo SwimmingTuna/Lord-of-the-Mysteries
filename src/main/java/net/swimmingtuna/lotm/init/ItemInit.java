@@ -25,7 +25,7 @@ public class ItemInit {
     public static final RegistryObject<Item> BattleHypnotism = ITEMS.register("battlehypnotism",
             () -> new BattleHypnotism(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PsychologicalInvisibility = ITEMS.register("psychologicalinvisibility",
-            () -> new PsychologicalInvisiblity(new Item.Properties().stacksTo(1)));
+            () -> new PsychologicalInvisibility(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Guidance = ITEMS.register("guidance",
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Manipulation = ITEMS.register("manipulation",

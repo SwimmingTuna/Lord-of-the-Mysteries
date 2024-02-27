@@ -42,7 +42,7 @@ public class BeyonderPotion extends Item {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         if (holder == null) return InteractionResultHolder.fail(itemStack);
         if (holder.getCurrentClass()!=null && holder.getCurrentClass() != beyonderClassSupplier.get()) return InteractionResultHolder.fail(itemStack);
-        if (holder.getCurrentSequence() < sequence) return InteractionResultHolder.fail(itemStack);
+        if (holder.getCurrentSequence() !=- 1 && holder.getCurrentSequence() < sequence) return InteractionResultHolder.fail(itemStack);
         var effect = new MobEffectInstance(MobEffects.BLINDNESS,effectDurations.get(sequence),1);
         effect.setCurativeItems(List.of());
         var effect1 = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,effectDurations.get(sequence),4);

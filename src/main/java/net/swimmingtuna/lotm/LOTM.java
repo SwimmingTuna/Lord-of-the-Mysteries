@@ -19,6 +19,7 @@ import net.swimmingtuna.lotm.events.ClientEvents;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.CommandInit;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.custom.BeyonderAbilities.PsychologicalInvisibility;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
@@ -45,7 +46,6 @@ public class LOTM {
     public LOTM()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
         ItemInit.register(modEventBus);
         ModEffects.register(modEventBus);
         ModAttributes.register(modEventBus);
@@ -53,6 +53,7 @@ public class LOTM {
         BeyonderClassInit.BEYONDER_CLASS.register(modEventBus);
 
         modEventBus.addListener(ClientEvents::onRegisterOverlays);
+
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfigs.SPEC, String.format("%s-client.toml", LOTM.MOD_ID));
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
