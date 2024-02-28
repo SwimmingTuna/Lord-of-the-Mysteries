@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.custom.BeyonderAbilities.PsychologicalInvisibility;
 
 import java.util.List;
 
@@ -105,6 +106,7 @@ public class SpectatorClass implements BeyonderClass {
         items.put(7, ItemInit.Placate.get());
         items.put(6, ItemInit.BattleHypnotism.get());
         items.put(6, ItemInit.PsychologicalInvisibility.get());
+        items.put(5, ItemInit.DreamWalking.get());
         return items;
     }
 
