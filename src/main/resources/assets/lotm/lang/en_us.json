@@ -25,6 +25,8 @@
   "item.lotm.envisionlocation": "Envision Location",
   "item.lotm.envisionhealth": "Envision Health",
   "item.lotm.dreamwalking": "Dream Walking",
+  "item.lotm.nightmare": "Nightmare",
+
 
 
   "item.lotm.spectator_9_potion": "Spectator 9 Potion",
@@ -56,6 +58,8 @@
   "attribute.lotm.max_spirituality": "Max Spirituality",
   "attribute.lotm.spirituality_regen": "Spirituality Regen",
   "attribute.lotm.soul_body": "Soul Body",
+  "attribute.lotm.nightmare": "Nightmare",
+
   "item.lotm.beholder_potion.alert": "You have advanced to a %s",
   "argument.lotm.beyonder_class.id.invalid": "Unknown Beyonder Class type '%s'",
   "container.lotm.abilities": "Abilities",

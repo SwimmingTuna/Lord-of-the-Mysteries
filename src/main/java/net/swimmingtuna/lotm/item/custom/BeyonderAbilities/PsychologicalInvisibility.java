@@ -104,14 +104,11 @@ public class PsychologicalInvisibility extends Item  {
                         if (!pPlayer.getAbilities().instabuild) {
                             if (spectatorSequence.getSpirituality() > 41) {
                                 spiritualityUseCounter++;
-
-                                // Check if 40 ticks have passed
                                 if (spiritualityUseCounter >= 20) {
                                     spectatorSequence.useSpirituality(40);
                                     spiritualityUseCounter = 0;
                                 }
                             } else {
-                                // Restore armor if spirituality is not sufficient
                                 restoreArmor(pPlayer);
                                 spiritualityUseCounter = 0;
                             }

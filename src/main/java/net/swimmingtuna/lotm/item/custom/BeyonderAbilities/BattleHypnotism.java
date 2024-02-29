@@ -74,7 +74,7 @@ public class BattleHypnotism extends Item implements ReachChangeUUIDs {
     }
     private void makesEntitiesAttackEachOther(Player pPlayer, Level level, BlockPos targetPos, int sequence) {
         double radius = 20.0 - sequence;
-        float damage = 10 - sequence;
+        float damage = 15 - sequence;
         int duration = 400 - (sequence * 10);
         AABB boundingBox = new AABB(targetPos).inflate(radius);
         level.getEntitiesOfClass(LivingEntity.class, boundingBox, entity -> entity.isAlive()).forEach(livingEntity -> {

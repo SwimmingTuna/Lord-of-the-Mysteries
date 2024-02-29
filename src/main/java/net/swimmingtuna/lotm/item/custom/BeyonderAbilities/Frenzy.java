@@ -74,7 +74,7 @@ public class Frenzy extends Item implements ReachChangeUUIDs {
 
     private void applyPotionEffectToEntities(Player pPlayer, Level level, BlockPos targetPos, int sequence) {
         double radius = 15.0 - sequence;
-        float damage = (float) (12.0 - (sequence/2));
+        float damage = (float) (18.0 - (sequence/2));
         int duration = 250 - (sequence * 12);
 
         AABB boundingBox = new AABB(targetPos).inflate(radius);

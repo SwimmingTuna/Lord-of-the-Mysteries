@@ -30,6 +30,8 @@ public class ItemInit {
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DreamWalking = ITEMS.register("dreamwalking",
             () -> new DreamWalking(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> Nightmare = ITEMS.register("nightmare",
+            () -> new Nightmare(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Manipulation = ITEMS.register("manipulation",
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MentalPlague = ITEMS.register("mentalplague",

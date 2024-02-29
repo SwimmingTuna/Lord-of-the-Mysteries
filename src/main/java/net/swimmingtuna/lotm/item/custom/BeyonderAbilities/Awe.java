@@ -41,7 +41,7 @@ public class Awe extends Item {
 
     private void applyPotionEffectToEntities(Player pPlayer, int sequence) {
         double radius = 15.0 - sequence;
-        float damage = (float) (9.0 - (sequence/2));
+        float damage = (float) (12.0 - (sequence/2));
         int duration = 250 - (sequence * 15);
         for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
             if (entity != pPlayer) {

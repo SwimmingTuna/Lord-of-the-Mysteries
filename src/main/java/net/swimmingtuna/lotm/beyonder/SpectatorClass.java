@@ -107,6 +107,7 @@ public class SpectatorClass implements BeyonderClass {
         items.put(6, ItemInit.BattleHypnotism.get());
         items.put(6, ItemInit.PsychologicalInvisibility.get());
         items.put(5, ItemInit.DreamWalking.get());
+        items.put(5, ItemInit.Nightmare.get());
         return items;
     }
 
