@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,15 +24,18 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class DreamWalking extends Item implements ReachChangeUUIDs {
+public class ApplyManipulation extends Item implements ReachChangeUUIDs {
     private final LazyOptional<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = LazyOptional.of(() -> createAttributeMap());
 
-    public DreamWalking(Properties pProperties) {
+    public ApplyManipulation(Properties pProperties) {
         super(pProperties);
     }
 
@@ -44,18 +48,17 @@ public class DreamWalking extends Item implements ReachChangeUUIDs {
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
-
         ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
         attributeBuilder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND));
-        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BeyonderEntityReach, "Reach modifier", 300, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
-        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BeyonderBlockReach, "Reach modifier", 300, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
+        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BeyonderEntityReach, "Reach modifier", 50, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
+        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BeyonderBlockReach, "Reach modifier", 50, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
         return attributeBuilder.build();
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use on a living entity, teleports to their location\n" +
+            componentList.add(Component.literal("Upon use on a living entity, gives you the ability to manipulate them for 30 seconds\n" +
                     "Spirituality Used: 70\n" +
                     "Cooldown: 2 seconds"));
         }
@@ -67,16 +70,35 @@ public class DreamWalking extends Item implements ReachChangeUUIDs {
         ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
         Entity targetEntity = event.getTarget();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-        if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof DreamWalking && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 5 && spectatorSequence.useSpirituality(70)) {
-            double x = targetEntity.getX();
-            double y = targetEntity.getY();
-            double z = targetEntity.getZ();
-            pPlayer.teleportTo(x,y,z);
-            if (!pPlayer.getAbilities().instabuild) {
-                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 40);
+            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof ApplyManipulation && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(50)) {
+                if (!((LivingEntity) targetEntity).hasEffect(ModEffects.MANIPULATION.get()))
+                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false,false));
+            pPlayer.sendSystemMessage(Component.literal("Manipulating " + targetEntity.getName().getString()));
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
-        }
             }
-    });
-}}
+         });
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ApplyManipulation) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateMovement.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ApplyManipulation) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateMovement.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
+}

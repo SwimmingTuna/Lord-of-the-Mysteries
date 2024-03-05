@@ -17,6 +17,7 @@ public class AttributeAdder {
     public static void modifyAttributes(EntityAttributeModificationEvent event) {
         addToPlayer(event, ModAttributes.SOUL_BODY);
         addToPlayer(event, ModAttributes.NIGHTMARE);
+        addToPlayer(event, ModAttributes.ARMORINVISIBLITY);
     }
 
     @SafeVarargs

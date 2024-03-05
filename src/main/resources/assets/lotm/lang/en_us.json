@@ -6,7 +6,9 @@
   "item.lotm.battlehypnotism": "Battle Hypnotism",
   "item.lotm.psychologicalinvisibility": "Psychological Invisibility",
   "item.lotm.guidance": "Guidance",
-  "item.lotm.manipulation": "Manipulation",
+  "item.lotm.manipulatemovement": "Manipulate Movement",
+  "item.lotm.manipulateemotion": "Manipulate Emotion",
+  "item.lotm.manipulatefondness": "Manipulate Fondness",
   "item.lotm.mentalplague": "Mental Plague",
   "item.lotm.mindstorm": "Mind Storm",
   "item.lotm.consciousnessstroll": "Consciousness Stroll",
@@ -26,6 +28,8 @@
   "item.lotm.envisionhealth": "Envision Health",
   "item.lotm.dreamwalking": "Dream Walking",
   "item.lotm.nightmare": "Nightmare",
+  "item.lotm.applymanipulation": "Apply Manipulation",
+
 
 
 
@@ -53,12 +57,15 @@
   "effects.lotm.advancement2": "Advancement 2",
   "effects.lotm.advancement1": "Advancement 1",
   "effects.lotm.advancement0": "Advancement 0",
+  "effects.lotm.mentalplague": "Mental Plague",
 
   "attribute.lotm.spirituality": "Spirituality",
   "attribute.lotm.max_spirituality": "Max Spirituality",
   "attribute.lotm.spirituality_regen": "Spirituality Regen",
   "attribute.lotm.soul_body": "Soul Body",
   "attribute.lotm.nightmare": "Nightmare",
+  "attribute.lotm.armorinvisiblity": "Armor Invisibility",
+
 
   "item.lotm.beholder_potion.alert": "You have advanced to a %s",
   "argument.lotm.beyonder_class.id.invalid": "Unknown Beyonder Class type '%s'",

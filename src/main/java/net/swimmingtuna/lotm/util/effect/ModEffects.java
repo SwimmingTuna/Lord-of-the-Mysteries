@@ -19,7 +19,10 @@ public class ModEffects {
             () -> new BattleHypnotismEffect(MobEffectCategory.HARMFUL,3124687));
     public static final RegistryObject<MobEffect> NIGHTMARE = MOB_EFFECTS.register("nightmare",
             () -> new NightmareEffect(MobEffectCategory.HARMFUL, 3124687));
-
+    public static final RegistryObject<MobEffect> MANIPULATION = MOB_EFFECTS.register("manipulation",
+            () -> new ManipulationEffect(MobEffectCategory.HARMFUL, 3124687));
+    public static final RegistryObject<MobEffect> MENTALPLAGUE = MOB_EFFECTS.register("mentalplague",
+            () -> new MentalPlagueEffect(MobEffectCategory.HARMFUL, 3124687));
 
 
     public static void register(IEventBus eventBus) {

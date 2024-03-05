@@ -1,10 +1,10 @@
 package net.swimmingtuna.lotm.item.custom.BeyonderAbilities;
-
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,15 +23,16 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class DreamWalking extends Item implements ReachChangeUUIDs {
+public class MentalPlague extends Item implements ReachChangeUUIDs {
     private final LazyOptional<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = LazyOptional.of(() -> createAttributeMap());
 
-    public DreamWalking(Properties pProperties) {
+    public MentalPlague(Properties pProperties) {
         super(pProperties);
     }
 
@@ -63,20 +64,21 @@ public class DreamWalking extends Item implements ReachChangeUUIDs {
     }
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+
         Player pPlayer = event.getEntity();
         ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
         Entity targetEntity = event.getTarget();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-        if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof DreamWalking && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 5 && spectatorSequence.useSpirituality(70)) {
-            double x = targetEntity.getX();
-            double y = targetEntity.getY();
-            double z = targetEntity.getZ();
-            pPlayer.teleportTo(x,y,z);
-            if (!pPlayer.getAbilities().instabuild) {
-                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 40);
-            event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.SUCCESS);
-        }
+            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MentalPlague && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(200)) {
+                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(),620,1));
+                if (!pPlayer.getAbilities().instabuild) {
+                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 40);
+                    event.setCanceled(true);
+                    event.setCancellationResult(InteractionResult.SUCCESS);
+                    targetEntity.hurt(targetEntity.damageSources().magic(), damage);
+
+                }
             }
-    });
-}}
+        });
+    }
+}

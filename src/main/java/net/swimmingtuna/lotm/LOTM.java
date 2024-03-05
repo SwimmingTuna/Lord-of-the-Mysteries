@@ -83,7 +83,9 @@ public class LOTM {
                 event.accept(ItemInit.Guidance);
                 event.accept(ItemInit.DreamWalking);
                 event.accept(ItemInit.Nightmare);
-                event.accept(ItemInit.Manipulation);
+                event.accept(ItemInit.ManipulateMovement);
+                event.accept(ItemInit.ManipulateEmotion);
+                event.accept(ItemInit.ApplyManipulation);
                 event.accept(ItemInit.MentalPlague);
                 event.accept(ItemInit.MindStorm);
                 event.accept(ItemInit.ConsciousnessStroll);

@@ -32,16 +32,22 @@ public class ItemInit {
             () -> new DreamWalking(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Nightmare = ITEMS.register("nightmare",
             () -> new Nightmare(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> Manipulation = ITEMS.register("manipulation",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ManipulateMovement = ITEMS.register("manipulateemotion",
+            () -> new ManipulateMovement(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ManipulateEmotion = ITEMS.register("manipulatemovement",
+            () -> new ManipulateMovement(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ManipulateFondness = ITEMS.register("manipulatefondness",
+            () -> new ManipulateMovement(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ApplyManipulation = ITEMS.register("applymanipulation",
+            () -> new ApplyManipulation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MentalPlague = ITEMS.register("mentalplague",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new MentalPlague(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MindStorm = ITEMS.register("mindstorm",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new MindStorm(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ConsciousnessStroll = ITEMS.register("consciousnessstroll",
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DragonBreath = ITEMS.register("dragonbreath",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new DragonBreath(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PlagueStorm = ITEMS.register("plaguestorm",
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DreamWeaving = ITEMS.register("dreamweaving",

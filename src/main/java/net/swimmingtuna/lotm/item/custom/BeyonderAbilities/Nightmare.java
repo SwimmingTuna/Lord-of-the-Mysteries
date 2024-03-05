@@ -83,7 +83,7 @@ public class Nightmare extends Item implements ReachChangeUUIDs {
         level.getEntitiesOfClass(LivingEntity.class, boundingBox, entity -> entity.isAlive()).forEach(livingEntity -> {
             AttributeInstance nightmareAttribute = livingEntity.getAttribute(ModAttributes.NIGHTMARE.get());
             String playerName = livingEntity.getDisplayName().getString();
-            //if (livingEntity != pPlayer) {
+            if (livingEntity != pPlayer) {
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
                 if (livingEntity instanceof Player) {
                     if (nightmareAttribute.getValue() < 3) {
@@ -98,7 +98,7 @@ public class Nightmare extends Item implements ReachChangeUUIDs {
                 else {
                     livingEntity.hurt(livingEntity.damageSources().magic(), damageMob);
                 }
-            //}
+            }
         });
     }
     @Override

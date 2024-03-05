@@ -16,6 +16,8 @@ public class ModAttributes {
             ()-> new RangedAttribute("attribute.lotm.spirituality",100.0D,0.0D,10000000).setSyncable(true));
     public static final RegistryObject<Attribute> NIGHTMARE = ATTRIBUTES.register("nightmare",
             ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,10).setSyncable(true));
+    public static final RegistryObject<Attribute> ARMORINVISIBLITY = ATTRIBUTES.register("armorinvisibility",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,10).setSyncable(true));
 
 
     public static void register(IEventBus eventBus) {
