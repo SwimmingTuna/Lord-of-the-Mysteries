@@ -75,8 +75,6 @@ public class MentalPlague extends Item implements ReachChangeUUIDs {
                     pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 40);
                     event.setCanceled(true);
                     event.setCancellationResult(InteractionResult.SUCCESS);
-                    targetEntity.hurt(targetEntity.damageSources().magic(), damage);
-
                 }
             }
         });
