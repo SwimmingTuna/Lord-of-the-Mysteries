@@ -33,7 +33,7 @@ public class ItemInit {
     public static final RegistryObject<Item> Nightmare = ITEMS.register("nightmare",
             () -> new Nightmare(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ManipulateMovement = ITEMS.register("manipulateemotion",
-            () -> new ManipulateMovement(new Item.Properties().stacksTo(1)));
+            () -> new ManipulateEmotion(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ManipulateEmotion = ITEMS.register("manipulatemovement",
             () -> new ManipulateMovement(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ManipulateFondness = ITEMS.register("manipulatefondness",
@@ -49,7 +49,7 @@ public class ItemInit {
     public static final RegistryObject<Item> DragonBreath = ITEMS.register("dragonbreath",
             () -> new DragonBreath(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PlagueStorm = ITEMS.register("plaguestorm",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new PlagueStorm(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DreamWeaving = ITEMS.register("dreamweaving",
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Discern = ITEMS.register("discern",
@@ -59,21 +59,21 @@ public class ItemInit {
     public static final RegistryObject<Item> Prophesize = ITEMS.register("prophesize",
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionLife = ITEMS.register("envisionlife",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> EnvisionNature = ITEMS.register("envisionnature",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new EnvisionLife(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> EnvisionDisasters = ITEMS.register("envisionnature",
+            () -> new EnvisionDisasters(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionWeather = ITEMS.register("envisionweather",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new EnvisionWeather(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionBarrier = ITEMS.register("envisionbarrier",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new EnvisionBarrier(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionDeath = ITEMS.register("envisiondeath",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new EnvisionDeath(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionKingdom = ITEMS.register("envisionkingdom",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new EnvisionKingdom(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionLocation = ITEMS.register("envisionlocation",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new EnvisionLocation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionHealth = ITEMS.register("envisionhealth",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new EnvisionHealth(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SPECTATOR_9_POTION = ITEMS.register("spectator_9_potion",
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1), ()->BeyonderClassInit.SPECTATOR.get(),9));
     public static final RegistryObject<Item> SPECTATOR_8_POTION = ITEMS.register("spectator_8_potion",
