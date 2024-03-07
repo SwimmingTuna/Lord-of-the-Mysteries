@@ -100,6 +100,7 @@ public class LOTM {
                 event.accept(ItemInit.EnvisionDeath);
                 event.accept(ItemInit.EnvisionKingdom);
                 event.accept(ItemInit.EnvisionLocation);
+                event.accept(ItemInit.EnvisionLocationBlink);
                 event.accept(ItemInit.EnvisionHealth);
                 event.accept(ItemInit.SPECTATOR_9_POTION);
                 event.accept(ItemInit.SPECTATOR_8_POTION);

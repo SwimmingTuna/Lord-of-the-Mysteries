@@ -51,5 +51,4 @@ public class EnvisionLocation extends Item {
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
-
 }

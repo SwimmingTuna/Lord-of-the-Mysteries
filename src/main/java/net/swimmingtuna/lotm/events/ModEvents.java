@@ -28,6 +28,7 @@ public class ModEvents {
     @SubscribeEvent
     public static void onPlayerJoinWorld(EntityJoinLevelEvent event) {
     }
+
     @SubscribeEvent
     public static void attributeHandler(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
@@ -48,12 +49,14 @@ public class ModEvents {
             if (armorInvisAttribute.getValue() > 0 && !pPlayer.hasEffect(MobEffects.INVISIBILITY)) {
                 pPlayer.sendSystemMessage(Component.literal("reset attribute"));
                 removeArmor(pPlayer);
-                armorInvisAttribute.setBaseValue(0);}
+                armorInvisAttribute.setBaseValue(0);
+            }
 
             // Save the updated nightmareTimer in player persistent data
             pPlayer.getPersistentData().putInt("NightmareTimer", nightmareTimer);
         }
     }
+
     @SubscribeEvent
     public static void handleLivingTick(LivingEvent.LivingTickEvent event) {
         LivingEntity entity = event.getEntity();
@@ -65,7 +68,7 @@ public class ModEvents {
 
                 if (mentalPlagueTimer >= 600) {
                     for (LivingEntity entity1 : entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(50))) {
-                       applyEffectsAndDamage(entity1);
+                        applyEffectsAndDamage(entity1);
                     }
                     applyEffectsAndDamage(entity);
                     mentalPlagueTimer = 0;
@@ -74,6 +77,7 @@ public class ModEvents {
             entity.getPersistentData().putInt("MentalPlagueTimer", mentalPlagueTimer);
         }
     }
+
     private static void applyEffectsAndDamage(LivingEntity entity) {
         entity.addEffect(new MobEffectInstance(MobEffects.POISON, 400, 2, false, false));
         entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 400, 2, false, false));
@@ -81,6 +85,7 @@ public class ModEvents {
         entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 400, 1, false, false));
         entity.hurt(entity.damageSources().magic(), 20);
     }
+
     private static void removeArmor(Player pPlayer) {
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             if (slot.getType() == EquipmentSlot.Type.ARMOR) {
@@ -90,4 +95,5 @@ public class ModEvents {
                 }
             }
         }
-}}
+    }
+}

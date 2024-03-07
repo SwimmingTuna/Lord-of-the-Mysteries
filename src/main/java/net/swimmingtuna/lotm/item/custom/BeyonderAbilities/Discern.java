@@ -29,27 +29,32 @@ public class Discern extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(75)) {
-                applyPotionEffectToEntities(pPlayer, spectatorSequence.getCurrentSequence(), hand);
+            if (spectatorSequence.getCurrentSequence() <= 2 && spectatorSequence.useSpirituality(1000)) {
+                removeCooldown(pPlayer);
                 if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 240);
+                    pPlayer.getCooldowns().addCooldown(this, 900);
             }
         });
         return super.use(level, pPlayer, hand);
     }
 
-    private void applyPotionEffectToEntities(Player pPlayer, int sequence, InteractionHand hand) {
-       ItemCooldowns cooldowns = pPlayer.getCooldowns();
-       ItemStack itemStack = pPlayer.getItemInHand(hand);
-       pPlayer.getCooldowns().removeCooldown(itemStack.getItem());
+    private void removeCooldown(Player pPlayer) {
+        if (!pPlayer.level().isClientSide()) {
+            for (int i = 0; i < pPlayer.getInventory().getContainerSize(); i++) {
+                ItemStack itemStack = pPlayer.getInventory().getItem(i);
+                if (!itemStack.isEmpty()) {
+                    pPlayer.sendSystemMessage(Component.literal("in inventory:" + itemStack));
+                    pPlayer.getCooldowns().removeCooldown(itemStack.getItem());
+                }
+            }
+        }
     }
-
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes all living entities around the user freeze in place\n" +
-                    "Spirituality Used: 75\n" +
-                    "Cooldown: 12 seconds"));
+            componentList.add(Component.literal("Upon use, resets the cooldown of all your abilities\n" +
+                    "Spirituality Used: 1000\n" +
+                    "Cooldown: 45 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
