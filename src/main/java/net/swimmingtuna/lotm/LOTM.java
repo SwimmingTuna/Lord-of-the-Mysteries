@@ -16,6 +16,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.ClientConfigs;
 import net.swimmingtuna.lotm.events.ClientEvents;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.init.BlockInit;
 import net.swimmingtuna.lotm.init.CommandInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
@@ -45,6 +46,7 @@ public class LOTM {
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ItemInit.register(modEventBus);
+        BlockInit.register(modEventBus);
         ModEffects.register(modEventBus);
         ModAttributes.register(modEventBus);
         CommandInit.ARGUMENT_TYPES.register(modEventBus);
@@ -86,6 +88,7 @@ public class LOTM {
                 event.accept(ItemInit.ApplyManipulation);
                 event.accept(ItemInit.MentalPlague);
                 event.accept(ItemInit.MindStorm);
+                event.accept(ItemInit.ManipulateFondness);
                 event.accept(ItemInit.ConsciousnessStroll);
                 event.accept(ItemInit.DragonBreath);
                 event.accept(ItemInit.PlagueStorm);
@@ -114,6 +117,9 @@ public class LOTM {
                 event.accept(ItemInit.SPECTATOR_0_POTION);
                 event.accept(ItemInit.BEYONDER_RESET_POTION);
                 event.accept(ItemInit.TYRANT_9_POTION);
+        }
+        if(event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
+            event.accept(BlockInit.VISIONARY_BARRIER_BLOCK);
         }
     }
 }

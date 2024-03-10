@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.item.custom.BeyonderAbilities;
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator;
 
 
 import net.minecraft.client.gui.screens.Screen;
@@ -18,9 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class EnvisionLife extends Item {
+public class EnvisionKingdom extends Item {
 
-    public EnvisionLife(Properties pProperties) {
+    public EnvisionKingdom(Properties pProperties) {
         super(pProperties);
     }
 

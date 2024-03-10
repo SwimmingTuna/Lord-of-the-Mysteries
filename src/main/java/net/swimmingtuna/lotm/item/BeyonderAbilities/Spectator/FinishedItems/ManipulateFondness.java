@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.item.custom.BeyonderAbilities;
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -57,6 +57,7 @@ public class ManipulateFondness extends Item implements ReachChangeUUIDs {
             for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
                 if (entity != pPlayer && entity.hasEffect(ModEffects.MANIPULATION.get())) {
                     entity.addEffect(new MobEffectInstance(ModEffects.BATTLEHYPNOTISM.get(),600, 1,false,false));
+                    entity.removeEffect(ModEffects.MANIPULATION.get());
                 }
             }
         }

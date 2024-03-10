@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.item.custom.BeyonderAbilities;
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -59,7 +59,13 @@ public class MindReading extends Item implements ReachChangeUUIDs {
     public InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
         if (spectatorSequence.getCurrentSequence() <= 8 && !pInteractionTarget.level().isClientSide && pInteractionTarget instanceof Player && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(20)) {
-            pPlayer.sendSystemMessage((Component.literal(String.valueOf(((Player) pInteractionTarget).getInventory().items))));
+            for (int i = 0; i < ((Player) pInteractionTarget).getInventory().getContainerSize(); i++) {
+                ItemStack itemStack = ((Player) pInteractionTarget).getInventory().getItem(i);
+                if (!itemStack.isEmpty()) {
+                    String playerName = pInteractionTarget.getName().getString();
+                    pPlayer.sendSystemMessage(Component.literal(playerName +"'s inventory is" + itemStack));
+                }
+            }
             if (!pPlayer.getAbilities().instabuild) {
                 pPlayer.getCooldowns().addCooldown(this, 60);
             }
@@ -67,7 +73,6 @@ public class MindReading extends Item implements ReachChangeUUIDs {
         });
         return InteractionResult.PASS;
     }
-
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {

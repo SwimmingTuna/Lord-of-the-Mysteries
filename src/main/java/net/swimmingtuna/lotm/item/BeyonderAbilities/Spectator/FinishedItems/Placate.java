@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.item.custom.BeyonderAbilities;
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;

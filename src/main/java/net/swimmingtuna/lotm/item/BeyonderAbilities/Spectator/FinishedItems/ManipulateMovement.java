@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.item.custom.BeyonderAbilities;
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -93,33 +93,35 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
 
     private static void manipulateEntities(Player pPlayer, Level level, BlockPos targetPos, int sequence) {
         double duration = 1200 - (sequence * 200);
-        if ((!pPlayer.level().isClientSide)) {
-        for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
-            if (entity != pPlayer && entity.hasEffect(ModEffects.MANIPULATION.get()) && !entity.level().isClientSide) {
-                entity.addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), (int) duration,1,false,false));
-                double deltaX = targetPos.getX() - entity.getX();
-                double deltaY = targetPos.getY() - entity.getY();
-                double deltaZ = targetPos.getZ() - entity.getZ();
+        if (!pPlayer.level().isClientSide) {
+            for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
+                if (entity != pPlayer && entity.hasEffect(ModEffects.MANIPULATION.get()) && !entity.level().isClientSide) {
+                    entity.addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), (int) duration, 1, false, false));
+                    double deltaX = targetPos.getX() - entity.getX();
+                    double deltaY = targetPos.getY() - entity.getY();
+                    double deltaZ = targetPos.getZ() - entity.getZ();
 
-                double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+                    double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-                if (distance > 0) {
-                    double speed = 0.25;
-                    double normalizedX = deltaX / distance * speed;
-                    double normalizedY = deltaY / distance * speed;
-                    double normalizedZ = deltaZ / distance * speed;
+                    if (distance > 0) {
+                        double speed = 0.25;
+                        double normalizedX = deltaX / distance * speed;
+                        double normalizedY = deltaY / distance * speed;
+                        double normalizedZ = deltaZ / distance * speed;
 
-                    BlockPos frontBlockPos = new BlockPos((int) (entity.getX() + normalizedX) , (int) (entity.getY() + normalizedY) , (int) (entity.getZ() + normalizedZ));
-                    BlockPos frontBlockPos1 = new BlockPos((int) (entity.getX() + normalizedX * 2) , (int) (entity.getY() + normalizedY * 2) , (int) (entity.getZ() + normalizedZ * 2));
+                        BlockPos frontBlockPos = new BlockPos((int) (entity.getX() + normalizedX), (int) (entity.getY() + normalizedY), (int) (entity.getZ() + normalizedZ));
+                        BlockPos frontBlockPos1 = new BlockPos((int) (entity.getX() + normalizedX * 2), (int) (entity.getY() + normalizedY * 2), (int) (entity.getZ() + normalizedZ * 2));
 
-                    if (!level.getBlockState(frontBlockPos).isAir() || !level.getBlockState(frontBlockPos1).isAir()) {
-                        if (entity.level().getGameTime() % 20 == 0) {
-                            entity.teleportTo(entity.getX(), entity.getY() + 1.0, entity.getZ());
+                        // Check if the path is clear
+                        boolean pathIsClear = level.getBlockState(frontBlockPos).isAir() && level.getBlockState(frontBlockPos1).isAir();
+
+                        if (pathIsClear) {
+                            entity.setDeltaMovement(normalizedX, normalizedY, normalizedZ);
+                        } else {
+                            // Adjust the entity's motion upwards when obstructed
+                            entity.setDeltaMovement(normalizedX, 0.25, normalizedZ);
                         }
-                    }
-                    else {
-                        entity.setDeltaMovement(normalizedX, entity.getY(), normalizedZ);
-                    }
+
                         if (entity.position().distanceTo(new Vec3(targetPos.getX(), targetPos.getY(), targetPos.getZ())) < 2.0) {
                             entity.removeEffect(ModEffects.MANIPULATION.get());
                         }
@@ -127,6 +129,16 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
                 }
             }
         }
+    }
+
+    private static BlockPos findNearestClearPosition(Level level, BlockPos targetPos, LivingEntity entity) {
+        // Implement your logic to find the nearest clear position from the target position
+        // This could involve checking adjacent blocks in a spiral or other pattern
+        // until an air block is found, then returning that position.
+        // You may need to adjust this method based on your specific requirements.
+
+        // For simplicity, let's assume we just move the entity up by 1 block if the path is obstructed
+        return new BlockPos(targetPos.getX(), targetPos.getY() + 1, targetPos.getZ());
     }
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {

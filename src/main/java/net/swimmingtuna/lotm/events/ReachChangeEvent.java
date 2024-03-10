@@ -11,7 +11,7 @@ import javax.swing.text.html.parser.Entity;
 import java.util.UUID;
 
 import static net.swimmingtuna.lotm.events.ReachChangeUUIDs.BeyonderEntityReach;
-import static net.swimmingtuna.lotm.item.custom.BeyonderAbilities.MindReading.pUsedHand;
+import static net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.MindReading.pUsedHand;
 
 public class ReachChangeEvent {
 

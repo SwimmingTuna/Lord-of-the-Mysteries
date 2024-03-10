@@ -6,9 +6,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.item.custom.BeyonderAbilities.*;
-import net.swimmingtuna.lotm.item.custom.BeyonderPotions.BeyonderPotion;
-import net.swimmingtuna.lotm.item.custom.BeyonderPotions.BeyonderResetPotion;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.*;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
+import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
+import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderResetPotion;
 
 public class ItemInit {
     public static final DeferredRegister<Item> ITEMS =
@@ -37,7 +38,7 @@ public class ItemInit {
     public static final RegistryObject<Item> ManipulateEmotion = ITEMS.register("manipulatemovement",
             () -> new ManipulateMovement(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ManipulateFondness = ITEMS.register("manipulatefondness",
-            () -> new ManipulateMovement(new Item.Properties().stacksTo(1)));
+            () -> new ManipulateFondness(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ApplyManipulation = ITEMS.register("applymanipulation",
             () -> new ApplyManipulation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MentalPlague = ITEMS.register("mentalplague",
@@ -45,19 +46,19 @@ public class ItemInit {
     public static final RegistryObject<Item> MindStorm = ITEMS.register("mindstorm",
             () -> new MindStorm(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ConsciousnessStroll = ITEMS.register("consciousnessstroll",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new ConciousnessStroll(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DragonBreath = ITEMS.register("dragonbreath",
             () -> new DragonBreath(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PlagueStorm = ITEMS.register("plaguestorm",
             () -> new PlagueStorm(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DreamWeaving = ITEMS.register("dreamweaving",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new DreamWeaving(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Discern = ITEMS.register("discern",
             () -> new Discern(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DreamIntoReality = ITEMS.register("dreamintoreality",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new DreamIntoReality(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Prophesize = ITEMS.register("prophesize",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new Prophesize(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionLife = ITEMS.register("envisionlife",
             () -> new EnvisionLife(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionDisasters = ITEMS.register("envisionnature",

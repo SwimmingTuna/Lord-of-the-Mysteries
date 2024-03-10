@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.item.custom.BeyonderAbilities;
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
 import net.minecraft.client.gui.screens.Screen;
@@ -19,9 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class EnvisionDeath extends Item {
+public class Awe extends Item {
 
-    public EnvisionDeath(Properties pProperties) {
+    public Awe(Properties pProperties) {
         super(pProperties);
     }
 
@@ -29,7 +29,7 @@ public class EnvisionDeath extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             if (spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(75)) {
-                applyPotionEffectToEntities(pPlayer);
+                applyPotionEffectToEntities(pPlayer, spectatorSequence.getCurrentSequence());
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 240);
             }
@@ -37,14 +37,14 @@ public class EnvisionDeath extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    private void applyPotionEffectToEntities(Player pPlayer) {
-        double radius = 300;
+    private void applyPotionEffectToEntities(Player pPlayer, int sequence) {
+        double radius = 15.0 - sequence;
+        float damage = (float) (12.0 - (sequence/2));
+        int duration = 250 - (sequence * 15);
         for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
             if (entity != pPlayer) {
-                int entityHealth = (int) entity.getHealth();
-                if (entityHealth <= 100) {
-                    entity.kill();
-                }
+                entity.addEffect((new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false)));
+            entity.hurt(entity.damageSources().magic(), damage);
         }}
     }
 

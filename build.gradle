@@ -5,6 +5,8 @@ plugins {
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
     id 'dev._100media.gradleutils' version '1.+'
+    id("com.github.johnrengelman.shadow") version("${shadow_plugin_version}")
+
 }
 
 version = "${minecraft_version}-${mod_version}"
@@ -123,6 +125,10 @@ mixin {
     // Enables exporting mixin-changed classes to .mixin.out in the run folder
     debug.export = true
 }
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
 
 dependencies {
     // Specify the version of Minecraft to use.
@@ -132,8 +138,10 @@ dependencies {
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     // Capability Syncer
-    hundredMedia.addJarJarDep('dev._100media.capabilitysyncer:capabilitysyncer', capabilitysyncer_version, capabilitysyncer_version_range)
-    hundredMedia.addJarJarDep('vazkii.patchouli:Patchouli', patchouli_version, patchouli_version_range)
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+    shade fg.deobf("dev._100media.capabilitysyncer:capabilitysyncer:${capabilitysyncer_version}")
+
 }
 
 def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta', "${mod_id}.mixins.json".toString()]
@@ -192,20 +200,20 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-tasks.jarJar {
+shadowJar {
     archiveClassifier = ''
+    configurations = [project.configurations.shade]
+
+    relocate("dev._100media.capabilitysyncer", "${group}.relocated.capabilitysyncer")
+    finalizedBy("reobfShadowJar")
 }
+
+assemble.dependsOn shadowJar
 
 reobf {
-    jarJar {}
+    shadowJar {}
 }
 
-afterEvaluate {
-    jar.finalizedBy reobfJar
-    tasks.jarJar.finalizedBy reobfJarJar
-    reobfJar.dependsOn 'addMixinsToJar'
-    reobfJarJar.dependsOn 'addMixinsToJarJar'
-}
 
 publishing {
     publications {
@@ -216,6 +224,13 @@ publishing {
     repositories {
         maven {
             url "file://${project.projectDir}/mcmodsrepo"
+        }
+        maven {
+            url = "https://maven.blamejared.com/"
+        }
+        maven {
+            name = '100Media'
+            url = 'https://maven.100media.dev/'
         }
     }
 }

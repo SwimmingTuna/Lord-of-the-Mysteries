@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.item.custom.BeyonderAbilities;
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.gui.screens.Screen;
@@ -28,12 +28,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class PlagueStorm extends Item implements ReachChangeUUIDs {
+public class MentalPlague extends Item implements ReachChangeUUIDs {
     private final LazyOptional<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = LazyOptional.of(() -> createAttributeMap());
 
-    public PlagueStorm(Properties pProperties) {
+    public MentalPlague(Properties pProperties) {
         super(pProperties);
     }
 
@@ -70,13 +69,9 @@ public class PlagueStorm extends Item implements ReachChangeUUIDs {
         ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
         Entity targetEntity = event.getTarget();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof PlagueStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(400)) {
-                double radius = 80 - (spectatorSequence.getCurrentSequence() * 10);
-                float damage = (float) (50 - (spectatorSequence.getCurrentSequence() * 4));
-                int duration = 300 - (spectatorSequence.getCurrentSequence() * 20);
-
-                //for (LivingEntity entity1 : targetEntity.level().getEntitiesOfClass(LivingEntity.class, entity1.getBoundingBox().inflate(50))) {
-                    if (!pPlayer.getAbilities().instabuild) {
+            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MentalPlague && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(200)) {
+                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(),620,1));
+                if (!pPlayer.getAbilities().instabuild) {
                     pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 40);
                     event.setCanceled(true);
                     event.setCancellationResult(InteractionResult.SUCCESS);

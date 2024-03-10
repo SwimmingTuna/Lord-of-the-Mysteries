@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.item.custom.BeyonderPotions;
+package net.swimmingtuna.lotm.item.BeyonderPotions;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;

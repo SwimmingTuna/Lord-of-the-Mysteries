@@ -1,21 +1,16 @@
-package net.swimmingtuna.lotm.item.custom.BeyonderAbilities;
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.TickEvent;
@@ -23,6 +18,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BlockInit;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -81,9 +77,9 @@ public class EnvisionBarrier extends Item {
                 return;
             }
 
-            // Create a new glass dome
             domeCenter = playerPos;
-            replacedAirBlocks.clear(); // Clear the list of replaced air blocks
+            replacedAirBlocks.clear();
+            BlockState barrierState = Blocks.OBSIDIAN.defaultBlockState();
             for (int x = -radius; x <= radius; x++) {
                 for (int y = -radius; y <= radius; y++) {
                     for (int z = -radius; z <= radius; z++) {
@@ -94,13 +90,14 @@ public class EnvisionBarrier extends Item {
                             continue;
                         } else if (distanceFromCenter <= radius * radius) {
                             BlockPos worldPos = domeCenter.offset(pos);
+
                             BlockState currentState = level.getBlockState(worldPos);
                             if (currentState.isAir()) {
-                                level.setBlockAndUpdate(worldPos, Blocks.GLASS.defaultBlockState());
-                                replacedAirBlocks.add(pos); // Add the position to the list of replaced air blocks
+                                level.setBlockAndUpdate(worldPos, BlockInit.VISIONARY_BARRIER_BLOCK.get().defaultBlockState());
+                                replacedAirBlocks.add(pos);
                             } else {
                                 replacedBlocks.put(pos, currentState);
-                                level.setBlockAndUpdate(worldPos, Blocks.GLASS.defaultBlockState());
+                                level.setBlockAndUpdate(worldPos, BlockInit.VISIONARY_BARRIER_BLOCK.get().defaultBlockState());
                             }
                         }
                     }
@@ -122,9 +119,9 @@ public class EnvisionBarrier extends Item {
                     int barrierRadius = pPlayer.getPersistentData().getInt("BarrierRadius");
                     if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof EnvisionBarrier) {
                         barrierRadius++;
-                        pPlayer.sendSystemMessage(Component.literal("Barrier Radius" + barrierRadius));
+                        pPlayer.sendSystemMessage(Component.literal("Barrier Radius " + barrierRadius));
                     }
-                    if (barrierRadius >= 100) {
+                    if (barrierRadius > 100) {
                         barrierRadius = 0;
                     }
                     pPlayer.getPersistentData().putInt("BarrierRadius", barrierRadius);
