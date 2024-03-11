@@ -73,10 +73,9 @@ public class DreamWalking extends Item implements ReachChangeUUIDs {
             double z = targetEntity.getZ();
             pPlayer.teleportTo(x,y,z);
             if (!pPlayer.getAbilities().instabuild) {
-                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 40);
+                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 40);}
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
-        }
             }
     });
 }}

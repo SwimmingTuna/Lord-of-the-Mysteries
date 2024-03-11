@@ -1,12 +1,13 @@
-package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator;
+
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -28,10 +29,10 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class PlagueStorm extends Item implements ReachChangeUUIDs {
+public class ConciousnessStroll extends Item implements ReachChangeUUIDs {
     private final LazyOptional<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = LazyOptional.of(() -> createAttributeMap());
 
-    public PlagueStorm(Properties pProperties) {
+    public ConciousnessStroll(Properties pProperties) {
         super(pProperties);
     }
 
@@ -47,8 +48,8 @@ public class PlagueStorm extends Item implements ReachChangeUUIDs {
 
         ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
         attributeBuilder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND));
-        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BeyonderEntityReach, "Reach modifier", 80, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
-        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BeyonderBlockReach, "Reach modifier", 80, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
+        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BeyonderEntityReach, "Reach modifier", 300, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
+        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BeyonderBlockReach, "Reach modifier", 300, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
         return attributeBuilder.build();
     }
 
@@ -63,33 +64,20 @@ public class PlagueStorm extends Item implements ReachChangeUUIDs {
     }
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-
         Player pPlayer = event.getEntity();
         ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
         Entity targetEntity = event.getTarget();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof PlagueStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(400)) {
-                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS,80,1,false,false));
-                for (LivingEntity targetEntity1 : targetEntity.level().getEntitiesOfClass(LivingEntity.class, targetEntity.getBoundingBox().inflate(30))) {
-                    if (targetEntity1 != pPlayer) {
-                        if (targetEntity1 != targetEntity) {
-                        targetEntity1.hurt(targetEntity1.damageSources().magic(), 20 - (spectatorSequence.getCurrentSequence() * 3));
-                        }
-                        else {
-                            targetEntity1.hurt(targetEntity1.damageSources().magic(), 40 - (spectatorSequence.getCurrentSequence() * 6));
-                        }
-                        targetEntity1.addEffect(new MobEffectInstance(MobEffects.DARKNESS,80,1,false,false));
-                        targetEntity1.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 2, false, false));
-                        targetEntity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 2, false, false));
-                        targetEntity1.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 1, false, false));
-                        targetEntity1.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 1, false, false));
-                    }
-                }
-                    if (!pPlayer.getAbilities().instabuild) {
-                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 160);}
-                    event.setCanceled(true);
-                    event.setCancellationResult(InteractionResult.SUCCESS);
+        if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof ConciousnessStroll && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 5 && spectatorSequence.useSpirituality(70)) {
+            double x = targetEntity.getX();
+            double y = targetEntity.getY();
+            double z = targetEntity.getZ();
+            pPlayer.teleportTo(x,y,z);
+            if (!pPlayer.getAbilities().instabuild) {
+                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 40);
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+        }
             }
-        });
-    }
-}
+    });
+}}
