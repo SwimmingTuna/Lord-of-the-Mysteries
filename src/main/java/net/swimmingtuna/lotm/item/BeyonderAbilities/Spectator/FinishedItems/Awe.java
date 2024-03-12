@@ -7,12 +7,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +31,8 @@ public class Awe extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             if (spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(75)) {
-                applyPotionEffectToEntities(pPlayer, spectatorSequence.getCurrentSequence());
+                AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+                applyPotionEffectToEntities(pPlayer, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 240);
             }
@@ -37,8 +40,8 @@ public class Awe extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    private void applyPotionEffectToEntities(Player pPlayer, int sequence) {
-        double radius = 15.0 - sequence;
+    private void applyPotionEffectToEntities(Player pPlayer, int sequence, int dir) {
+        double radius = (15.0 - sequence) * dir;
         float damage = (float) (12.0 - (sequence/2));
         int duration = 250 - (sequence * 15);
         for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {

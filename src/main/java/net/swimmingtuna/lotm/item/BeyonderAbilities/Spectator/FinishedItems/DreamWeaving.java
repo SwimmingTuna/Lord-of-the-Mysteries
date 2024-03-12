@@ -27,6 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -78,41 +79,83 @@ public class DreamWeaving extends Item implements ReachChangeUUIDs {
         double y = targetEntity.getY();
         double z = targetEntity.getZ();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
             if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof DreamWeaving && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 5 && spectatorSequence.useSpirituality(70)) {
-                ( targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS, 150, 1, false, false));
+                (targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS, 150, 1, false, false));
                 Random random = new Random();
                 int times = 20 - (spectatorSequence.getCurrentSequence() * 3);
                 for (int i = 0; i < times; i++) {
                     int randomNumber = random.nextInt(10);
                     if (randomNumber == 0) {
-                        spawnZombiesAroundTarget(targetEntity, level,x,y,z, 1);
+                        if (dreamIntoReality.getValue() == 2) {
+                            spawnZombiesAroundTarget(targetEntity, level, x, y, z, 2);
+                        } else {
+                            spawnZombiesAroundTarget(targetEntity, level, x, y, z, 1);
+                        }
                     }
                     if (randomNumber == 1) {
-                        spawnSkeletonAroundTarget(targetEntity, level,x,y,z, 1);
+                        if (dreamIntoReality.getValue() == 2) {
+                            spawnSkeletonAroundTarget(targetEntity, level, x, y, z, 2);
+                        } else {
+                            spawnSkeletonAroundTarget(targetEntity, level, x, y, z, 1);
+                        }
                     }
                     if (randomNumber == 2) {
-                        spawnCreeperAroundTarget(targetEntity, level,x,y,z, 1);
+                        if (dreamIntoReality.getValue() == 2) {
+                            spawnCreeperAroundTarget(targetEntity, level, x, y, z, 2);
+                        } else {
+                            spawnCreeperAroundTarget(targetEntity, level, x, y, z, 1);
+
+                        }
                     }
                     if (randomNumber == 3) {
-                        spawnEndermanAroundTarget(targetEntity, level,x,y,z, 1);
+                        if (dreamIntoReality.getValue() == 2) {
+                            spawnEndermanAroundTarget(targetEntity, level, x, y, z, 2);
+                        } else {
+                            spawnEndermanAroundTarget(targetEntity, level, x, y, z, 1);
+                        }
                     }
                     if (randomNumber == 4) {
-                        spawnRavagerAroundTarget(targetEntity, level,x,y,z, 1);
+                        if (dreamIntoReality.getValue() == 2) {
+                            spawnRavagerAroundTarget(targetEntity, level, x, y, z, 2);
+                        } else {
+                            spawnRavagerAroundTarget(targetEntity, level, x, y, z, 1);
+                        }
                     }
                     if (randomNumber == 5) {
-                        spawnVexAroundTarget(targetEntity, level,x,y,z, 1);
+                        if (dreamIntoReality.getValue() == 2) {
+                            spawnVexAroundTarget(targetEntity, level, x, y, z, 2);
+                        } else {
+                            spawnVexAroundTarget(targetEntity, level, x, y, z, 1);
+                        }
                     }
                     if (randomNumber == 6) {
-                        spawnEndermiteAroundTarget(targetEntity, level,x,y,z, 1);
+                        if (dreamIntoReality.getValue() == 2) {
+                            spawnEndermiteAroundTarget(targetEntity, level, x, y, z, 2);
+                        } else {
+                            spawnEndermiteAroundTarget(targetEntity, level, x, y, z, 1);
+                        }
                     }
                     if (randomNumber == 7) {
-                        spawnSpidersAroundTarget(targetEntity, level,x,y,z, 1);
+                        if (dreamIntoReality.getValue() == 2) {
+                            spawnSpidersAroundTarget(targetEntity, level, x, y, z, 2);
+                        } else {
+                            spawnSpidersAroundTarget(targetEntity, level, x, y, z, 1);
+                        }
                     }
                     if (randomNumber == 8) {
-                        spawnWitherAroundTarget(targetEntity, level,x,y,z, 1);
+                        if (dreamIntoReality.getValue() == 2) {
+                            spawnWitherAroundTarget(targetEntity, level, x, y, z, 2);
+                        } else {
+                            spawnWitherAroundTarget(targetEntity, level, x, y, z, 1);
+                        }
                     }
                     if (randomNumber == 9) {
-                        spawnPhantomAroundTarget(targetEntity, level,x,y,z, 1);
+                        if (dreamIntoReality.getValue() == 2) {
+                            spawnPhantomAroundTarget(targetEntity, level, x, y, z, 2);
+                        } else {
+                            spawnPhantomAroundTarget(targetEntity, level, x, y, z, 1);
+                        }
                     }
                 }
             }

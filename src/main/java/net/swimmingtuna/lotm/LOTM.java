@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -12,6 +13,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.ClientConfigs;
 import net.swimmingtuna.lotm.events.ClientEvents;
@@ -35,7 +38,6 @@ public class LOTM {
     public static Supplier<Integer> fadeTicks;
     public static Supplier<Double> maxBrightness;
     public static Supplier<Double> fadeRate = () -> maxBrightness.get() / fadeTicks.get();
-
     public static ResourceLocation modLoc(String name) {return new ResourceLocation(MOD_ID, name);}
 
 

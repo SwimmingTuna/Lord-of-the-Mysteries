@@ -48,14 +48,13 @@ public class PsychologicalInvisibility extends Item  {
                 if (hadArmor || !storedArmor.isEmpty()) {
                     restoreArmor(pPlayer);
                     storedArmor.clear();
-                    if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 200);
-                    pPlayer.sendSystemMessage(Component.literal("working1"));
                 } else {
                     storeArmor(pPlayer);
-                    pPlayer.sendSystemMessage(Component.literal("working2"));
                 }
-        }});}
+                pPlayer.getCooldowns().addCooldown(this,20);
+            }
+            });
+        }
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemStack);
     }
 
@@ -109,6 +108,7 @@ public class PsychologicalInvisibility extends Item  {
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
         if (entity instanceof Player) {
             Player pPlayer = (Player) entity;
+            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
             if (!pPlayer.level().isClientSide) {
                 boolean hadArmor = pPlayer.getPersistentData().getBoolean(HAD_ARMOR_TAG);
 
@@ -120,7 +120,7 @@ public class PsychologicalInvisibility extends Item  {
                             if (spectatorSequence.getSpirituality() > 41) {
                                 counterValue[0]++;
                                 if (counterValue[0] >= 20) {
-                                    spectatorSequence.useSpirituality(40);
+                                    spectatorSequence.useSpirituality((int) (40 / dreamIntoReality.getValue()));
                                     counterValue[0] = 0;
                                 }
                             } else {

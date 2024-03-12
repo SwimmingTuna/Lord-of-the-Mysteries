@@ -6,12 +6,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -27,7 +29,8 @@ public class EnvisionDeath extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             if (spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality(2000)) {
-                envisionDeath(pPlayer);
+                AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+                envisionDeath(pPlayer, (int) dreamIntoReality.getValue());
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 2400);
             }
@@ -35,8 +38,8 @@ public class EnvisionDeath extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    private void envisionDeath(Player pPlayer) {
-        double radius = 300;
+    private void envisionDeath(Player pPlayer, int dir) {
+        double radius = 300 * dir;
         for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
             if (entity != pPlayer) {
                 int entityHealth = (int) entity.getHealth();

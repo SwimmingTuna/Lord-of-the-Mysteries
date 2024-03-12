@@ -11,6 +11,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -23,6 +24,7 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.LazyOptional;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,11 +60,12 @@ public class Frenzy extends Item implements ReachChangeUUIDs {
     public InteractionResult useOn(UseOnContext pContext) {
         Player pPlayer = pContext.getPlayer();
         Level level = pPlayer.level();
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BlockPos positionClicked = pContext.getClickedPos();
         if (!pContext.getLevel().isClientSide) {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
                 if (spectatorSequence.getCurrentSequence() <= 7 &&  BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(125)) {
-                    applyPotionEffectToEntities(pPlayer, level, positionClicked, spectatorSequence.getCurrentSequence());
+                    applyPotionEffectToEntities(pPlayer, level, positionClicked, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
                     if (!pPlayer.getAbilities().instabuild) {
                         pPlayer.getCooldowns().addCooldown(this, 300);
                     }
@@ -72,10 +75,10 @@ public class Frenzy extends Item implements ReachChangeUUIDs {
         return InteractionResult.SUCCESS;
     }
 
-    private void applyPotionEffectToEntities(Player pPlayer, Level level, BlockPos targetPos, int sequence) {
-        double radius = 15.0 - sequence;
+    private void applyPotionEffectToEntities(Player pPlayer, Level level, BlockPos targetPos, int sequence, int dir) {
+        double radius = (15.0 - sequence) * dir;
         float damage = (float) (18.0 - (sequence/2));
-        int duration = 250 - (sequence * 12);
+        int duration = 250 - (sequence * 12) * dir;
 
         AABB boundingBox = new AABB(targetPos).inflate(radius);
         level.getEntitiesOfClass(LivingEntity.class, boundingBox, entity -> entity.isAlive()).forEach(livingEntity -> {

@@ -4,6 +4,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +15,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -40,23 +42,24 @@ public class EnvisionWeather extends Item {
         Player pPlayer = event.getPlayer();
         String message = event.getMessage().getString().toLowerCase();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
             if (pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather && spectatorSequence.getCurrentSequence() == 0) {
         if (message.equals("clear")) {
             setWeatherClear(level);
             event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Clear"), true);
-            spectatorSequence.useSpirituality(500);
+            spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
             event.setCanceled(true);
         }
         if (message.equals("rain")) {
             event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Rain"), true);
             setWeatherRain(level);
-            spectatorSequence.useSpirituality(500);
+            spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
             event.setCanceled(true);
         }
         if (message.equals("thunder")) {
             event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Thunder"), true);
             setWeatherThunder(level);
-            spectatorSequence.useSpirituality(500);
+            spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
             event.setCanceled(true);
         }}
     });

@@ -8,6 +8,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -67,16 +69,17 @@ public class PlagueStorm extends Item implements ReachChangeUUIDs {
         Player pPlayer = event.getEntity();
         ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
         Entity targetEntity = event.getTarget();
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof PlagueStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(400)) {
                 ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS,80,1,false,false));
-                for (LivingEntity targetEntity1 : targetEntity.level().getEntitiesOfClass(LivingEntity.class, targetEntity.getBoundingBox().inflate(30))) {
+                for (LivingEntity targetEntity1 : targetEntity.level().getEntitiesOfClass(LivingEntity.class, targetEntity.getBoundingBox().inflate(30 * dreamIntoReality.getValue()))) {
                     if (targetEntity1 != pPlayer) {
                         if (targetEntity1 != targetEntity) {
-                        targetEntity1.hurt(targetEntity1.damageSources().magic(), 20 - (spectatorSequence.getCurrentSequence() * 3));
+                        targetEntity1.hurt(targetEntity1.damageSources().magic(), (float) ((20 - (spectatorSequence.getCurrentSequence() * 3)) * dreamIntoReality.getValue()));
                         }
                         else {
-                            targetEntity1.hurt(targetEntity1.damageSources().magic(), 40 - (spectatorSequence.getCurrentSequence() * 6));
+                            targetEntity1.hurt(targetEntity1.damageSources().magic(), (float) ((40 - (spectatorSequence.getCurrentSequence() * 6)) * dreamIntoReality.getValue()));
                         }
                         targetEntity1.addEffect(new MobEffectInstance(MobEffects.DARKNESS,80,1,false,false));
                         targetEntity1.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 2, false, false));

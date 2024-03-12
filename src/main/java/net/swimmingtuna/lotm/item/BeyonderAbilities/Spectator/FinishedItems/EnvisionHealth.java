@@ -31,7 +31,8 @@ public class EnvisionHealth extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality(4000)) {
+            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+            if (spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality((int) (4000 / dreamIntoReality.getValue()))) {
                 setHealth(pPlayer);
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 2400);

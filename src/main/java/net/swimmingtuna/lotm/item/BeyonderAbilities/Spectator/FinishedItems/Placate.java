@@ -7,12 +7,14 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -25,6 +27,7 @@ public class Placate extends Item {
 
     public InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
             if (spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(50)) {
                 removeHarmfulEffects(pInteractionTarget);
             }
@@ -32,7 +35,7 @@ public class Placate extends Item {
                 halfHarmfulEffects(pInteractionTarget);
             }
             if (!pPlayer.getAbilities().instabuild) {
-                pPlayer.getCooldowns().addCooldown(this, 120);
+                pPlayer.getCooldowns().addCooldown(this, 120 /(int) dreamIntoReality.getValue());
             }
         });
         return InteractionResult.SUCCESS;

@@ -2,9 +2,12 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,55 +32,20 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ConciousnessStroll extends Item implements ReachChangeUUIDs {
-    private final LazyOptional<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = LazyOptional.of(() -> createAttributeMap());
+public class ConciousnessStroll extends Item {
 
     public ConciousnessStroll(Properties pProperties) {
         super(pProperties);
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
-        if (pSlot == EquipmentSlot.MAINHAND) {
-            return lazyAttributeMap.orElseGet(() -> createAttributeMap());
-        }
-        return super.getDefaultAttributeModifiers(pSlot);
-    }
-
-    private Multimap<Attribute, AttributeModifier> createAttributeMap() {
-
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
-        attributeBuilder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND));
-        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BeyonderEntityReach, "Reach modifier", 300, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
-        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BeyonderBlockReach, "Reach modifier", 300, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
-        return attributeBuilder.build();
-    }
-
-    @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use on a living entity, teleports to their location\n" +
-                    "Spirituality Used: 70\n" +
-                    "Cooldown: 2 seconds"));
-        }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
-    }
-    @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player pPlayer = event.getEntity();
-        ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
-        Entity targetEntity = event.getTarget();
+    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-        if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof ConciousnessStroll && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 5 && spectatorSequence.useSpirituality(70)) {
-            double x = targetEntity.getX();
-            double y = targetEntity.getY();
-            double z = targetEntity.getZ();
-            pPlayer.teleportTo(x,y,z);
-            if (!pPlayer.getAbilities().instabuild) {
-                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 40);
-            event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.SUCCESS);
-        }
+            if (spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(75)) {
+                if (!pPlayer.getAbilities().instabuild)
+                    pPlayer.getCooldowns().addCooldown(this, 240);
             }
-    });
-}}
+        });
+        return super.use(level, pPlayer, hand);
+    }
+}

@@ -42,7 +42,6 @@ public class ModEvents {
                 nightmareTimer = 0;
             }
             if (armorInvisAttribute.getValue() > 0 && !pPlayer.hasEffect(MobEffects.INVISIBILITY)) {
-                pPlayer.sendSystemMessage(Component.literal("reset attribute"));
                 removeArmor(pPlayer);
                 armorInvisAttribute.setBaseValue(0);
             }

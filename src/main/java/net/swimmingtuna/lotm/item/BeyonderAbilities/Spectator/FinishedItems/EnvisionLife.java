@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,6 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -48,8 +50,11 @@ public class EnvisionLife extends Item {
         String message = event.getMessage().getString().toLowerCase();
 
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
             if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && spectatorSequence.getCurrentSequence() == 0) {
                 spawnMob(pPlayer, message);
+                if (dreamIntoReality.getValue() == 2) {
+                    spawnMob(pPlayer,message);}
                 spectatorSequence.useSpirituality(1500);
                 event.setCanceled(true);
             }

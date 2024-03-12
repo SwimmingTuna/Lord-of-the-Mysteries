@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -40,6 +42,7 @@ public class EnvisionLocation extends Item {
         Player pPlayer = event.getPlayer();
         String message = event.getMessage().getString();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
             if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLocation && spectatorSequence.getCurrentSequence() == 0) {
                 if (isThreeIntegers(message)) {
                     String[] coordinates = message.split(" ");
@@ -49,7 +52,7 @@ public class EnvisionLocation extends Item {
                         int z = Integer.parseInt(coordinates[2]);
                         pPlayer.teleportTo(x, y, z);
                         event.getPlayer().sendSystemMessage(Component.literal("Teleported to " + x + ", " + y + ", " + z), true);
-                        spectatorSequence.useSpirituality(500);
+                        spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
                         event.setCanceled(true);
                     }
                 } else {

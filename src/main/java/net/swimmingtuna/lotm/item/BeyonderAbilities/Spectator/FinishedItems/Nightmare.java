@@ -58,11 +58,12 @@ public class Nightmare extends Item implements ReachChangeUUIDs {
     public InteractionResult useOn(UseOnContext pContext) {
         Player pPlayer = pContext.getPlayer();
         Level level = pPlayer.level();
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BlockPos positionClicked = pContext.getClickedPos();
         if (!pContext.getLevel().isClientSide) {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
                 if (spectatorSequence.getCurrentSequence() <= 5 &&  BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(100)) {
-                    useNightmare(pPlayer, level, positionClicked, spectatorSequence.getCurrentSequence());
+                    useNightmare(pPlayer, level, positionClicked, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
                     if (!pPlayer.getAbilities().instabuild) {
                         pPlayer.getCooldowns().addCooldown(this, 110);
                     }
@@ -72,10 +73,10 @@ public class Nightmare extends Item implements ReachChangeUUIDs {
         return InteractionResult.SUCCESS;
     }
 
-    private void useNightmare(Player pPlayer, Level level, BlockPos targetPos, int sequence) {
+    private void useNightmare(Player pPlayer, Level level, BlockPos targetPos, int sequence, int dir) {
             double radius = 25.0 - sequence;
-            float damagePlayer = (float) 120.0 - (sequence * 10);
-            float damageMob = (float) (50.0 - (sequence * 3)) / 2;
+            float damagePlayer = ((float) 120.0 - (sequence * 10)) * dir;
+            float damageMob = ((float) (50.0 - (sequence * 3)) / 2) * dir;
 
         int duration = 200 - (sequence * 20);
 

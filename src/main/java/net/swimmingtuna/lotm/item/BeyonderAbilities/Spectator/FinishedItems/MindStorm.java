@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,11 +72,15 @@ public class MindStorm extends Item implements ReachChangeUUIDs {
         Player pPlayer = event.getEntity();
         ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
         Entity targetEntity = event.getTarget();
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
         if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MindStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(250)) {
             int sequence = spectatorSequence.getCurrentSequence();
             int duration = 300 - (sequence * 25);
             int damage = 30 - (sequence * 2);
+            if (dreamIntoReality.getValue() == 2) {
+                damage = 50 - (sequence * 2);
+            }
             ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.AWE.get(), duration,1,false,false));
             ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS,duration,1,false,false));
             ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.CONFUSION,duration,1,false,false));
