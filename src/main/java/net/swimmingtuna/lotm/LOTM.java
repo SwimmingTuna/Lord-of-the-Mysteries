@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -13,15 +12,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.ClientConfigs;
 import net.swimmingtuna.lotm.events.ClientEvents;
-import net.swimmingtuna.lotm.init.BeyonderClassInit;
-import net.swimmingtuna.lotm.init.BlockInit;
-import net.swimmingtuna.lotm.init.CommandInit;
-import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.init.*;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
@@ -47,6 +41,7 @@ public class LOTM {
     public LOTM()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        BlockEntityInit.BLOCK_ENTITIES.register(modEventBus);
         ItemInit.register(modEventBus);
         BlockInit.register(modEventBus);
         ModEffects.register(modEventBus);
@@ -97,7 +92,9 @@ public class LOTM {
                 event.accept(ItemInit.DreamWeaving);
                 event.accept(ItemInit.Discern);
                 event.accept(ItemInit.DreamIntoReality);
-                event.accept(ItemInit.Prophesize);
+                event.accept(ItemInit.ProphesizeTeleportBlock);
+                event.accept(ItemInit.ProphesizeTeleportPlayer);
+                event.accept(ItemInit.ProphesizeDemise);
                 event.accept(ItemInit.EnvisionLife);
                 event.accept(ItemInit.EnvisionDisasters);
                 event.accept(ItemInit.EnvisionWeather);
@@ -122,6 +119,10 @@ public class LOTM {
         }
         if(event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(BlockInit.VISIONARY_BARRIER_BLOCK);
+            event.accept(BlockInit.CATHEDRAL_BLOCK);
+            event.accept(BlockInit.MINDSCAPE_BLOCK);
+            event.accept(BlockInit.MINDSCAPE_OUTSIDE);
+
         }
     }
 }

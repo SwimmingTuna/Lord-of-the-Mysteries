@@ -57,8 +57,12 @@ public class ItemInit {
             () -> new Discern(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DreamIntoReality = ITEMS.register("dreamintoreality",
             () -> new DreamIntoReality(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> Prophesize = ITEMS.register("prophesize",
-            () -> new Prophesize(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ProphesizeTeleportBlock = ITEMS.register("prophesize",
+            () -> new ProphesizeTeleportBlock(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ProphesizeTeleportPlayer = ITEMS.register("prophesizeplayer",
+            () -> new ProphesizeTeleportPlayer(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ProphesizeDemise = ITEMS.register("prophesizedemise",
+            () -> new ProphesizeDemise(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionLife = ITEMS.register("envisionlife",
             () -> new EnvisionLife(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionDisasters = ITEMS.register("envisionnature",
@@ -70,7 +74,7 @@ public class ItemInit {
     public static final RegistryObject<Item> EnvisionDeath = ITEMS.register("envisiondeath",
             () -> new EnvisionDeath(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionKingdom = ITEMS.register("envisionkingdom",
-            () -> new EnvisionKingdom(new Item.Properties().stacksTo(1)));
+            () -> new Mindscape(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionLocation = ITEMS.register("envisionlocation",
             () -> new EnvisionLocation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionLocationBlink = ITEMS.register("envisionlocationblink",

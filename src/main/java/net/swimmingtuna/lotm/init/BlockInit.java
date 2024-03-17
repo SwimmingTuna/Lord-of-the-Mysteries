@@ -6,11 +6,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.item.Blocks.CathedralBlock;
+import net.swimmingtuna.lotm.item.Blocks.MindscapeBlock;
+import net.swimmingtuna.lotm.item.Blocks.MindscapeOutsideBlock;
 import net.swimmingtuna.lotm.item.Blocks.VisionaryBB;
 
 import java.util.function.Supplier;
@@ -23,6 +27,15 @@ public class BlockInit {
 
     public static final RegistryObject<Block> VISIONARY_BARRIER_BLOCK = registerBlock("visionary_barrier_block",
             () -> new VisionaryBB(BlockBehaviour.Properties.of().sound(SoundType.GLASS)));
+
+    public static final RegistryObject<Block> CATHEDRAL_BLOCK = registerBlock("cathedral_block",
+            () -> new CathedralBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+
+    public static final RegistryObject<Block> MINDSCAPE_BLOCK = registerBlock("mindscape_block",
+            () -> new MindscapeBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+
+    public static final RegistryObject<Block> MINDSCAPE_OUTSIDE = registerBlock("mindscape_outside",
+            () -> new MindscapeOutsideBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

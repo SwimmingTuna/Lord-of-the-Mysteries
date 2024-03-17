@@ -17,13 +17,17 @@
   "item.lotm.dreamweaving": "Dream Weaving",
   "item.lotm.discern": "Discern",
   "item.lotm.dreamintoreality": "Dream into Reality",
-  "item.lotm.prophesize": "Prophesize",
+  "item.lotm.prophesize": "Prophesize: Teleport to Block",
+  "item.lotm.prophesizeplayer": "Prophesize: Teleport to Player",
+  "item.lotm.prophesizedemise": "Prophesize Demise",
+
+
   "item.lotm.envisionlife": "Envision Life",
   "item.lotm.envisionnature": "Envision Disasters",
   "item.lotm.envisionweather": "Envision Weather",
   "item.lotm.envisionbarrier": "Envision Barrier",
   "item.lotm.envisiondeath": "Envision Death",
-  "item.lotm.envisionkingdom": "Envision Kingdom",
+  "item.lotm.envisionkingdom": "Mindscape",
   "item.lotm.envisionlocation": "Envision Location",
   "item.lotm.envisionhealth": "Envision Health",
   "item.lotm.dreamwalking": "Dream Walking",
@@ -33,6 +37,9 @@
 
 
   "block.lotm.visionary_barrier_block": "Visionary BB",
+  "block.lotm.cathedral_block": "Cathedral Block",
+  "block.lotm.mindscape_block": "Mindscape Block",
+  "block.lotm.mindscape_outside": "Mindscape Outside",
 
 
 

@@ -23,6 +23,8 @@ public class ModEffects {
             () -> new ManipulationEffect(MobEffectCategory.HARMFUL, 3124687));
     public static final RegistryObject<MobEffect> MENTALPLAGUE = MOB_EFFECTS.register("mentalplague",
             () -> new MentalPlagueEffect(MobEffectCategory.HARMFUL, 3124687));
+    public static final RegistryObject<MobEffect> SPECTATORDEMISE = MOB_EFFECTS.register("demise",
+            () -> new SpectatorDemiseEffect(MobEffectCategory.HARMFUL, 3124687));
 
 
     public static void register(IEventBus eventBus) {
