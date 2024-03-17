@@ -32,7 +32,6 @@ public class DragonBreath extends Item {
                 shootFireball(pPlayer);
                     pPlayer.sendSystemMessage(Component.literal("working"));
                 }
-                if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 10);
             });
         return super.use(level, pPlayer, hand);
