@@ -8,7 +8,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.DragonFireball;
-import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -48,10 +47,20 @@ public class DragonBreath extends Item {
         Vec3 direction = pPlayer.getViewVector(1.0f);
         Vec3 fireballPosition = eyePosition.add(direction.scale(1.2));
 
-        LargeFireball fireball = new LargeFireball(EntityType.FIREBALL, pPlayer.level());
+        SmallFireball fireball = new SmallFireball(EntityType.SMALL_FIREBALL, pPlayer.level()) {
+
+            @Override
+            public void tick() {
+                super.tick();
+
+                Vec3 currentVelocity = getDeltaMovement().normalize().scale(2.0);
+                setDeltaMovement(currentVelocity);
+            }
+        };
+
         fireball.setPos(fireballPosition);
         fireball.setOwner(pPlayer);
-        fireball.setDeltaMovement(direction.normalize().scale(1.0));
+
         pPlayer.level().addFreshEntity(fireball);
     }
     @Override

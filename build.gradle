@@ -121,6 +121,7 @@ mixin {
 
     // Sets up the mixin config; this gets added to run configurations and the manifest in the final jar
     config "${mod_id}.mixins.json"
+    config 'lotm.mixins.json'
 
     // Enables exporting mixin-changed classes to .mixin.out in the run folder
     debug.export = true
@@ -141,6 +142,7 @@ dependencies {
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
     runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
     shade fg.deobf("dev._100media.capabilitysyncer:capabilitysyncer:${capabilitysyncer_version}")
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
 }
 

@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class LOTM {
 
+    public static final int NEW_STRUCTURE_SIZE = 512;
     public static Supplier<Boolean> fadeOut;
     public static Supplier<Integer> fadeTicks;
     public static Supplier<Double> maxBrightness;

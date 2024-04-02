@@ -87,7 +87,6 @@ public class DreamIntoReality extends Item {
         playerAbilities.mayfly = false;
         playerAbilities.flying = false;
         dreamIntoReality.setBaseValue(1);
-
         playerAbilities.setFlyingSpeed(0.05F);
         pPlayer.onUpdateAbilities();
         if (pPlayer instanceof ServerPlayer serverPlayer) {
