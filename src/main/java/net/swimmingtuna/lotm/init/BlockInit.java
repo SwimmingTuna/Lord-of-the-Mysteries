@@ -1,10 +1,12 @@
 package net.swimmingtuna.lotm.init;
 
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -12,13 +14,11 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.item.Blocks.CathedralBlock;
-import net.swimmingtuna.lotm.item.Blocks.MindscapeBlock;
-import net.swimmingtuna.lotm.item.Blocks.MindscapeOutsideBlock;
-import net.swimmingtuna.lotm.item.Blocks.VisionaryBB;
+import net.swimmingtuna.lotm.item.Blocks.*;
 
 import java.util.function.Supplier;
 
+import static net.minecraft.world.item.Items.OBSIDIAN;
 import static net.minecraft.world.item.Items.registerBlock;
 
 public class BlockInit {
@@ -26,16 +26,19 @@ public class BlockInit {
             DeferredRegister.create(ForgeRegistries.BLOCKS, LOTM.MOD_ID);
 
     public static final RegistryObject<Block> VISIONARY_BARRIER_BLOCK = registerBlock("visionary_barrier_block",
-            () -> new VisionaryBB(BlockBehaviour.Properties.of().sound(SoundType.GLASS)));
+            () -> new VisionaryBB(BlockBehaviour.Properties.of().sound(SoundType.GLASS).noLootTable()));
 
     public static final RegistryObject<Block> CATHEDRAL_BLOCK = registerBlock("cathedral_block",
-            () -> new CathedralBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+            () -> new CathedralBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
 
     public static final RegistryObject<Block> MINDSCAPE_BLOCK = registerBlock("mindscape_block",
-            () -> new MindscapeBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+            () -> new MindscapeBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
 
     public static final RegistryObject<Block> MINDSCAPE_OUTSIDE = registerBlock("mindscape_outside",
-            () -> new MindscapeOutsideBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)));
+            () -> new MindscapeOutsideBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
+
+    public static final RegistryObject<Block> VISIONARY_BLACK_STAINED_GLASS = registerBlock("visionary_black_stained_glass",
+            () -> new VisionaryBlackStainedGlass(DyeColor.BLACK, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

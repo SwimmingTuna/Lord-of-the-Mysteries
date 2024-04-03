@@ -123,6 +123,7 @@ public class LOTM {
             event.accept(BlockInit.CATHEDRAL_BLOCK);
             event.accept(BlockInit.MINDSCAPE_BLOCK);
             event.accept(BlockInit.MINDSCAPE_OUTSIDE);
+            event.accept(BlockInit.VISIONARY_BLACK_STAINED_GLASS);
 
         }
     }

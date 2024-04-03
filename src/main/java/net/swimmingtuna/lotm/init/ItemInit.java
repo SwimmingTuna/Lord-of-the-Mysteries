@@ -74,7 +74,7 @@ public class ItemInit {
     public static final RegistryObject<Item> EnvisionDeath = ITEMS.register("envisiondeath",
             () -> new EnvisionDeath(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionKingdom = ITEMS.register("envisionkingdom",
-            () -> new Mindscape(new Item.Properties().stacksTo(1)));
+            () -> new EnvisionKingdom(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionLocation = ITEMS.register("envisionlocation",
             () -> new EnvisionLocation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionLocationBlink = ITEMS.register("envisionlocationblink",
