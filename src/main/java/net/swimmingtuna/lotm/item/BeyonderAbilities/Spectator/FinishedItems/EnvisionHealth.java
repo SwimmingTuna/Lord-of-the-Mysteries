@@ -14,7 +14,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
@@ -50,11 +53,33 @@ public class EnvisionHealth extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes all living entities around the user freeze in place\n" +
+            componentList.add(Component.literal("Upon use, heals to full health\n" +
+                    "Left Click for Envision Health\n" +
                     "Spirituality Used: 4000\n" +
                     "Cooldown: 2 minutes seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
-
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionHealth) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLife.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionHealth) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLife.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
 }

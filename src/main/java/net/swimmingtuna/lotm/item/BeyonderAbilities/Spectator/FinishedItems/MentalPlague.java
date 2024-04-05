@@ -58,9 +58,9 @@ public class MentalPlague extends Item implements ReachChangeUUIDs {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use on a living entity, teleports to their location\n" +
-                    "Spirituality Used: 70\n" +
-                    "Cooldown: 2 seconds"));
+            componentList.add(Component.literal("Upon use on a living entity, plants a plague seed in the target, sprouting after 30 seconds and dealing massive damage to it and all entities around it, be careful as this can effect the user\n" +
+                    "Spirituality Used: 200\n" +
+                    "Cooldown: 5 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
@@ -75,7 +75,7 @@ public class MentalPlague extends Item implements ReachChangeUUIDs {
             if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MentalPlague && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(200)) {
                 ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(),620,1));
                 if (!pPlayer.getAbilities().instabuild) {
-                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), (int) (40 / dreamIntoReality.getValue()));
+                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), (int) (100 / dreamIntoReality.getValue()));
                     event.setCanceled(true);
                     event.setCancellationResult(InteractionResult.SUCCESS);
                 }

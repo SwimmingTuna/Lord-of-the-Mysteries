@@ -65,8 +65,8 @@ public class ItemInit {
             () -> new ProphesizeDemise(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionLife = ITEMS.register("envisionlife",
             () -> new EnvisionLife(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> EnvisionDisasters = ITEMS.register("envisionnature",
-            () -> new EnvisionDisasters(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MeteorShower = ITEMS.register("envisionnature",
+            () -> new MeteorShower(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionWeather = ITEMS.register("envisionweather",
             () -> new EnvisionWeather(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionBarrier = ITEMS.register("envisionbarrier",

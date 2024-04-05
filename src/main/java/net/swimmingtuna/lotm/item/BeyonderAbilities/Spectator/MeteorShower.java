@@ -18,19 +18,19 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class EnvisionDisasters extends Item {
+public class MeteorShower extends Item {
 
-    public EnvisionDisasters(Properties pProperties) {
+    public MeteorShower(Properties pProperties) {
         super(pProperties);
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality(4000)) {
+            if (spectatorSequence.getCurrentSequence() == 1 && spectatorSequence.useSpirituality(1500)) {
                 setHealth(pPlayer);
                 if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 2400);
+                    pPlayer.getCooldowns().addCooldown(this, 900);
             }
         });
         return super.use(level, pPlayer, hand);
@@ -45,9 +45,9 @@ public class EnvisionDisasters extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes all living entities around the user freeze in place\n" +
-                    "Spirituality Used: 4000\n" +
-                    "Cooldown: 2 minutes seconds"));
+            componentList.add(Component.literal("Upon use, summons a meteor shower\n" +
+                    "Spirituality Used: 1500\n" +
+                    "Cooldown: 45 secondss"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

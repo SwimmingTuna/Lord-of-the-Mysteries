@@ -75,7 +75,7 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
                     manipulateEntities(pPlayer, level, targetPos, spectatorSequence.getCurrentSequence());
                     resetTargetPos(pPlayer);
                     if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 300);
+                        pPlayer.getCooldowns().addCooldown(this, 600);
                     }
                 }
             });
@@ -87,9 +87,10 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, all living entities 250 blocks around you move to the location you clicked on\n" +
+            componentList.add(Component.literal("Upon use, all living entities 150 blocks around you move to the location you clicked on\n" +
+                    "Left Click for Apply Manipulation\n" +
                     "Spirituality Used: 200\n" +
-                    "Cooldown: 15 seconds"));
+                    "Cooldown: 30 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
@@ -97,8 +98,8 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
     private static void manipulateEntities(Player pPlayer, Level level, BlockPos targetPos, int sequence) {
         double duration = 1200 - (sequence * 200);
         if (!pPlayer.level().isClientSide) {
-            for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
-                if (entity != pPlayer && entity.hasEffect(ModEffects.MANIPULATION.get()) && !entity.level().isClientSide) {
+            for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(150))) {
+                if (entity != pPlayer && !entity.hasEffect(ModEffects.MANIPULATION.get()) && !entity.level().isClientSide) {
                     entity.addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), (int) duration, 1, false, false));
                     double deltaX = targetPos.getX() - entity.getX();
                     double deltaY = targetPos.getY() - entity.getY();
@@ -133,16 +134,6 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
             }
         }
     }
-
-    private static BlockPos findNearestClearPosition(Level level, BlockPos targetPos, LivingEntity entity) {
-        // Implement your logic to find the nearest clear position from the target position
-        // This could involve checking adjacent blocks in a spiral or other pattern
-        // until an air block is found, then returning that position.
-        // You may need to adjust this method based on your specific requirements.
-
-        // For simplicity, let's assume we just move the entity up by 1 block if the path is obstructed
-        return new BlockPos(targetPos.getX(), targetPos.getY() + 1, targetPos.getZ());
-    }
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
@@ -161,7 +152,7 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateMovement) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateEmotion.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ApplyManipulation.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }
@@ -172,7 +163,7 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateMovement) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateEmotion.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ApplyManipulation.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }

@@ -10,10 +10,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +34,7 @@ public class EnvisionLocation extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("While holding this item, type in three coordinates, e.g. (100, 100, 100) or a player's name, and you'll teleport to that location\n" +
                     "Spirituality Used: 500\n" +
+                    "Left Click for Envision Location (Blink)\n" +
                     "Cooldown: 0 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
@@ -82,5 +85,28 @@ public class EnvisionLocation extends Item {
     }
     private static boolean isThreeIntegers(String message) {
         return message.matches("\\d+ \\d+ \\d+");
+    }
+
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocation) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLocationBlink.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocation) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLocationBlink.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
     }
 }

@@ -49,6 +49,7 @@ public class ManipulateFondness extends Item implements ReachChangeUUIDs {
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, all living entities within 250 blocks of the user that are able to be manipulated are attacked by all mobs nearby\n" +
+                    "Left Click for Manipulate Movement\n" +
                     "Spirituality Used: 100\n" +
                     "Cooldown: 5 seconds"));
         }
@@ -70,7 +71,7 @@ public class ManipulateFondness extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateFondness) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ApplyManipulation.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateMovement.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }
@@ -81,7 +82,7 @@ public class ManipulateFondness extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateFondness) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ApplyManipulation.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateMovement.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }

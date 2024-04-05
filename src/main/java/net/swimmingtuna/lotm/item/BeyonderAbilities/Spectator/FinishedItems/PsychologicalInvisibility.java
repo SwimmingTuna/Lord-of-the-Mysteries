@@ -44,7 +44,7 @@ public class PsychologicalInvisibility extends Item  {
         if (!pPlayer.level().isClientSide) {
         boolean hadArmor = pPlayer.getPersistentData().getBoolean("HAD_ARMOR_TAG");
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() <= 7) {
+            if (spectatorSequence.getCurrentSequence() <= 4) {
                 if (hadArmor || !storedArmor.isEmpty()) {
                     restoreArmor(pPlayer);
                     storedArmor.clear();
@@ -97,7 +97,7 @@ public class PsychologicalInvisibility extends Item  {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, takes off your armor and turns you invisible while draining your spirituality while you're invisible, upon use again, turns you visible and gives you back your armor\n" +
+            componentList.add(Component.literal("Upon use, takes off your armor and turns you invisible while draining your spirituality, upon use again, turns you visible and gives you back your armor\n" +
                     "Spirituality Used: 40 every second\n" +
                     "Cooldown: 10 seconds"));
         }

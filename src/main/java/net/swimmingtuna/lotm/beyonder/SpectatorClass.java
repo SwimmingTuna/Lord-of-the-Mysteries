@@ -106,9 +106,15 @@ public class SpectatorClass implements BeyonderClass {
         items.put(5, ItemInit.DreamWalking.get());
         items.put(5, ItemInit.Nightmare.get());
         items.put(4, ItemInit.ApplyManipulation.get());
-        items.put(4, ItemInit.MentalPlague.get());
-
-
+        items.put(4, ItemInit.DragonBreath.get());
+        items.put(3, ItemInit.MentalPlague.get());
+        items.put(3, ItemInit.PlagueStorm.get());
+        items.put(2, ItemInit.Discern.get());
+        items.put(2, ItemInit.DreamIntoReality.get());
+        items.put(2, ItemInit.ConsciousnessStroll.get());
+        items.put(1, ItemInit.ProphesizeDemise.get());
+        items.put(1, ItemInit.MeteorShower.get());
+        items.put(0, ItemInit.EnvisionBarrier.get());
         return items;
     }
 

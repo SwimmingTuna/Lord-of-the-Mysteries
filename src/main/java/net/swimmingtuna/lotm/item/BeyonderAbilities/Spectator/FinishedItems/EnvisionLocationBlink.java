@@ -16,10 +16,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,9 +60,10 @@ public class EnvisionLocationBlink extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
+        int blinkDistance = pPlayer.getPersistentData().getInt("BlinkDistance");
+
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide() && spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality(150)) {
-                int blinkDistance = pPlayer.getPersistentData().getInt("BlinkDistance");
+            if (!pPlayer.level().isClientSide() && spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality(blinkDistance * 8)) {
                 Vec3 lookVector = pPlayer.getLookAngle();
                 double targetX = pPlayer.getX() + blinkDistance * lookVector.x();
                 double targetY = (pPlayer.getY() + 1) + blinkDistance * lookVector.y();
@@ -90,6 +93,7 @@ public class EnvisionLocationBlink extends Item {
                 }
                 AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
                 if (!pPlayer.getAbilities().instabuild)
+
                     pPlayer.getCooldowns().addCooldown( this, (int) (20/ dreamIntoReality.getValue()));
             }
         });
@@ -100,9 +104,33 @@ public class EnvisionLocationBlink extends Item {
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, teleport in front of you\n" +
+                    "Shift to Increase Blink Distance\n" +
+                    "Left Click for Envision Weather\n" +
                     "Spirituality Used: 150\n" +
                     "Cooldown: 1 second"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocationBlink) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionWeather.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocationBlink) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionWeather.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
     }
 }

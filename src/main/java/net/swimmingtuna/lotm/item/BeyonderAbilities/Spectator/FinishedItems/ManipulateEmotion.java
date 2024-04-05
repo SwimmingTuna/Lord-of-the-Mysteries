@@ -49,6 +49,7 @@ public class ManipulateEmotion extends Item implements ReachChangeUUIDs {
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, all living entities able to be manipulated within 250 blocks fall into despair and harm themselves.\n" +
+                    "Left Click for Manipulate Fondness\n" +
                     "Spirituality Used: 500\n" +
                     "Cooldown: 1 minute"));
         }

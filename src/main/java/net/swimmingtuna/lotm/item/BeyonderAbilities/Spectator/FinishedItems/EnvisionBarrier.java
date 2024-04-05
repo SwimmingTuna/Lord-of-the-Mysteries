@@ -15,11 +15,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BlockInit;
+import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +42,7 @@ public class EnvisionBarrier extends Item {
         BlockPos playerPos = pPlayer.getOnPos();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality((int) (800 / dreamIntoReality.getValue()))) {
+            if (spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (800 / dreamIntoReality.getValue()))) {
                 generateBarrier(pPlayer, level, playerPos);
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 100);
@@ -53,6 +55,8 @@ public class EnvisionBarrier extends Item {
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, makes a barrier around the user\n" +
+                    "Hold Shift to Increase Barrier Radius\n" +
+                    "Left Click for Envision Death\n" +
                     "Spirituality Used: 800\n" +
                     "Cooldown: 5 seconds "));
         }
@@ -130,6 +134,28 @@ public class EnvisionBarrier extends Item {
                     pPlayer.getPersistentData().putInt("BarrierRadius", barrierRadius);
                 }
             });
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionBarrier) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionDeath.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionBarrier) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionDeath.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
         }
     }
 }

@@ -62,9 +62,9 @@ public class DreamWeaving extends Item implements ReachChangeUUIDs {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use on a living entity, teleports to their location\n" +
-                    "Spirituality Used: 70\n" +
-                    "Cooldown: 2 seconds"));
+            componentList.add(Component.literal("Upon use on a living entity, brings their nightmares into reality, giving them darkness temporarily and summoning a random array of mobs around the target\n" +
+                    "Spirituality Used: 250\n" +
+                    "Cooldown: 8 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
@@ -80,7 +80,7 @@ public class DreamWeaving extends Item implements ReachChangeUUIDs {
         double z = targetEntity.getZ();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof DreamWeaving && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 5 && spectatorSequence.useSpirituality(70)) {
+            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof DreamWeaving && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(250)) {
                 (targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS, 150, 1, false, false));
                 Random random = new Random();
                 int times = 20 - (spectatorSequence.getCurrentSequence() * 3);
@@ -157,6 +157,9 @@ public class DreamWeaving extends Item implements ReachChangeUUIDs {
                             spawnPhantomAroundTarget(targetEntity, level, x, y, z, 1);
                         }
                     }
+                    if (!pPlayer.getAbilities().instabuild) {
+                        pPlayer.getCooldowns().addCooldown(itemStack.getItem(), (int) (160 / dreamIntoReality.getValue()));
+                }
                 }
             }
         });

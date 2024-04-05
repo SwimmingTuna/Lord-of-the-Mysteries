@@ -59,8 +59,9 @@ public class ApplyManipulation extends Item implements ReachChangeUUIDs {
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use on a living entity, gives you the ability to manipulate them for 30 seconds\n" +
-                    "Spirituality Used: 70\n" +
-                    "Cooldown: 2 seconds"));
+                    "Left Click for Manipulate Emotion\n" +
+                    "Spirituality Used: 50\n" +
+                    "Cooldown: None"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
@@ -85,7 +86,7 @@ public class ApplyManipulation extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ApplyManipulation) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateMovement.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateEmotion.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }
@@ -96,7 +97,7 @@ public class ApplyManipulation extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ApplyManipulation) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateMovement.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateEmotion.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }

@@ -47,6 +47,7 @@ public class LOTM {
         BlockInit.register(modEventBus);
         ModEffects.register(modEventBus);
         ModAttributes.register(modEventBus);
+        EntityInit.register(modEventBus);
         CommandInit.ARGUMENT_TYPES.register(modEventBus);
         BeyonderClassInit.BEYONDER_CLASS.register(modEventBus);
 
@@ -97,7 +98,7 @@ public class LOTM {
                 event.accept(ItemInit.ProphesizeTeleportPlayer);
                 event.accept(ItemInit.ProphesizeDemise);
                 event.accept(ItemInit.EnvisionLife);
-                event.accept(ItemInit.EnvisionDisasters);
+                event.accept(ItemInit.MeteorShower);
                 event.accept(ItemInit.EnvisionWeather);
                 event.accept(ItemInit.EnvisionBarrier);
                 event.accept(ItemInit.EnvisionDeath);

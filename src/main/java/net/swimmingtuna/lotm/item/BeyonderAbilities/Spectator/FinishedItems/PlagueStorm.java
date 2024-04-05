@@ -57,9 +57,9 @@ public class PlagueStorm extends Item implements ReachChangeUUIDs {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use on a living entity, teleports to their location\n" +
-                    "Spirituality Used: 70\n" +
-                    "Cooldown: 2 seconds"));
+            componentList.add(Component.literal("Upon use on a living entity, all living entities around it gain Darkness, Wither, Blindness, and Confusion, as well as take damage\n" +
+                    "Spirituality Used: 400\n" +
+                    "Cooldown: 8 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
@@ -82,7 +82,6 @@ public class PlagueStorm extends Item implements ReachChangeUUIDs {
                             targetEntity1.hurt(targetEntity1.damageSources().magic(), (float) ((40 - (spectatorSequence.getCurrentSequence() * 6)) * dreamIntoReality.getValue()));
                         }
                         targetEntity1.addEffect(new MobEffectInstance(MobEffects.DARKNESS,80,1,false,false));
-                        targetEntity1.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 2, false, false));
                         targetEntity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 2, false, false));
                         targetEntity1.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 1, false, false));
                         targetEntity1.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 1, false, false));

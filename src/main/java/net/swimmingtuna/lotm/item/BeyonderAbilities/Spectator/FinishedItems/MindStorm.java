@@ -61,7 +61,7 @@ public class MindStorm extends Item implements ReachChangeUUIDs {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use on a living entity, freezes, blinds, and confuses them\n" +
+            componentList.add(Component.literal("Upon use on a living entity, damages, freezes, blinds, and confuses them\n" +
                     "Spirituality Used: 250\n" +
                     "Cooldown: 10 seconds"));
         }
@@ -74,7 +74,7 @@ public class MindStorm extends Item implements ReachChangeUUIDs {
         Entity targetEntity = event.getTarget();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-        if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MindStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(250)) {
+        if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MindStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(250)) {
             int sequence = spectatorSequence.getCurrentSequence();
             int duration = 300 - (sequence * 25);
             int damage = 30 - (sequence * 2);

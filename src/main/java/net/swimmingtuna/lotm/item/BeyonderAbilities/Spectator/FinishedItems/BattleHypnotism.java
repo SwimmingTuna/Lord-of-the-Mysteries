@@ -94,7 +94,7 @@ public class BattleHypnotism extends Item implements ReachChangeUUIDs {
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, makes all living entities around the clicked location target the nearest player if one is present and each other if there isn't one\n" +
-                    "Spirituality Used: 100\n" +
+                    "Spirituality Used: 150\n" +
                     "Cooldown: 15 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);

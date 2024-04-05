@@ -14,11 +14,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,6 +41,7 @@ public class EnvisionLife extends Item {
             componentList.add(Component.literal("While holding this item, type in a mob and that mob will be spawned, targeting the nearest player within 100 blocks\n" +
                     "In the case of Modded Mobs, type in the Mod ID followed by the mob name, e.g. (lotm:black_panter\n" +
                     "Spirituality Used: 1500\n" +
+                    "Left Click for Envision Location\n" +
                     "Cooldown: 0 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
@@ -71,18 +75,23 @@ public class EnvisionLife extends Item {
         // Find the EntityType based on the mobName (assuming it's a valid EntityType)
         EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(mobName));
 
-        // Check if the EntityType is valid
-        if (entityType != null) {
-            Entity entity = entityType.create(level);
-            if (entity != null) {
-                Mob mob = (Mob) entity;
-                entity.setPos(x, y, z);
-                Player nearestPlayer = findNearestPlayer(level, x, y, z, 100, pPlayer);
-                if (nearestPlayer != null) {
-                mob.setLastHurtByPlayer(nearestPlayer);
+        int waitMakeLifeCounter = pPlayer.getPersistentData().getInt("waitMakeLifeTimer");
+        if (waitMakeLifeCounter == 0) {
+            if (entityType != null) {
+                Entity entity = entityType.create(level);
+                if (entity != null) {
+                    Mob mob = (Mob) entity;
+                    entity.setPos(x, y, z);
+                    Player nearestPlayer = findNearestPlayer(level, x, y, z, 100, pPlayer);
+                    if (nearestPlayer != null) {
+                        mob.setLastHurtByPlayer(nearestPlayer);
+                    }
+                    level.addFreshEntity(entity);
                 }
-                level.addFreshEntity(entity);
             }
+        }
+        if (waitMakeLifeCounter != 0) {
+            pPlayer.sendSystemMessage(Component.literal("Ability on Cooldown for " + (int) ((400 - waitMakeLifeCounter)/20) + " seconds"));
         }
         else {
             pPlayer.sendSystemMessage(Component.literal("Mob not valid"));
@@ -101,5 +110,40 @@ public class EnvisionLife extends Item {
         });
 
         return players.get(0);
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLife) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionKingdom.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLife) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionKingdom.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void tickCounter(TickEvent.PlayerTickEvent event) {
+        Player pPlayer = event.player;
+        if (event.phase == TickEvent.Phase.START && !pPlayer.level().isClientSide()) {
+            int waitMakeLifeCounter = pPlayer.getPersistentData().getInt("waitMakeLifeTimer");
+            if (waitMakeLifeCounter >= 1) {
+                waitMakeLifeCounter++;}
+            if (waitMakeLifeCounter >= 600) {
+                pPlayer.getPersistentData().putInt("waitMakeLifeTimer", 0);
+                waitMakeLifeCounter = 0;
+            }
+        }
     }
 }

@@ -28,7 +28,7 @@ public class Placate extends Item {
     public InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-            if (spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(50)) {
+            if (spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(50)) {
                 removeHarmfulEffects(pInteractionTarget);
             }
             if (spectatorSequence.getCurrentSequence() < 7 && spectatorSequence.getCurrentSequence() > 4 && spectatorSequence.useSpirituality(50)){
@@ -63,10 +63,20 @@ public class Placate extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, reduces or removes the targeted living entity's harmful potion effects\n" +
+            Player pPlayer = (Player) pStack.getItemHolder();
+            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+                if (spectatorSequence.getCurrentSequence() > 4) {
+            componentList.add(Component.literal("Upon use, reduces the duration of the targeted living entity's harmful potion effects\n" +
                     "Spirituality Used: 125\n" +
                     "Cooldown: 15 seconds"));
-        }
+            }
+                if (spectatorSequence.getCurrentSequence() <= 4) {
+                    componentList.add(Component.literal("Upon use,removes the targeted living entity's harmful potion effects\n" +
+                            "Spirituality Used: 125\n" +
+                            "Cooldown: 15 seconds"));
+                }
+                });
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        }
     }
 }

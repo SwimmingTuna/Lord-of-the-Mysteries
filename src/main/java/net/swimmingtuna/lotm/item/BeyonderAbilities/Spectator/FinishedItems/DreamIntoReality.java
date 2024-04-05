@@ -48,7 +48,10 @@ public class DreamIntoReality extends Item {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
                 if (spectatorSequence.getCurrentSequence() <= 2) {
                     toggleFlying(pPlayer);
-                    pPlayer.getCooldowns().addCooldown(this,20);
+                    boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
+                    if (canFly) {
+                        pPlayer.getCooldowns().addCooldown(this, 300);
+                    }
                 }
             });
         }
@@ -59,10 +62,8 @@ public class DreamIntoReality extends Item {
         boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
         if (canFly) {
             stopFlying(pPlayer);
-            pPlayer.sendSystemMessage(Component.literal("working"));
         } else {
             startFlying(pPlayer);
-            pPlayer.sendSystemMessage(Component.literal("working1"));
         }
     }
 
@@ -127,9 +128,9 @@ public class DreamIntoReality extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, takes off your armor and turns you invisible while draining your spirituality while you're invisible, upon use again, turns you visible and gives you back your armor\n" +
-                    "Spirituality Used: 40 every second\n" +
-                    "Cooldown: 10 seconds"));
+            componentList.add(Component.literal("Upon use, makes your dreams into reality, turning into a giant with shorter cooldowns on abilities and more health as well as strengthed damage resistance, regeneration, and strength\n" +
+                    "Spirituality Used: 300 every second\n" +
+                    "Cooldown: 30 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
