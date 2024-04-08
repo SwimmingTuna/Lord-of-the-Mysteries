@@ -1,8 +1,6 @@
 package net.swimmingtuna.lotm.beyonder;
 
 import com.google.common.collect.HashMultimap;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
@@ -10,20 +8,20 @@ import net.swimmingtuna.lotm.init.ItemInit;
 
 import java.util.List;
 
-public class SailorClass implements BeyonderClass {
+public class WarriorClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.sailor0",
-                "lotm.beyonder.sailor1",
-                "lotm.beyonder.sailor2",
-                "lotm.beyonder.sailor3",
-                "lotm.beyonder.sailor4",
-                "lotm.beyonder.sailor5",
-                "lotm.beyonder.sailor6",
-                "lotm.beyonder.sailor7",
-                "lotm.beyonder.sailor8",
-                "lotm.beyonder.sailor9"
+                "lotm.beyonder.warrior0",
+                "lotm.beyonder.warrior1",
+                "lotm.beyonder.warrior2",
+                "lotm.beyonder.warrior3",
+                "lotm.beyonder.warrior4",
+                "lotm.beyonder.warrior5",
+                "lotm.beyonder.warrior6",
+                "lotm.beyonder.warrior7",
+                "lotm.beyonder.warrior8",
+                "lotm.beyonder.warrior9"
         );
     }
 

@@ -101,7 +101,7 @@ public class ItemInit {
     public static final RegistryObject<Item> SPECTATOR_1_POTION = ITEMS.register("spectator_1_potion",
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SPECTATOR.get(),1));
     public static final RegistryObject<Item> TYRANT_9_POTION = ITEMS.register("tyrant_1_potion",
-            () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.TYRANT.get(),1));
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SAILOR.get(),1));
     public static final RegistryObject<Item> SPECTATOR_0_POTION = ITEMS.register("spectator_0_potion",
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SPECTATOR.get(),0));
     public static final RegistryObject<Item> BEYONDER_RESET_POTION = ITEMS.register("beyonder_reset_potion",

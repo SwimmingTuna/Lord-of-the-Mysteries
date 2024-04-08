@@ -14,7 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
-import net.swimmingtuna.lotm.commands.BeyonderClassArgument;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.core.PlayerCapability;
@@ -193,7 +192,67 @@ public class BeyonderHolder extends PlayerCapability {
     public boolean isSpectatorClass() {
         return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SPECTATOR.get());
     }
-    public boolean isTyrantClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.TYRANT.get());
+    public boolean isSailorClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SAILOR.get());
+    }
+    public boolean isApothecaryClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.APOTHECARY.get());
+    }
+    public boolean isApprenticeClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.APPRENTICE.get());
+    }
+    public boolean isArbiterClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.ARBITER.get());
+    }
+    public boolean isAssassinClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.ASSASSIN.get());
+    }
+    public boolean isBardClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.BARD.get());
+    }
+    public boolean isCorpseCollectorClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.CORPSECOLLECTOR.get());
+    }
+    public boolean isCriminalClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.CRIMINAL.get());
+    }
+    public boolean isHunterClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.HUNTER.get());
+    }
+    public boolean isLawyerClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.LAWYER.get());
+    }
+    public boolean isMarauderClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.MARAUDER.get());
+    }
+    public boolean isMonsterClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.MONSTER.get());
+    }
+    public boolean isMysteryPryerClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.MYSTERYPRYER.get());
+    }
+    public boolean isPlanterClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.PLANTER.get());
+    }
+    public boolean isPrisonerClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.PRISONER.get());
+    }
+    public boolean isReaderClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.READER.get());
+    }
+    public boolean isSavantClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SAVANT.get());
+    }
+    public boolean isSecretsSupplicantClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SECRETSSUPPLICANT.get());
+    }
+    public boolean isSleeplessClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SLEEPLESS.get());
+    }
+    public boolean isWarriorClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.WARRIOR.get());
+    }
+    public boolean isSeerClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SEER.get());
     }
 }
