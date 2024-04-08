@@ -1,6 +1,9 @@
 package net.swimmingtuna.lotm.init;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
@@ -9,6 +12,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.beyonder.SailorClass;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.beyonder.SpectatorClass;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
@@ -18,6 +22,7 @@ public class BeyonderClassInit {
 
     public static final RegistryObject<SpectatorClass> SPECTATOR = BEYONDER_CLASS.register("spectator", SpectatorClass::new);
     public static final RegistryObject<SailorClass> TYRANT = BEYONDER_CLASS.register("tyrant", SailorClass::new);
+
 
     public static IForgeRegistry<BeyonderClass> getRegistry() {
         return SUPPLIER.get();

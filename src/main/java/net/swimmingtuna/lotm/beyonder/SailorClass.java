@@ -14,16 +14,16 @@ public class SailorClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.spectator0",
-                "lotm.beyonder.spectator1",
-                "lotm.beyonder.spectator2",
-                "lotm.beyonder.spectator3",
-                "lotm.beyonder.spectator4",
-                "lotm.beyonder.spectator5",
-                "lotm.beyonder.spectator6",
-                "lotm.beyonder.spectator7",
-                "lotm.beyonder.tyrant8",
-                "lotm.beyonder.tyrant9"
+                "lotm.beyonder.sailor0",
+                "lotm.beyonder.sailor1",
+                "lotm.beyonder.sailor2",
+                "lotm.beyonder.sailor3",
+                "lotm.beyonder.sailor4",
+                "lotm.beyonder.sailor5",
+                "lotm.beyonder.sailor6",
+                "lotm.beyonder.sailor7",
+                "lotm.beyonder.sailor8",
+                "lotm.beyonder.sailor9"
         );
     }
 
@@ -47,10 +47,6 @@ public class SailorClass implements BeyonderClass {
         if (player.level().getGameTime() % 50 == 0) {
             if (sequenceLevel >= 0) {
                 player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, -1));
-
-                if (player.isCrouching()) {
-                    player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 60, -1));
-                }
             }
         }
     }

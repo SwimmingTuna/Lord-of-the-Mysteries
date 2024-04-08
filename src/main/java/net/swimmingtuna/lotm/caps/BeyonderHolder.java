@@ -1,8 +1,6 @@
 package net.swimmingtuna.lotm.caps;
 
-import dev._100media.capabilitysyncer.core.PlayerCapability;
-import dev._100media.capabilitysyncer.network.EntityCapabilityStatusPacket;
-import dev._100media.capabilitysyncer.network.SimpleEntityCapabilityStatusPacket;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -16,8 +14,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
+import net.swimmingtuna.lotm.commands.BeyonderClassArgument;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
+import net.swimmingtuna.lotm.util.CapabilitySyncer.core.PlayerCapability;
+import net.swimmingtuna.lotm.util.CapabilitySyncer.network.EntityCapabilityStatusPacket;
+import net.swimmingtuna.lotm.util.CapabilitySyncer.network.SimpleEntityCapabilityStatusPacket;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = LOTM.MOD_ID)
 public class BeyonderHolder extends PlayerCapability {
@@ -79,6 +81,7 @@ public class BeyonderHolder extends PlayerCapability {
     public BeyonderClass getCurrentClass() {
         return currentClass;
     }
+
     public void setCurrentClass(BeyonderClass newClass) {
         this.currentClass = newClass;
         updateTracking();
@@ -90,6 +93,7 @@ public class BeyonderHolder extends PlayerCapability {
     public int getCurrentSequence() {
         return currentSequence;
     }
+
     public void setCurrentSequence(int currentSequence) {
         this.currentSequence = currentSequence;
         maxSpirituality = currentClass.spiritualityLevels().get(currentSequence);
@@ -185,5 +189,11 @@ public class BeyonderHolder extends PlayerCapability {
             });
         }
 
+    }
+    public boolean isSpectatorClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SPECTATOR.get());
+    }
+    public boolean isTyrantClass() {
+        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.TYRANT.get());
     }
 }

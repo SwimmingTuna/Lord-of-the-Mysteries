@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -14,6 +15,7 @@ import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
@@ -31,6 +33,15 @@ public class Discern extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            if (holder.getSpirituality() < (int) (1000/ dreamIntoReality.getValue())) {
+                pPlayer.displayClientMessage(Component.literal("You need " + ((int) (1000/ dreamIntoReality.getValue()) + " spirituality in order to use this")).withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD), true);
+            }
+        }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             if (spectatorSequence.getCurrentSequence() <= 2 && spectatorSequence.useSpirituality((int) (1000 / dreamIntoReality.getValue()))) {
 

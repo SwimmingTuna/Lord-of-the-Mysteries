@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.caps;
 
-import dev._100media.capabilitysyncer.core.CapabilityAttacher;
-import dev._100media.capabilitysyncer.network.SimpleEntityCapabilityStatusPacket;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -11,6 +10,8 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.util.CapabilitySyncer.core.CapabilityAttacher;
+import net.swimmingtuna.lotm.util.CapabilitySyncer.network.SimpleEntityCapabilityStatusPacket;
 
 import javax.annotation.Nullable;
 

@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -12,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,8 +28,17 @@ public class MeteorShower extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            if (holder.getSpirituality() < 2500) {
+                pPlayer.displayClientMessage(Component.literal("You need 2500 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+        }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() == 1 && spectatorSequence.useSpirituality(1500)) {
+            if (spectatorSequence.getCurrentSequence() == 1 && spectatorSequence.useSpirituality(2500)) {
                 setHealth(pPlayer);
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 900);

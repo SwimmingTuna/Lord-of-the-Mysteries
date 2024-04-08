@@ -1,9 +1,0 @@
-{
-  "name": "LOTM Book",
-  "landing_text": "Put Description Text Here!",
-  "version": 1,
-  "creative_tab": "ingredients",
-  "use_resource_pack": true,
-  "model": "patchouli:book_red",
-  "show_progress": false
-}

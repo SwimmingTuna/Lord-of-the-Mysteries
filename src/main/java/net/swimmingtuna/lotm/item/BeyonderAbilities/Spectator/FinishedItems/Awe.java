@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
@@ -29,14 +31,23 @@ public class Awe extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(75)) {
-                AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                applyPotionEffectToEntities(pPlayer, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 240);
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-        });
+            if (holder.getSpirituality() < 75) {
+                pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+                if (spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(75)) {
+                    AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+                    applyPotionEffectToEntities(pPlayer, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
+                    if (!pPlayer.getAbilities().instabuild)
+                        pPlayer.getCooldowns().addCooldown(this, 240);
+                }
+            });
+        }
         return super.use(level, pPlayer, hand);
     }
 

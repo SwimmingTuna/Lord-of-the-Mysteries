@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -15,6 +16,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
@@ -42,26 +44,33 @@ public class EnvisionWeather extends Item {
 
         Level level = event.getPlayer().serverLevel();
         Player pPlayer = event.getPlayer();
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            if (holder.getSpirituality() < (int) 500/dreamIntoReality.getValue()) {
+                pPlayer.displayClientMessage(Component.literal("You need "  + ((int) 500/dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+        }
         String message = event.getMessage().getString().toLowerCase();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-            if (pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather && spectatorSequence.getCurrentSequence() == 0) {
-        if (message.equals("clear")) {
+            if (pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather && spectatorSequence.getCurrentSequence() == 9) {
+        if (message.equals("clear") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
             setWeatherClear(level);
             event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Clear"), true);
             spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
             event.setCanceled(true);
         }
-        if (message.equals("rain")) {
+        if (message.equals("rain") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
             event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Rain"), true);
             setWeatherRain(level);
-            spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
             event.setCanceled(true);
         }
-        if (message.equals("thunder")) {
+        if (message.equals("thunder") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
             event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Thunder"), true);
             setWeatherThunder(level);
-            spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
             event.setCanceled(true);
         }}
     });

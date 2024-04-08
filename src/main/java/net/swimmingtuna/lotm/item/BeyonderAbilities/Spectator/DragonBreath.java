@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -14,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
@@ -30,8 +32,16 @@ public class DragonBreath extends Item {
     }
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            if (holder.getSpirituality() < (int) 100/dreamIntoReality.getValue()) {
+                pPlayer.displayClientMessage(Component.literal("You need " + (100 /dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+        }        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             if (spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality((int) (100 / dreamIntoReality.getValue()))) {
                 shootFireball(pPlayer);
                     pPlayer.sendSystemMessage(Component.literal("working"));

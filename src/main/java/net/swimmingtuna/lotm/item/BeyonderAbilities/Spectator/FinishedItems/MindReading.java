@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.LazyOptional;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
@@ -61,7 +63,15 @@ public class MindReading extends Item implements ReachChangeUUIDs {
     }
 
     public InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            if (holder.getSpirituality() < 20) {
+                pPlayer.displayClientMessage(Component.literal("You need 20 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+        }        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
             if (spectatorSequence.getCurrentSequence() <= 8 && !pInteractionTarget.level().isClientSide && pInteractionTarget instanceof Player && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(20)) {
             for (int i = 0; i < ((Player) pInteractionTarget).getInventory().getContainerSize(); i++) {

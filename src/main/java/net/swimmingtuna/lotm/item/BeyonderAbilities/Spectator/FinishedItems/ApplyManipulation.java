@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -22,6 +23,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.ItemInit;
@@ -68,17 +70,26 @@ public class ApplyManipulation extends Item implements ReachChangeUUIDs {
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         Player pPlayer = event.getEntity();
-        ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
-        Entity targetEntity = event.getTarget();
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof ApplyManipulation && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(50)) {
-                if (!((LivingEntity) targetEntity).hasEffect(ModEffects.MANIPULATION.get()))
-                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false,false));
-            pPlayer.sendSystemMessage(Component.literal("Manipulating " + targetEntity.getName().getString()));
-            event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.SUCCESS);
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-         });
+            if (holder.getSpirituality() < 50) {
+                pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
+            Entity targetEntity = event.getTarget();
+            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+                if (!targetEntity.level().isClientSide && holder.isSpectatorClass() && itemStack.getItem() instanceof ApplyManipulation && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(50)) {
+                    if (!((LivingEntity) targetEntity).hasEffect(ModEffects.MANIPULATION.get()))
+                        ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false, false));
+                    pPlayer.sendSystemMessage(Component.literal("Manipulating " + targetEntity.getName().getString()));
+                    event.setCanceled(true);
+                    event.setCancellationResult(InteractionResult.SUCCESS);
+                }
+            });
+        }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {

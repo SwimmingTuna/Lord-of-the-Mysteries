@@ -16,7 +16,6 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.commands.AbilitiesCommand;
 import net.swimmingtuna.lotm.commands.BeyonderClassArgument;
 import net.swimmingtuna.lotm.commands.BeyonderCommand;
-import vazkii.patchouli.common.item.PatchouliItems;
 
 
 public class CommandInit {
@@ -28,18 +27,5 @@ public class CommandInit {
     public static void onCommandRegistration(RegisterCommandsEvent event) {
         BeyonderCommand.register(event.getBuildContext(),event.getDispatcher());
         AbilitiesCommand.register(event.getDispatcher());
-
-        event.getDispatcher().register(
-                Commands.literal("lotmbook").executes(
-                        (context) -> {
-                            ItemStack book = new ItemStack(PatchouliItems.BOOK);
-                            CompoundTag tag = new CompoundTag();
-                            tag.putString("patchouli:book", "lotm:lotmbook");
-                            book.setTag(tag);
-                            context.getSource().getPlayerOrException().getInventory().add(book);
-                            return 1;
-                        }
-                )
-        );
     }
 }

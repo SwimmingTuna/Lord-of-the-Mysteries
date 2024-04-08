@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -26,6 +27,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.ItemInit;
@@ -65,13 +67,22 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
     @Override
     public InteractionResult useOn(UseOnContext pContext) {
         Player pPlayer = pContext.getPlayer();
-        targetPos = pContext.getClickedPos();
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            if (holder.getSpirituality() < (int) 200/dreamIntoReality.getValue()) {
+                pPlayer.displayClientMessage(Component.literal("You need spirituality" + ((int) 200/ dreamIntoReality.getValue()) + " in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+        }
+            targetPos = pContext.getClickedPos();
         Level level = pContext.getLevel();
 
-        if (!level.isClientSide) {
+        if (!pPlayer.level().isClientSide()) {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                if (spectatorSequence.getCurrentSequence() <= 4 && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(200/ (int) dreamIntoReality.getValue())) {
+                if (spectatorSequence.getCurrentSequence() <= 4 && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality((int) (200/ dreamIntoReality.getValue()))) {
                     manipulateEntities(pPlayer, level, targetPos, spectatorSequence.getCurrentSequence());
                     resetTargetPos(pPlayer);
                     if (!pPlayer.getAbilities().instabuild) {

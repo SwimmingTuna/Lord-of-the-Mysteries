@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
@@ -34,6 +36,15 @@ public class ProphesizeTeleportPlayer extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+            if (!pPlayer.level().isClientSide()) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                if (!holder.isSpectatorClass()) {
+                    pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                }
+                if (holder.getSpirituality() < 750) {
+                    pPlayer.displayClientMessage(Component.literal("You need 750 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                }
+            }
             if (spectatorSequence.getCurrentSequence() <= 1 && spectatorSequence.useSpirituality(750)) {
                 AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
                 teleportEntities(pPlayer, level, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());

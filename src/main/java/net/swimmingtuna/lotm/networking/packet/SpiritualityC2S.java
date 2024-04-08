@@ -1,6 +1,5 @@
 package net.swimmingtuna.lotm.networking.packet;
 
-import dev._100media.capabilitysyncer.network.IPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -9,6 +8,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.swimmingtuna.lotm.util.CapabilitySyncer.network.IPacket;
 
 public class SpiritualityC2S implements IPacket {
     public SpiritualityC2S() {

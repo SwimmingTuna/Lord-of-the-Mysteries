@@ -6,6 +6,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.RagingBlows;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
@@ -105,6 +106,8 @@ public class ItemInit {
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SPECTATOR.get(),0));
     public static final RegistryObject<Item> BEYONDER_RESET_POTION = ITEMS.register("beyonder_reset_potion",
             () -> new BeyonderResetPotion(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> RagingBlows = ITEMS.register("ragingblows",
+            () -> new RagingBlows(new Item.Properties().stacksTo(1)));
 
 
     public static void register(IEventBus eventBus) {

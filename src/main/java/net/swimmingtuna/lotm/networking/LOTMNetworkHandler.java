@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.networking;
 
 import com.google.common.collect.ImmutableList;
-import dev._100media.capabilitysyncer.network.SimpleEntityCapabilityStatusPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkRegistry;
@@ -9,6 +8,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.networking.packet.SpiritualityC2S;
+import net.swimmingtuna.lotm.util.CapabilitySyncer.network.SimpleEntityCapabilityStatusPacket;
 
 import java.util.List;
 import java.util.function.BiConsumer;

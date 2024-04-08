@@ -118,6 +118,7 @@ public class LOTM {
                 event.accept(ItemInit.SPECTATOR_0_POTION);
                 event.accept(ItemInit.BEYONDER_RESET_POTION);
                 event.accept(ItemInit.TYRANT_9_POTION);
+                event.accept(ItemInit.RagingBlows);
         }
         if(event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(BlockInit.VISIONARY_BARRIER_BLOCK);

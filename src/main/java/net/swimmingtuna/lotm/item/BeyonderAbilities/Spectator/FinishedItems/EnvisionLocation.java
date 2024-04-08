@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -14,6 +15,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
@@ -43,9 +45,18 @@ public class EnvisionLocation extends Item {
     public static void onChatMessage(ServerChatEvent event) {
         Level level = event.getPlayer().serverLevel();
         Player pPlayer = event.getPlayer();
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            if (holder.getSpirituality() < (int) 500/dreamIntoReality.getValue()) {
+                pPlayer.displayClientMessage(Component.literal("You need "  + ((int) 500/dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+        }
         String message = event.getMessage().getString();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
             if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLocation && spectatorSequence.getCurrentSequence() == 0) {
                 if (isThreeIntegers(message)) {
                     String[] coordinates = message.split(" ");

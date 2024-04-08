@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
@@ -22,6 +23,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +45,15 @@ public class DreamIntoReality extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            if (holder.getSpirituality() < 50) {
+                pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+        }
         ItemStack itemStack = pPlayer.getItemInHand(hand);
         if (!pPlayer.level().isClientSide) {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
@@ -59,12 +70,16 @@ public class DreamIntoReality extends Item {
     }
 
     private void toggleFlying(Player pPlayer) {
-        boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
-        if (canFly) {
-            stopFlying(pPlayer);
-        } else {
-            startFlying(pPlayer);
-        }
+        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+            if (spectatorSequence.useSpirituality(300)) {
+                boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
+                if (canFly) {
+                    stopFlying(pPlayer);
+                } else {
+                    startFlying(pPlayer);
+                }
+            }
+        });
     }
 
     private void startFlying(Player pPlayer) {

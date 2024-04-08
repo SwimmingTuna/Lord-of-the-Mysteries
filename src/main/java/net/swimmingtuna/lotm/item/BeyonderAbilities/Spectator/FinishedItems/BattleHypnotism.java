@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.LazyOptional;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
@@ -60,6 +62,15 @@ public class BattleHypnotism extends Item implements ReachChangeUUIDs {
     @Override
     public InteractionResult useOn(UseOnContext pContext) {
         Player pPlayer = pContext.getPlayer();
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            if (holder.getSpirituality() < 150) {
+                pPlayer.displayClientMessage(Component.literal("You need 150 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+        }
         Level level = pPlayer.level();
         BlockPos positionClicked = pContext.getClickedPos();
         if (!pContext.getLevel().isClientSide && !pPlayer.level().isClientSide) {
@@ -99,5 +110,4 @@ public class BattleHypnotism extends Item implements ReachChangeUUIDs {
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
-
 }

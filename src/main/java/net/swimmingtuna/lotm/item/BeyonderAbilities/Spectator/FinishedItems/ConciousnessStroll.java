@@ -1,10 +1,12 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +18,9 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -33,9 +37,11 @@ public class ConciousnessStroll extends Item {
     public static void onChatMessage(ServerChatEvent event) {
         Level level = event.getPlayer().serverLevel();
         Player pPlayer = event.getPlayer();
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         String message = event.getMessage().getString().toLowerCase();
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof ConciousnessStroll && spectatorSequence.getCurrentSequence() <= 2) {
+            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof ConciousnessStroll && spectatorSequence.getCurrentSequence() <= 2) {
                 Player targetPlayer = null;
                 for (Player serverPlayer : level.players()) {
                     if (serverPlayer.getUUID().toString().equals(message)) {
@@ -46,6 +52,14 @@ public class ConciousnessStroll extends Item {
                 int consciousnessStrollTimer = pPlayer.getPersistentData().getInt("waitStrollTimer");
                 if (consciousnessStrollTimer == 0) {
                 if (targetPlayer != null) {
+                    if (!pPlayer.level().isClientSide()) {
+                        if (!holder.isSpectatorClass()) {
+                            pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                        }
+                        if (holder.getSpirituality() < (int) 500/dreamIntoReality.getValue()) {
+                            pPlayer.displayClientMessage(Component.literal("You need 500 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                        }
+                    }
                     int x = (int) targetPlayer.getX();
                     int y = (int) targetPlayer.getY();
                     int z = (int) targetPlayer.getZ();
@@ -53,7 +67,7 @@ public class ConciousnessStroll extends Item {
                     int strollTimer = pPlayer.getPersistentData().getInt("StrollTimer");
                     pPlayer.getPersistentData().putInt("StrollTimer", 1);
                     pPlayer.getPersistentData().putInt("waitStrollTimer",1);
-                    spectatorSequence.useSpirituality(500);
+                    spectatorSequence.useSpirituality((int) (500/dreamIntoReality.getValue()));
                     event.setCanceled(true);}
                 if (consciousnessStrollTimer != 0) {
                     event.getPlayer().sendSystemMessage(Component.literal("Ability on Cooldown for " + (int) ((400 - consciousnessStrollTimer)/20) + " seconds"));
