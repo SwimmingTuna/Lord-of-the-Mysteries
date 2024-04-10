@@ -12,16 +12,16 @@ public class CorpseCollectorClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.corpsecollector0",
-                "lotm.beyonder.corpsecollector1",
-                "lotm.beyonder.corpsecollector2",
-                "lotm.beyonder.corpsecollector3",
-                "lotm.beyonder.corpsecollector4",
-                "lotm.beyonder.corpsecollector5",
-                "lotm.beyonder.corpsecollector6",
-                "lotm.beyonder.corpsecollector7",
-                "lotm.beyonder.corpsecollector8",
-                "lotm.beyonder.corpsecollector9"
+                "Death",
+                "Pale Emperor",
+                "Death Consul",
+                "Ferryman",
+                "Undying",
+                "Gatekeeper",
+                "Spirit Guide",
+                "Spirit Medium",
+                "Gravedigger",
+                "Corpse Collector"
         );
     }
 

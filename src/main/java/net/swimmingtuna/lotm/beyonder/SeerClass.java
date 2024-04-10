@@ -12,16 +12,16 @@ public class SeerClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.seer0",
-                "lotm.beyonder.seer1",
-                "lotm.beyonder.seer2",
-                "lotm.beyonder.seer3",
-                "lotm.beyonder.seer4",
-                "lotm.beyonder.seer5",
-                "lotm.beyonder.seer6",
-                "lotm.beyonder.seer7",
-                "lotm.beyonder.seer8",
-                "lotm.beyonder.seer9"
+                "Fool",
+                "Attendant of Mysteries",
+                "Miracle Invoker",
+                "Scholar of Yore",
+                "Bizarro Sorcerer",
+                "Marionettest",
+                "Faceless",
+                "Magician",
+                "Clown",
+                "Seer"
         );
     }
 

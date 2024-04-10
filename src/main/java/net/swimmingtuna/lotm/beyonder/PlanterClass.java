@@ -12,16 +12,16 @@ public class PlanterClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.planter0",
-                "lotm.beyonder.planter1",
-                "lotm.beyonder.planter2",
-                "lotm.beyonder.planter3",
-                "lotm.beyonder.planter4",
-                "lotm.beyonder.planter5",
-                "lotm.beyonder.planter6",
-                "lotm.beyonder.planter7",
-                "lotm.beyonder.planter8",
-                "lotm.beyonder.planter9"
+                "Mother",
+                "Naturewalker",
+                "Desolate Matriarch",
+                "lPallbearer",
+                "Classical Alchemist",
+                "Druid",
+                "Biologist",
+                "Harvest Priest",
+                "Doctor",
+                "Planter"
         );
     }
 

@@ -12,16 +12,16 @@ public class SavantClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.savant0",
-                "lotm.beyonder.savant1",
-                "lotm.beyonder.savant2",
-                "lotm.beyonder.savant3",
-                "lotm.beyonder.savant4",
-                "lotm.beyonder.savant5",
-                "lotm.beyonder.savant6",
-                "lotm.beyonder.savant7",
-                "lotm.beyonder.savant8",
-                "lotm.beyonder.savant9"
+                "Paragon",
+                "Illuminator",
+                "Knowledge Magister",
+                "Arcane Scholar",
+                "Alchemist",
+                "Astronomer",
+                "Artisan",
+                "Appraiser",
+                "Archeologist",
+                "Savant"
         );
     }
 

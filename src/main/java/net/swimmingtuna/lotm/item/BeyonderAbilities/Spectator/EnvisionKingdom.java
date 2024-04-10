@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -16,8 +17,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -44,7 +48,7 @@ public class EnvisionKingdom extends Item {
         super(pProperties);
     }
 
-    ResourceLocation CATHEDRAL = new ResourceLocation(LOTM.MOD_ID, "data/structures/corpse_cathedral.nbt");
+    ResourceLocation CATHEDRAL = new ResourceLocation(LOTM.MOD_ID, "data/structures/teststructure.nbt");
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
@@ -59,11 +63,11 @@ public class EnvisionKingdom extends Item {
                     pPlayer.displayClientMessage(Component.literal("You need " + ((int) 3500/dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
             }
-            ServerLevel serverLevel = (ServerLevel) level;
+            ServerLevel serverLevel = (ServerLevel) pPlayer.level();
             BlockPos playerPos = pPlayer.getOnPos();
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             if (spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
-                generateCathedral(pPlayer, level, playerPos, serverLevel);
+                generateCathedral(pPlayer, playerPos, serverLevel);
                 if (!pPlayer.getAbilities().instabuild) {
                     pPlayer.getCooldowns().addCooldown(this, 900);
                 }
@@ -88,14 +92,15 @@ public class EnvisionKingdom extends Item {
         settings.setRotation(Rotation.NONE);
         settings.setMirror(Mirror.NONE);
         settings.setRotationPivot(pos);
+
         return settings;
     }
-    private void generateCathedral(Player pPlayer, Level level, BlockPos playerPos, ServerLevel serverLevel) {
+    private void generateCathedral(Player pPlayer, BlockPos playerPos, ServerLevel serverLevel) {
         if (!pPlayer.level().isClientSide()) {
             RandomSource random = serverLevel.getRandom();
             StructurePlaceSettings settings = getStructurePlaceSettings(playerPos);
             StructureTemplate template = serverLevel.getStructureManager().getOrCreate(CATHEDRAL);
-            template.placeInWorld(serverLevel, playerPos, BlockPos.ZERO, settings, random, 3);
+            template.placeInWorld((ServerLevel) pPlayer.level(), playerPos, playerPos, new StructurePlaceSettings(), random, Block.UPDATE_ALL);
             pPlayer.sendSystemMessage(Component.literal("pos is" + playerPos));
             if (template != null) {
                 pPlayer.sendSystemMessage(Component.literal("cathedral isnt null"));

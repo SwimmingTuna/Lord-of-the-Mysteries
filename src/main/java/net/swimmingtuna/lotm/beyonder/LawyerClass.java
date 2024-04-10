@@ -12,16 +12,16 @@ public class LawyerClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.lawyer0",
-                "lotm.beyonder.lawyer1",
-                "lotm.beyonder.lawyer2",
-                "lotm.beyonder.lawyer3",
-                "lotm.beyonder.lawyer4",
-                "lotm.beyonder.lawyer5",
-                "lotm.beyonder.lawyer6",
-                "lotm.beyonder.lawyer7",
-                "lotm.beyonder.lawyer8",
-                "lotm.beyonder.lawyer9"
+                "Black Emperor",
+                "Prince of Abolition",
+                "Duke of Entropy",
+                "Frenzied Mage",
+                "Earl of the Fallen",
+                "Mentor of Disorder",
+                "Baron of Corruption",
+                "Briber",
+                "Barbarian",
+                "Lawyer"
         );
     }
 

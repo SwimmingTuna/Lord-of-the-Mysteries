@@ -12,16 +12,16 @@ public class SleeplessClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.sleepless0",
-                "lotm.beyonder.sleepless1",
-                "lotm.beyonder.sleepless2",
-                "lotm.beyonder.sleepless3",
-                "lotm.beyonder.sleepless4",
-                "lotm.beyonder.sleepless5",
-                "lotm.beyonder.sleepless6",
-                "lotm.beyonder.sleepless7",
-                "lotm.beyonder.sleepless8",
-                "lotm.beyonder.sleepless9"
+                "Darkness",
+                "Knight of Misfortune",
+                "Servant of Concealment",
+                "Horror Bishop",
+                "Nightwatcher",
+                "Spirit Warlock",
+                "Soul Assurer",
+                "Nightmare",
+                "Midnight Poet",
+                "Sleepless"
         );
     }
 

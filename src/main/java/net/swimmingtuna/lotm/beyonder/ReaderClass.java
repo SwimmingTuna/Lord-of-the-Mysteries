@@ -12,16 +12,16 @@ public class ReaderClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.reader0",
-                "lotm.beyonder.reader1",
-                "lotm.beyonder.reader2",
-                "lotm.beyonder.reader3",
-                "lotm.beyonder.reader4",
-                "lotm.beyonder.reader5",
-                "lotm.beyonder.reader6",
-                "lotm.beyonder.reader7",
-                "lotm.beyonder.reader8",
-                "lotm.beyonder.reader9"
+                "White Tower",
+                "Omniscient Eye",
+                "Wisdom Angel",
+                "Cognizer",
+                "Prophet",
+                "Mysticism Magister",
+                "Polymath",
+                "Detective",
+                "Student of Ratiocination",
+                "Reader"
         );
     }
 

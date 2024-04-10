@@ -12,16 +12,16 @@ public class PrisonerClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.prisoner0",
-                "lotm.beyonder.prisoner1",
-                "lotm.beyonder.prisoner2",
-                "lotm.beyonder.prisoner3",
-                "lotm.beyonder.prisoner4",
-                "lotm.beyonder.prisoner5",
-                "lotm.beyonder.prisoner6",
-                "lotm.beyonder.prisoner7",
-                "lotm.beyonder.prisoner8",
-                "lotm.beyonder.prisoner9"
+                "Chained",
+                "Abomination",
+                "Ancient Bane",
+                "Disciple of Silence",
+                "Puppet",
+                "Wraith",
+                "Zombie",
+                "Werewolf",
+                "Lunatic",
+                "Prisoner"
         );
     }
 

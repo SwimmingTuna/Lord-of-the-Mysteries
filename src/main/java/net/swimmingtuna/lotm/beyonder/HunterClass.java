@@ -12,16 +12,16 @@ public class HunterClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.hunter0",
-                "lotm.beyonder.hunter1",
-                "lotm.beyonder.hunter2",
-                "lotm.beyonder.hunter3",
-                "lotm.beyonder.hunter4",
-                "lotm.beyonder.hunter5",
-                "lotm.beyonder.hunter6",
-                "lotm.beyonder.hunter7",
-                "lotm.beyonder.hunter8",
-                "lotm.beyonder.hunter9"
+                "Red Priest",
+                "Conquerer",
+                "Weather Warlock",
+                "War Bishop",
+                "Iron-Blooded Knight",
+                "Reaper",
+                "Conspirer",
+                "Pyromaniac",
+                "Provoker",
+                "Hunter"
         );
     }
 

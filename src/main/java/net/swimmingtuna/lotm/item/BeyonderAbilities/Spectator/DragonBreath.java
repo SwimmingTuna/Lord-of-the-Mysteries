@@ -38,7 +38,7 @@ public class DragonBreath extends Item {
             if (!holder.isSpectatorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-            if (holder.getSpirituality() < (int) 100/dreamIntoReality.getValue()) {
+            if (holder.getSpirituality() < 75) {
                 pPlayer.displayClientMessage(Component.literal("You need " + (100 /dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
         }        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
@@ -57,17 +57,9 @@ public class DragonBreath extends Item {
         Vec3 direction = pPlayer.getViewVector(1.0f);
         Vec3 fireballPosition = eyePosition.add(direction.scale(1.2));
 
-        SmallFireball fireball = new SmallFireball(EntityType.SMALL_FIREBALL, pPlayer.level()) {
-
-            @Override
-            public void tick() {
-                super.tick();
-
-                Vec3 currentVelocity = getDeltaMovement().normalize().scale(2.0);
-                setDeltaMovement(currentVelocity);
-            }
-        };
-
+        SmallFireball fireball = new SmallFireball(EntityType.SMALL_FIREBALL, pPlayer.level());
+        Vec3 initialVelocity = direction.scale(2.0); // Adjust the scale factor as needed
+        fireball.setDeltaMovement(initialVelocity);
         fireball.setPos(fireballPosition);
         fireball.setOwner(pPlayer);
 

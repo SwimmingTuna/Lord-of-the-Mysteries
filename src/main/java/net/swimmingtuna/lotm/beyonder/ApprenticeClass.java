@@ -12,16 +12,16 @@ public class ApprenticeClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.apprentice0",
-                "lotm.beyonder.apprentice1",
-                "lotm.beyonder.apprentice2",
-                "lotm.beyonder.apprentice3",
-                "lotm.beyonder.apprentice4",
-                "lotm.beyonder.apprentice5",
-                "lotm.beyonder.apprentice6",
-                "lotm.beyonder.apprentice7",
-                "lotm.beyonder.apprentice8",
-                "lotm.beyonder.apprentice9"
+                "Door",
+                "Key of Stars",
+                "Planeswalker",
+                "Wanderer",
+                "Secrets Sorcerer",
+                "Traveler",
+                "Scribe",
+                "Astrologer",
+                "Trickmaster",
+                "Apprentice"
         );
     }
 

@@ -12,16 +12,16 @@ public class MarauderClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.marauder0",
-                "lotm.beyonder.marauder1",
-                "lotm.beyonder.marauder2",
-                "lotm.beyonder.marauder3",
-                "lotm.beyonder.marauder4",
-                "lotm.beyonder.marauder5",
-                "lotm.beyonder.marauder6",
-                "lotm.beyonder.marauder7",
-                "lotm.beyonder.marauder8",
-                "lotm.beyonder.marauder9"
+                "Error",
+                "Worm of Time",
+                "Trojan Horse of Destiny",
+                "Mentor of Deceit",
+                "Parasite",
+                "Dream Stealer",
+                "Prometheus",
+                "Cryptologist",
+                "Swindler",
+                "Marauder"
         );
     }
 

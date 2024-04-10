@@ -12,16 +12,16 @@ public class WarriorClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.warrior0",
-                "lotm.beyonder.warrior1",
-                "lotm.beyonder.warrior2",
-                "lotm.beyonder.warrior3",
-                "lotm.beyonder.warrior4",
-                "lotm.beyonder.warrior5",
-                "lotm.beyonder.warrior6",
-                "lotm.beyonder.warrior7",
-                "lotm.beyonder.warrior8",
-                "lotm.beyonder.warrior9"
+                "Twilight Giant",
+                "Hand of God",
+                "Glory",
+                "Silver Knight",
+                "Demon Hunter",
+                "Guardian",
+                "Dawn Paladin",
+                "Weapon Master",
+                "Pugilist",
+                "Warrior"
         );
     }
 

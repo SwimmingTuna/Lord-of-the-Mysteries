@@ -12,16 +12,16 @@ public class SecretsSupplicantClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.secrets_supplicant0",
-                "lotm.beyonder.secrets_supplicant1",
-                "lotm.beyonder.secrets_supplicant2",
-                "lotm.beyonder.secrets_supplicant3",
-                "lotm.beyonder.secrets_supplicant4",
-                "lotm.beyonder.secrets_supplicant5",
-                "lotm.beyonder.secrets_supplicant6",
-                "lotm.beyonder.secrets_supplicant7",
-                "lotm.beyonder.secrets_supplicant8",
-                "lotm.beyonder.secrets_supplicant9"
+                "Hanged Man",
+                "Dark Angel",
+                "Profane Presbyter",
+                "Trinity Templar",
+                "Black Night",
+                "Shepherd",
+                "Rose Bishop",
+                "Shadow Ascetic",
+                "Listener",
+                "Secrets Supplicant"
         );
     }
 

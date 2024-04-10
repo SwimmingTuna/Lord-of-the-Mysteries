@@ -12,16 +12,16 @@ public class MonsterClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.monster0",
-                "lotm.beyonder.monster1",
-                "lotm.beyonder.monster2",
-                "lotm.beyonder.monster3",
-                "lotm.beyonder.monster4",
-                "lotm.beyonder.monster5",
-                "lotm.beyonder.monster6",
-                "lotm.beyonder.monster7",
-                "lotm.beyonder.monster8",
-                "lotm.beyonder.monster9"
+                "Wheel of Fortune",
+                "Snake of Mercury",
+                "Soothsayer",
+                "Chaoswalker",
+                "Misfortune Mage",
+                "Winner",
+                "Calamity Priest",
+                "Lucky One",
+                "Robot",
+                "Monster"
         );
     }
 

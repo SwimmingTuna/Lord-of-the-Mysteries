@@ -12,16 +12,16 @@ public class AssassinClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.assassin0",
-                "lotm.beyonder.assassin1",
-                "lotm.beyonder.assassin2",
-                "lotm.beyonder.assassin3",
-                "lotm.beyonder.assassin4",
-                "lotm.beyonder.assassin5",
-                "lotm.beyonder.assassin6",
-                "lotm.beyonder.assassin7",
-                "lotm.beyonder.assassin8",
-                "lotm.beyonder.assassin9"
+                "Demoness",
+                "Demoness of Apocalypse",
+                "Demoness of Catastrophe",
+                "Demoness of Unaging",
+                "Demoness of Despair",
+                "Demoness of Afflictions",
+                "Demoness of Pleasure",
+                "Witch",
+                "Instigator",
+                "Assassin"
         );
     }
 

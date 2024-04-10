@@ -12,16 +12,16 @@ public class MysteryPryerClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.mysterypryer0",
-                "lotm.beyonder.mysterypryer1",
-                "lotm.beyonder.mysterypryer2",
-                "lotm.beyonder.mysterypryer3",
-                "lotm.beyonder.mysterypryer4",
-                "lotm.beyonder.mysterypryer5",
-                "lotm.beyonder.mysterypryer6",
-                "lotm.beyonder.mysterypryer7",
-                "lotm.beyonder.mysterypryer8",
-                "lotm.beyonder.mysterypryer9"
+                "Hermit",
+                "Knowledge Emperor",
+                "Sage",
+                "Clairvoyant",
+                "Mysticologist",
+                "Constellations Master",
+                "Scrolls Professor",
+                "Warlock",
+                "Melee Scholar",
+                "Mystery Pryer"
         );
     }
 

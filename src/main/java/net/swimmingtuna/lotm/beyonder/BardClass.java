@@ -12,16 +12,16 @@ public class BardClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.bard0",
-                "lotm.beyonder.bard1",
-                "lotm.beyonder.bard2",
-                "lotm.beyonder.bard3",
-                "lotm.beyonder.bard4",
-                "lotm.beyonder.bard5",
-                "lotm.beyonder.bard6",
-                "lotm.beyonder.bard7",
-                "lotm.beyonder.bard8",
-                "lotm.beyonder.bard9"
+                "Sun",
+                "White Angel",
+                "Lightseeker",
+                "Justice Mentor",
+                "Unshadowed",
+                "Priest of Light",
+                "Notary",
+                "Solar High Priest",
+                "Light Supplicant",
+                "Bard"
         );
     }
 

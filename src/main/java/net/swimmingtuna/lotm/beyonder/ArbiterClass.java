@@ -12,16 +12,16 @@ public class ArbiterClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.arbiter0",
-                "lotm.beyonder.arbiter1",
-                "lotm.beyonder.arbiter2",
-                "lotm.beyonder.arbiter3",
-                "lotm.beyonder.arbiter4",
-                "lotm.beyonder.arbiter5",
-                "lotm.beyonder.arbiter6",
-                "lotm.beyonder.arbiter7",
-                "lotm.beyonder.arbiter8",
-                "lotm.beyonder.arbiter9"
+                "Justiciar",
+                "Hand of Order",
+                "Balancer",
+                "Chaos Hunter",
+                "Imperative Mage",
+                "Disciplinary Paladin",
+                "Judge",
+                "Interrogator",
+                "Sheriff",
+                "Arbiter"
         );
     }
 

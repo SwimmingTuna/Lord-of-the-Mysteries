@@ -12,16 +12,15 @@ public class CriminalClass implements BeyonderClass {
     @Override
     public List<String> sequenceNames() {
         return List.of(
-                "lotm.beyonder.criminal0",
-                "lotm.beyonder.criminal1",
-                "lotm.beyonder.criminal2",
-                "lotm.beyonder.criminal3",
-                "lotm.beyonder.criminal4",
-                "lotm.beyonder.criminal5",
-                "lotm.beyonder.criminal6",
-                "lotm.beyonder.criminal7",
-                "lotm.beyonder.criminal8",
-                "lotm.beyonder.criminal9"
+                "Abyss",
+                "Filthy Monarch",
+                "Bloody Archduke",
+                "Blatherer",
+                "Demon",
+                "Devil",
+                "Serial Killer",
+                "Unwinged Angel",
+                "Criminal"
         );
     }
 
