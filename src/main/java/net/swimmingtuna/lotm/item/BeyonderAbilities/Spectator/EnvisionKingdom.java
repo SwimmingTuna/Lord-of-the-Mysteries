@@ -3,7 +3,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -16,25 +15,18 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.commands.BeyonderClassArgument;
-import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.ManipulateFondness;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +40,7 @@ public class EnvisionKingdom extends Item {
         super(pProperties);
     }
 
-    ResourceLocation CATHEDRAL = new ResourceLocation(LOTM.MOD_ID, "data/structures/teststructure.nbt");
+    ResourceLocation CATHEDRAL = new ResourceLocation(LOTM.MOD_ID, "data/structures/acaciatree.nbt");
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
@@ -66,11 +58,11 @@ public class EnvisionKingdom extends Item {
             ServerLevel serverLevel = (ServerLevel) pPlayer.level();
             BlockPos playerPos = pPlayer.getOnPos();
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
-                generateCathedral(pPlayer, playerPos, serverLevel);
-                if (!pPlayer.getAbilities().instabuild) {
-                    pPlayer.getCooldowns().addCooldown(this, 900);
-                }
+                if (spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
+                    generateCathedral(pPlayer, playerPos, serverLevel);
+                    if (!pPlayer.getAbilities().instabuild) {
+                        pPlayer.getCooldowns().addCooldown(this, 900);
+                    }
                 }
             });
         }
@@ -100,7 +92,8 @@ public class EnvisionKingdom extends Item {
             RandomSource random = serverLevel.getRandom();
             StructurePlaceSettings settings = getStructurePlaceSettings(playerPos);
             StructureTemplate template = serverLevel.getStructureManager().getOrCreate(CATHEDRAL);
-            template.placeInWorld((ServerLevel) pPlayer.level(), playerPos, playerPos, new StructurePlaceSettings(), random, Block.UPDATE_ALL);
+            template.placeInWorld(serverLevel, playerPos, playerPos, settings, random, Block.UPDATE_ALL);
+            System.out.println(template.getSize());
             pPlayer.sendSystemMessage(Component.literal("pos is" + playerPos));
             if (template != null) {
                 pPlayer.sendSystemMessage(Component.literal("cathedral isnt null"));
