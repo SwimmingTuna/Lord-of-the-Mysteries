@@ -6,18 +6,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -40,12 +40,10 @@ public class EnvisionKingdom extends Item {
         super(pProperties);
     }
 
-    ResourceLocation CATHEDRAL = new ResourceLocation(LOTM.MOD_ID, "data/structures/acaciatree.nbt");
-
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        if (!pPlayer.level().isClientSide()) {
+        if (!pPlayer.level().isClientSide) {
             if (!pPlayer.level().isClientSide()) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
                 if (!holder.isSpectatorClass()) {
@@ -55,11 +53,10 @@ public class EnvisionKingdom extends Item {
                     pPlayer.displayClientMessage(Component.literal("You need " + ((int) 3500/dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
             }
-            ServerLevel serverLevel = (ServerLevel) pPlayer.level();
             BlockPos playerPos = pPlayer.getOnPos();
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
                 if (spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
-                    generateCathedral(pPlayer, playerPos, serverLevel);
+                    generateCathedral(pPlayer, playerPos, level);
                     if (!pPlayer.getAbilities().instabuild) {
                         pPlayer.getCooldowns().addCooldown(this, 900);
                     }
@@ -80,23 +77,38 @@ public class EnvisionKingdom extends Item {
     }
 
     private StructurePlaceSettings getStructurePlaceSettings(BlockPos pos) {
+        BoundingBox boundingBox = new BoundingBox(
+                pos.getX(),
+                pos.getY(),
+                pos.getZ(),
+                pos.getX() + 160,
+                pos.getY() + 97,
+                pos.getZ() + 265
+        );
         StructurePlaceSettings settings = new StructurePlaceSettings();
         settings.setRotation(Rotation.NONE);
         settings.setMirror(Mirror.NONE);
         settings.setRotationPivot(pos);
-
+        settings.setBoundingBox(boundingBox);
         return settings;
     }
-    private void generateCathedral(Player pPlayer, BlockPos playerPos, ServerLevel serverLevel) {
-        if (!pPlayer.level().isClientSide()) {
-            RandomSource random = serverLevel.getRandom();
+
+    private void generateCathedral(Player pPlayer, BlockPos playerPos, Level level) {
+        if (!pPlayer.level().isClientSide) {
+            double x = pPlayer.getX();
+            double y = pPlayer.getY();
+            double z = pPlayer.getZ();
+            pPlayer.teleportTo(x + 79, y + 10, z + 206);
+            for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
+                if (entity != pPlayer) {
+                    entity.teleportTo(x + 69 + (Math.random() * 10), y + 10, z + 196);
+                }
+            }
             StructurePlaceSettings settings = getStructurePlaceSettings(playerPos);
-            StructureTemplate template = serverLevel.getStructureManager().getOrCreate(CATHEDRAL);
-            template.placeInWorld(serverLevel, playerPos, playerPos, settings, random, Block.UPDATE_ALL);
-            System.out.println(template.getSize());
-            pPlayer.sendSystemMessage(Component.literal("pos is" + playerPos));
+            ServerLevel serverLevel = (ServerLevel) level;
+            StructureTemplate template = serverLevel.getStructureManager().getOrCreate(new ResourceLocation(LOTM.MOD_ID, "corpse_cathedral"));
             if (template != null) {
-                pPlayer.sendSystemMessage(Component.literal("cathedral isnt null"));
+                template.placeInWorld(serverLevel, playerPos, playerPos, settings, null, 3);
             }
         }
     }
