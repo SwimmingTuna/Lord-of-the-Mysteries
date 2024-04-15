@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -110,6 +112,23 @@ public class EnvisionKingdom extends Item {
             if (template != null) {
                 template.placeInWorld(serverLevel, playerPos, playerPos, settings, null, 3);
             }
+            CompoundTag compoundTag = pPlayer.getPersistentData();
+            compoundTag.putInt("inMindscape", 1);
+        }
+    }
+
+    @SubscribeEvent
+    public static void mindscapeCounter(TickEvent.PlayerTickEvent event) {
+        Player pPlayer = event.player;
+        CompoundTag compoundTag = pPlayer.getPersistentData();
+        int mindscape = compoundTag.getInt("inMindscape");
+        if (mindscape >= 1) {
+            compoundTag.putInt("inMindscape", mindscape + 1);
+            pPlayer.sendSystemMessage(Component.literal("working" + mindscape));
+        }
+        if (mindscape >= 600) {
+            compoundTag.putInt("inMindscape", 0);
+
         }
     }
     @SubscribeEvent

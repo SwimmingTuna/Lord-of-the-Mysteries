@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,6 +28,8 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
+import virtuoel.pehkui.api.*;
+import virtuoel.pehkui.util.PehkuiEntityExtensions;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -60,7 +63,7 @@ public class DreamIntoReality extends Item {
                 if (spectatorSequence.getCurrentSequence() <= 2) {
                     toggleFlying(pPlayer);
                     boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
-                    if (canFly) {
+                    if (canFly && !pPlayer.getAbilities().instabuild) {
                         pPlayer.getCooldowns().addCooldown(this, 300);
                     }
                 }
@@ -71,40 +74,48 @@ public class DreamIntoReality extends Item {
 
     private void toggleFlying(Player pPlayer) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.useSpirituality(300)) {
                 boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
                 if (canFly) {
                     stopFlying(pPlayer);
                 } else {
                     startFlying(pPlayer);
                 }
-            }
         });
     }
 
     private void startFlying(Player pPlayer) {
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+        if (dreamIntoReality.getValue() != 3) {
         pPlayer.getPersistentData().putBoolean(CAN_FLY, true);
         Abilities playerAbilities = pPlayer.getAbilities();
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        dreamIntoReality.setBaseValue(2);
+        dreamIntoReality.setBaseValue(4);
+        if (!playerAbilities.instabuild) {
         playerAbilities.mayfly = true;
         playerAbilities.flying = true;
-        playerAbilities.setFlyingSpeed(0.2F);
+        playerAbilities.setFlyingSpeed(0.2F);}
+        ScaleData scaleData = ScaleTypes.BASE.getScaleData(pPlayer);
+        scaleData.setTargetScale(scaleData.getBaseScale() * 4);
+        scaleData.markForSync(true);
         pPlayer.onUpdateAbilities();
         if (pPlayer instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
-        }
+            serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));}}
     }
 
     private void stopFlying(Player pPlayer) {
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         pPlayer.getPersistentData().putBoolean(CAN_FLY, false);
         Abilities playerAbilities = pPlayer.getAbilities();
+        CompoundTag compoundTag = pPlayer.getPersistentData();
+        int mindscape = compoundTag.getInt("inMindscape");
+        if (!playerAbilities.instabuild || mindscape >= 1) {
         playerAbilities.mayfly = false;
-        playerAbilities.flying = false;
+        playerAbilities.flying = false;}
         dreamIntoReality.setBaseValue(1);
         playerAbilities.setFlyingSpeed(0.05F);
         pPlayer.onUpdateAbilities();
+        ScaleData scaleData = ScaleTypes.BASE.getScaleData(pPlayer);
+        scaleData.setTargetScale(1);
+        scaleData.markForSync(true);
         if (pPlayer instanceof ServerPlayer serverPlayer) {
             serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
         }
@@ -153,7 +164,6 @@ public class DreamIntoReality extends Item {
     public static void tickEvent(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
         boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
-
         if (!pPlayer.level().isClientSide) {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
                 if (canFly) {
