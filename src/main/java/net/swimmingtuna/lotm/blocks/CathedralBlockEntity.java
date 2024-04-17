@@ -1,37 +1,26 @@
-package net.swimmingtuna.lotm.item.Blocks;
+package net.swimmingtuna.lotm.blocks;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BlockEntityInit;
 import net.swimmingtuna.lotm.init.BlockInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.TickableBlockEntity;
-import org.joml.Matrix3dStack;
 
 import java.util.List;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)

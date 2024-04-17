@@ -1,18 +1,19 @@
-package net.swimmingtuna.lotm.item.Blocks;
+package net.swimmingtuna.lotm.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.AbstractGlassBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class MindscapeBlock extends AbstractGlassBlock {
-    public MindscapeBlock(Properties p) {
-        super(Properties.copy(Blocks.GLASS)
+public class VisionaryBB extends AbstractGlassBlock {
+    public VisionaryBB(Properties p) {
+        super(BlockBehaviour.Properties.copy(Blocks.GLASS)
                 .destroyTime(2)
                 .strength(15));
     }

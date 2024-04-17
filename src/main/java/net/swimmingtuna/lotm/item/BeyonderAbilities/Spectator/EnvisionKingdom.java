@@ -120,15 +120,16 @@ public class EnvisionKingdom extends Item {
     @SubscribeEvent
     public static void mindscapeCounter(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
-        CompoundTag compoundTag = pPlayer.getPersistentData();
-        int mindscape = compoundTag.getInt("inMindscape");
-        if (mindscape >= 1) {
-            compoundTag.putInt("inMindscape", mindscape + 1);
-            pPlayer.sendSystemMessage(Component.literal("working" + mindscape));
-        }
-        if (mindscape >= 600) {
-            compoundTag.putInt("inMindscape", 0);
-
+        if(!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
+            CompoundTag compoundTag = pPlayer.getPersistentData();
+            int mindscape = compoundTag.getInt("inMindscape");
+            if (mindscape >= 1) {
+                compoundTag.putInt("inMindscape", mindscape + 1);
+                pPlayer.sendSystemMessage(Component.literal("working" + mindscape));
+            }
+            if (mindscape >= 600) {
+                compoundTag.putInt("inMindscape", 0);
+            }
         }
     }
     @SubscribeEvent

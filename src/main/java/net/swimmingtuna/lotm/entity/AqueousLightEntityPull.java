@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -15,28 +14,32 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 
-public class AqueousLightEntity extends AbstractHurtingProjectile {
-    private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(AqueousLightEntity.class, EntityDataSerializers.BOOLEAN);
+public class AqueousLightEntityPull extends AbstractHurtingProjectile {
+    private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(AqueousLightEntityPull.class, EntityDataSerializers.BOOLEAN);
 
-    public AqueousLightEntity(EntityType<? extends AqueousLightEntity> pEntityType, Level pLevel) {
+    public AqueousLightEntityPull(EntityType<? extends AqueousLightEntityPull> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public AqueousLightEntity(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.AQUEOUS_LIGHT_ENTITY.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+    public AqueousLightEntityPull(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
+        super(EntityInit.AQUEOUS_LIGHT_ENTITY_PULL.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
     }
 
 
+    /**
+     * Return the motion factor for this projectile. The factor is multiplied by the original motion.
+     */
     protected float getInertia() {
         return this.isDangerous() ? 0.73F : super.getInertia();
     }
 
-
+    /**
+     * Returns {@code true} if the entity is on fire. Used by render to add the fire effect on rendering.
+     */
     public boolean isOnFire() {
         return false;
     }
@@ -45,19 +48,18 @@ public class AqueousLightEntity extends AbstractHurtingProjectile {
     protected void onHitEntity(EntityHitResult pResult) {
         if (!this.level().isClientSide()) {
             if (pResult.getEntity() instanceof LivingEntity entity) {
-                CompoundTag compoundTag = entity.getPersistentData();
-                compoundTag.putInt("lightDrowning",1);
                 LivingEntity owner = (LivingEntity) this.getOwner();
+                double x = owner.getX() - entity.getX();
+                double y = owner.getY() - entity.getY();
+                double z = owner.getZ() - entity.getZ();
+                entity.setDeltaMovement(x * 0.3,y * 0.3,z * 0.3);
                 if (owner instanceof Player pPlayer) {
                     BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                       int damage = 20 - (tyrantSequence.getCurrentSequence() * 2);
-                       entity.hurt(damageSources().fall(), damage);
+                        int damage = 15 - (tyrantSequence.getCurrentSequence() * 2);
+                        entity.hurt(damageSources().fall(), damage);
                     });
                 }
-
-                if (compoundTag.getInt("lightDrowning") >= 1) {
-                    this.getOwner().sendSystemMessage(Component.literal("hasInt"));
-                }
+                this.discard();
             }
         }
     }
@@ -91,7 +93,7 @@ public class AqueousLightEntity extends AbstractHurtingProjectile {
 
     public static void summonEntityWithSpeed(Vec3 direction, Vec3 initialVelocity, Vec3 eyePosition, double x, double y, double z, Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
-            AqueousLightEntity aqueousLightEntity = new AqueousLightEntity(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
+            AqueousLightEntityPull aqueousLightEntity = new AqueousLightEntityPull(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
             aqueousLightEntity.setDeltaMovement(initialVelocity);
             Vec3 lightPosition = eyePosition.add(direction.scale(2.0));
             aqueousLightEntity.setPos(lightPosition);
@@ -104,7 +106,7 @@ public class AqueousLightEntity extends AbstractHurtingProjectile {
         if (!pPlayer.level().isClientSide()) {
             Vec3 direction = pPlayer.getViewVector(1.0f);
             Vec3 initialVelocity = direction.scale(2.0);
-            AqueousLightEntity aqueousLightEntity = new AqueousLightEntity(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
+            AqueousLightEntityPull aqueousLightEntity = new AqueousLightEntityPull(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
             CompoundTag tag = aqueousLightEntity.getPersistentData();
             x = tag.getBoolean("waterManipulationPull");
             Vec3 eyePosition = pPlayer.getEyePosition(1.0f);

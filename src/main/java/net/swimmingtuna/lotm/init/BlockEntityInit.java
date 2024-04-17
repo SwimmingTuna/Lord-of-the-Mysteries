@@ -5,8 +5,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.item.Blocks.CathedralBlock;
-import net.swimmingtuna.lotm.item.Blocks.CathedralBlockEntity;
+import net.swimmingtuna.lotm.blocks.CathedralBlockEntity;
 
 public class BlockEntityInit {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =

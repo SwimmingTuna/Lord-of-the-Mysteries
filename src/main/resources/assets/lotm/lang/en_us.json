@@ -20,8 +20,6 @@
   "item.lotm.prophesize": "Prophesize: Teleport to Block",
   "item.lotm.prophesizeplayer": "Prophesize: Teleport to Player",
   "item.lotm.prophesizedemise": "Prophesize Demise",
-
-
   "item.lotm.envisionlife": "Envision Life",
   "item.lotm.envisionnature": "Meteor Shower",
   "item.lotm.envisionweather": "Envision Weather",
@@ -35,16 +33,16 @@
   "item.lotm.applymanipulation": "Apply Manipulation",
   "item.lotm.envisionlocationblink": "Envision Location (Blink)",
 
-  "lotm.beyonder_spectator9": "Spectator",
-
-
   "block.lotm.visionary_barrier_block": "Visionary BB",
   "block.lotm.cathedral_block": "Cathedral Block",
   "block.lotm.mindscape_block": "Mindscape Block",
   "block.lotm.mindscape_outside": "Mindscape Outside",
 
-
-
+  "item.lotm.enableordisablelightning": "Enable/Disable Lightning",
+  "item.lotm.ragingblows": "Raging Blows",
+  "item.lotm.aqueouslightdrown": "Water Manipulation: Drown",
+  "item.lotm.aqueouslightpull": "Water Manipulation: Pull",
+  "item.lotm.aqueouslightpush": "Water Manipulation: Push",
 
 
   "item.lotm.spectator_9_potion": "Spectator 9 Potion",

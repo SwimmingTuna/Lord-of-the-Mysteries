@@ -6,9 +6,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.AqueousLight;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.EnableOrDisableLightning;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.RagingBlows;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
@@ -111,7 +109,11 @@ public class ItemInit {
     public static final RegistryObject<Item> RagingBlows = ITEMS.register("ragingblows",
             () -> new RagingBlows(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> AqueousLightDrown = ITEMS.register("aqueouslightdrown",
-            () -> new AqueousLight(new Item.Properties().stacksTo(1)));
+            () -> new AqueousLightDrown(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> AqueousLightPush = ITEMS.register("aqueouslightpush",
+            () -> new AqueousLightPush(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> AqueousLightPull = ITEMS.register("aqueouslightpull",
+            () -> new AqueousLightPull(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnableOrDisableLightning = ITEMS.register("enableordisablelightning",
             () -> new EnableOrDisableLightning(new Item.Properties().stacksTo(1)));
 

@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,6 +16,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.ClientConfigs;
+import net.swimmingtuna.lotm.entity.AqueousLightEntityPushRenderer;
+import net.swimmingtuna.lotm.entity.AqueousLightEntityPullRenderer;
 import net.swimmingtuna.lotm.entity.AqueousLightEntityRenderer;
 import net.swimmingtuna.lotm.events.ClientEvents;
 import net.swimmingtuna.lotm.init.*;
@@ -77,6 +78,8 @@ public class LOTM {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         EntityRenderers.register(EntityInit.AQUEOUS_LIGHT_ENTITY.get(), AqueousLightEntityRenderer::new);
+        EntityRenderers.register(EntityInit.AQUEOUS_LIGHT_ENTITY_PULL.get(), AqueousLightEntityPullRenderer::new);
+        EntityRenderers.register(EntityInit.AQUEOUS_LIGHT_ENTITY_JET.get(), AqueousLightEntityPushRenderer::new);
     }
 
     // Add the example block item to the building blocks tab
@@ -130,6 +133,8 @@ public class LOTM {
                 event.accept(ItemInit.RagingBlows);
                 event.accept(ItemInit.AqueousLightDrown);
                 event.accept(ItemInit.EnableOrDisableLightning);
+                event.accept(ItemInit.AqueousLightPull);
+                event.accept(ItemInit.AqueousLightPush);
         }
         if(event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(BlockInit.VISIONARY_BARRIER_BLOCK);

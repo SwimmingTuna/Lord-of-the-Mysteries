@@ -58,11 +58,12 @@ public class DragonBreath extends Item {
         Vec3 fireballPosition = eyePosition.add(direction.scale(1.2));
 
         SmallFireball fireball = new SmallFireball(EntityType.SMALL_FIREBALL, pPlayer.level());
-        Vec3 initialVelocity = direction.scale(2.0); // Adjust the scale factor as needed
+        Vec3 initialVelocity = direction.scale(2.0);
+
+
         fireball.setDeltaMovement(initialVelocity);
         fireball.setPos(fireballPosition);
         fireball.setOwner(pPlayer);
-
         pPlayer.level().addFreshEntity(fireball);
     }
     @Override

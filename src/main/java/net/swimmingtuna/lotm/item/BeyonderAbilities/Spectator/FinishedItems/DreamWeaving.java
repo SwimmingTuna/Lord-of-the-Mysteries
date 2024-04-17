@@ -271,8 +271,7 @@ public class DreamWeaving extends Item implements ReachChangeUUIDs {
         AttributeInstance maxHP = entity.getAttribute(Attributes.MAX_HEALTH);
         if (!(entity instanceof Player) && maxHP.getBaseValue() == 551) {
             int deathTimer = entity.getPersistentData().getInt("DeathTimer");
-            deathTimer++;
-            entity.getPersistentData().putInt("DeathTimer", deathTimer);
+            entity.getPersistentData().putInt("DeathTimer", deathTimer + 1);
             if (deathTimer >= 300) {
                 entity.remove(Entity.RemovalReason.KILLED);
             }
