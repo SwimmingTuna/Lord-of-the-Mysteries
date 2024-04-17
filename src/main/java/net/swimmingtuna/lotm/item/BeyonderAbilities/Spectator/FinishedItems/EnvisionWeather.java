@@ -45,35 +45,36 @@ public class EnvisionWeather extends Item {
         Level level = event.getPlayer().serverLevel();
         Player pPlayer = event.getPlayer();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather) {
             if (!holder.isSpectatorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-            if (holder.getSpirituality() < (int) 500/dreamIntoReality.getValue()) {
-                pPlayer.displayClientMessage(Component.literal("You need "  + ((int) 500/dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            if (holder.getSpirituality() < (int) 500 / dreamIntoReality.getValue()) {
+                pPlayer.displayClientMessage(Component.literal("You need " + ((int) 500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
+            String message = event.getMessage().getString().toLowerCase();
+            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+                if (holder.isSpectatorClass() && pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather && spectatorSequence.getCurrentSequence() == 0) {
+                    if (message.equals("clear") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
+                        setWeatherClear(level);
+                        event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Clear"), true);
+                        spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
+                        event.setCanceled(true);
+                    }
+                    if (message.equals("rain") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
+                        event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Rain"), true);
+                        setWeatherRain(level);
+                        event.setCanceled(true);
+                    }
+                    if (message.equals("thunder") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
+                        event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Thunder"), true);
+                        setWeatherThunder(level);
+                        event.setCanceled(true);
+                    }
+                }
+            });
         }
-        String message = event.getMessage().getString().toLowerCase();
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather && spectatorSequence.getCurrentSequence() == 9) {
-        if (message.equals("clear") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
-            setWeatherClear(level);
-            event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Clear"), true);
-            spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
-            event.setCanceled(true);
-        }
-        if (message.equals("rain") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
-            event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Rain"), true);
-            setWeatherRain(level);
-            event.setCanceled(true);
-        }
-        if (message.equals("thunder") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
-            event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Thunder"), true);
-            setWeatherThunder(level);
-            event.setCanceled(true);
-        }}
-    });
     }
 
     private static void setWeatherClear(Level level) {

@@ -110,7 +110,7 @@ public class ModEvents {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 8) {
+                if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7) {
                     LivingEntity target = (LivingEntity) event.getTarget();
                     if (x) {
                     if (target != pPlayer) {

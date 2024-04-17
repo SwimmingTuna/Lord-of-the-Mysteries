@@ -90,8 +90,9 @@ public class DreamWeaving extends Item implements ReachChangeUUIDs {
         double y = targetEntity.getY();
         double z = targetEntity.getZ();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
             AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof DreamWeaving && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(250)) {
+            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof DreamWeaving && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(250)) {
                 (targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS, 150, 1, false, false));
                 Random random = new Random();
                 int times = 20 - (spectatorSequence.getCurrentSequence() * 3);

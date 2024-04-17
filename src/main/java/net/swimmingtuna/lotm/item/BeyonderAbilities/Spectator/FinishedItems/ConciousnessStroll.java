@@ -40,6 +40,14 @@ public class ConciousnessStroll extends Item {
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         String message = event.getMessage().getString().toLowerCase();
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof ConciousnessStroll) {
+            if (!holder.isSpectatorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+            if (holder.getSpirituality() < (int) 500/dreamIntoReality.getValue()) {
+                pPlayer.displayClientMessage(Component.literal("You need 500 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
+        }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             if (holder.isSpectatorClass() && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof ConciousnessStroll && spectatorSequence.getCurrentSequence() <= 2) {
                 Player targetPlayer = null;

@@ -47,7 +47,8 @@ public class ManipulateFondness extends Item implements ReachChangeUUIDs {
             }
         }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(100)) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(100)) {
                 manipulateEmotion(pPlayer);
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 100);

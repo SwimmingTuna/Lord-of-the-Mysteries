@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
@@ -24,6 +25,8 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.AqueousLightEntity;
 import net.swimmingtuna.lotm.entity.AqueousLightEntityPull;
+import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.EnvisionKingdom;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -138,6 +141,28 @@ public class AqueousLightDrown extends Item {
                     }
                 }
             }
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightDrown) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightPull.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightDrown) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightPull.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
         }
     }
 }

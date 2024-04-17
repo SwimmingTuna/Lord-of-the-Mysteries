@@ -8,6 +8,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
@@ -48,10 +49,20 @@ public class AqueousLightEntity extends AbstractHurtingProjectile {
                 CompoundTag compoundTag = entity.getPersistentData();
                 compoundTag.putInt("lightDrowning",1);
                 LivingEntity owner = (LivingEntity) this.getOwner();
+                CompoundTag ownerTag = owner.getPersistentData();
+                boolean sailorLightning = ownerTag.getBoolean("SailorLightning");
                 if (owner instanceof Player pPlayer) {
                     BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
                        int damage = 20 - (tyrantSequence.getCurrentSequence() * 2);
                        entity.hurt(damageSources().fall(), damage);
+                        if (tyrantSequence.getCurrentSequence() <= 7) {
+                            double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5)); // Decrease chance by 12.5% for each level below 9
+                            if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
+                                LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
+                                lightningBolt.moveTo(entity.getX(), entity.getY(), entity.getZ());
+                                entity.level().addFreshEntity(lightningBolt);
+                            }
+                        }
                     });
                 }
 

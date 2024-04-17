@@ -39,10 +39,11 @@ public class Placate extends Item {
                     pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
             }
-            if (spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(50)) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(50)) {
                 removeHarmfulEffects(pInteractionTarget);
             }
-            if (spectatorSequence.getCurrentSequence() < 7 && spectatorSequence.getCurrentSequence() > 4 && spectatorSequence.useSpirituality(50)){
+            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() < 7 && spectatorSequence.getCurrentSequence() > 4 && spectatorSequence.useSpirituality(50)){
                 halfHarmfulEffects(pInteractionTarget);
             }
             if (!pPlayer.getAbilities().instabuild) {

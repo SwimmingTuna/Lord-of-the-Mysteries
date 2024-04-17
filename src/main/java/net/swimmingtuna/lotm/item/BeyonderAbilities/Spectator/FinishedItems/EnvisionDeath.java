@@ -42,7 +42,8 @@ public class EnvisionDeath extends Item {
             }
         }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality(2000)) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality(2000)) {
                 AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
                 envisionDeath(pPlayer, (int) dreamIntoReality.getValue());
                 if (!pPlayer.getAbilities().instabuild)

@@ -81,15 +81,13 @@ public class RagingBlows extends Item {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
                 int ragingBlows = persistentData.getInt("ragingBlows");
                 int radius = (45 - (tyrantSequence.getCurrentSequence() * 5));
-                int damage = (int) (20 - tyrantSequence.getCurrentSequence() * 1.5);
+                int damage = (int) (20 - tyrantSequence.getCurrentSequence() * 2);
                 if (ragingBlows >= 1) {
                     persistentData.putInt("ragingBlows", ragingBlows + 1);
-                    pPlayer.sendSystemMessage(Component.literal("blows is" + ragingBlows));
                 }
-                if (ragingBlows == 8 || ragingBlows == 16 || ragingBlows == 24 || ragingBlows == 32 || ragingBlows == 40 || ragingBlows == 48 || ragingBlows == 56 || ragingBlows == 64 || ragingBlows == 72 || ragingBlows == 80 || ragingBlows == 88 || ragingBlows == 96 || ragingBlows == 4 || ragingBlows == 12 || ragingBlows == 20 || ragingBlows == 28 || ragingBlows == 36 || ragingBlows == 44 || ragingBlows == 52 || ragingBlows == 60 || ragingBlows == 68 || ragingBlows == 76 || ragingBlows == 84 || ragingBlows == 92) {
-
-                }
-                if (ragingBlows == 8) {
+                if (ragingBlows == 6 || ragingBlows == 12 || ragingBlows == 18 || ragingBlows == 24 || ragingBlows == 30 || ragingBlows == 36 || ragingBlows == 42 ||
+                        ragingBlows == 48 || ragingBlows == 54 || ragingBlows == 60 || ragingBlows == 66 || ragingBlows == 72 || ragingBlows == 78 ||
+                        ragingBlows == 84 || ragingBlows == 90 || ragingBlows == 96) {
                     pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
                     for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
                         if (entity != pPlayer) {
@@ -98,220 +96,11 @@ public class RagingBlows extends Item {
                             double z = pPlayer.getZ() - entity.getZ();
                             entity.knockback(0.25, x, z);
                             if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
-                                if (Math.random() * 100 < chanceOfDamage) {
-                                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (ragingBlows == 16) {
-                    pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                        if (entity != pPlayer) {
-                            entity.hurt(entity.damageSources().generic(), damage);
-                            double x = pPlayer.getX() - entity.getX();
-                            double z = pPlayer.getZ() - entity.getZ();
-                            entity.knockback(0.25, x, z);
-                            if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
+                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5)); // Decrease chance by 12.5% for each level below 9
                                 if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
                                     LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (ragingBlows == 24) {
-                    pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                        if (entity != pPlayer) {
-                            entity.hurt(entity.damageSources().generic(), damage);
-                            double x = pPlayer.getX() - entity.getX();
-                            double z = pPlayer.getZ() - entity.getZ();
-                            entity.knockback(0.25, x, z);
-                            if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
-                                if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (ragingBlows == 32) {
-                    pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                        if (entity != pPlayer) {
-                            entity.hurt(entity.damageSources().generic(), damage);
-                            double x = pPlayer.getX() - entity.getX();
-                            double z = pPlayer.getZ() - entity.getZ();
-                            entity.knockback(0.25, x, z);
-                            if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
-                                if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (ragingBlows == 40) {
-                    pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                        if (entity != pPlayer) {
-                            entity.hurt(entity.damageSources().generic(), damage);
-                            double x = pPlayer.getX() - entity.getX();
-                            double z = pPlayer.getZ() - entity.getZ();
-                            entity.knockback(0.25, x, z);
-                            if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
-                                if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (ragingBlows == 48) {
-                    pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                        if (entity != pPlayer) {
-                            entity.hurt(entity.damageSources().generic(), damage);
-                            double x = pPlayer.getX() - entity.getX();
-                            double z = pPlayer.getZ() - entity.getZ();
-                            entity.knockback(0.25, x, z);
-                            if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
-                                if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (ragingBlows == 56) {
-                    pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                        if (entity != pPlayer) {
-                            entity.hurt(entity.damageSources().generic(), damage);
-                            double x = pPlayer.getX() - entity.getX();
-                            double z = pPlayer.getZ() - entity.getZ();
-                            entity.knockback(0.25, x, z);
-                            if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
-                                if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (ragingBlows == 64) {
-                    pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                        if (entity != pPlayer) {
-                            entity.hurt(entity.damageSources().generic(), damage);
-                            double x = pPlayer.getX() - entity.getX();
-                            double z = pPlayer.getZ() - entity.getZ();
-                            entity.knockback(0.25, x, z);
-                            if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
-                                if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (ragingBlows == 72) {
-                    pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                        if (entity != pPlayer) {
-                            entity.hurt(entity.damageSources().generic(), damage);
-                            double x = pPlayer.getX() - entity.getX();
-                            double z = pPlayer.getZ() - entity.getZ();
-                            entity.knockback(0.25, x, z);
-                            if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
-                                if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (ragingBlows == 80) {
-                    pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                        if (entity != pPlayer) {
-                            entity.hurt(entity.damageSources().generic(), damage);
-                            double x = pPlayer.getX() - entity.getX();
-                            double z = pPlayer.getZ() - entity.getZ();
-                            entity.knockback(0.25, x, z);
-                            if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
-                                if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (ragingBlows == 88) {
-                    pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                        if (entity != pPlayer) {
-                            entity.hurt(entity.damageSources().generic(), damage);
-                            double x = pPlayer.getX() - entity.getX();
-                            double z = pPlayer.getZ() - entity.getZ();
-                            entity.knockback(0.25, x, z);
-                            if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
-                                if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
-                                }
-                            }
-                        }
-                    }
-                }
-                if (ragingBlows == 96) {
-                    pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 0.5F, 0.5F);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                        if (entity != pPlayer) {
-                            entity.hurt(entity.damageSources().generic(), damage);
-                            double x = pPlayer.getX() - entity.getX();
-                            double z = pPlayer.getZ() - entity.getZ();
-                            entity.knockback(0.25, x, z);
-                            if (tyrantSequence.getCurrentSequence() <= 7) {
-                                double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5));
-                                if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                    LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                    lightningBolt.hurt(entity.damageSources().lightningBolt(), 5);
-                                    pPlayer.sendSystemMessage(Component.literal("working!"));
+                                    lightningBolt.moveTo(entity.getX(), entity.getY(), entity.getZ());
+                                    entity.level().addFreshEntity(lightningBolt);
                                 }
                             }
                         }

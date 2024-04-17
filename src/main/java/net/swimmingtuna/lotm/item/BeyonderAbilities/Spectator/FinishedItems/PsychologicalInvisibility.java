@@ -52,7 +52,8 @@ public class PsychologicalInvisibility extends Item  {
         if (!pPlayer.level().isClientSide) {
         boolean hadArmor = pPlayer.getPersistentData().getBoolean("HAD_ARMOR_TAG");
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() <= 4) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                if (spectatorSequence.getCurrentSequence() <= 4 && holder.isSpectatorClass()) {
                 if (hadArmor || !storedArmor.isEmpty()) {
                     restoreArmor(pPlayer);
                     storedArmor.clear();

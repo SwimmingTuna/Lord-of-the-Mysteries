@@ -36,14 +36,15 @@ public class MeteorShower extends Item {
             if (holder.getSpirituality() < 2500) {
                 pPlayer.displayClientMessage(Component.literal("You need 2500 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-        }
+
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() == 1 && spectatorSequence.useSpirituality(2500)) {
+            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() == 1 && spectatorSequence.useSpirituality(2500)) {
                 setHealth(pPlayer);
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 900);
             }
         });
+            }
         return super.use(level, pPlayer, hand);
     }
 

@@ -46,7 +46,8 @@ public class EnvisionHealth extends Item {
             }
         }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
                 setHealth(pPlayer);
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 2400);

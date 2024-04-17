@@ -53,7 +53,8 @@ public class EnvisionBarrier extends Item {
         }
         BlockPos playerPos = pPlayer.getOnPos();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide() && spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (800 / dreamIntoReality.getValue()))) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide() && spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (800 / dreamIntoReality.getValue()))) {
                 generateBarrier(pPlayer, level, playerPos);
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 100);

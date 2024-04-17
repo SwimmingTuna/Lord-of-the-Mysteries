@@ -70,19 +70,20 @@ public class BattleHypnotism extends Item implements ReachChangeUUIDs {
             if (holder.getSpirituality() < 150) {
                 pPlayer.displayClientMessage(Component.literal("You need 150 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-        }
-        Level level = pPlayer.level();
-        BlockPos positionClicked = pContext.getClickedPos();
-        if (!pContext.getLevel().isClientSide && !pPlayer.level().isClientSide) {
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (spectatorSequence.getCurrentSequence() <= 6 &&  BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(150)) {
-                    AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                    makesEntitiesAttackEachOther(pPlayer, level, positionClicked, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 300);
+
+            Level level = pPlayer.level();
+            BlockPos positionClicked = pContext.getClickedPos();
+            if (!pContext.getLevel().isClientSide && !pPlayer.level().isClientSide) {
+                BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+                    if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 6 && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(150)) {
+                        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+                        makesEntitiesAttackEachOther(pPlayer, level, positionClicked, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
+                        if (!pPlayer.getAbilities().instabuild) {
+                            pPlayer.getCooldowns().addCooldown(this, 300);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         return InteractionResult.SUCCESS;
     }

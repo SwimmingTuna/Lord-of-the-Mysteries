@@ -82,7 +82,8 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
 
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (spectatorSequence.getCurrentSequence() <= 4 && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality((int) (200/ dreamIntoReality.getValue()))) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 4 && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality((int) (200/ dreamIntoReality.getValue()))) {
                     manipulateEntities(pPlayer, level, targetPos, spectatorSequence.getCurrentSequence());
                     resetTargetPos(pPlayer);
                     if (!pPlayer.getAbilities().instabuild) {

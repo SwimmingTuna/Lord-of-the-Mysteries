@@ -38,18 +38,18 @@ public class Discern extends Item {
             if (!holder.isSpectatorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-            if (holder.getSpirituality() < (int) (1000/ dreamIntoReality.getValue())) {
-                pPlayer.displayClientMessage(Component.literal("You need " + ((int) (1000/ dreamIntoReality.getValue()) + " spirituality in order to use this")).withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD), true);
+            if (holder.getSpirituality() < (int) (1000 / dreamIntoReality.getValue())) {
+                pPlayer.displayClientMessage(Component.literal("You need " + ((int) (1000 / dreamIntoReality.getValue()) + " spirituality in order to use this")).withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD), true);
             }
-        }
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (spectatorSequence.getCurrentSequence() <= 2 && spectatorSequence.useSpirituality((int) (1000 / dreamIntoReality.getValue()))) {
 
-                removeCooldown(pPlayer);
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 900);
-            }
-        });
+            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 2 && spectatorSequence.useSpirituality((int) (1000 / dreamIntoReality.getValue()))) {
+                    removeCooldown(pPlayer);
+                    if (!pPlayer.getAbilities().instabuild)
+                        pPlayer.getCooldowns().addCooldown(this, 900);
+                }
+            });
+        }
         return super.use(level, pPlayer, hand);
     }
 

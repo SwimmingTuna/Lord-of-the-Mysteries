@@ -82,7 +82,8 @@ public class MentalPlague extends Item implements ReachChangeUUIDs {
         ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
         Entity targetEntity = event.getTarget();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MentalPlague && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(200)) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MentalPlague && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(200)) {
                 ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(),620,1));
                 if (!pPlayer.getAbilities().instabuild) {
                     pPlayer.getCooldowns().addCooldown(itemStack.getItem(), (int) (100 / dreamIntoReality.getValue()));

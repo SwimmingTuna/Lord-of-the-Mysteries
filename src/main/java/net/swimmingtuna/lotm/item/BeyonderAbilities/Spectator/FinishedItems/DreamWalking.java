@@ -80,7 +80,7 @@ public class DreamWalking extends Item implements ReachChangeUUIDs {
             ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
             Entity targetEntity = event.getTarget();
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof DreamWalking && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 5 && spectatorSequence.useSpirituality(70)) {
+                if (holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof DreamWalking && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 5 && spectatorSequence.useSpirituality(70)) {
                     double x = targetEntity.getX();
                     double y = targetEntity.getY();
                     double z = targetEntity.getZ();

@@ -40,7 +40,7 @@ public class Awe extends Item {
                 pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(75)) {
+                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(75)) {
                     AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
                     applyPotionEffectToEntities(pPlayer, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
                     if (!pPlayer.getAbilities().instabuild)

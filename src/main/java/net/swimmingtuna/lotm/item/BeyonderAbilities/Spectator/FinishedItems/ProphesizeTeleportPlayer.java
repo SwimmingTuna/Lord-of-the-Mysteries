@@ -45,7 +45,8 @@ public class ProphesizeTeleportPlayer extends Item {
                     pPlayer.displayClientMessage(Component.literal("You need 750 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
             }
-            if (spectatorSequence.getCurrentSequence() <= 1 && spectatorSequence.useSpirituality(750)) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 1 && spectatorSequence.useSpirituality(750)) {
                 AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
                 teleportEntities(pPlayer, level, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
                 if (!pPlayer.getAbilities().instabuild)

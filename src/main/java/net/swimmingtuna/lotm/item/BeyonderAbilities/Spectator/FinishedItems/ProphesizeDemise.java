@@ -101,7 +101,8 @@ public class ProphesizeDemise extends Item implements ReachChangeUUIDs {
         }        ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
         Entity targetEntity = event.getTarget();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof ProphesizeDemise && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 1 && spectatorSequence.useSpirituality(1000)) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof ProphesizeDemise && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 1 && spectatorSequence.useSpirituality(1000)) {
                 ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.SPECTATORDEMISE.get(), 600, 1, false, false));
                 if (!pPlayer.getAbilities().instabuild) {
                     AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());

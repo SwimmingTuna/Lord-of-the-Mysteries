@@ -81,7 +81,8 @@ public class PlagueStorm extends Item implements ReachChangeUUIDs {
         Entity targetEntity = event.getTarget();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof PlagueStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(400)) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof PlagueStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(400)) {
                 ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS,80,1,false,false));
                 for (LivingEntity targetEntity1 : targetEntity.level().getEntitiesOfClass(LivingEntity.class, targetEntity.getBoundingBox().inflate(30 * dreamIntoReality.getValue()))) {
                     if (targetEntity1 != pPlayer) {

@@ -73,7 +73,8 @@ public class Nightmare extends Item implements ReachChangeUUIDs {
         BlockPos positionClicked = pContext.getClickedPos();
         if (!pContext.getLevel().isClientSide) {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (spectatorSequence.getCurrentSequence() <= 5 &&  BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(100)) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 5 &&  BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(100)) {
                     useNightmare(pPlayer, level, positionClicked, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
                     if (!pPlayer.getAbilities().instabuild) {
                         pPlayer.getCooldowns().addCooldown(this, 110);

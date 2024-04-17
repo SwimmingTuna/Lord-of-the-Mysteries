@@ -45,26 +45,25 @@ public class EnvisionKingdom extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        if (!pPlayer.level().isClientSide) {
             if (!pPlayer.level().isClientSide()) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
                 if (!holder.isSpectatorClass()) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
-                if (holder.getSpirituality() < (int) 3500/dreamIntoReality.getValue()) {
-                    pPlayer.displayClientMessage(Component.literal("You need " + ((int) 3500/dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                if (holder.getSpirituality() < (int) 3500 / dreamIntoReality.getValue()) {
+                    pPlayer.displayClientMessage(Component.literal("You need " + ((int) 3500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
-            }
-            BlockPos playerPos = pPlayer.getOnPos();
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
-                    generateCathedral(pPlayer, playerPos, level);
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 900);
+
+                BlockPos playerPos = pPlayer.getOnPos();
+                BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+                    if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
+                        generateCathedral(pPlayer, playerPos, level);
+                        if (!pPlayer.getAbilities().instabuild) {
+                            pPlayer.getCooldowns().addCooldown(this, 900);
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
         return super.use(level, pPlayer, hand);
     }
 

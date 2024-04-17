@@ -56,11 +56,8 @@ public class DreamIntoReality extends Item {
             if (holder.getSpirituality() < 50) {
                 pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-        }
-        ItemStack itemStack = pPlayer.getItemInHand(hand);
-        if (!pPlayer.level().isClientSide) {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (spectatorSequence.getCurrentSequence() <= 2) {
+                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 2) {
                     toggleFlying(pPlayer);
                     boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
                     if (canFly && !pPlayer.getAbilities().instabuild) {
@@ -69,6 +66,7 @@ public class DreamIntoReality extends Item {
                 }
             });
         }
+        ItemStack itemStack = pPlayer.getItemInHand(hand);
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemStack);
     }
 

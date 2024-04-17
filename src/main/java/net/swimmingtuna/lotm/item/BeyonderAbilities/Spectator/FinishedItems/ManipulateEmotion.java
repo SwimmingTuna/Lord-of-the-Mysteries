@@ -46,8 +46,9 @@ public class ManipulateEmotion extends Item implements ReachChangeUUIDs {
             }
         }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
             AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-            if (spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(500)) {
+            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(500)) {
                 manipulateEmotion(pPlayer, spectatorSequence.getCurrentSequence());
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, (int) (1200/ dreamIntoReality.getValue()));

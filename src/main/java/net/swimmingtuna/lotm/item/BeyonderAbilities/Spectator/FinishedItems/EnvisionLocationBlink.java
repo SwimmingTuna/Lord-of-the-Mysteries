@@ -72,7 +72,8 @@ public class EnvisionLocationBlink extends Item {
                 pPlayer.displayClientMessage(Component.literal("You need "  + (blinkDistance * 8) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
         }        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide() && spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality(blinkDistance * 8)) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide() && spectatorSequence.getCurrentSequence() == 0 && spectatorSequence.useSpirituality(blinkDistance * 8)) {
                 Vec3 lookVector = pPlayer.getLookAngle();
                 double targetX = pPlayer.getX() + blinkDistance * lookVector.x();
                 double targetY = (pPlayer.getY() + 1) + blinkDistance * lookVector.y();

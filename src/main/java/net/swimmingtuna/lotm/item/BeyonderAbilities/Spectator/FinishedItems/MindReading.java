@@ -72,8 +72,9 @@ public class MindReading extends Item implements ReachChangeUUIDs {
                 pPlayer.displayClientMessage(Component.literal("You need 20 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
         }        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
             AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-            if (spectatorSequence.getCurrentSequence() <= 8 && !pInteractionTarget.level().isClientSide && pInteractionTarget instanceof Player && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(20)) {
+            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 8 && !pInteractionTarget.level().isClientSide && pInteractionTarget instanceof Player && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(20)) {
             for (int i = 0; i < ((Player) pInteractionTarget).getInventory().getContainerSize(); i++) {
                 ItemStack itemStack = ((Player) pInteractionTarget).getInventory().getItem(i);
                 if (!itemStack.isEmpty()) {

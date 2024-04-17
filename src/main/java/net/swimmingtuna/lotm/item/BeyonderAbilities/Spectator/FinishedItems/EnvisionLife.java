@@ -56,17 +56,18 @@ public class EnvisionLife extends Item {
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         String message = event.getMessage().getString().toLowerCase();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && spectatorSequence.getCurrentSequence() == 0) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && spectatorSequence.getCurrentSequence() == 0) {
                 if (!holder.isSpectatorClass()) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
                 if (holder.getSpirituality() < 1500) {
                     pPlayer.displayClientMessage(Component.literal("You need "  + ((int) 1500/dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
-                    spawnMob(pPlayer,message);}
+                    spawnMob(pPlayer,message);
                 spectatorSequence.useSpirituality((int) (1500/dreamIntoReality.getValue()));
                 event.setCanceled(true);
+            }
         });
     }
 

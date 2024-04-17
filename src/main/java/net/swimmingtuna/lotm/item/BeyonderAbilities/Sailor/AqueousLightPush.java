@@ -11,11 +11,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.AqueousLightEntityPush;
+import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.EnvisionKingdom;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -64,5 +68,27 @@ public class AqueousLightPush extends Item {
                     "Cooldown: 2 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightPush) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightDrown.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightPush) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightDrown.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
     }
 }
