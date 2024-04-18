@@ -26,7 +26,7 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
     }
 
     public AqueousLightEntityPush(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.AQUEOUS_LIGHT_ENTITY_PULL.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+        super(EntityInit.AQUEOUS_LIGHT_ENTITY_PUSH.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
     }
 
 
@@ -113,13 +113,11 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
         }
     }
 
-    public static void summonEntityWhip(Player pPlayer, LivingEntity pEntity, boolean x) {
+    public static void summonEntityWhip(Player pPlayer, LivingEntity pEntity) {
         if (!pPlayer.level().isClientSide()) {
             Vec3 direction = pPlayer.getViewVector(1.0f);
             Vec3 initialVelocity = direction.scale(2.0);
             AqueousLightEntityPush aqueousLightEntity = new AqueousLightEntityPush(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
-            CompoundTag tag = aqueousLightEntity.getPersistentData();
-            x = tag.getBoolean("waterManipulationPull");
             Vec3 eyePosition = pPlayer.getEyePosition(1.0f);
             summonEntityWithSpeed(direction, initialVelocity, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer);
         }

@@ -1,9 +1,11 @@
 package net.swimmingtuna.lotm;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -11,14 +13,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.ClientConfigs;
-import net.swimmingtuna.lotm.entity.AqueousLightEntityPushRenderer;
-import net.swimmingtuna.lotm.entity.AqueousLightEntityPullRenderer;
-import net.swimmingtuna.lotm.entity.AqueousLightEntityRenderer;
+import net.swimmingtuna.lotm.entity.Meteor.MeteorEntityRenderer;
+import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityPushRenderer;
+import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityPullRenderer;
+import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityRenderer;
 import net.swimmingtuna.lotm.events.ClientEvents;
 import net.swimmingtuna.lotm.init.*;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
@@ -44,6 +46,11 @@ public class LOTM {
     public static final String MOD_ID = "lotm";
 
     private static final Logger LOGGER = LogUtils.getLogger();
+
+    public static ResourceLocation rl(String name)
+    {
+        return new ResourceLocation(LOTM.MOD_ID, name);
+    }
     public LOTM()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -76,12 +83,15 @@ public class LOTM {
     }
 
     @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        EntityRenderers.register(EntityInit.AQUEOUS_LIGHT_ENTITY.get(), AqueousLightEntityRenderer::new);
-        EntityRenderers.register(EntityInit.AQUEOUS_LIGHT_ENTITY_PULL.get(), AqueousLightEntityPullRenderer::new);
-        EntityRenderers.register(EntityInit.AQUEOUS_LIGHT_ENTITY_JET.get(), AqueousLightEntityPushRenderer::new);
-    }
+    @OnlyIn(Dist.CLIENT)
+    public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY.get(), AqueousLightEntityRenderer::new);
+        event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY_PUSH.get(), AqueousLightEntityPushRenderer::new);
+        event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY_PULL.get(), AqueousLightEntityPullRenderer::new);
+        event.registerEntityRenderer(EntityInit.METEOR_ENTITY.get(), MeteorEntityRenderer::new);
 
+
+    }
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {

@@ -90,7 +90,7 @@ public class ProphesizeDemise extends Item implements ReachChangeUUIDs {
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         Player pPlayer = event.getEntity();
-        if (!pPlayer.level().isClientSide()) {
+        if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof ProphesizeDemise) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
             if (!holder.isSpectatorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
