@@ -17,7 +17,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.ClientConfigs;
-import net.swimmingtuna.lotm.entity.Meteor.MeteorEntityRenderer;
 import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityPushRenderer;
 import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityPullRenderer;
 import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityRenderer;
@@ -88,11 +87,9 @@ public class LOTM {
         event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY.get(), AqueousLightEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY_PUSH.get(), AqueousLightEntityPushRenderer::new);
         event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY_PULL.get(), AqueousLightEntityPullRenderer::new);
-        event.registerEntityRenderer(EntityInit.METEOR_ENTITY.get(), MeteorEntityRenderer::new);
 
 
     }
-    // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
                 event.accept(ItemInit.MindReading);
