@@ -23,7 +23,7 @@ public class MeteorEntityRenderer extends EntityRenderer<MeteorEntity> {
 
     public MeteorEntityRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
-        this.model = new MeteorModel(pContext.bakeLayer(ModelLayers.TRIDENT));
+        this.model = new MeteorModel(pContext.bakeLayer(MeteorModel.METEOR_LOCATION));
     }
 
     @Override

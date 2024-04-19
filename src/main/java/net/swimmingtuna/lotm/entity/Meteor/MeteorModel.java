@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.entity.Meteor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
@@ -12,7 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.swimmingtuna.lotm.LOTM;
 
 public class MeteorModel <T extends Entity> extends EntityModel<T> {
-    public static final ResourceLocation TEXTURE = new ResourceLocation(LOTM.MOD_ID, "textures/entity/aqueouslight.png");
+    public static final ModelLayerLocation METEOR_LOCATION = new ModelLayerLocation(new ResourceLocation(LOTM.MOD_ID, "meteor"), "main");
     private final ModelPart outline1;
     private final ModelPart bone2;
     private final ModelPart bone3;
