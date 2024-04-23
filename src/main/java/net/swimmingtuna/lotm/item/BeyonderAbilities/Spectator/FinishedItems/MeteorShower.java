@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator;
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
 import net.minecraft.ChatFormatting;
@@ -6,20 +6,23 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fml.common.Mod;
+import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.entity.MeteorEntity;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
+@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MeteorShower extends Item {
 
     public MeteorShower(Properties pProperties) {
@@ -38,8 +41,8 @@ public class MeteorShower extends Item {
             }
 
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() == 1 && spectatorSequence.useSpirituality(2500)) {
-                setHealth(pPlayer);
+            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() >= 1 && spectatorSequence.useSpirituality(20)) {
+                meteorShower(pPlayer);
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 900);
             }
@@ -48,10 +51,18 @@ public class MeteorShower extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    private void setHealth(Player pPlayer) {
-        AttributeInstance maxHP = pPlayer.getAttribute(Attributes.MAX_HEALTH);
-        double maxHealth = maxHP.getValue();
-        pPlayer.setHealth((float) maxHealth);
+    public static void meteorShower(Player pPlayer) {
+        Vec3 eyePosition = pPlayer.getEyePosition(1.0f);
+        Vec3 direction = pPlayer.getViewVector(1.0f).scale(-1);
+        MeteorEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
+        MeteorEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
+        MeteorEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
+        MeteorEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
+        MeteorEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
+        MeteorEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
+        MeteorEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
+        MeteorEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
+
     }
 
     @Override

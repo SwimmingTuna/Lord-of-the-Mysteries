@@ -47,14 +47,14 @@ public class EnvisionLocation extends Item {
         Player pPlayer = event.getPlayer();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-        if (!pPlayer.level().isClientSide()) {
-            if (!holder.isSpectatorClass()) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < (int) 500/dreamIntoReality.getValue()) {
-                pPlayer.displayClientMessage(Component.literal("You need "  + ((int) 500/dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-            }
+        if (pPlayer.getMainHandItem().getItem() instanceof EnvisionLocation && !pPlayer.level().isClientSide()) {
+        if (!holder.isSpectatorClass()) {
+            pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
         }
+        if (holder.getSpirituality() < (int) 500 / dreamIntoReality.getValue()) {
+            pPlayer.displayClientMessage(Component.literal("You need " + ((int) 500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+        }
+    }
         String message = event.getMessage().getString();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             if (holder.isSpectatorClass() && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLocation && spectatorSequence.getCurrentSequence() == 0) {
@@ -83,12 +83,10 @@ public class EnvisionLocation extends Item {
                         int z = (int) targetPlayer.getZ();
                         pPlayer.teleportTo(x,y,z);
                         spectatorSequence.useSpirituality(500);
-                        event.setCanceled(true);
-                    }
-                    else {
+                    } else {
                         event.getPlayer().sendSystemMessage(Component.literal("Player:" + message + " not found"), true);
-                        event.setCanceled(true);
                     }
+                    event.setCanceled(true);
                 }
 
             }

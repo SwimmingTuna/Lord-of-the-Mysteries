@@ -1,15 +1,17 @@
-package net.swimmingtuna.lotm.entity.Meteor;
+package net.swimmingtuna.lotm.entity.Renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.entity.Model.MeteorModel;
+import net.swimmingtuna.lotm.entity.MeteorEntity;
+
 
 public class MeteorEntityRenderer extends EntityRenderer<MeteorEntity> {
     public static final ResourceLocation METEOR_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/meteor.png");
@@ -17,7 +19,7 @@ public class MeteorEntityRenderer extends EntityRenderer<MeteorEntity> {
 
     public MeteorEntityRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
-        this.model = new MeteorModel(pContext.bakeLayer(MeteorModel.METEOR_LOCATION));
+        this.model = new MeteorModel<>(pContext.bakeLayer(MeteorModel.METEOR_LOCATION));
     }
 
     @Override
@@ -32,6 +34,6 @@ public class MeteorEntityRenderer extends EntityRenderer<MeteorEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(MeteorEntity entity) { return METEOR_LOCATION; }
+    public  ResourceLocation getTextureLocation( MeteorEntity entity) { return METEOR_LOCATION; }
 
 }

@@ -55,15 +55,19 @@ public class EnvisionLife extends Item {
         Player pPlayer = event.getPlayer();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         String message = event.getMessage().getString().toLowerCase();
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && spectatorSequence.getCurrentSequence() == 0) {
+        if (pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && !pPlayer.level().isClientSide()) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
                 if (!holder.isSpectatorClass()) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
+
                 if (holder.getSpirituality() < 1500) {
-                    pPlayer.displayClientMessage(Component.literal("You need "  + ((int) 1500/dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                    pPlayer.displayClientMessage(Component.literal("You need " + ((int) 1500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
+        }
+        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && spectatorSequence.getCurrentSequence() == 0) {
                     spawnMob(pPlayer,message);
                 spectatorSequence.useSpirituality((int) (1500/dreamIntoReality.getValue()));
                 event.setCanceled(true);

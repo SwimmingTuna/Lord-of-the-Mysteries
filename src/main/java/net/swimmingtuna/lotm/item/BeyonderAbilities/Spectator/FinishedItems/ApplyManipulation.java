@@ -82,11 +82,12 @@ public class ApplyManipulation extends Item implements ReachChangeUUIDs {
             Entity targetEntity = event.getTarget();
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
                 if (!targetEntity.level().isClientSide && holder.isSpectatorClass() && itemStack.getItem() instanceof ApplyManipulation && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(50)) {
-                    if (!((LivingEntity) targetEntity).hasEffect(ModEffects.MANIPULATION.get()))
+                    if (!((LivingEntity) targetEntity).hasEffect(ModEffects.MANIPULATION.get())) {
                         ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false, false));
-                    pPlayer.sendSystemMessage(Component.literal("Manipulating " + targetEntity.getName().getString()));
-                    event.setCanceled(true);
-                    event.setCancellationResult(InteractionResult.SUCCESS);
+                        pPlayer.sendSystemMessage(Component.literal("Manipulating " + targetEntity.getName().getString()));
+                        event.setCanceled(true);
+                        event.setCancellationResult(InteractionResult.SUCCESS);
+                    }
                 }
             });
         }

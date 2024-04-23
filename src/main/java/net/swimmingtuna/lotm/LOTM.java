@@ -118,6 +118,7 @@ public class LOTM {
                 event.accept(ItemInit.ProphesizeDemise);
                 event.accept(ItemInit.EnvisionLife);
                 event.accept(ItemInit.MeteorShower);
+                event.accept(ItemInit.MeteorNoLevelShower);
                 event.accept(ItemInit.EnvisionWeather);
                 event.accept(ItemInit.EnvisionBarrier);
                 event.accept(ItemInit.EnvisionDeath);
@@ -142,6 +143,7 @@ public class LOTM {
                 event.accept(ItemInit.EnableOrDisableLightning);
                 event.accept(ItemInit.AqueousLightPull);
                 event.accept(ItemInit.AqueousLightPush);
+                event.accept(ItemInit.WindManipulationFlight);
         }
         if(event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(BlockInit.VISIONARY_BARRIER_BLOCK);

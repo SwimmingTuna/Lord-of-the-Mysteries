@@ -127,7 +127,7 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
     public void tick() {
         super.tick();
         if (this.tickCount % 20 == 0) {
-            if (this.tickCount >= 60) {
+            if (this.tickCount >= 100) {
                 this.discard();
             }
         }

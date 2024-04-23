@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.entity.DragonBreathEntity;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,34 +39,22 @@ public class DragonBreath extends Item {
             if (!holder.isSpectatorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-            if (holder.getSpirituality() < 75) {
-                pPlayer.displayClientMessage(Component.literal("You need " + (100 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            if (holder.getSpirituality() < 500) {
+                pPlayer.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality((int) (100 / dreamIntoReality.getValue()))) {
-                    shootFireball(pPlayer);
-                    pPlayer.sendSystemMessage(Component.literal("working"));
+                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(500)) {
+                    shootFireball(pPlayer, (int) ((30 - spectatorSequence.getCurrentSequence() * 4) * dreamIntoReality.getValue()));
                 }
                 if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 10);
+                    pPlayer.getCooldowns().addCooldown(this, 100);
             });
         }
         return super.use(level, pPlayer, hand);
     }
 
-    public static void shootFireball(Player pPlayer) {
-        Vec3 eyePosition = pPlayer.getEyePosition(1.0f);
-        Vec3 direction = pPlayer.getViewVector(1.0f);
-        Vec3 fireballPosition = eyePosition.add(direction.scale(1.2));
-
-        SmallFireball fireball = new SmallFireball(EntityType.SMALL_FIREBALL, pPlayer.level());
-        Vec3 initialVelocity = direction.scale(2.0);
-
-
-        fireball.setDeltaMovement(initialVelocity);
-        fireball.setPos(fireballPosition);
-        fireball.setOwner(pPlayer);
-        pPlayer.level().addFreshEntity(fireball);
+    public static void shootFireball(Player pPlayer, int sequence) {
+        DragonBreathEntity.shootDragonBreath(pPlayer, sequence, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ() );
     }
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {

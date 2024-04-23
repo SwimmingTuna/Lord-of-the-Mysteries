@@ -1,8 +1,10 @@
 package net.swimmingtuna.lotm.beyonder;
 
 import com.google.common.collect.HashMultimap;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -48,6 +50,13 @@ public class SailorClass implements BeyonderClass {
     public void tick(Player pPlayer, int sequenceLevel) {
         if (pPlayer.level().getGameTime() % 50 == 0) {
             if (pPlayer.isInWater() || pPlayer.level().isRaining()) {
+                CompoundTag tag = pPlayer.getPersistentData();
+                boolean x = tag.getBoolean("sailorFlight1");
+                Abilities playerAbilites = pPlayer.getAbilities();
+                playerAbilites.setFlyingSpeed(0.2F);
+                if (!pPlayer.level().isRaining() && !x) {
+                    playerAbilites.setFlyingSpeed(0.05F);
+                }
                 MobEffectInstance dolphinsGrace = pPlayer.getEffect(MobEffects.DOLPHINS_GRACE);
                 MobEffectInstance speed = pPlayer.getEffect(MobEffects.MOVEMENT_SPEED);
                 MobEffectInstance haste = pPlayer.getEffect(MobEffects.DIG_SPEED);

@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -58,7 +59,7 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
         attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BeyonderBlockReach, "Reach modifier", 300, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
         return attributeBuilder.build();
     }
-    private static BlockPos targetPos;  // Store the target position for continuous effect
+    private static CompoundTag targetPos;  // Store the target position for continuous effect
 
     public ManipulateMovement(Properties pProperties) {
         super(pProperties);
@@ -77,7 +78,11 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
                 pPlayer.displayClientMessage(Component.literal("You need spirituality" + ((int) 200/ dreamIntoReality.getValue()) + " in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
         }
-            targetPos = pContext.getClickedPos();
+        CompoundTag pos = new CompoundTag();
+        pos.putInt("x", pContext.getClickedPos().getX());
+        pos.putInt("y", pContext.getClickedPos().getY());
+        pos.putInt("z", pContext.getClickedPos().getZ());
+        targetPos = pos;
         Level level = pContext.getLevel();
 
         if (!pPlayer.level().isClientSide()) {
@@ -107,15 +112,13 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
 
-    private static void manipulateEntities(Player pPlayer, Level level, BlockPos targetPos, int sequence) {
-        double duration = 1200 - (sequence * 200);
+    private static void manipulateEntities(Player pPlayer, Level level, CompoundTag targetPos, int sequence) {
         if (!pPlayer.level().isClientSide) {
             for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(150))) {
-                if (entity != pPlayer && !entity.hasEffect(ModEffects.MANIPULATION.get()) && !entity.level().isClientSide) {
-                    entity.addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), (int) duration, 1, false, false));
-                    double deltaX = targetPos.getX() - entity.getX();
-                    double deltaY = targetPos.getY() - entity.getY();
-                    double deltaZ = targetPos.getZ() - entity.getZ();
+                if (entity != pPlayer && entity.hasEffect(ModEffects.MANIPULATION.get()) && !entity.level().isClientSide) {
+                    double deltaX = targetPos.getInt("x") - entity.getX();
+                    double deltaY = targetPos.getInt("y") - entity.getY();
+                    double deltaZ = targetPos.getInt("z") - entity.getZ();
 
                     double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
@@ -138,7 +141,7 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
                             entity.setDeltaMovement(normalizedX, 0.25, normalizedZ);
                         }
 
-                        if (entity.position().distanceTo(new Vec3(targetPos.getX(), targetPos.getY(), targetPos.getZ())) < 2.0) {
+                        if (entity.position().distanceTo(new Vec3(targetPos.getInt("x"), targetPos.getInt("y"), targetPos.getInt("z"))) < 2.0) {
                             entity.removeEffect(ModEffects.MANIPULATION.get());
                         }
                     }
@@ -152,12 +155,16 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide && pPlayer.level().getGameTime() % 2 == 0) {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
                 if (ManipulateMovement.targetPos != null) {
+                    int x = ManipulateMovement.targetPos.getInt("x");
+                    int y = ManipulateMovement.targetPos.getInt("y");
+                    int z = ManipulateMovement.targetPos.getInt("z");
+                    BlockPos targetBlockPos = new BlockPos(x, y, z);
                     ManipulateMovement.manipulateEntities(pPlayer, pPlayer.level(), ManipulateMovement.targetPos, spectatorSequence.getCurrentSequence());
                 }
             });
         }
-
     }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player pPlayer = event.getEntity();
@@ -169,6 +176,7 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
             event.setCanceled(true);
         }
     }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
         Player pPlayer = event.getEntity();
@@ -180,20 +188,27 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
             event.setCanceled(true);
         }
     }
+
+    private static CompoundTag anyEntityAffected = new CompoundTag();
+
+// ...
+
     private static void resetTargetPos(Player pPlayer) {
-        if ((!pPlayer.level().isClientSide)) {
-            boolean anyEntityAffected = false;
+        if (!pPlayer.level().isClientSide) {
+            anyEntityAffected.putBoolean("affected", false);
 
             for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
                 if (entity.hasEffect(ModEffects.MANIPULATION.get()) && !entity.level().isClientSide) {
-                    anyEntityAffected = true;
+                    anyEntityAffected.putBoolean("affected", true);
                     break;
                 }
             }
-            if (!anyEntityAffected) {
+
+            if (!anyEntityAffected.getBoolean("affected")) {
                 targetPos = null;
                 pPlayer.sendSystemMessage(Component.literal("Manipulation Position Reset"));
             }
         }
     }
+
 }

@@ -22,6 +22,7 @@
   "item.lotm.prophesizedemise": "Prophesize Demise",
   "item.lotm.envisionlife": "Envision Life",
   "item.lotm.envisionnature": "Meteor Shower",
+  "item.lotm.envisionnature1": "Meteor Shower: No Block Destruction",
   "item.lotm.envisionweather": "Envision Weather",
   "item.lotm.envisionbarrier": "Envision Barrier",
   "item.lotm.envisiondeath": "Envision Death",
@@ -38,6 +39,7 @@
   "block.lotm.mindscape_block": "Mindscape Block",
   "block.lotm.mindscape_outside": "Mindscape Outside",
 
+  "item.lotm.windmanipulationflight": "Wind Manipulation: Flight",
   "item.lotm.enableordisablelightning": "Enable/Disable Lightning",
   "item.lotm.ragingblows": "Raging Blows",
   "item.lotm.aqueouslightdrown": "Water Manipulation: Drown",
@@ -70,6 +72,7 @@
   "effects.lotm.advancement1": "Advancement 1",
   "effects.lotm.advancement0": "Advancement 0",
   "effects.lotm.mentalplague": "Mental Plague",
+  "effects.lotm.awe": "Paralysis",
 
   "attribute.lotm.spirituality": "Spirituality",
   "attribute.lotm.max_spirituality": "Max Spirituality",

@@ -80,7 +80,7 @@ public class RagingBlows extends Item {
             boolean sailorLightning = persistentData.getBoolean("SailorLightning");
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
                 int ragingBlows = persistentData.getInt("ragingBlows");
-                int radius = (45 - (tyrantSequence.getCurrentSequence() * 5));
+                int radius = (25 - (tyrantSequence.getCurrentSequence() * 3));
                 int damage = (int) (20 - tyrantSequence.getCurrentSequence() * 2);
                 if (ragingBlows >= 1) {
                     persistentData.putInt("ragingBlows", ragingBlows + 1);

@@ -68,6 +68,8 @@ public class ItemInit {
             () -> new EnvisionLife(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MeteorShower = ITEMS.register("envisionnature",
             () -> new MeteorShower(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MeteorNoLevelShower = ITEMS.register("envisionnature1",
+            () -> new MeteorNoLevelShower(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionWeather = ITEMS.register("envisionweather",
             () -> new EnvisionWeather(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnvisionBarrier = ITEMS.register("envisionbarrier",
@@ -116,6 +118,8 @@ public class ItemInit {
             () -> new AqueousLightPull(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EnableOrDisableLightning = ITEMS.register("enableordisablelightning",
             () -> new EnableOrDisableLightning(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WindManipulationFlight = ITEMS.register("windmanipulationflight",
+            () -> new WindManipulationFlight(new Item.Properties().stacksTo(1)));
 
 
     public static void register(IEventBus eventBus) {
