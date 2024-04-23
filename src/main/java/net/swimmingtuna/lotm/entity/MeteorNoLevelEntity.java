@@ -101,8 +101,8 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
             Vec3 lightPosition = eyePosition.add(direction.scale(2.0));
             meteorEntity.setPos(lightPosition);
             meteorEntity.setOwner(pPlayer);
-            double randomX = Math.random() * 120 - 60;
-            double randomZ = Math.random() * 120 - 60;
+            double randomX = Math.random() * 60 - 30;
+            double randomZ = Math.random() * 60 - 30;
             meteorEntity.teleportTo(pPlayer.getX() + randomX, pPlayer.getY() + 50, pPlayer.getZ() + randomZ);
             double random = 0.5 + Math.random();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);

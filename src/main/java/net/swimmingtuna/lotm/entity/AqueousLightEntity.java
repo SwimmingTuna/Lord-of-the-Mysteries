@@ -54,6 +54,7 @@ public class AqueousLightEntity extends AbstractHurtingProjectile {
                 if (owner instanceof Player pPlayer) {
                     BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
                        int damage = 20 - (tyrantSequence.getCurrentSequence() * 2);
+                       if (!entity.level().isClientSide() && !owner.level().isClientSide()) {
                        entity.hurt(damageSources().fall(), damage);
                         if (tyrantSequence.getCurrentSequence() <= 7) {
                             double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5)); // Decrease chance by 12.5% for each level below 9
@@ -61,6 +62,7 @@ public class AqueousLightEntity extends AbstractHurtingProjectile {
                                 LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
                                 lightningBolt.moveTo(entity.getX(), entity.getY(), entity.getZ());
                                 entity.level().addFreshEntity(lightningBolt);
+                            }
                             }
                         }
                     });

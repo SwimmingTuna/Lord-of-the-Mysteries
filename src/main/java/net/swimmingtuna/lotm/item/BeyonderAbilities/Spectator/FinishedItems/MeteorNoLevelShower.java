@@ -12,12 +12,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.MeteorEntity;
 import net.swimmingtuna.lotm.entity.MeteorNoLevelEntity;
+import net.swimmingtuna.lotm.init.ItemInit;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -71,9 +74,31 @@ public class MeteorNoLevelShower extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons a meteor shower\n" +
                     "Spirituality Used: 1500\n" +
+                    "Left Click for a version that deals block destruction\n" +
                     "Cooldown: 45 secondss"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
-
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof MeteorNoLevelShower) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MeteorShower.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof MeteorNoLevelShower) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MeteorShower.get()));
+            heldItem.shrink(1);
+            event.setCanceled(true);
+        }
+    }
 }
