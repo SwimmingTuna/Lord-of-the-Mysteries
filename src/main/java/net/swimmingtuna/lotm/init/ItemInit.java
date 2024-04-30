@@ -120,6 +120,10 @@ public class ItemInit {
             () -> new EnableOrDisableLightning(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> WindManipulationFlight = ITEMS.register("windmanipulationflight",
             () -> new WindManipulationFlight(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WindManipulationBlade = ITEMS.register("windmanipulationblade",
+            () -> new WindManipulationBlade(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WindManipulationCushion = ITEMS.register("windmanipulationcushion",
+            () -> new WindManipulationCushion(new Item.Properties().stacksTo(1)));
 
 
     public static void register(IEventBus eventBus) {

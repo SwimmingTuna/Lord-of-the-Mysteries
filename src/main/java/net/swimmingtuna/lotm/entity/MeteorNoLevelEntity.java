@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.entity;
 
 
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -17,6 +18,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.init.ParticleInit;
+import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
@@ -53,6 +56,11 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
             }
             this.discard();
         }
+    }
+
+    @Override
+    public @NotNull ParticleOptions getTrailParticle() {
+        return ParticleInit.NULL_PARTICLE.get();
     }
 
     @Override

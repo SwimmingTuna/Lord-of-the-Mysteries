@@ -32,6 +32,12 @@ public class EntityInit {
     public static final RegistryObject<EntityType<MeteorNoLevelEntity>> METEOR_NO_LEVEL_ENTITY =
             ENTITIES.register("meteor_no_hurt", () -> EntityType.Builder.<MeteorNoLevelEntity>of(MeteorNoLevelEntity::new, MobCategory.MISC)
                     .sized(2.0f,2.0f).build("meteor_no_hurt"));
+    public static final RegistryObject<EntityType<WindBladeEntity>> WIND_BLADE_ENTITY =
+            ENTITIES.register("wind_blade", () -> EntityType.Builder.<WindBladeEntity>of(WindBladeEntity::new, MobCategory.MISC)
+                    .sized(0.5f,0.5f).build("wind_blade"));
+    public static final RegistryObject<EntityType<WindCushionEntity>> WIND_CUSHION_ENTITY =
+            ENTITIES.register("wind_cushion", () -> EntityType.Builder.<WindCushionEntity>of(WindCushionEntity::new, MobCategory.MISC)
+                    .sized(0.5f,0.5f).build("wind_cushion"));
 
     public static void register(IEventBus bus) {ENTITIES.register(bus);}
 }

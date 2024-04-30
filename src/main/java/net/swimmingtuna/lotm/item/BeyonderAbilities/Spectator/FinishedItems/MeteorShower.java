@@ -44,7 +44,7 @@ public class MeteorShower extends Item {
             }
 
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() >= 1 && spectatorSequence.useSpirituality(20)) {
+            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 1 && spectatorSequence.useSpirituality(2500)) {
                 meteorShower(pPlayer);
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 900);

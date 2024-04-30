@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.entity;
 
 
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -20,6 +21,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.init.ParticleInit;
+import org.jetbrains.annotations.NotNull;
 
 public class AqueousLightEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(AqueousLightEntity.class, EntityDataSerializers.BOOLEAN);
@@ -42,6 +45,10 @@ public class AqueousLightEntity extends AbstractHurtingProjectile {
         return false;
     }
 
+    @Override
+    public @NotNull ParticleOptions getTrailParticle() {
+        return ParticleInit.NULL_PARTICLE.get();
+    }
 
     protected void onHitEntity(EntityHitResult pResult) {
         if (!this.level().isClientSide()) {

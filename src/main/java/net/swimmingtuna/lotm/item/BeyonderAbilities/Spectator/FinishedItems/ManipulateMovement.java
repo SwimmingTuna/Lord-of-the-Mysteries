@@ -9,11 +9,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +27,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -115,7 +119,11 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
     private static void manipulateEntities(Player pPlayer, Level level, CompoundTag targetPos, int sequence) {
         if (!pPlayer.level().isClientSide) {
             for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(150))) {
-                if (entity != pPlayer && entity.hasEffect(ModEffects.MANIPULATION.get()) && !entity.level().isClientSide) {
+                CompoundTag tag = entity.getPersistentData();
+                if (entity != pPlayer && !entity.level().isClientSide) {
+                    if (entity.hasEffect(ModEffects.MANIPULATION.get()) || tag.getBoolean("spectatorManipulateMovement"))
+                        tag.putBoolean("spectatorManipulatingMovement", true);
+                    entity.removeEffect(ModEffects.MANIPULATION.get());
                     double deltaX = targetPos.getInt("x") - entity.getX();
                     double deltaY = targetPos.getInt("y") - entity.getY();
                     double deltaZ = targetPos.getInt("z") - entity.getZ();
@@ -143,6 +151,7 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
 
                         if (entity.position().distanceTo(new Vec3(targetPos.getInt("x"), targetPos.getInt("y"), targetPos.getInt("z"))) < 2.0) {
                             entity.removeEffect(ModEffects.MANIPULATION.get());
+                            tag.putBoolean("spectatorManipulatingMovement", false);
                         }
                     }
                 }
@@ -210,5 +219,22 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
             }
         }
     }
+    @SubscribeEvent
+    public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
+        LivingEntity entity = event.getEntity();
+        CompoundTag tag = entity.getPersistentData();
+        int spectatorCounter = tag.getInt("spectatorManipulateMovementCounter");
+        if (tag.getBoolean("spectatorManipulateMovement")) {
+            tag.putInt("spectatorManipulateMovementCounter", spectatorCounter + 1);
+        } else
+            spectatorCounter = 0;
+            tag.putInt("spectatorManipulateMovementCounter", 0);
 
+        if (spectatorCounter >= 600) {
+            tag.putInt("spectatorManipulateMovementCounter", 0);
+            spectatorCounter = 0;
+            tag.putBoolean("spectatorManipulateMovement", false);
+
+        }
+    }
 }

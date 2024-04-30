@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class  BeamEntity extends LOTMProjectile {
     public double endPosX, endPosY, endPosZ;
@@ -118,7 +119,6 @@ public abstract class  BeamEntity extends LOTMProjectile {
         }
 
         if (this.getOwner() instanceof LivingEntity owner) {
-
             if (!this.on && this.animation == 0) {
                 this.discard();
             }
@@ -140,12 +140,14 @@ public abstract class  BeamEntity extends LOTMProjectile {
                     this.calculateEndPos();
                 }
 
-                List<Entity> entities = this.checkCollisions(new Vec3(this.getX(), this.getY(), this.getZ()),
+
+                List<Entity> entities = this.checkCollisions(new Vec3(this.getX() + 1, this.getY() + 1, this.getZ() + 1),
                         new Vec3(this.endPosX, this.endPosY, this.endPosZ));
 
                 for (Entity entity : entities) {
                     if (entity == owner) continue;
-                    if (!entity.hurt(magicDamageSource(this, owner, this), this.getDamage() * this.getPower())) continue;
+
+                    entity.hurt(entity.damageSources().lightningBolt(), this.getDamage());
 
                     if (this.causesFire()) {
                         entity.setSecondsOnFire(5);
@@ -238,7 +240,7 @@ public abstract class  BeamEntity extends LOTMProjectile {
 
         BlockHitResult result = this.level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
 
-        if (result.getType() != HitResult.Type.MISS) {
+        if (result.getType() == HitResult.Type.MISS || result.getType() == HitResult.Type.ENTITY || result.getType() == HitResult.Type.BLOCK) {
             Vec3 pos = result.getLocation();
             this.collidePosX = pos.x;
             this.collidePosY = pos.y;
@@ -252,6 +254,22 @@ public abstract class  BeamEntity extends LOTMProjectile {
         }
         List<Entity> entities = new ArrayList<>();
 
+        AABB bounds = new AABB(Math.min(this.getX(), this.collidePosX), Math.min(this.getY(), this.collidePosY),
+                Math.min(this.getZ(), this.collidePosZ), Math.max(this.getX(), this.collidePosX),
+                Math.max(this.getY(), this.collidePosY), Math.max(this.getZ(), this.collidePosZ))
+                .inflate(this.getScale());
+
+        for (Entity entity : this.level().getEntitiesOfClass(Entity.class, bounds)) {
+            float pad = entity.getPickRadius() + 0.5F;
+            AABB padded = entity.getBoundingBox().inflate(pad, pad, pad);
+            Optional<Vec3> hit = padded.clip(from, to);
+
+            if (padded.contains(from)) {
+                entities.add(entity);
+            } else if (hit.isPresent()) {
+                entities.add(entity);
+            }
+        }
         return entities;
     }
 

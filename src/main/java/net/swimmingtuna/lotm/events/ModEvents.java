@@ -1,6 +1,8 @@
 package net.swimmingtuna.lotm.events;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -10,6 +12,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -19,6 +23,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.particle.NullParticle;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 
@@ -32,7 +38,7 @@ public class ModEvents {
     @SubscribeEvent
     public static void attributeHandler(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
-        if(!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
+        if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
             AttributeInstance nightmareAttribute = pPlayer.getAttribute(ModAttributes.NIGHTMARE.get());
             AttributeInstance armorInvisAttribute = pPlayer.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
             if (!event.player.level().isClientSide && event.phase == TickEvent.Phase.START) {
@@ -110,17 +116,47 @@ public class ModEvents {
                 if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7) {
                     LivingEntity target = (LivingEntity) event.getTarget();
                     if (x) {
-                    if (target != pPlayer) {
-                        double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5)); // Decrease chance by 12.5% for each level below 9
-                        if (Math.random() * 100 < chanceOfDamage) {
-                            LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, target.level());
-                            lightningBolt.moveTo(target.getX(), target.getY(), target.getZ());
-                            target.level().addFreshEntity(lightningBolt);
+                        if (target != pPlayer) {
+                            double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5)); // Decrease chance by 12.5% for each level below 9
+                            if (Math.random() * 100 < chanceOfDamage) {
+                                LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, target.level());
+                                lightningBolt.moveTo(target.getX(), target.getY(), target.getZ());
+                                target.level().addFreshEntity(lightningBolt);
+                            }
                         }
-                    }
                     }
                 }
             });
         }
+    }
+
+    @SubscribeEvent
+    public static void playerWindCushionTick(TickEvent.PlayerTickEvent event) {
+        Player pPlayer = event.player;
+        CompoundTag tag = pPlayer.getPersistentData();
+        Vec3 lookVector = pPlayer.getLookAngle();
+        if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
+            int windCushion = tag.getInt("windCushion");
+            if (windCushion >= 1) {
+                tag.putInt("windCushion", windCushion + 1);
+                pPlayer.sendSystemMessage(Component.literal("windCushion is" + windCushion));
+                pPlayer.setDeltaMovement(pPlayer.getDeltaMovement().x(), pPlayer.getDeltaMovement().y() * 0.2, pPlayer.getDeltaMovement().z());
+                pPlayer.hurtMarked = true;
+                if (windCushion == 16) {
+                    pPlayer.setDeltaMovement(lookVector.x * 2, lookVector.y * 2, lookVector.z * 2);
+                    pPlayer.resetFallDistance();
+                    pPlayer.hurtMarked = true;
+                }
+                if (windCushion >= 20) {
+                    tag.putInt("windCushion", 0);
+                    windCushion = 0;
+                }
+            }
+        }
+    }
+    @SubscribeEvent
+    public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
+        Minecraft.getInstance().particleEngine.register(ParticleInit.NULL_PARTICLE.get(),
+                NullParticle.Provider::new);
     }
 }
