@@ -28,12 +28,11 @@ public class WindCushionRenderer extends EntityRenderer<WindCushionEntity> {
         poseStack.pushPose();
 
         VertexConsumer ivertexbuilder = buffers.getBuffer(this.model.renderType(this.getTextureLocation(entity)));
-        this.model.renderToBuffer(poseStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.model.renderToBuffer(poseStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 0.5F);
         poseStack.popPose();
 
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
     }
-
     @Override
     public  ResourceLocation getTextureLocation( WindCushionEntity entity) { return WIND_CUSHION_LOCATION; }
 

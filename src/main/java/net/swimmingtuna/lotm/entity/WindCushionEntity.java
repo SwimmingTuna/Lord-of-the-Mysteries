@@ -85,9 +85,10 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
             Vec3 lookVector = pPlayer.getLookAngle();
             WindCushionEntity windCushion = new WindCushionEntity(pPlayer.level(), pPlayer, 0,0,0);
             pPlayer.getPersistentData().putInt("windCushion",1);
-            windCushion.setDeltaMovement(pPlayer.getDeltaMovement().x(),pPlayer.getDeltaMovement().y * 0.3,pPlayer.getDeltaMovement().z());
+            windCushion.setDeltaMovement(0,pPlayer.getDeltaMovement().y * 0.4,0);
             windCushion.setOwner(pPlayer);
-            windCushion.teleportTo(pPlayer.getX(), pPlayer.getY() + -2, pPlayer.getZ());
+            windCushion.setXRot(90.0F);
+            windCushion.setXRot(90);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(windCushion);
             scaleData.setTargetScale(2);
             scaleData.markForSync(true);

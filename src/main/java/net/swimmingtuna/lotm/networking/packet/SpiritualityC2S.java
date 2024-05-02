@@ -38,7 +38,6 @@ public class SpiritualityC2S implements IPacket {
             ServerPlayer player = context.getSender();
             ServerLevel level = (ServerLevel) player.level();
             if (hasSolidBlocksAround(player, level) && player.isCrouching()) {
-                player.sendSystemMessage(Component.literal("worked"));
             }});
     }
 

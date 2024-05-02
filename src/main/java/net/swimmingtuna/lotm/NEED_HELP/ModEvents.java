@@ -1,14 +1,11 @@
-package net.swimmingtuna.lotm.events;
+package net.swimmingtuna.lotm.NEED_HELP;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +21,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.particle.NullParticle;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
@@ -137,20 +135,29 @@ public class ModEvents {
         Vec3 lookVector = pPlayer.getLookAngle();
         if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
             int windCushion = tag.getInt("windCushion");
-            if (windCushion >= 1) {
+            if (windCushion == 1) {
+                tag.putDouble("lookVectorXCushion", lookVector.x());
+                tag.putDouble("lookVectorYCushion", lookVector.y());
+                tag.putDouble("lookVectorZCushion", lookVector.z());
+            }
+            if (windCushion >= 1 && windCushion < 16) {
                 tag.putInt("windCushion", windCushion + 1);
-                pPlayer.sendSystemMessage(Component.literal("windCushion is" + windCushion));
                 pPlayer.setDeltaMovement(pPlayer.getDeltaMovement().x(), pPlayer.getDeltaMovement().y() * 0.2, pPlayer.getDeltaMovement().z());
                 pPlayer.hurtMarked = true;
-                if (windCushion == 16) {
-                    pPlayer.setDeltaMovement(lookVector.x * 2, lookVector.y * 2, lookVector.z * 2);
-                    pPlayer.resetFallDistance();
-                    pPlayer.hurtMarked = true;
-                }
-                if (windCushion >= 20) {
-                    tag.putInt("windCushion", 0);
-                    windCushion = 0;
-                }
+            }
+            if (windCushion >= 16) {
+                tag.putInt("windCushion", windCushion + 1);
+            }
+            if (windCushion == 16) {
+                pPlayer.setDeltaMovement(tag.getDouble("lookVectorXCushion") * 2, tag.getDouble("lookVectorYCushion") * 2, tag.getDouble("lookVectorZCushion") * 2);
+                pPlayer.resetFallDistance();
+                pPlayer.hurtMarked = true;
+                pPlayer.sendSystemMessage(Component.literal("lookVectorX is" + tag.getDouble("lookVectorXCushion")));
+                pPlayer.sendSystemMessage(Component.literal("delta movement x is" + pPlayer.getDeltaMovement().x()));
+            }
+            if (windCushion >= 20) {
+                tag.putInt("windCushion", 0);
+                windCushion = 0;
             }
         }
     }
@@ -158,5 +165,47 @@ public class ModEvents {
     public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
         Minecraft.getInstance().particleEngine.register(ParticleInit.NULL_PARTICLE.get(),
                 NullParticle.Provider::new);
+    }
+    @SubscribeEvent
+    public static void windSailorSense(TickEvent.PlayerTickEvent event) {
+        Player pPlayer = event.player;
+        if (event.phase == TickEvent.Phase.END) {
+            if (!pPlayer.level().isClientSide()) {
+                CompoundTag tag = pPlayer.getPersistentData();
+                int windGlowing = tag.getInt("windGlowing");
+                if (windGlowing >= 1 && windGlowing <= 200) {
+                    pPlayer.sendSystemMessage(Component.literal("windglowing is" + windGlowing));
+                }
+                if (windGlowing > 200) {
+                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(20))) {
+                        if (entity != pPlayer) {
+                            entity.removeEffect(ModEffects.LOTMGLOWING.get());
+                        }}
+                }
+            } else {
+                LOTMNetworkHandler.sendToServer(new GlowingPacketC2S());
+            }
+
+        }
+    }
+    @SubscribeEvent
+    public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
+        LivingEntity entity = event.getEntity();
+        CompoundTag tag = entity.getPersistentData();
+        int glowing = tag.getInt("LOTMisGlowing");
+        if (entity.isCurrentlyGlowing() && glowing == 0) {
+            tag.putInt("LOTMisGlowing", 1);;
+        }
+        if (glowing >= 1) {
+            tag.putInt("LOTMisGlowing", glowing + 1);
+        }
+        if (glowing > 100) {
+            if (entity.hasEffect(MobEffects.GLOWING) || entity.hasEffect(ModEffects.LOTMGLOWING.get())) {
+                tag.putInt("LOTMisGlowing", 1);
+                entity.setGlowingTag(false);
+            } else {
+                tag.putInt("LOTMisGlowing", 0);
+            }
+        }
     }
 }

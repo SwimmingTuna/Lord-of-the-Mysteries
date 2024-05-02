@@ -147,6 +147,8 @@ public class LOTM {
                 event.accept(ItemInit.WindManipulationFlight);
                 event.accept(ItemInit.WindManipulationBlade);
                 event.accept(ItemInit.WindManipulationCushion);
+                event.accept(ItemInit.WindManipulationSense);
+
         }
         if(event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(BlockInit.VISIONARY_BARRIER_BLOCK);

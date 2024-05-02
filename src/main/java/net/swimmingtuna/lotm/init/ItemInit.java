@@ -6,6 +6,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.NEED_HELP.WindManipulationSense;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
@@ -124,6 +125,8 @@ public class ItemInit {
             () -> new WindManipulationBlade(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> WindManipulationCushion = ITEMS.register("windmanipulationcushion",
             () -> new WindManipulationCushion(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WindManipulationSense = ITEMS.register("windmanipulationsense",
+            () -> new WindManipulationSense(new Item.Properties().stacksTo(1)));
 
 
     public static void register(IEventBus eventBus) {
