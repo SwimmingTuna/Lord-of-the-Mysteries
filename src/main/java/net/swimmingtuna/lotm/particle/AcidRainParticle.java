@@ -5,10 +5,11 @@ import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
-public class NullParticle extends TextureSheetParticle {
-    protected NullParticle(ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-        super(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
+public class AcidRainParticle extends TextureSheetParticle {
+    protected AcidRainParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
+        super(level, xCoord, yCoord, zCoord, xd, yd, zd);
 
         this.friction = 0.8F;
         this.xd = xd;
@@ -16,6 +17,7 @@ public class NullParticle extends TextureSheetParticle {
         this.zd = zd;
         this.quadSize *= 0.85F;
         this.lifetime = 20;
+        this.setSpriteFromAge(spriteSet);
 
 
         this.rCol = 1f;
@@ -33,8 +35,8 @@ public class NullParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return null;
+    public @NotNull ParticleRenderType getRenderType() {
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -48,7 +50,7 @@ public class NullParticle extends TextureSheetParticle {
         public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
                                        double x, double y, double z,
                                        double dx, double dy, double dz) {
-            return new NullParticle(level, x, y, z, dx, dy, dz);
+            return new AcidRainParticle(level, x, y, z, this.sprites, dx, dy, dz);
         }
     }
 }

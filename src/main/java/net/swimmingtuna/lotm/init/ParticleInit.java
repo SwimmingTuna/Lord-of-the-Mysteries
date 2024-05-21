@@ -15,6 +15,8 @@ public class ParticleInit {
 
     public static final RegistryObject<SimpleParticleType> NULL_PARTICLE =
             PARTICLE_TYPES.register("null_particle", () -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> ACIDRAIN_PARTICLE =
+            PARTICLE_TYPES.register("acidrain_particle", () -> new SimpleParticleType(true));
 
     public static void register(IEventBus eventBus) {
         PARTICLE_TYPES.register(eventBus);

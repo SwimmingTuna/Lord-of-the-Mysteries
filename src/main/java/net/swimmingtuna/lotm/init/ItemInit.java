@@ -127,6 +127,8 @@ public class ItemInit {
             () -> new WindManipulationCushion(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> WindManipulationSense = ITEMS.register("windmanipulationsense",
             () -> new WindManipulationSense(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> AcidicRain = ITEMS.register("acidicrain",
+            () -> new AcidicRain(new Item.Properties().stacksTo(1)));
 
 
     public static void register(IEventBus eventBus) {

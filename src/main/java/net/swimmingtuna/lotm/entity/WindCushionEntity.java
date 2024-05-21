@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.entity;
 
 
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -84,15 +85,17 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
         if (!pPlayer.level().isClientSide()) {
             Vec3 lookVector = pPlayer.getLookAngle();
             WindCushionEntity windCushion = new WindCushionEntity(pPlayer.level(), pPlayer, 0,0,0);
-            pPlayer.getPersistentData().putInt("windCushion",1);
-            windCushion.setDeltaMovement(0,pPlayer.getDeltaMovement().y * 0.4,0);
-            windCushion.setOwner(pPlayer);
-            windCushion.setXRot(90.0F);
-            windCushion.setXRot(90);
-            ScaleData scaleData = ScaleTypes.BASE.getScaleData(windCushion);
-            scaleData.setTargetScale(2);
-            scaleData.markForSync(true);
-            pPlayer.level().addFreshEntity(windCushion);
+                pPlayer.getPersistentData().putInt("windCushion", 1);
+                windCushion.setDeltaMovement(0, pPlayer.getDeltaMovement().y * 0.4, 0);
+                windCushion.setOwner(pPlayer);
+                windCushion.setXRot(90.0F);
+                windCushion.setRot(90.0F,130.0F);
+                windCushion.hurtMarked = true;
+                ScaleData scaleData = ScaleTypes.BASE.getScaleData(windCushion);
+                scaleData.setTargetScale(2);
+                scaleData.markForSync(true);
+                pPlayer.level().addFreshEntity(windCushion);
+                pPlayer.sendSystemMessage(Component.literal("rotation is" + windCushion.getXRot() + "and" + windCushion.getYRot()));
         }
     }
     @Override

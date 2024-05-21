@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.NEED_HELP;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -22,6 +23,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
+import net.swimmingtuna.lotm.particle.AcidRainParticle;
 import net.swimmingtuna.lotm.particle.NullParticle;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
@@ -149,7 +151,7 @@ public class ModEvents {
                 tag.putInt("windCushion", windCushion + 1);
             }
             if (windCushion == 16) {
-                pPlayer.setDeltaMovement(tag.getDouble("lookVectorXCushion") * 2, tag.getDouble("lookVectorYCushion") * 2, tag.getDouble("lookVectorZCushion") * 2);
+                pPlayer.setDeltaMovement(tag.getDouble("lookVectorXCushion") * 2,  tag.getDouble("lookVectorYCushion") * 2, tag.getDouble("lookVectorZCushion") * 2);
                 pPlayer.resetFallDistance();
                 pPlayer.hurtMarked = true;
                 pPlayer.sendSystemMessage(Component.literal("lookVectorX is" + tag.getDouble("lookVectorXCushion")));
@@ -165,6 +167,8 @@ public class ModEvents {
     public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
         Minecraft.getInstance().particleEngine.register(ParticleInit.NULL_PARTICLE.get(),
                 NullParticle.Provider::new);
+        Minecraft.getInstance().particleEngine.register(ParticleInit.ACIDRAIN_PARTICLE.get(),
+                AcidRainParticle.Provider::new);
     }
     @SubscribeEvent
     public static void windSailorSense(TickEvent.PlayerTickEvent event) {
@@ -192,6 +196,8 @@ public class ModEvents {
     public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
         LivingEntity entity = event.getEntity();
         CompoundTag tag = entity.getPersistentData();
+        if (entity instanceof Player) {
+        entity.level().addParticle(ParticleInit.ACIDRAIN_PARTICLE.get(), entity.getX(), entity.getY() + 1, entity.getZ(), 0,0.3,0);}
         int glowing = tag.getInt("LOTMisGlowing");
         if (entity.isCurrentlyGlowing() && glowing == 0) {
             tag.putInt("LOTMisGlowing", 1);;
