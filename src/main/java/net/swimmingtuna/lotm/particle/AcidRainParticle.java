@@ -11,14 +11,13 @@ public class AcidRainParticle extends TextureSheetParticle {
     protected AcidRainParticle(ClientLevel level, double xCoord, double yCoord, double zCoord, SpriteSet spriteSet, double xd, double yd, double zd) {
         super(level, xCoord, yCoord, zCoord, xd, yd, zd);
 
-        this.friction = 0.8F;
+        this.friction = 0F;
         this.xd = xd;
         this.yd = yd;
         this.zd = zd;
-        this.quadSize *= 0.85F;
-        this.lifetime = 20;
+        this.quadSize *= 1;
+        this.lifetime = 16;
         this.setSpriteFromAge(spriteSet);
-
 
         this.rCol = 1f;
         this.gCol = 1f;
@@ -30,27 +29,28 @@ public class AcidRainParticle extends TextureSheetParticle {
         super.tick();
         fadeOut();
     }
+
     private void fadeOut() {
-        this.alpha = (-(1/(float)lifetime) * age + 1);
+        this.alpha = (-(1 / (float) lifetime) * age + 1);
     }
 
+    @NotNull
     @Override
-    public @NotNull ParticleRenderType getRenderType() {
+    public ParticleRenderType getRenderType() {
         return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public static class Provider implements ParticleProvider<SimpleParticleType> {
-        private final SpriteSet sprites;
+    public static class Provider implements net.minecraft.client.particle.ParticleProvider<SimpleParticleType> {
+        private final SpriteSet spriteSet;
 
         public Provider(SpriteSet spriteSet) {
-            this.sprites = spriteSet;
+            this.spriteSet = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel level,
-                                       double x, double y, double z,
-                                       double dx, double dy, double dz) {
-            return new AcidRainParticle(level, x, y, z, this.sprites, dx, dy, dz);
+        public Particle createParticle(@NotNull SimpleParticleType particleType, @NotNull ClientLevel level, double x, double y, double z, double dx, double dy, double dz) {
+            AcidRainParticle acidRainParticle = new AcidRainParticle(level, x, y, z, this.spriteSet, dx, dy, dz);
+            acidRainParticle.setColor(1F, 0.80F, 0.25F);
+            return acidRainParticle;
         }
     }
 }

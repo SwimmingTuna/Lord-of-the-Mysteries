@@ -15,6 +15,7 @@ import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -154,8 +155,6 @@ public class ModEvents {
                 pPlayer.setDeltaMovement(tag.getDouble("lookVectorXCushion") * 2,  tag.getDouble("lookVectorYCushion") * 2, tag.getDouble("lookVectorZCushion") * 2);
                 pPlayer.resetFallDistance();
                 pPlayer.hurtMarked = true;
-                pPlayer.sendSystemMessage(Component.literal("lookVectorX is" + tag.getDouble("lookVectorXCushion")));
-                pPlayer.sendSystemMessage(Component.literal("delta movement x is" + pPlayer.getDeltaMovement().x()));
             }
             if (windCushion >= 20) {
                 tag.putInt("windCushion", 0);
@@ -163,13 +162,7 @@ public class ModEvents {
             }
         }
     }
-    @SubscribeEvent
-    public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
-        Minecraft.getInstance().particleEngine.register(ParticleInit.NULL_PARTICLE.get(),
-                NullParticle.Provider::new);
-        Minecraft.getInstance().particleEngine.register(ParticleInit.ACIDRAIN_PARTICLE.get(),
-                AcidRainParticle.Provider::new);
-    }
+
     @SubscribeEvent
     public static void windSailorSense(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
@@ -192,12 +185,11 @@ public class ModEvents {
 
         }
     }
+
     @SubscribeEvent
     public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
         LivingEntity entity = event.getEntity();
         CompoundTag tag = entity.getPersistentData();
-        if (entity instanceof Player) {
-        entity.level().addParticle(ParticleInit.ACIDRAIN_PARTICLE.get(), entity.getX(), entity.getY() + 1, entity.getZ(), 0,0.3,0);}
         int glowing = tag.getInt("LOTMisGlowing");
         if (entity.isCurrentlyGlowing() && glowing == 0) {
             tag.putInt("LOTMisGlowing", 1);;

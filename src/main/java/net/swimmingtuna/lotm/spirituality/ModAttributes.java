@@ -22,6 +22,7 @@ public class ModAttributes {
             ()-> new RangedAttribute("attribute.lotm.spirituality",1.0D,0.0D,10).setSyncable(true));
 
 
+
     public static void register(IEventBus eventBus) {
         ATTRIBUTES.register(eventBus);
     }

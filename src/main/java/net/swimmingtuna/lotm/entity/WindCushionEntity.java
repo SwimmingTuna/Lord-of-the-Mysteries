@@ -14,6 +14,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -85,11 +86,11 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
         if (!pPlayer.level().isClientSide()) {
             Vec3 lookVector = pPlayer.getLookAngle();
             WindCushionEntity windCushion = new WindCushionEntity(pPlayer.level(), pPlayer, 0,0,0);
+                pPlayer.getPersistentData().putInt("windCushionXRot", (int) pPlayer.getXRot());
+                pPlayer.getPersistentData().putInt("windCushionYRot", (int) pPlayer.getYRot());
                 pPlayer.getPersistentData().putInt("windCushion", 1);
-                windCushion.setDeltaMovement(0, pPlayer.getDeltaMovement().y * 0.4, 0);
+                windCushion.setDeltaMovement(pPlayer.getDeltaMovement().x * 2, pPlayer.getDeltaMovement().y * 1.1, pPlayer.getDeltaMovement().z * 2);
                 windCushion.setOwner(pPlayer);
-                windCushion.setXRot(90.0F);
-                windCushion.setRot(90.0F,130.0F);
                 windCushion.hurtMarked = true;
                 ScaleData scaleData = ScaleTypes.BASE.getScaleData(windCushion);
                 scaleData.setTargetScale(2);
@@ -101,6 +102,7 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
     @Override
     public void tick() {
         super.tick();
+        ProjectileUtil.rotateTowardsMovement(this,0.0F);
         int currentLifeCount = this.entityData.get(DATA_LIFE_COUNT);
         if (currentLifeCount >= 20) {
             this.discard();

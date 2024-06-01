@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -41,6 +42,13 @@ public class MeteorEntity extends AbstractHurtingProjectile {
         return this.isDangerous() ? 0.73F : super.getInertia();
     }
 
+    @Override
+    public boolean canHitEntity(Entity entity) {
+        if (entity instanceof MeteorEntity) {
+            return false;
+        }
+        return super.canHitEntity(entity);
+    }
 
     public boolean isOnFire() {
         return false;
