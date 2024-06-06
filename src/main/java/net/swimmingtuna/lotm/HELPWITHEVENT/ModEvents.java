@@ -209,7 +209,7 @@ public class ModEvents {
                         }}
                 }
                 else {
-                    LOTMNetworkHandler.sendToServer(new GlowingPacketC2S());
+                    LOTMNetworkHandler.sendToServer(new GlowingPacketC2S()); //PROBLEM AREA
                 }
             }
 
