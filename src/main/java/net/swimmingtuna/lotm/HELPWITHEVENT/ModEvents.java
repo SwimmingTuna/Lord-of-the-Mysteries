@@ -1,31 +1,31 @@
-package net.swimmingtuna.lotm.NEED_HELP;
+package net.swimmingtuna.lotm.HELPWITHEVENT;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.NEED_HELP.GlowingPacketC2S;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
-import net.swimmingtuna.lotm.particle.AcidRainParticle;
-import net.swimmingtuna.lotm.particle.NullParticle;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 
@@ -164,10 +164,35 @@ public class ModEvents {
     }
 
     @SubscribeEvent
+    public static void windManipulationGlide(TickEvent.PlayerTickEvent event) {
+        Player pPlayer = event.player;
+        if (event.phase == TickEvent.Phase.END && !pPlayer.level().isClientSide()) {
+            CompoundTag tag = pPlayer.getPersistentData();
+            int regularFlight = tag.getInt("sailorFlight");
+            boolean enhancedFlight = tag.getBoolean("sailorFlight1");
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (holder.isSailorClass() && holder.getCurrentSequence() <= 7 && pPlayer.isShiftKeyDown() && pPlayer.getDeltaMovement().y() < 0 && !pPlayer.getAbilities().instabuild && !enhancedFlight && regularFlight == 0) {
+                Vec3 movement = pPlayer.getDeltaMovement();
+                double deltaX = Math.cos(Math.toRadians(pPlayer.getYRot() + 90)) * 0.06;
+                double deltaZ = Math.sin(Math.toRadians(pPlayer.getYRot() + 90)) * 0.06;
+                pPlayer.setDeltaMovement(movement.x + deltaX, -0.05, movement.z + deltaZ);
+
+
+                pPlayer.resetFallDistance();
+                pPlayer.hurtMarked = true;
+                pPlayer.sendSystemMessage(Component.literal("y delta movement is" + pPlayer.getDeltaMovement().y()));
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void windSailorSense(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
         if (event.phase == TickEvent.Phase.END) {
             if (!pPlayer.level().isClientSide()) {
+                if (pPlayer.getPersistentData().getBoolean("sailorFlight1") == false) {
+                    pPlayer.getPersistentData().putBoolean("sailorFlight1", false);
+                }
                 CompoundTag tag = pPlayer.getPersistentData();
                 int windGlowing = tag.getInt("windGlowing");
                 if (windGlowing >= 1 && windGlowing <= 200) {
@@ -205,5 +230,39 @@ public class ModEvents {
                 tag.putInt("LOTMisGlowing", 0);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void sailorProjectiles(ProjectileEvent.ProjectileControlEvent event) {
+        Projectile projectile = event.getProjectile();
+        HitResult ray = event.getProjectileResult();
+        LivingEntity pPlayer = event.getOwner();
+        ModEventFactory.onSailorShootProjectile(projectile, ray);
+        ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile,ray);
+        MinecraftForge.EVENT_BUS.post(projectileEvent);
+        if (!projectile.level().isClientSide()) {
+        LivingEntity target = event.getTarget(30,0);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder((Player) pPlayer).orElse(null);
+        pPlayer.sendSystemMessage(Component.literal("working"));
+        if (holder.isSailorClass() && holder.getCurrentSequence() <= 7) {
+            Vec3 projectilePos = projectile.position();
+            Vec3 targetPos = new Vec3(target.getX(), target.getY(), target.getZ());
+            Vec3 projectileVelocity = projectile.getDeltaMovement();
+            Vec3 directionToTarget = targetPos.subtract(projectilePos).normalize();
+
+            double curveStrength = 2.0;
+            Vec3 newVelocity = projectileVelocity.add(directionToTarget.scale(curveStrength));
+            projectile.setDeltaMovement(newVelocity);
+            projectile.hurtMarked = true;
+
+        }
+        }
+    }
+    @SubscribeEvent
+    public static void sailorProj(ProjectileEvent.ProjectileControlEvent event) {
+        Projectile projectile = event.getProjectile();
+        HitResult ray = event.getProjectileResult();
+        ModEventFactory.onSailorShootProjectile(projectile, ray);
+
     }
 }

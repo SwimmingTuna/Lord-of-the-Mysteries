@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.entity.AqueousLightEntityPush;
 import net.swimmingtuna.lotm.entity.WindBladeEntity;
 import net.swimmingtuna.lotm.init.ItemInit;
 import org.jetbrains.annotations.NotNull;

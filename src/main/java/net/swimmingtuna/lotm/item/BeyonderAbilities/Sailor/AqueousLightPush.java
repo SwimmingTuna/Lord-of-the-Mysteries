@@ -19,7 +19,6 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.AqueousLightEntityPush;
 import net.swimmingtuna.lotm.init.ItemInit;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.EnvisionKingdom;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;

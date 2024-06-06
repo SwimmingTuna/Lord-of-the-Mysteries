@@ -6,7 +6,6 @@ import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 
 import java.util.Arrays;
 import java.util.function.Supplier;

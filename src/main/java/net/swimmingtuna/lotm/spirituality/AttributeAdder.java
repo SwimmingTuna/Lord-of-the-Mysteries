@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.spirituality;
 
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,6 +18,16 @@ public class AttributeAdder {
         addToPlayer(event, ModAttributes.NIGHTMARE);
         addToPlayer(event, ModAttributes.ARMORINVISIBLITY);
         addToPlayer(event, ModAttributes.DIR);
+        addToPlayer(event, ModAttributes.PARTICLE_HELPER);
+        addToPlayer(event, ModAttributes.PARTICLE_HELPER1);
+        addToPlayer(event, ModAttributes.PARTICLE_HELPER2);
+        addToPlayer(event, ModAttributes.PARTICLE_HELPER3);
+        addToPlayer(event, ModAttributes.PARTICLE_HELPER4);
+        addToPlayer(event, ModAttributes.PARTICLE_HELPER5);
+        addToPlayer(event, ModAttributes.PARTICLE_HELPER6);
+        addToPlayer(event, ModAttributes.PARTICLE_HELPER7);
+        addToPlayer(event, ModAttributes.PARTICLE_HELPER8);
+        addToPlayer(event, ModAttributes.PARTICLE_HELPER9);
     }
 
     @SafeVarargs

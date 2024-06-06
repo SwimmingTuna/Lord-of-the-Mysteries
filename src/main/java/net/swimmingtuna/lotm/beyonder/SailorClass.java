@@ -2,13 +2,14 @@ package net.swimmingtuna.lotm.beyonder;
 
 import com.google.common.collect.HashMultimap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TridentItem;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.init.ItemInit;
 
@@ -54,8 +55,17 @@ public class SailorClass implements BeyonderClass {
                 boolean x = tag.getBoolean("sailorFlight1");
                 Abilities playerAbilites = pPlayer.getAbilities();
                 playerAbilites.setFlyingSpeed(0.2F);
+                pPlayer.onUpdateAbilities();
+                if (pPlayer instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(serverPlayer.getAbilities()));
+                }
                 if (!pPlayer.level().isRaining() && !x) {
                     playerAbilites.setFlyingSpeed(0.05F);
+                    pPlayer.sendSystemMessage(Component.literal("flying speed is " + playerAbilites.getFlyingSpeed()));
+                    pPlayer.onUpdateAbilities();
+                    if (pPlayer instanceof ServerPlayer serverPlayer) {
+                        serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(serverPlayer.getAbilities()));
+                    }
                 }
                 MobEffectInstance dolphinsGrace = pPlayer.getEffect(MobEffects.DOLPHINS_GRACE);
                 MobEffectInstance speed = pPlayer.getEffect(MobEffects.MOVEMENT_SPEED);

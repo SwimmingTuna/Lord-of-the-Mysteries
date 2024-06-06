@@ -28,8 +28,8 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
-import virtuoel.pehkui.api.*;
-import virtuoel.pehkui.util.PehkuiEntityExtensions;
+import virtuoel.pehkui.api.ScaleData;
+import virtuoel.pehkui.api.ScaleTypes;
 
 import javax.annotation.Nullable;
 import java.util.List;

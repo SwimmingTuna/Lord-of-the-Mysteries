@@ -9,8 +9,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 
 
 public class BeyonderCommand {

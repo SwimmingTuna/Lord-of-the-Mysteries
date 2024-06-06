@@ -14,7 +14,6 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.util.ModAnimationDefinitions;
 
 public class WindCushionModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation WIND_CUSHION_LOCATION = new ModelLayerLocation(new ResourceLocation(LOTM.MOD_ID, "wind_cushion"), "main1");

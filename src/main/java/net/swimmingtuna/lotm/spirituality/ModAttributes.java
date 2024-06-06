@@ -21,7 +21,25 @@ public class ModAttributes {
     public static final RegistryObject<Attribute> DIR = ATTRIBUTES.register("dreamintoreality",
             ()-> new RangedAttribute("attribute.lotm.spirituality",1.0D,0.0D,10).setSyncable(true));
     public static final RegistryObject<Attribute> PARTICLE_HELPER = ATTRIBUTES.register("particle_helper",
-            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,10).setSyncable(true));
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
+    public static final RegistryObject<Attribute> PARTICLE_HELPER1 = ATTRIBUTES.register("particle_helper1",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
+    public static final RegistryObject<Attribute> PARTICLE_HELPER2 = ATTRIBUTES.register("particle_helper2",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
+    public static final RegistryObject<Attribute> PARTICLE_HELPER3 = ATTRIBUTES.register("particle_helper3",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
+    public static final RegistryObject<Attribute> PARTICLE_HELPER4 = ATTRIBUTES.register("particle_helper4",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
+    public static final RegistryObject<Attribute> PARTICLE_HELPER5 = ATTRIBUTES.register("particle_helper5",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
+    public static final RegistryObject<Attribute> PARTICLE_HELPER6 = ATTRIBUTES.register("particle_helper6",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
+    public static final RegistryObject<Attribute> PARTICLE_HELPER7 = ATTRIBUTES.register("particle_helper7",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
+    public static final RegistryObject<Attribute> PARTICLE_HELPER8 = ATTRIBUTES.register("particle_helper8",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
+    public static final RegistryObject<Attribute> PARTICLE_HELPER9 = ATTRIBUTES.register("particle_helper9",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
 
 
     public static void register(IEventBus eventBus) {

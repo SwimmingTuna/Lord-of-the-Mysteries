@@ -1,24 +1,12 @@
 package net.swimmingtuna.lotm.util;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 public class HelperMethods {
     public static final RandomSource RANDOM = RandomSource.createThreadSafe();

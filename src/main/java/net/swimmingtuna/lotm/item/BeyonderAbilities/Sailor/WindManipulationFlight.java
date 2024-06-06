@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -24,10 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
-import virtuoel.pehkui.api.ScaleData;
-import virtuoel.pehkui.api.ScaleTypes;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -102,7 +98,7 @@ public class WindManipulationFlight extends Item {
             playerAbilities.mayfly = false;
             playerAbilities.flying = false;}
         playerAbilities.setFlyingSpeed(0.05F);
-        pPlayer.onUpdateAbilities();;
+        pPlayer.onUpdateAbilities();
         if (pPlayer instanceof ServerPlayer serverPlayer) {
             serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
         }

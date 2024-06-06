@@ -11,12 +11,10 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import net.swimmingtuna.lotm.blocks.*;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.blocks.*;
 
 import java.util.function.Supplier;
-
-import static net.minecraft.world.item.Items.registerBlock;
 
 public class BlockInit {
     public static final DeferredRegister<Block> BLOCKS =

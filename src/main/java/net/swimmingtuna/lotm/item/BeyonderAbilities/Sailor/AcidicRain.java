@@ -2,27 +2,27 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.ParticleInit;
-import net.swimmingtuna.lotm.util.effect.ModEffects;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -56,6 +56,8 @@ public class AcidicRain extends Item {
 
     private static void shootAcidicRain(Player pPlayer, Level level) {
         pPlayer.getPersistentData().putInt("sailorAcidicRain", 1);
+        AttributeInstance particleAttribute = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER.get());
+        particleAttribute.setBaseValue(1);
     }
 
     @Override
@@ -73,14 +75,40 @@ public class AcidicRain extends Item {
         Player pPlayer = event.player;
         if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
             int acidicRain = pPlayer.getPersistentData().getInt("sailorAcidicRain");
-            if (acidicRain > 0) {
-                pPlayer.sendSystemMessage(Component.literal("working"));
+            AttributeInstance particleAttribute = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER.get());
+            if (acidicRain > 0 && particleAttribute.getValue() == 1) {
                 pPlayer.getPersistentData().putInt("sailorAcidicRain", acidicRain + 1);
-                spawnAcidicRainParticles(pPlayer);
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                int sequence = holder.getCurrentSequence();
+                double radius1 = 50 - (sequence * 7);
+                double radius2 = 10 - sequence;
+
+
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius1))) {
+                    if (entity != pPlayer) {
+                        if (entity.hasEffect(MobEffects.POISON)) {
+                            int poisonAmp = entity.getEffect(MobEffects.POISON).getAmplifier();
+                            if (poisonAmp == 0) {
+                                entity.addEffect((new MobEffectInstance(MobEffects.POISON, 60, 1, false, false)));
+                            }
+                        } else entity.addEffect((new MobEffectInstance(MobEffects.POISON, 60, 1, false, false)));
+                    }
+                }
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius2))) {
+                    if (entity != pPlayer) {
+                        if (entity.hasEffect(MobEffects.POISON)) {
+                            int poisonAmp = entity.getEffect(MobEffects.POISON).getAmplifier();
+                            if (poisonAmp <= 2) {
+                                entity.addEffect((new MobEffectInstance(MobEffects.POISON, 60, 2, false, false)));
+                            }
+                        } else entity.addEffect((new MobEffectInstance(MobEffects.POISON, 60, 2, false, false)));
+                    }
+                }
+
 
                 if (acidicRain > 300) {
                     pPlayer.getPersistentData().putInt("sailorAcidicRain", 0);
-                    // Add logic to remove acid rain effect and particles here
+                    particleAttribute.setBaseValue(0);
                 }
             }
         }
@@ -88,22 +116,36 @@ public class AcidicRain extends Item {
 
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
         if (entity instanceof Player pPlayer) {
-            if (pPlayer.level().isClientSide()) {
-                int acidicRain = pPlayer.getPersistentData().getInt("sailorAcidicRain");
-                if (acidicRain >= 1) {
-                    spawnAcidicRainParticles(pPlayer);
-                }
+            double acidicRain = pPlayer.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER.get());
+            if (acidicRain >= 1) {
+                spawnAcidicRainParticles(pPlayer);
             }
         }
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
 
 
-
     private static void spawnAcidicRainParticles(Player pPlayer) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        int sequence = holder.getCurrentSequence();
         double x = pPlayer.getX();
         double y = pPlayer.getY() + 5;
         double z = pPlayer.getZ();
-        pPlayer.level().addParticle(ParticleInit.ACIDRAIN_PARTICLE.get(), x, y-3, z, 0, 0.3, 0);
+        int maxRadius = 50 - (sequence * 7);
+        int maxParticles = 500 - (sequence * 60);
+
+        for (int i = 0; i < maxParticles; i++) {
+            double dx = pPlayer.level().random.nextGaussian() * maxRadius;
+            double dy = pPlayer.level().random.nextGaussian() * 2; // Adjust this value to control the vertical spread
+            double dz = pPlayer.level().random.nextGaussian() * maxRadius;
+            double distance = Math.sqrt(dx * dx + dz * dz);
+
+            if (distance < maxRadius) {
+                double density = 1.0 - (distance / maxRadius); // Calculate the density based on distance
+                if (pPlayer.level().random.nextDouble() < density) {
+                    pPlayer.level().addParticle(ParticleInit.ACIDRAIN_PARTICLE.get(), x + dx, y + dy, z + dz, 0, -3, 0);
+                }
+            }
+        }
     }
 }

@@ -1,25 +1,14 @@
 package net.swimmingtuna.lotm.entity;
 
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.init.EntityInit;
-import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.util.EntityUtil.BeamEntity;
 import net.swimmingtuna.lotm.util.RotationUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import virtuoel.pehkui.api.ScaleData;
-import virtuoel.pehkui.api.ScaleTypes;
 
 public class DragonBreathEntity extends BeamEntity {
 
