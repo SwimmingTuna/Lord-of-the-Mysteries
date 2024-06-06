@@ -2,6 +2,8 @@ package net.swimmingtuna.lotm.HELPWITHEVENT;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -12,6 +14,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
@@ -28,6 +32,9 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
 public class ModEvents {
@@ -233,36 +240,57 @@ public class ModEvents {
     }
 
     @SubscribeEvent
-    public static void sailorProjectiles(ProjectileEvent.ProjectileControlEvent event) {
-        Projectile projectile = event.getProjectile();
-        HitResult ray = event.getProjectileResult();
-        LivingEntity pPlayer = event.getOwner();
-        ModEventFactory.onSailorShootProjectile(projectile, ray);
+    public static void tickEventTest(TickEvent.PlayerTickEvent event) {
+        Player pPlayer = event.player;
+
+        Projectile projectile = getProjectileFromPlayer(pPlayer);
+        assert projectile != null;
+        HitResult ray = getRayFromProjectile(projectile);
+        assert ray != null;
         ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile,ray);
-        MinecraftForge.EVENT_BUS.post(projectileEvent);
-        if (!projectile.level().isClientSide()) {
-        LivingEntity target = event.getTarget(30,0);
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder((Player) pPlayer).orElse(null);
-        pPlayer.sendSystemMessage(Component.literal("working"));
-        if (holder.isSailorClass() && holder.getCurrentSequence() <= 7) {
-            Vec3 projectilePos = projectile.position();
-            Vec3 targetPos = new Vec3(target.getX(), target.getY(), target.getZ());
-            Vec3 projectileVelocity = projectile.getDeltaMovement();
-            Vec3 directionToTarget = targetPos.subtract(projectilePos).normalize();
-
-            double curveStrength = 2.0;
-            Vec3 newVelocity = projectileVelocity.add(directionToTarget.scale(curveStrength));
-            projectile.setDeltaMovement(newVelocity);
-            projectile.hurtMarked = true;
-
+        projectile = projectileEvent.getProjectile();
+        ray = projectileEvent.getProjectileResult();
+        Player player = (Player) projectileEvent.getOwner();
+        if (projectile != null && ray != null) {
+        if (!player.level().isClientSide()) {
+            player.sendSystemMessage(Component.literal("coords are " + projectile.getX() + " " + projectile.getY() + " " + projectile.getZ()));
+            ModEventFactory.onSailorShootProjectile(projectile,ray);
+            if (!projectile.level().isClientSide()) {
+                LivingEntity target = projectileEvent.getTarget(30, 0);
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(player).orElse(null);
+                if (holder.isSailorClass() && holder.getCurrentSequence() <= 7) {
+                    projectile.setDeltaMovement(projectile.getX() - target.getX(), projectile.getY() - target.getY(), projectile.getZ() - target.getZ());
+                    projectile.hurtMarked = true;
+                }
+            }
         }
         }
     }
-    @SubscribeEvent
-    public static void sailorProj(ProjectileEvent.ProjectileControlEvent event) {
-        Projectile projectile = event.getProjectile();
-        HitResult ray = event.getProjectileResult();
-        ModEventFactory.onSailorShootProjectile(projectile, ray);
 
+    private static Projectile getProjectileFromPlayer(Player player) {
+
+        List<Projectile> projectiles = player.level().getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(500));
+
+        for (Projectile proj : projectiles) {
+            if (proj.getOwner() == player) {
+                return proj;
+            }
+        }
+        return null;
+    }
+    private static HitResult getRayFromProjectile(Projectile projectile) {
+        if (projectile != null) {
+            Vec3 startPos = projectile.position();
+            Vec3 direction = projectile.getDeltaMovement().normalize();
+            Vec3 endPos = startPos.add(direction.scale(100)); // Adjust the scale as needed for your requirements
+
+            // Ray trace to detect entities or blocks in the projectile's path
+            Level level = projectile.level();
+            ClipContext context = new ClipContext(startPos, endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, projectile);
+            HitResult rayTraceResult = level.clip(context);
+
+            return rayTraceResult;
+        }
+        return null;
     }
 }

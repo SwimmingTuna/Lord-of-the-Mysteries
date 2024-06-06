@@ -19,28 +19,7 @@ public class ModEventFactory {
     }
 
     public static void onSailorShootProjectile(Projectile projectile, HitResult ray) {
-        ProjectileEvent.ProjectileControlEvent event = new ProjectileEvent.ProjectileControlEvent(projectile,ray);
-        LivingEntity pPlayer = event.getOwner();
-        ModEventFactory.onSailorShootProjectile(projectile, ray);
         ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile,ray);
         MinecraftForge.EVENT_BUS.post(projectileEvent);
-        if (!projectile.level().isClientSide()) {
-            LivingEntity target = event.getTarget(30,0);
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder((Player) pPlayer).orElse(null);
-            pPlayer.sendSystemMessage(Component.literal("working"));
-            if (holder.isSailorClass() && holder.getCurrentSequence() <= 7) {
-                Vec3 projectilePos = projectile.position();
-                Vec3 targetPos = new Vec3(target.getX(), target.getY(), target.getZ());
-                Vec3 projectileVelocity = projectile.getDeltaMovement();
-                Vec3 directionToTarget = targetPos.subtract(projectilePos).normalize();
-
-                double curveStrength = 2.0;
-                Vec3 newVelocity = projectileVelocity.add(directionToTarget.scale(curveStrength));
-                projectile.setDeltaMovement(newVelocity);
-                projectile.hurtMarked = true;
-
-            }
-        }
-        fireModEvent(event);
     }
 }
