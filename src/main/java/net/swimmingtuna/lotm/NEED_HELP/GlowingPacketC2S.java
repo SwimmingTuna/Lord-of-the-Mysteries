@@ -34,10 +34,6 @@ public class GlowingPacketC2S {
                 for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(20))) {
                     if (entity.hasEffect(ModEffects.LOTMGLOWING.get())) {
                         entity.setGlowingTag(true);
-                    } else {
-                        if (!entity.hasEffect(MobEffects.GLOWING)) {
-                            entity.setGlowingTag(false);
-                        }
                     }
                 }
             }

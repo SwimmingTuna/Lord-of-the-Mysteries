@@ -195,22 +195,22 @@ public class ModEvents {
         Player pPlayer = event.player;
         if (event.phase == TickEvent.Phase.END) {
             if (!pPlayer.level().isClientSide()) {
+
                 if (pPlayer.getPersistentData().getBoolean("sailorFlight1") == false) {
                     pPlayer.getPersistentData().putBoolean("sailorFlight1", false);
                 }
+
                 CompoundTag tag = pPlayer.getPersistentData();
                 int windGlowing = tag.getInt("windGlowing");
-                if (windGlowing >= 1 && windGlowing <= 200) {
-                    pPlayer.sendSystemMessage(Component.literal("windglowing is" + windGlowing));
-                }
                 if (windGlowing > 200) {
                     for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(20))) {
                         if (entity != pPlayer) {
                             entity.removeEffect(ModEffects.LOTMGLOWING.get());
                         }}
                 }
-            } else {
-                LOTMNetworkHandler.sendToServer(new GlowingPacketC2S());
+                else {
+                    LOTMNetworkHandler.sendToServer(new GlowingPacketC2S());
+                }
             }
 
         }
@@ -240,7 +240,7 @@ public class ModEvents {
     @SubscribeEvent
     public static void sailorProjectileMovement(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
-        Projectile projectile = getProjectileFromPlayer(pPlayer);
+        Projectile projectile = getProjectiles(pPlayer);
         if (projectile != null) {
             ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile);
             projectile = projectileEvent.getProjectile();
@@ -254,8 +254,8 @@ public class ModEvents {
                         if (target != null) {
                             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(player).orElse(null);
                             if (holder.isSailorClass() && holder.getCurrentSequence() <= 7) {
-                                projectileEvent.addMovement(projectile, (target.getX() - projectile.getX()) * 0.075, (target.getY() - projectile.getY()) * 0.075, (target.getZ() - projectile.getZ()) * 0.075);
-                                projectile.hurtMarked = true;
+                                    projectileEvent.addMovement(projectile, (target.getX() - projectile.getX()) * 0.075, (target.getY() - projectile.getY()) * 0.075, (target.getZ() - projectile.getZ()) * 0.075);
+                                    projectile.hurtMarked = true;
                             }
                         }
                     }
@@ -263,37 +263,18 @@ public class ModEvents {
             }
         }
     }
-
-    private static Projectile getProjectileFromPlayer(Player player) {
-        if (!player.level().isClientSide()) {
-            List<Projectile> projectiles = player.level().getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(50));
-            for (Projectile proj : projectiles) {
-                if (!proj.level().isClientSide()) {
-                    if (proj instanceof Arrow arrow) {
-                        if (arrowOnGround(arrow)) {
-                            return null;
-                        } else {
-                            return proj;
-                        }
+    private static Projectile getProjectiles(Player pPlayer) {
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            int sequence = holder.getCurrentSequence();
+            for (Projectile projectile : pPlayer.level().getEntitiesOfClass(Projectile.class, pPlayer.getBoundingBox().inflate(50))) {
+                if (projectile.getOwner() == pPlayer) {
+                    if (projectile.tickCount > 20 && projectile.tickCount < Math.max(100 - (sequence * 10), 50)) {
+                        return projectile;
                     }
-                }
-                if (proj.getOwner() == player) {
-                    return proj;
                 }
             }
         }
         return null;
-    }
-    private static boolean arrowOnGround(Arrow arrow) {
-        if (!arrow.level().isClientSide()) {
-            BlockPos blockPos = new BlockPos((int) arrow.getX(), (int) (arrow.getY() - 2), (int) arrow.getZ());
-            BlockState blockState = arrow.level().getBlockState(blockPos);
-            if (blockState.isSolid()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return true;
     }
 }
