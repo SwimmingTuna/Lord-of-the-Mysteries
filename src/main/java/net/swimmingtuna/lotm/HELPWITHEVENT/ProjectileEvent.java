@@ -17,22 +17,18 @@ public class ProjectileEvent extends Event implements IModBusEvent {
 
 
     public static class ProjectileControlEvent extends ProjectileEvent{
-        private  HitResult ray;
         private Projectile projectile;
         private ProjectileImpactEvent.ImpactResult result = ProjectileImpactEvent.ImpactResult.DEFAULT;
 
-        public ProjectileControlEvent(Projectile projectile, HitResult ray) {
+        public ProjectileControlEvent(Projectile projectile) {
             super();
-            this.ray = ray;
+
             this.projectile = projectile;
         }
         public Projectile getProjectile() {
             return projectile;
         }
 
-        public HitResult getProjectileResult() {
-            return ray;
-        }
         public LivingEntity getOwner() {
             return (LivingEntity) projectile.getOwner();
         }
@@ -48,6 +44,13 @@ public class ProjectileEvent extends Event implements IModBusEvent {
         public void setMovement(Projectile projectile, double deltaMovementX, double deltaMovementY, double deltaMovementZ) {
             projectile.setDeltaMovement(deltaMovementX, deltaMovementY, deltaMovementZ);
         }
+        public void addMovement(Projectile projectile, double deltaMovementX, double deltaMovementY, double deltaMovementZ) {
+            if (!projectile.level().isClientSide()) {
+                Vec3 currentDeltaMovement = projectile.getDeltaMovement();
+                Vec3 newDeltaMovement = currentDeltaMovement.add(deltaMovementX, deltaMovementY, deltaMovementZ);
+                projectile.setDeltaMovement(newDeltaMovement);
+            }
+        }
 
         public LivingEntity getTarget(double maxValue, double minValue) {
             LivingEntity closestEntity = null;
@@ -55,9 +58,8 @@ public class ProjectileEvent extends Event implements IModBusEvent {
             Vec3 projectilePos = projectile.position();
             double radius = maxValue;
             List<LivingEntity> nearbyEntities = projectile.level().getEntitiesOfClass(LivingEntity.class, projectile.getBoundingBox().inflate(radius));
-
             for (LivingEntity entity : nearbyEntities) {
-                if (entity != getOwner()) {
+                if (entity != getOwner() && !entity.level().isClientSide()) {
                     double distance = entity.distanceToSqr(projectilePos);
                     if (distance < maxValue && distance > minValue && distance < closestDistance) {
                         closestDistance = distance;
@@ -65,7 +67,6 @@ public class ProjectileEvent extends Event implements IModBusEvent {
                     }
                 }
             }
-
             return closestEntity;
         }
     }

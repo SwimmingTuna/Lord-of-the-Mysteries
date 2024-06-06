@@ -18,8 +18,8 @@ public class ModEventFactory {
         ModLoader.get().postEvent(event);
     }
 
-    public static void onSailorShootProjectile(Projectile projectile, HitResult ray) {
-        ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile,ray);
+    public static void onSailorShootProjectile(Projectile projectile) {
+        ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile);
         MinecraftForge.EVENT_BUS.post(projectileEvent);
     }
 }

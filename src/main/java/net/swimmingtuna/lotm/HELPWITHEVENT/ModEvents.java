@@ -1,9 +1,9 @@
 package net.swimmingtuna.lotm.HELPWITHEVENT;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Position;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -12,13 +12,12 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -32,7 +31,6 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -240,57 +238,62 @@ public class ModEvents {
     }
 
     @SubscribeEvent
-    public static void tickEventTest(TickEvent.PlayerTickEvent event) {
+    public static void sailorProjectileMovement(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
-
         Projectile projectile = getProjectileFromPlayer(pPlayer);
-        assert projectile != null;
-        HitResult ray = getRayFromProjectile(projectile);
-        assert ray != null;
-        ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile,ray);
-        projectile = projectileEvent.getProjectile();
-        ray = projectileEvent.getProjectileResult();
-        Player player = (Player) projectileEvent.getOwner();
-        if (projectile != null && ray != null) {
-        if (!player.level().isClientSide()) {
-            player.sendSystemMessage(Component.literal("coords are " + projectile.getX() + " " + projectile.getY() + " " + projectile.getZ()));
-            ModEventFactory.onSailorShootProjectile(projectile,ray);
-            if (!projectile.level().isClientSide()) {
-                LivingEntity target = projectileEvent.getTarget(30, 0);
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(player).orElse(null);
-                if (holder.isSailorClass() && holder.getCurrentSequence() <= 7) {
-                    projectile.setDeltaMovement(projectile.getX() - target.getX(), projectile.getY() - target.getY(), projectile.getZ() - target.getZ());
-                    projectile.hurtMarked = true;
+        if (projectile != null) {
+            ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile);
+            projectile = projectileEvent.getProjectile();
+
+            Player player = (Player) projectileEvent.getOwner();
+            if (projectile != null) {
+                if (!player.level().isClientSide()) {
+                    ModEventFactory.onSailorShootProjectile(projectile);
+                    if (!projectile.level().isClientSide()) {
+                        LivingEntity target = projectileEvent.getTarget(75, 0);
+                        if (target != null) {
+                            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(player).orElse(null);
+                            if (holder.isSailorClass() && holder.getCurrentSequence() <= 7) {
+                                projectileEvent.addMovement(projectile, (target.getX() - projectile.getX()) * 0.075, (target.getY() - projectile.getY()) * 0.075, (target.getZ() - projectile.getZ()) * 0.075);
+                                projectile.hurtMarked = true;
+                            }
+                        }
+                    }
                 }
             }
-        }
         }
     }
 
     private static Projectile getProjectileFromPlayer(Player player) {
-
-        List<Projectile> projectiles = player.level().getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(500));
-
-        for (Projectile proj : projectiles) {
-            if (proj.getOwner() == player) {
-                return proj;
+        if (!player.level().isClientSide()) {
+            List<Projectile> projectiles = player.level().getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(50));
+            for (Projectile proj : projectiles) {
+                if (!proj.level().isClientSide()) {
+                    if (proj instanceof Arrow arrow) {
+                        if (arrowOnGround(arrow)) {
+                            return null;
+                        } else {
+                            return proj;
+                        }
+                    }
+                }
+                if (proj.getOwner() == player) {
+                    return proj;
+                }
             }
         }
         return null;
     }
-    private static HitResult getRayFromProjectile(Projectile projectile) {
-        if (projectile != null) {
-            Vec3 startPos = projectile.position();
-            Vec3 direction = projectile.getDeltaMovement().normalize();
-            Vec3 endPos = startPos.add(direction.scale(100)); // Adjust the scale as needed for your requirements
-
-            // Ray trace to detect entities or blocks in the projectile's path
-            Level level = projectile.level();
-            ClipContext context = new ClipContext(startPos, endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, projectile);
-            HitResult rayTraceResult = level.clip(context);
-
-            return rayTraceResult;
+    private static boolean arrowOnGround(Arrow arrow) {
+        if (!arrow.level().isClientSide()) {
+            BlockPos blockPos = new BlockPos((int) arrow.getX(), (int) (arrow.getY() - 2), (int) arrow.getZ());
+            BlockState blockState = arrow.level().getBlockState(blockPos);
+            if (blockState.isSolid()) {
+                return true;
+            } else {
+                return false;
+            }
         }
-        return null;
+        return true;
     }
 }

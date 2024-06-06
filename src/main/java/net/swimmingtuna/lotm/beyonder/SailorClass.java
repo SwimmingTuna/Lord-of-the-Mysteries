@@ -61,7 +61,6 @@ public class SailorClass implements BeyonderClass {
                 }
                 if (!pPlayer.level().isRaining() && !x) {
                     playerAbilites.setFlyingSpeed(0.05F);
-                    pPlayer.sendSystemMessage(Component.literal("flying speed is " + playerAbilites.getFlyingSpeed()));
                     pPlayer.onUpdateAbilities();
                     if (pPlayer instanceof ServerPlayer serverPlayer) {
                         serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(serverPlayer.getAbilities()));
