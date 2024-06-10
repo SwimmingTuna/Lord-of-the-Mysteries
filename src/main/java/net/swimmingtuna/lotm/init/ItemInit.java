@@ -103,7 +103,25 @@ public class ItemInit {
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SPECTATOR.get(),2));
     public static final RegistryObject<Item> SPECTATOR_1_POTION = ITEMS.register("spectator_1_potion",
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SPECTATOR.get(),1));
-    public static final RegistryObject<Item> TYRANT_9_POTION = ITEMS.register("tyrant_1_potion",
+    public static final RegistryObject<Item> TYRANT_9_POTION = ITEMS.register("tyrant_9_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SAILOR.get(),1));
+    public static final RegistryObject<Item> TYRANT_8_POTION = ITEMS.register("tyrant_8_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SAILOR.get(),1));
+    public static final RegistryObject<Item> TYRANT_7_POTION = ITEMS.register("tyrant_7_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SAILOR.get(),1));
+    public static final RegistryObject<Item> TYRANT_6_POTION = ITEMS.register("tyrant_6_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SAILOR.get(),1));
+    public static final RegistryObject<Item> TYRANT_5_POTION = ITEMS.register("tyrant_5_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SAILOR.get(),1));
+    public static final RegistryObject<Item> TYRANT_4_POTION = ITEMS.register("tyrant_4_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SAILOR.get(),1));
+    public static final RegistryObject<Item> TYRANT_3_POTION = ITEMS.register("tyrant_3_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SAILOR.get(),1));
+    public static final RegistryObject<Item> TYRANT_2_POTION = ITEMS.register("tyrant_2_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SAILOR.get(),1));
+    public static final RegistryObject<Item> TYRANT_1_POTION = ITEMS.register("tyrant_1_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SAILOR.get(),1));
+    public static final RegistryObject<Item> TYRANT_0_POTION = ITEMS.register("tyrant_0_potion",
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SAILOR.get(),1));
     public static final RegistryObject<Item> SPECTATOR_0_POTION = ITEMS.register("spectator_0_potion",
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1),  ()->BeyonderClassInit.SPECTATOR.get(),0));

@@ -139,6 +139,15 @@ public class LOTM {
                 event.accept(ItemInit.SPECTATOR_0_POTION);
                 event.accept(ItemInit.BEYONDER_RESET_POTION);
                 event.accept(ItemInit.TYRANT_9_POTION);
+                event.accept(ItemInit.TYRANT_8_POTION);
+                event.accept(ItemInit.TYRANT_7_POTION);
+                event.accept(ItemInit.TYRANT_6_POTION);
+                event.accept(ItemInit.TYRANT_5_POTION);
+                event.accept(ItemInit.TYRANT_4_POTION);
+                event.accept(ItemInit.TYRANT_3_POTION);
+                event.accept(ItemInit.TYRANT_2_POTION);
+                event.accept(ItemInit.TYRANT_1_POTION);
+                event.accept(ItemInit.TYRANT_0_POTION);
                 event.accept(ItemInit.RagingBlows);
                 event.accept(ItemInit.AqueousLightDrown);
                 event.accept(ItemInit.EnableOrDisableLightning);
