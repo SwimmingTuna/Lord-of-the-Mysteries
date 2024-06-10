@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -208,8 +209,7 @@ public class ModEvents {
                             entity.removeEffect(ModEffects.LOTMGLOWING.get());
                         }}
                 }
-                else {
-                    LOTMNetworkHandler.sendToServer(new GlowingPacketC2S()); //PROBLEM AREA
+                else { //LOTMNetworkHandler.sendToPlayer(new GlowingPacketC2S(), (ServerPlayer) pPlayer);
                 }
             }
 
@@ -254,7 +254,7 @@ public class ModEvents {
                         if (target != null) {
                             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(player).orElse(null);
                             if (holder.isSailorClass() && holder.getCurrentSequence() <= 7) {
-                                    projectileEvent.addMovement(projectile, (target.getX() - projectile.getX()) * 0.075, (target.getY() - projectile.getY()) * 0.075, (target.getZ() - projectile.getZ()) * 0.075);
+                                    projectileEvent.addMovement(projectile, (target.getX() - projectile.getX()) * 0.1, (target.getY() - projectile.getY()) * 0.1, (target.getZ() - projectile.getZ()) * 0.1);
                                     projectile.hurtMarked = true;
                             }
                         }
@@ -267,9 +267,9 @@ public class ModEvents {
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
             int sequence = holder.getCurrentSequence();
-            for (Projectile projectile : pPlayer.level().getEntitiesOfClass(Projectile.class, pPlayer.getBoundingBox().inflate(50))) {
+            for (Projectile projectile : pPlayer.level().getEntitiesOfClass(Projectile.class, pPlayer.getBoundingBox().inflate(30))) {
                 if (projectile.getOwner() == pPlayer) {
-                    if (projectile.tickCount > 20 && projectile.tickCount < Math.max(100 - (sequence * 10), 50)) {
+                    if (projectile.tickCount > 8 && projectile.tickCount < 50) {
                         return projectile;
                     }
                 }
