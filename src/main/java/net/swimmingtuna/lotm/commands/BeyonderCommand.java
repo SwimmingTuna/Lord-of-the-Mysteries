@@ -8,6 +8,10 @@ import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Abilities;
+import net.minecraft.world.entity.player.Player;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
@@ -38,7 +42,15 @@ public class BeyonderCommand {
                         )
                         .then(Commands.literal("remove").executes(
                                         context -> {
-                                            BeyonderHolderAttacher.getHolder(context.getSource().getPlayerOrException()).ifPresent(BeyonderHolder::removeClass);
+                                            Player pPlayer = context.getSource().getPlayerOrException();
+                                            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(BeyonderHolder::removeClass);
+                                            Abilities playerAbilities = pPlayer.getAbilities();
+                                            playerAbilities.setFlyingSpeed(0.05F);
+                                            playerAbilities.setWalkingSpeed(0.1F);
+                                            pPlayer.onUpdateAbilities();
+                                            if (pPlayer instanceof ServerPlayer serverPlayer) {
+                                                serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+                                            }
                                             return 1;
                                         }
                                 )

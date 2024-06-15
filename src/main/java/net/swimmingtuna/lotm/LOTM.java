@@ -165,7 +165,12 @@ public class LOTM {
             event.accept(BlockInit.MINDSCAPE_BLOCK);
             event.accept(BlockInit.MINDSCAPE_OUTSIDE);
             event.accept(BlockInit.VISIONARY_BLACK_STAINED_GLASS);
-
+            event.accept(BlockInit.LOTM_DARKOAK_SLAB);
+            event.accept(BlockInit.LOTM_QUARTZ_SLAB);
+            event.accept(BlockInit.LOTM_DARKOAK_STAIRS);
+            event.accept(BlockInit.LOTM_OAK_STAIRS);
+            event.accept(BlockInit.LOTM_QUARTZ_STAIRS);
+            event.accept(BlockInit.LOTM_DEEPSLATEBRICK_STAIRS);
         }
     }
 }

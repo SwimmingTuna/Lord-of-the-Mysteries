@@ -98,7 +98,9 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
     @Override
     public void tick() {
         super.tick();
-        ProjectileUtil.rotateTowardsMovement(this,0.0F);
+        ProjectileUtil.rotateTowardsMovement(this, 0);
+        this.xRotO = getXRot();
+        this.yRotO = this.getYRot();
         int currentLifeCount = this.entityData.get(DATA_LIFE_COUNT);
         if (currentLifeCount >= 20) {
             this.discard();

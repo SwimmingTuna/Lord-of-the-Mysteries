@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 public class StructureBlockRenderMixin {
 
     @ModifyConstant(method = "getViewDistance", constant = @Constant(intValue = 96), require = 0)
-    public int getrenderDistance(int value) {return LOTM.NEW_STRUCTURE_SIZE / 2;
+    public int getrenderDistance(int value) {
+        return LOTM.NEW_STRUCTURE_SIZE ;
     }
 }

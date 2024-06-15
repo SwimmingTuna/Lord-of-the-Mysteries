@@ -12,6 +12,7 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.EnvisionKingdom;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderResetPotion;
+import net.swimmingtuna.lotm.worldgen.portal.ModTeleporter;
 
 public class ItemInit {
     public static final DeferredRegister<Item> ITEMS =
@@ -147,6 +148,7 @@ public class ItemInit {
             () -> new WindManipulationSense(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> AcidicRain = ITEMS.register("acidicrain",
             () -> new AcidicRain(new Item.Properties().stacksTo(1)));
+
 
 
     public static void register(IEventBus eventBus) {

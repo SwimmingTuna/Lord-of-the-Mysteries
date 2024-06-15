@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -42,6 +43,9 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
         return this.isDangerous() ? 0.73F : super.getInertia();
     }
 
+    public boolean isNoGravity() {
+        return true;
+    }
 
     public boolean isOnFire() {
         return false;
@@ -122,7 +126,7 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
         if (!pPlayer.level().isClientSide()) {
             WindBladeEntity windBladeEntity = new WindBladeEntity(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
             windBladeEntity.setDeltaMovement(initialVelocity);
-            Vec3 lightPosition = eyePosition.add(direction.scale(2.0));
+            Vec3 lightPosition = eyePosition.add(direction.scale(1.0));
             windBladeEntity.setPos(lightPosition);
             windBladeEntity.setOwner(pPlayer);
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
@@ -139,6 +143,10 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
     @Override
     public void tick() {
         super.tick();
+        Vec3 vec3 = this.getDeltaMovement();
+        ProjectileUtil.rotateTowardsMovement(this, 0);
+        this.xRotO = getXRot();
+        this.yRotO = this.getYRot();
         if (this.tickCount % 20 == 0) {
             if (this.tickCount >= 240) {
                 this.discard();

@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "lotm:block/cathedral_block"},
-    "facing=east": { "model": "lotm:block/cathedral_block", "y": 90},
-    "facing=south": { "model": "lotm:block/cathedral_block", "y": 1800},
-    "facing=west": { "model": "lotm:block/cathedral_block", "y": 270}
-  }
-  }

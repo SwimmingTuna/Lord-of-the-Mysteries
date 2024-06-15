@@ -30,6 +30,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -57,7 +58,7 @@ public class EnvisionKingdom extends Item {
                 BlockPos playerPos = pPlayer.getOnPos();
                 BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
                     if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
-                        generateCathedral(pPlayer, playerPos, level);
+                        generateCathedral(pPlayer);
                         if (!pPlayer.getAbilities().instabuild) {
                             pPlayer.getCooldowns().addCooldown(this, 900);
                         }
@@ -77,60 +78,20 @@ public class EnvisionKingdom extends Item {
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
 
-    private StructurePlaceSettings getStructurePlaceSettings(BlockPos pos) {
-        BoundingBox boundingBox = new BoundingBox(
-                pos.getX(),
-                pos.getY(),
-                pos.getZ(),
-                pos.getX() + 160,
-                pos.getY() + 97,
-                pos.getZ() + 265
-        );
-        StructurePlaceSettings settings = new StructurePlaceSettings();
-        settings.setRotation(Rotation.NONE);
-        settings.setMirror(Mirror.NONE);
-        settings.setRotationPivot(pos);
-        settings.setBoundingBox(boundingBox);
-        return settings;
-    }
-
-    private void generateCathedral(Player pPlayer, BlockPos playerPos, Level level) {
+    private void generateCathedral(Player pPlayer) {
         if (!pPlayer.level().isClientSide) {
-            double x = pPlayer.getX();
-            double y = pPlayer.getY();
-            double z = pPlayer.getZ();
-            pPlayer.teleportTo(x + 79, y + 10, z + 206);
-            for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
-                if (entity != pPlayer) {
-                    entity.teleportTo(x + 69 + (Math.random() * 10), y + 10, z + 196);
-                }
-            }
-            StructurePlaceSettings settings = getStructurePlaceSettings(playerPos);
-            ServerLevel serverLevel = (ServerLevel) level;
-            StructureTemplate template = serverLevel.getStructureManager().getOrCreate(new ResourceLocation(LOTM.MOD_ID, "corpse_cathedral"));
-            if (template != null) {
-                template.placeInWorld(serverLevel, playerPos, playerPos, settings, null, 3);
-            }
+            int x = (int) pPlayer.getX();
+            int y = (int) pPlayer.getY();
+            int z = (int) pPlayer.getZ();
             CompoundTag compoundTag = pPlayer.getPersistentData();
+            compoundTag.putInt("mindscapeAbilities", 50);
             compoundTag.putInt("inMindscape", 1);
+            compoundTag.putInt("mindscapePlayerLocationX", x); //check if this works
+            compoundTag.putInt("mindscapePlayerLocationY", y);
+            compoundTag.putInt("mindscapePlayerLocationZ", z);
         }
     }
 
-    @SubscribeEvent
-    public static void mindscapeCounter(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if(!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
-            CompoundTag compoundTag = pPlayer.getPersistentData();
-            int mindscape = compoundTag.getInt("inMindscape");
-            if (mindscape >= 1) {
-                compoundTag.putInt("inMindscape", mindscape + 1);
-                pPlayer.sendSystemMessage(Component.literal("working" + mindscape));
-            }
-            if (mindscape >= 600) {
-                compoundTag.putInt("inMindscape", 0);
-            }
-        }
-    }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player pPlayer = event.getEntity();

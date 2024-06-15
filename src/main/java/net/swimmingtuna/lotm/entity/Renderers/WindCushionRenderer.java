@@ -28,11 +28,8 @@ public class WindCushionRenderer extends EntityRenderer<WindCushionEntity> {
     @Override
     public void render(WindCushionEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffers, int packedLight) {
         poseStack.pushPose();
-        LivingEntity owner = (LivingEntity) entity.getOwner();
-        float ownerPitch = owner.getPersistentData().getInt("windCushionXRot");
-        float ownerYaw = owner.getPersistentData().getInt("windCushionYRot");
-        poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, entity.getXRot(), ownerYaw)));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entity.getYRot(), ownerPitch)));
+        poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot())));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entity.xRotO, entity.getXRot())));
 
 
         VertexConsumer ivertexbuilder = buffers.getBuffer(this.model.renderType(this.getTextureLocation(entity)));
