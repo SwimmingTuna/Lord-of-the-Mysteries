@@ -58,7 +58,7 @@ public class WindManipulationBlade extends Item {
         Vec3 initialVelocity = direction.scale(2.0);
         float x = pPlayer.getXRot();
         float y = pPlayer.getYRot();
-        WindBladeEntity.summonEntityWithSpeed(direction, initialVelocity, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, x,y);
+        WindBladeEntity.testShoot(pPlayer);
     }
 
     @Override

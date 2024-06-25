@@ -2,13 +2,17 @@ package net.swimmingtuna.lotm.entity;
 
 
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -19,6 +23,7 @@ import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.util.SMath;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
@@ -41,10 +46,6 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
 
     protected float getInertia() {
         return this.isDangerous() ? 0.73F : super.getInertia();
-    }
-
-    public boolean isNoGravity() {
-        return true;
     }
 
     public boolean isOnFire() {
@@ -125,12 +126,13 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
     public static void summonEntityWithSpeed(Vec3 direction, Vec3 initialVelocity, Vec3 eyePosition, double x, double y, double z, Player pPlayer, float yRotation, float xRotation) {
         if (!pPlayer.level().isClientSide()) {
             WindBladeEntity windBladeEntity = new WindBladeEntity(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
-            windBladeEntity.setDeltaMovement(initialVelocity);
-            Vec3 lightPosition = eyePosition.add(direction.scale(1.0));
+            windBladeEntity.getDeltaMovement().add(initialVelocity);
+            windBladeEntity.hurtMarked = true;
+            Vec3 lightPosition = eyePosition.add(direction.scale(3.0));
             windBladeEntity.setPos(lightPosition);
             windBladeEntity.setOwner(pPlayer);
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (!pPlayer.level().isClientSide()) {
+                if (!windBladeEntity.level().isClientSide()) {
                     ScaleData scaleData = ScaleTypes.BASE.getScaleData(windBladeEntity);
                     scaleData.setTargetScale((7 - (tyrantSequence.getCurrentSequence())));
                     scaleData.markForSync(true);
@@ -139,14 +141,51 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
             pPlayer.level().addFreshEntity(windBladeEntity);
         }
     }
+    public static void testShoot(Player pPlayer) {
+        if (!pPlayer.level().isClientSide()) {
+            Vec3 direction = pPlayer.getViewVector(1.0f);
+            Vec3 velocity = direction.scale(2.0);
+            Vec3 lookVec = pPlayer.getLookAngle();
+            WindBladeEntity windBladeEntity = new WindBladeEntity(pPlayer.level(), pPlayer, velocity.x(), velocity.y(), velocity.z());
+            windBladeEntity.shoot(lookVec.x, lookVec.y, lookVec.z, 2.0f, 0.1f);
+            windBladeEntity.hurtMarked = true;
+            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
+                int x = 7 - tyrantSequence.getCurrentSequence();
+                if (!windBladeEntity.level().isClientSide()) {
+                    ScaleData scaleData = ScaleTypes.BASE.getScaleData(windBladeEntity);
+                    scaleData.setScale(x);
+                    scaleData.markForSync(true);
+                }
+            });
+            pPlayer.level().addFreshEntity(windBladeEntity);
+        }
+    }
+
+    public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
+        Vec3 vector3d = (new Vec3(x, y, z)).normalize().add(this.random.nextGaussian() * (double)0.0075F * (double)inaccuracy, this.random.nextGaussian() * (double)0.0075F * (double)inaccuracy, this.random.nextGaussian() * (double)0.0075F * (double)inaccuracy).scale(velocity);
+        this.setDeltaMovement(vector3d);
+        float f = (float)Math.sqrt(SMath.getHorizontalDistanceSqr(vector3d));
+        this.setYRot((float)(Mth.atan2(vector3d.x, vector3d.z) * (double)(180F / (float)Math.PI)));
+        this.setXRot((float)(Mth.atan2(vector3d.y, f) * (double)(180F / (float)Math.PI)));
+        this.yRotO = this.getYRot();
+        this.xRotO = this.getXRot();
+    }
+
 
     @Override
     public void tick() {
         super.tick();
-        Vec3 vec3 = this.getDeltaMovement();
-        ProjectileUtil.rotateTowardsMovement(this, 0);
-        this.xRotO = getXRot();
-        this.yRotO = this.getYRot();
+        if (!this.level().isClientSide()) {
+            ProjectileUtil.rotateTowardsMovement(this,0.5f);
+            this.xRotO = getXRot();
+            this.yRotO = this.getYRot();
+            Vec3 movement = this.getDeltaMovement();
+            double d0 = this.getX() + movement.x; double d1 = this.getY() + movement.y; double d2 = this.getZ() + movement.z;
+
+            this.setDeltaMovement(movement.add(this.xPower, this.yPower, this.zPower));
+            this.setPos(d0, d1, d2);
+
+        }
         if (this.tickCount % 20 == 0) {
             if (this.tickCount >= 240) {
                 this.discard();
