@@ -40,6 +40,8 @@ public class GlowingPacketC2S {
         });
         return true;
     }
+
+
     private boolean hasGlowingEffectTag(ServerPlayer pPlayer) {
         CompoundTag tag = pPlayer.getPersistentData();
         return tag.getInt("windGlowing") > 1;

@@ -1,6 +1,8 @@
 package net.swimmingtuna.lotm;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
@@ -20,6 +22,7 @@ import net.swimmingtuna.lotm.client.ClientConfigs;
 import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityPullRenderer;
 import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityPushRenderer;
 import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityRenderer;
+import net.swimmingtuna.lotm.entity.Renderers.LineEntityRenderer;
 import net.swimmingtuna.lotm.events.ClientEvents;
 import net.swimmingtuna.lotm.init.*;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
@@ -79,8 +82,11 @@ public class LOTM {
 
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {
+        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BARRIER_BLOCK.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BLACK_STAINED_GLASS_PANE.get(), RenderType.cutout());
         LOTMNetworkHandler.register();
     }
+
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
@@ -88,11 +94,13 @@ public class LOTM {
         event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY.get(), AqueousLightEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY_PUSH.get(), AqueousLightEntityPushRenderer::new);
         event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY_PULL.get(), AqueousLightEntityPullRenderer::new);
+        event.registerEntityRenderer(EntityInit.LINE_ENTITY.get(), LineEntityRenderer::new);
 
 
     }
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+                event.accept(ItemInit.TestItem);
                 event.accept(ItemInit.MindReading);
                 event.accept(ItemInit.Awe);
                 event.accept(ItemInit.Frenzy);
@@ -164,7 +172,23 @@ public class LOTM {
             event.accept(BlockInit.CATHEDRAL_BLOCK);
             event.accept(BlockInit.MINDSCAPE_BLOCK);
             event.accept(BlockInit.MINDSCAPE_OUTSIDE);
-            event.accept(BlockInit.VISIONARY_BLACK_STAINED_GLASS);
+            event.accept(BlockInit.VISIONARY_BLACK_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_WHITE_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_GRAY_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_LIGHT_GRAY_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_BROWN_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_PURPLE_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_CYAN_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_BLUE_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_LIGHT_BLUE_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_LIME_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_GREEN_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_YELLOW_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_RED_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_ORANGE_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_PINK_STAINED_GLASS_PANE);
+            event.accept(BlockInit.VISIONARY_MAGENTA_STAINED_GLASS_PANE);
+
             event.accept(BlockInit.LOTM_DARKOAK_SLAB);
             event.accept(BlockInit.LOTM_QUARTZ_SLAB);
             event.accept(BlockInit.LOTM_DARKOAK_STAIRS);

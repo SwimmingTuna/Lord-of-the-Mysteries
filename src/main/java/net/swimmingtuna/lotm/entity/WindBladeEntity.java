@@ -149,6 +149,8 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
             WindBladeEntity windBladeEntity = new WindBladeEntity(pPlayer.level(), pPlayer, velocity.x(), velocity.y(), velocity.z());
             windBladeEntity.shoot(lookVec.x, lookVec.y, lookVec.z, 2.0f, 0.1f);
             windBladeEntity.hurtMarked = true;
+            windBladeEntity.setXRot((float) direction.x);
+            windBladeEntity.setYRot((float) direction.y);
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
                 int x = 7 - tyrantSequence.getCurrentSequence();
                 if (!windBladeEntity.level().isClientSide()) {
@@ -176,8 +178,15 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
     public void tick() {
         super.tick();
         if (!this.level().isClientSide()) {
+            if (this.getOwner() instanceof Player pPlayer) {
+                float x = this.getXRot();
+                float y = this.getYRot();
+                Vec3 direction = pPlayer.getViewVector(1.0f);
+                float x1 = (float) (x - direction.x);
+                pPlayer.sendSystemMessage(Component.literal("rot is " + x1));
+            }
             ProjectileUtil.rotateTowardsMovement(this,0.5f);
-            this.xRotO = getXRot();
+            this.xRotO = this.getXRot();
             this.yRotO = this.getYRot();
             Vec3 movement = this.getDeltaMovement();
             double d0 = this.getX() + movement.x; double d1 = this.getY() + movement.y; double d2 = this.getZ() + movement.z;

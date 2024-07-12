@@ -26,7 +26,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         blockWithItem(BlockInit.VISIONARY_BARRIER_BLOCK);
 
         //PANE
-        paneBlock((IronBarsBlock) BlockInit.VISIONARY_BLACK_STAINED_GLASS.get(), new ResourceLocation("minecraft", "blocks/black_stained_glass"), new ResourceLocation("minecraft", "black_stained_glass_pane_top"));
+        paneBlock((IronBarsBlock) BlockInit.VISIONARY_BLACK_STAINED_GLASS_PANE.get(), new ResourceLocation("minecraft", "blocks/black_stained_glass"), new ResourceLocation("minecraft", "black_stained_glass_pane_top"));
         //STAIRS BLOCKS
         stairsBlock(((StairBlock) BlockInit.LOTM_DARKOAK_STAIRS.get()), blockTexture(Blocks.DARK_OAK_PLANKS));
         stairsBlock(((StairBlock) BlockInit.LOTM_DEEPSLATEBRICK_STAIRS.get()), blockTexture(Blocks.DEEPSLATE_BRICKS));

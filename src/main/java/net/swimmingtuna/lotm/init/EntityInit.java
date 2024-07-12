@@ -38,6 +38,9 @@ public class EntityInit {
     public static final RegistryObject<EntityType<WindCushionEntity>> WIND_CUSHION_ENTITY =
             ENTITIES.register("wind_cushion", () -> EntityType.Builder.<WindCushionEntity>of(WindCushionEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build("wind_cushion"));
+    public static final RegistryObject<EntityType<LineEntity>> LINE_ENTITY =
+            ENTITIES.register("line_entity", () -> EntityType.Builder.<LineEntity>of(LineEntity::new, MobCategory.MISC)
+                    .sized(0.5f,0.5f).build("line_entity"));
 
     public static void register(IEventBus bus) {ENTITIES.register(bus);}
 }
