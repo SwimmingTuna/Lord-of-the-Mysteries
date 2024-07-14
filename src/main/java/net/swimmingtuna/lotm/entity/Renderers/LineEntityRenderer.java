@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
+import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.entity.LineEntity;
 import org.joml.Matrix4f;
 
@@ -28,7 +29,7 @@ public class LineEntityRenderer extends EntityRenderer<LineEntity> {
         List<Vec3> positions = entity.getPositions();
         if (positions.size() < 2) return;
 
-        VertexConsumer builder = buffer.getBuffer(RenderType.entityTranslucent(new ResourceLocation("textures/misc/white.png")));
+        VertexConsumer builder = buffer.getBuffer(RenderType.leash());
 
         poseStack.pushPose();
 
@@ -80,16 +81,22 @@ public class LineEntityRenderer extends EntityRenderer<LineEntity> {
 
     private void addVertex(VertexConsumer builder, Matrix4f matrix, Vec3 pos, int packedLight) {
         builder.vertex(matrix, (float) pos.x, (float) pos.y, (float) pos.z)
-                .color(255, 255, 255, 255)
+                .color(246,255,155,255)
+
+
+
+                //
+                //decreasing green to 100 made it darker, increasing didnt help much.
                 .uv(0, 0)
                 .overlayCoords(0, 0)
                 .uv2(packedLight)
                 .normal(1, 0, 0)
+
                 .endVertex();
     }
 
     @Override
     public ResourceLocation getTextureLocation(LineEntity entity) {
-        return new ResourceLocation("textures/misc/white.png");
+        return new ResourceLocation(LOTM.MOD_ID, "textures/entity/lightning.png");
     }
 }

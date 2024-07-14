@@ -41,7 +41,6 @@ public class TestItem extends Item {
             lineEntity.setMaxLength(30);
             lineEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
             level.addFreshEntity(lineEntity);
-            pPlayer.sendSystemMessage(Component.literal("hi"));
         }
     }
 }
