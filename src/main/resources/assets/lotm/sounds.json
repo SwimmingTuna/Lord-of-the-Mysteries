@@ -1,0 +1,26 @@
+{
+  "siren_song_harm": {
+    "subtitle": "sounds.lotm.siren_song_harm",
+    "sounds": [
+      "lotm:siren_song_harm"
+    ]
+  },
+  "siren_song_weaken": {
+    "subtitle": "sounds.lotm.siren_song_weaken",
+    "sounds": [
+      "lotm:siren_song_weaken"
+    ]
+  },
+  "siren_song_stun": {
+    "subtitle": "siren_song_stun",
+    "sounds": [
+      "lotm:siren_song_stun"
+    ]
+  },
+  "siren_song_strengthen": {
+    "subtitle": "sounds.siren_song_strengthen",
+    "sounds": [
+      "lotm:siren_song_strengthen"
+    ]
+  }
+}

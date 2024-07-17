@@ -34,6 +34,12 @@
   "item.lotm.applymanipulation": "Apply Manipulation",
   "item.lotm.envisionlocationblink": "Envision Location (Blink)",
 
+  "sounds.lotm.siren_song_harm": "Siren Song Harm",
+  "sounds.lotm.siren_song_strengthen": "Siren Song Strengthen",
+  "sounds.lotm.siren_song_stun": "Siren Song Stun",
+  "sounds.lotm.siren_song_weaken": "Siren Song Weaken",
+
+
   "block.lotm.visionary_barrier_block": "Visionary BB",
   "block.lotm.cathedral_block": "Cathedral Block",
   "block.lotm.mindscape_block": "Mindscape Block",

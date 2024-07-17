@@ -65,6 +65,7 @@ public class LOTM {
         CommandInit.ARGUMENT_TYPES.register(modEventBus);
         BeyonderClassInit.BEYONDER_CLASS.register(modEventBus);
         ParticleInit.register(modEventBus);
+        SoundInit.register(modEventBus);
 
         modEventBus.addListener(ClientEvents::onRegisterOverlays);
 
@@ -166,6 +167,10 @@ public class LOTM {
                 event.accept(ItemInit.WindManipulationCushion);
                 event.accept(ItemInit.WindManipulationSense);
                 event.accept(ItemInit.AcidicRain);
+                event.accept(ItemInit.SirenSongHarm);
+                event.accept(ItemInit.SirenSongWeaken);
+                event.accept(ItemInit.SirenSongStun);
+                event.accept(ItemInit.SirenSongStrengthen);
         }
         if(event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(BlockInit.VISIONARY_BARRIER_BLOCK);

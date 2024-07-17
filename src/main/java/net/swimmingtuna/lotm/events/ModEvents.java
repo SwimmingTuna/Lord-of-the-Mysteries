@@ -1,24 +1,34 @@
 package net.swimmingtuna.lotm.events;
 
+import com.google.common.collect.Multimap;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
@@ -29,10 +39,14 @@ import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 
+import java.util.List;
+
+import static net.minecraft.commands.arguments.EntityArgument.getEntity;
 import static net.swimmingtuna.lotm.util.BeyonderUtil.getProjectiles;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
-public class ModEvents {
+public class ModEvents implements ReachChangeUUIDs {
+
 
     @SubscribeEvent
     public static void onPlayerJoinWorld(EntityJoinLevelEvent event) {
@@ -154,7 +168,7 @@ public class ModEvents {
                 tag.putInt("windCushion", windCushion + 1);
             }
             if (windCushion == 16) {
-                pPlayer.setDeltaMovement(tag.getDouble("lookVectorXCushion") * 2,  tag.getDouble("lookVectorYCushion") * 2, tag.getDouble("lookVectorZCushion") * 2);
+                pPlayer.setDeltaMovement(tag.getDouble("lookVectorXCushion") * 2, tag.getDouble("lookVectorYCushion") * 2, tag.getDouble("lookVectorZCushion") * 2);
                 pPlayer.resetFallDistance();
                 pPlayer.hurtMarked = true;
             }
@@ -203,9 +217,9 @@ public class ModEvents {
                     for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(20))) {
                         if (entity != pPlayer) {
                             entity.removeEffect(ModEffects.LOTMGLOWING.get());
-                        }}
-                }
-                else { //LOTMNetworkHandler.sendToPlayer(new GlowingPacketC2S(), (ServerPlayer) pPlayer);
+                        }
+                    }
+                } else { //LOTMNetworkHandler.sendToPlayer(new GlowingPacketC2S(), (ServerPlayer) pPlayer);
                 }
             }
 
@@ -218,7 +232,8 @@ public class ModEvents {
         CompoundTag tag = entity.getPersistentData();
         int glowing = tag.getInt("LOTMisGlowing");
         if (entity.isCurrentlyGlowing() && glowing == 0) {
-            tag.putInt("LOTMisGlowing", 1);;
+            tag.putInt("LOTMisGlowing", 1);
+            ;
         }
         if (glowing >= 1) {
             tag.putInt("LOTMisGlowing", glowing + 1);
@@ -250,8 +265,8 @@ public class ModEvents {
                         if (target != null) {
                             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(player).orElse(null);
                             if (holder.isSailorClass() && holder.getCurrentSequence() <= 7) {
-                                    projectileEvent.addMovement(projectile, (target.getX() - projectile.getX()) * 0.1, (target.getY() - projectile.getY()) * 0.1, (target.getZ() - projectile.getZ()) * 0.1);
-                                    projectile.hurtMarked = true;
+                                projectileEvent.addMovement(projectile, (target.getX() - projectile.getX()) * 0.1, (target.getY() - projectile.getY()) * 0.1, (target.getZ() - projectile.getZ()) * 0.1);
+                                projectile.hurtMarked = true;
                             }
                         }
                     }

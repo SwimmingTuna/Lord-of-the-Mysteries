@@ -8,12 +8,11 @@ import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.NEED_HELP.WindManipulationSense;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SailorLightning;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.EnvisionKingdom;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.TestItem;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderResetPotion;
-import net.swimmingtuna.lotm.worldgen.portal.ModTeleporter;
 
 public class ItemInit {
     public static final DeferredRegister<Item> ITEMS =
@@ -21,7 +20,7 @@ public class ItemInit {
 
 
     public static final RegistryObject<Item> TestItem = ITEMS.register("testitem",
-            () -> new TestItem(new Item.Properties().stacksTo(1)));
+            () -> new SailorLightning(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MindReading = ITEMS.register("mindreading",
             () -> new MindReading(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Awe = ITEMS.register("awe",
@@ -152,6 +151,16 @@ public class ItemInit {
             () -> new WindManipulationSense(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> AcidicRain = ITEMS.register("acidicrain",
             () -> new AcidicRain(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SirenSongHarm = ITEMS.register("siren_song_harm",
+            () -> new SirenSongHarm(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SirenSongStrengthen = ITEMS.register("siren_song_strengthen",
+            () -> new SirenSongStrengthen(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SirenSongStun = ITEMS.register("siren_song_stun",
+            () -> new SirenSongStun(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SirenSongWeaken = ITEMS.register("siren_song_weaken",
+            () -> new SirenSongWeaken(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SailorEarthquake = ITEMS.register("sailorearthquake",
+            () -> new Earthquake(new Item.Properties().stacksTo(1)));
 
 
 

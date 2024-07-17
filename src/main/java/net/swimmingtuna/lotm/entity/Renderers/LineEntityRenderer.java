@@ -9,12 +9,12 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.entity.LineEntity;
+import net.swimmingtuna.lotm.entity.LightningEntity;
 import org.joml.Matrix4f;
 
 import java.util.List;
 
-public class LineEntityRenderer extends EntityRenderer<LineEntity> {
+public class LineEntityRenderer extends EntityRenderer<LightningEntity> {
     private static final float LINE_WIDTH = 0.1f; // Adjust this value to change line thickness
     private static final int SEGMENTS_PER_POINT = 8; // Increase this for smoother curves
 
@@ -23,7 +23,7 @@ public class LineEntityRenderer extends EntityRenderer<LineEntity> {
     }
 
     @Override
-    public void render(LineEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    public void render(LightningEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
 
         List<Vec3> positions = entity.getPositions();
@@ -96,7 +96,7 @@ public class LineEntityRenderer extends EntityRenderer<LineEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(LineEntity entity) {
+    public ResourceLocation getTextureLocation(LightningEntity entity) {
         return new ResourceLocation(LOTM.MOD_ID, "textures/entity/lightning.png");
     }
 }

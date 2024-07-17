@@ -27,6 +27,8 @@ public class ModEffects {
             () -> new SpectatorDemiseEffect(MobEffectCategory.HARMFUL, 3124687));
     public static final RegistryObject<MobEffect> LOTMGLOWING = MOB_EFFECTS.register("lotmglowing",
             () -> new LOTMGlowingEffect(MobEffectCategory.HARMFUL, 3124687));
+    public static final RegistryObject<MobEffect> PARALYSIS = MOB_EFFECTS.register("paralysis",
+            () -> new LOTMGlowingEffect(MobEffectCategory.HARMFUL, 3124687));
 
 
 
