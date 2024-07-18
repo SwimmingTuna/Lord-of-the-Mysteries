@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.entity;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -14,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -117,14 +119,13 @@ public class LightningEntity extends AbstractHurtingProjectile {
         }
         if (compound.contains("TargetPos")) {
             CompoundTag targetPosTag = compound.getCompound("TargetPos");
-            this.startPos = new Vec3(
+            this.targetPos = new Vec3(
                     targetPosTag.getDouble("tX"),
                     targetPosTag.getDouble("tY"),
                     targetPosTag.getDouble("tZ")
             );
         }
     }
-
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
@@ -152,7 +153,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
             compound.putUUID("OwnerUUID", this.owner.getUUID());
         }
         if (this.targetEntity != null) {
-            compound.putUUID("targetUUID", this.targetEntity.getUUID());
+            compound.putUUID("TargetUUID", this.targetEntity.getUUID());
         }
         if (targetPos != null) {
             CompoundTag targetPosTag = new CompoundTag();
@@ -221,30 +222,64 @@ public class LightningEntity extends AbstractHurtingProjectile {
             this.positions.add(newPos);
         }
 
+
+
         for (int i = 0; i < this.positions.size() - 1; i++) {
             Vec3 pos1 = this.positions.get(i);
             Vec3 pos2 = this.positions.get(i + 1);
             double distance = pos1.distanceTo(pos2);
             Vec3 direction = pos2.subtract(pos1).normalize();
             for (double d = 0; d < distance; d += 3.0) {
-                AABB checkArea = createBoundingBox(pos1.add(direction.scale(d)));
-                for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, checkArea)) {
-                    if (entity != this.getOwner()) {
-                        if (this.owner instanceof Player pPlayer) {
-                            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                            int sequence = holder.getCurrentSequence();
-                            entity.hurt(entity.damageSources().lightningBolt(), 50 - (sequence * 6));
-                            pPlayer.sendSystemMessage(Component.literal("working"));
-                            level().explode(this, entity.getX(), entity.getY(), entity.getZ(), 20 - (sequence * 2), true, Level.ExplosionInteraction.TNT);
-                            this.discard();
-                        } else {
-                            entity.hurt(entity.damageSources().lightningBolt(), 20);
-                            level().explode(this, entity.getX(), entity.getY(), entity.getZ(), 10, true, Level.ExplosionInteraction.TNT);
+                Vec3 currentPos = pos1.add(direction.scale(d));
+                AABB checkArea = createBoundingBox(currentPos);
+                if (!this.level().isClientSide()) {
+                    for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, checkArea)) {
+                        if (entity != this.owner) {
+                            if (this.owner instanceof Player pPlayer) {
+                                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                                int sequence = holder.getCurrentSequence();
+                                entity.hurt(entity.damageSources().lightningBolt(), 50 - (sequence * 6));
+                                level().explode(this, entity.getX(), entity.getY(), entity.getZ(), 20 - (sequence * 2), false, Level.ExplosionInteraction.TNT);
+                                this.discard();
+                            } else {
+                                entity.hurt(entity.damageSources().lightningBolt(), 20);
+                                level().explode(this, entity.getX(), entity.getY(), entity.getZ(), 10, false, Level.ExplosionInteraction.TNT);
+                                this.discard();
+                            }
+                        }
+                    }
+                    for (BlockPos blockPos : BlockPos.betweenClosed(new BlockPos((int) checkArea.minX, (int) checkArea.minY, (int) checkArea.minZ), new BlockPos((int) checkArea.maxX, (int) checkArea.maxY, (int) checkArea.maxZ))) {
+                        if (!this.level().getBlockState(blockPos).isAir()) {
+                            Vec3 hitPos = currentPos;
+                            if (this.owner != null) {
+                                if (this.owner instanceof Player pPlayer) {
+                                    BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                                    int sequence = holder.getCurrentSequence();
+                                    int radius = 20 - (sequence * 2);
+                                    this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, radius, Level.ExplosionInteraction.BLOCK);
+                                    AABB damageArea = new AABB(hitPos.x - radius, hitPos.y - radius, hitPos.z - radius,
+                                            hitPos.x + radius, hitPos.y + radius, hitPos.z + radius);
+                                    for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, damageArea)) {
+                                        double distance1 = Math.sqrt(entity.distanceToSqr(hitPos));
+                                        float maxDamage = 50f;
+                                        float minDamage = 10f;
+                                        float damageFalloff = (float) (distance1 / radius);
+                                        float damage = Math.max(minDamage, maxDamage * (1 - damageFalloff));
+                                        damage -= (sequence * 2); // Reduce damage based on sequence
+                                        entity.hurt(entity.damageSources().lightningBolt(), damage);
+                                        pPlayer.sendSystemMessage(Component.literal("Damage dealt: " + damage + " at distance: " + distance1));
+                                    }
+                                }
+                            } else {
+                                level().explode(this, hitPos.x(), hitPos.y, hitPos.z, 10, false, Level.ExplosionInteraction.TNT);
+                                for (LivingEntity entity : this.owner.level().getEntitiesOfClass(LivingEntity.class, this.owner.getBoundingBox().inflate(4))) {
+                                    entity.hurt(entity.damageSources().lightningBolt(), 10);
+                                }
+                            }
                             this.discard();
                         }
                     }
                 }
-
                 // Add particles at each AABB location with a random offset of ±2
                 double offsetX = random.nextGaussian() * 1;
                 double offsetY = random.nextGaussian() * 1;
@@ -266,6 +301,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
         if (this.tickCount > this.getMaxLength()) {
             this.discard();
         }
+
     }
 
 
@@ -298,25 +334,6 @@ public class LightningEntity extends AbstractHurtingProjectile {
             }
         }
         super.onHitEntity(pResult);
-    }
-
-    @Override
-    protected void onHitBlock(BlockHitResult pResult) {
-        if (!this.level().isClientSide) {
-            Vec3 hitPos = pResult.getLocation();
-            ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
-            this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.BLOCK);
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE.AMBIENT, 5.0F, 5.0F);
-            if (this.owner != null) {  // Null check to avoid NullPointerException
-                for (LivingEntity entity : this.owner.level().getEntitiesOfClass(LivingEntity.class, this.owner.getBoundingBox().inflate(50))) {
-                    Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
-                    DamageSource damageSource = damageSources().explosion(explosion);
-                    entity.hurt(damageSource, 30.0F);
-                    entity.hurt(damageSource, 25.0F);
-                }
-            }
-            this.discard();
-        }
     }
 
     public int getMaxLength() {

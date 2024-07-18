@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.events;
 
 import com.google.common.collect.Multimap;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -26,9 +27,11 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
@@ -271,6 +274,34 @@ public class ModEvents implements ReachChangeUUIDs {
                         }
                     }
                 }
+            }
+        }
+    }
+    @SubscribeEvent
+    public static void projectileImpactEvent(ProjectileImpactEvent event) {
+        Entity projectile = event.getProjectile();
+        if (!projectile.level().isClientSide()) {
+            CompoundTag tag = projectile.getPersistentData();
+            int x = tag.getInt("sailorLightningProjectileCounter");
+            if (event.getRayTraceResult().getType() == HitResult.Type.ENTITY && x >= 1) {
+                EntityHitResult entityHit = (EntityHitResult) event.getRayTraceResult();
+                Entity entity = entityHit.getEntity();
+                if (!entity.level().isClientSide()) {
+                    if (entity instanceof LivingEntity) {
+                        entity.hurt(projectile.damageSources().lightningBolt(), (x * 5));
+                        LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
+                        lightningBolt.moveTo(entity.getX(), entity.getY(), entity.getZ());
+                        entity.level().addFreshEntity(lightningBolt);
+                        event.setResult(Event.Result.DENY);
+                    }
+                }
+            }
+            if (event.getRayTraceResult().getType() == HitResult.Type.BLOCK && x >= 1) {
+                Vec3 blockPos = event.getRayTraceResult().getLocation();
+                LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, projectile.level());
+                lightningBolt.moveTo(blockPos);
+                projectile.level().addFreshEntity(lightningBolt);
+                projectile.level().explode(null, blockPos.x(), blockPos.y(), blockPos.z(), 4, Level.ExplosionInteraction.BLOCK);
             }
         }
     }

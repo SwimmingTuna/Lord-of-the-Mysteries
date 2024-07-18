@@ -14,11 +14,11 @@ import org.joml.Matrix4f;
 
 import java.util.List;
 
-public class LineEntityRenderer extends EntityRenderer<LightningEntity> {
+public class LightningEntityRenderer extends EntityRenderer<LightningEntity> {
     private static final float LINE_WIDTH = 0.1f; // Adjust this value to change line thickness
     private static final int SEGMENTS_PER_POINT = 8; // Increase this for smoother curves
 
-    public LineEntityRenderer(EntityRendererProvider.Context context) {
+    public LightningEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
