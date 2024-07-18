@@ -108,7 +108,8 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
                 float speed = 15.0f;
                 if (targetEntity instanceof AbstractArrow || targetEntity instanceof AbstractHurtingProjectile || targetEntity instanceof Projectile || targetEntity instanceof Arrow) {
                     CompoundTag tag = targetEntity.getPersistentData();
-                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 5);
+                    if (!pPlayer.getAbilities().instabuild) {
+                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 5);}
                     int x = tag.getInt("sailorLightningProjectileCounter");
                     tag.putInt("sailorLightningProjectileCounter", x + 1);
                     shootLineBlock(pPlayer, pPlayer.level(), targetEntity.position());
@@ -118,7 +119,8 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
                 } else if (targetEntity instanceof LivingEntity) {
                     LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), pPlayer.level());
                     lightningEntity.setSpeed(speed);
-                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 10 + (holder.getCurrentSequence() * 2));
+                    if (!pPlayer.getAbilities().instabuild) {
+                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 10 + (holder.getCurrentSequence() * 2));}
                     Vec3 lookVec = pPlayer.getLookAngle();
                     lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
                     lightningEntity.setMaxLength(30);
@@ -146,7 +148,8 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
             }
             if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.isSailorClass() && !pPlayer.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
                 shootLine(pPlayer, pPlayer.level());
-                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 5 + holder.getCurrentSequence());
+                if (!pPlayer.getAbilities().instabuild) {
+                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 5 + holder.getCurrentSequence());}
                 event.setCanceled(true);
             }
         }
@@ -165,7 +168,8 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
             }
             if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.isSailorClass() && !pPlayer.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
                 shootLineBlock(pPlayer, pPlayer.level(), event.getPos().getCenter());
-                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 8 + holder.getCurrentSequence());
+                if (!pPlayer.getAbilities().instabuild) {
+                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 8 + holder.getCurrentSequence());}
                 event.setCanceled(true);
             }
         }

@@ -64,6 +64,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
         this.owner = shooter;
     }
 
+
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
@@ -163,16 +164,6 @@ public class LightningEntity extends AbstractHurtingProjectile {
             compound.put("TargetPos", targetPosTag);
         }
     }
-    // Add this method to create a bounding box between two positions
-    private AABB createBoundingBoxBetween(Vec3 startPos, Vec3 endPos) {
-        double minX = Math.min(startPos.x, endPos.x);
-        double minY = Math.min(startPos.y, endPos.y);
-        double minZ = Math.min(startPos.z, endPos.z);
-        double maxX = Math.max(startPos.x, endPos.x);
-        double maxY = Math.max(startPos.y, endPos.y);
-        double maxZ = Math.max(startPos.z, endPos.z);
-        return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
-    }
 
     @Override
     public void tick() {
@@ -222,32 +213,17 @@ public class LightningEntity extends AbstractHurtingProjectile {
             this.positions.add(newPos);
         }
 
+        boolean hasExploded = false;
 
-
-        for (int i = 0; i < this.positions.size() - 1; i++) {
+        for (int i = 0; i < this.positions.size() - 1 && !hasExploded; i++) {
             Vec3 pos1 = this.positions.get(i);
             Vec3 pos2 = this.positions.get(i + 1);
             double distance = pos1.distanceTo(pos2);
             Vec3 direction = pos2.subtract(pos1).normalize();
-            for (double d = 0; d < distance; d += 3.0) {
+            for (double d = 0; d < distance && !hasExploded; d += 3.0) {
                 Vec3 currentPos = pos1.add(direction.scale(d));
                 AABB checkArea = createBoundingBox(currentPos);
                 if (!this.level().isClientSide()) {
-                    for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, checkArea)) {
-                        if (entity != this.owner) {
-                            if (this.owner instanceof Player pPlayer) {
-                                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                                int sequence = holder.getCurrentSequence();
-                                entity.hurt(entity.damageSources().lightningBolt(), 50 - (sequence * 6));
-                                level().explode(this, entity.getX(), entity.getY(), entity.getZ(), 20 - (sequence * 2), false, Level.ExplosionInteraction.TNT);
-                                this.discard();
-                            } else {
-                                entity.hurt(entity.damageSources().lightningBolt(), 20);
-                                level().explode(this, entity.getX(), entity.getY(), entity.getZ(), 10, false, Level.ExplosionInteraction.TNT);
-                                this.discard();
-                            }
-                        }
-                    }
                     for (BlockPos blockPos : BlockPos.betweenClosed(new BlockPos((int) checkArea.minX, (int) checkArea.minY, (int) checkArea.minZ), new BlockPos((int) checkArea.maxX, (int) checkArea.maxY, (int) checkArea.maxZ))) {
                         if (!this.level().getBlockState(blockPos).isAir()) {
                             Vec3 hitPos = currentPos;
@@ -260,23 +236,27 @@ public class LightningEntity extends AbstractHurtingProjectile {
                                     AABB damageArea = new AABB(hitPos.x - radius, hitPos.y - radius, hitPos.z - radius,
                                             hitPos.x + radius, hitPos.y + radius, hitPos.z + radius);
                                     for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, damageArea)) {
-                                        double distance1 = Math.sqrt(entity.distanceToSqr(hitPos));
-                                        float maxDamage = 50f;
-                                        float minDamage = 10f;
-                                        float damageFalloff = (float) (distance1 / radius);
-                                        float damage = Math.max(minDamage, maxDamage * (1 - damageFalloff));
-                                        damage -= (sequence * 2); // Reduce damage based on sequence
-                                        entity.hurt(entity.damageSources().lightningBolt(), damage);
-                                        pPlayer.sendSystemMessage(Component.literal("Damage dealt: " + damage + " at distance: " + distance1));
+                                        if (entity != this.owner) {
+                                            double distance1 = Math.sqrt(entity.distanceToSqr(hitPos));
+                                            float maxDamage = 50f;
+                                            float minDamage = 10f;
+                                            float damageFalloff = (float) (distance1 / radius);
+                                            float damage = Math.max(minDamage, maxDamage * (1 - damageFalloff));
+                                            damage -= (sequence * 2); // Reduce damage based on sequence
+                                            entity.hurt(entity.damageSources().lightningBolt(), damage);
+                                            pPlayer.sendSystemMessage(Component.literal("Damage dealt: " + damage + " at distance: " + distance1));
+                                        }
                                     }
                                 }
                             } else {
                                 level().explode(this, hitPos.x(), hitPos.y, hitPos.z, 10, false, Level.ExplosionInteraction.TNT);
-                                for (LivingEntity entity : this.owner.level().getEntitiesOfClass(LivingEntity.class, this.owner.getBoundingBox().inflate(4))) {
+                                for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, new AABB(hitPos.x - 4, hitPos.y - 4, hitPos.z - 4, hitPos.x + 4, hitPos.y + 4, hitPos.z + 4))) {
                                     entity.hurt(entity.damageSources().lightningBolt(), 10);
                                 }
                             }
+                            hasExploded = true;
                             this.discard();
+                            break;
                         }
                     }
                 }
@@ -287,6 +267,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
                 level().addParticle(ParticleTypes.ELECTRIC_SPARK, checkArea.minX + offsetX, checkArea.minY + offsetY, checkArea.minZ + offsetZ, 0, 0, 0);
                 level().addParticle(ParticleTypes.ELECTRIC_SPARK, checkArea.maxX + offsetX, checkArea.maxY + offsetY, checkArea.maxZ + offsetZ, 0, 0, 0);
             }
+            if (hasExploded) break;
         }
 
         this.setPos(startPos.x, startPos.y, startPos.z);
@@ -301,11 +282,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
         if (this.tickCount > this.getMaxLength()) {
             this.discard();
         }
-
     }
-
-
-
 
 
     private AABB createBoundingBox(Vec3 position) {
