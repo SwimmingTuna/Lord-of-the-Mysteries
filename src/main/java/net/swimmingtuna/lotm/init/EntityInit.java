@@ -29,6 +29,9 @@ public class EntityInit {
     public static final RegistryObject<EntityType<MeteorEntity>> METEOR_ENTITY =
             ENTITIES.register("meteor", () -> EntityType.Builder.<MeteorEntity>of(MeteorEntity::new, MobCategory.MISC)
                     .sized(2.0f,2.0f).build("meteor"));
+    public static final RegistryObject<EntityType<StoneEntity>> STONE_ENTITY =
+            ENTITIES.register("stone", () -> EntityType.Builder.<StoneEntity>of(StoneEntity::new, MobCategory.MISC)
+                    .sized(2.0f,2.0f).build("stone"));
     public static final RegistryObject<EntityType<MeteorNoLevelEntity>> METEOR_NO_LEVEL_ENTITY =
             ENTITIES.register("meteor_no_hurt", () -> EntityType.Builder.<MeteorNoLevelEntity>of(MeteorNoLevelEntity::new, MobCategory.MISC)
                     .sized(2.0f,2.0f).build("meteor_no_hurt"));

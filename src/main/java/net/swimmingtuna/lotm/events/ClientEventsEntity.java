@@ -20,10 +20,12 @@ public class ClientEventsEntity {
         event.registerLayerDefinition(DragonBreathModel.LAYER, DragonBreathModel::createBodyLayer);
         event.registerLayerDefinition(WindBladeModel.WIND_BLADE_LOCATION, WindBladeModel::createBodyLayer);
         event.registerLayerDefinition(WindCushionModel.WIND_CUSHION_LOCATION, WindCushionModel::createBodyLayer);
+        event.registerLayerDefinition(StoneEntityModel.STONE_MODEL_LOCATION, StoneEntityModel::createBodyLayer);
     }
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(EntityInit.METEOR_ENTITY.get(), MeteorEntityRenderer::new);
+        event.registerEntityRenderer(EntityInit.STONE_ENTITY.get(), StoneEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.METEOR_NO_LEVEL_ENTITY.get(), MeteorNoLevelEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.DRAGON_BREATH_ENTITY.get(), DragonBreathRenderer::new);
         event.registerEntityRenderer(EntityInit.WIND_BLADE_ENTITY.get(), WindBladeRenderer::new);

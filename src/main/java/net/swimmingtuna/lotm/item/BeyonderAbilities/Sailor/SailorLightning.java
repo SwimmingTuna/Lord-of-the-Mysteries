@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.item.BeyonderAbilities;
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -13,13 +13,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.LazyOptional;
@@ -56,14 +57,50 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
         attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BeyonderBlockReach, "Reach modifier", 150, AttributeModifier.Operation.ADDITION)); // adds a 12 block reach for interacting with blocks, pretty much useless for this item
         return attributeBuilder.build();
     }
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
+        if (!pPlayer.level().isClientSide()) {
+            Vec3 eyePosition = pPlayer.getEyePosition();
+            Vec3 lookVector = pPlayer.getLookAngle();
+            double reachDistance = 150;
+            Vec3 endPoint = eyePosition.add(lookVector.scale(reachDistance));
 
+            // Check for block interaction
+            BlockHitResult blockHit = level.clip(new ClipContext(eyePosition, endPoint, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, pPlayer));
+            if (blockHit.getType() != HitResult.Type.MISS) {
+                return InteractionResultHolder.pass(pPlayer.getItemInHand(hand));
+            }
+
+            // Check for entity interaction
+            EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, pPlayer, eyePosition, endPoint, pPlayer.getBoundingBox().inflate(reachDistance), entity -> !entity.isSpectator() && entity.isPickable());
+            if (entityHit != null) {
+                return InteractionResultHolder.pass(pPlayer.getItemInHand(hand));
+            }
+
+            // If no block or entity is targeted, proceed with the original functionality
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSailorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            }
+            if (holder.getSpirituality() < 120) {
+                pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            }
+            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
+                if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 5 && sailorSequence.useSpirituality(120)) {
+                    shootLine(pPlayer, level);
+                    if (!pPlayer.getAbilities().instabuild)
+                        pPlayer.getCooldowns().addCooldown(this, 240);
+                }
+            });
+        }
+        return super.use(level, pPlayer, hand);
+    }
 
 
     private static void shootLine(Player pPlayer, Level level) {
         if (!level.isClientSide()) {
             Vec3 lookVec = pPlayer.getLookAngle();
             float speed = 15.0f;
-
             LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), level);
             lightningEntity.setSpeed(speed);
             lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
@@ -78,7 +115,6 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
         if (!level.isClientSide()) {
             Vec3 lookVec = pPlayer.getLookAngle();
             float speed = 15.0f;
-
             LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), level);
             lightningEntity.setSpeed(speed);
             lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
@@ -113,10 +149,8 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
                     int x = tag.getInt("sailorLightningProjectileCounter");
                     tag.putInt("sailorLightningProjectileCounter", x + 1);
                     shootLineBlock(pPlayer, pPlayer.level(), targetEntity.position());
-                    if (targetEntity instanceof Arrow arrow) {
-                        pPlayer.sendSystemMessage(Component.literal("working"));
-                    }
                 } else if (targetEntity instanceof LivingEntity) {
+                    pPlayer.sendSystemMessage(Component.literal("entity check"));
                     LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), pPlayer.level());
                     lightningEntity.setSpeed(speed);
                     if (!pPlayer.getAbilities().instabuild) {
@@ -130,26 +164,6 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
                     lightningEntity.setOwner(pPlayer);
                     pPlayer.level().addFreshEntity(lightningEntity);
                 }
-            }
-            event.setCanceled(true);
-        }
-    }
-    @SubscribeEvent
-    public static void onNothingInteract(PlayerInteractEvent.RightClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSailorClass()) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-            if (holder.getSpirituality() < 120) {
-                pPlayer.displayClientMessage(Component.literal("You need 120 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-            if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.isSailorClass() && !pPlayer.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
-                shootLine(pPlayer, pPlayer.level());
-                if (!pPlayer.getAbilities().instabuild) {
-                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 5 + holder.getCurrentSequence());}
                 event.setCanceled(true);
             }
         }
@@ -168,6 +182,7 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
             }
             if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.isSailorClass() && !pPlayer.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
                 shootLineBlock(pPlayer, pPlayer.level(), event.getPos().getCenter());
+                pPlayer.sendSystemMessage(Component.literal("block check"));
                 if (!pPlayer.getAbilities().instabuild) {
                 pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 8 + holder.getCurrentSequence());}
                 event.setCanceled(true);

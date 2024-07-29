@@ -8,9 +8,10 @@ import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.NEED_HELP.WindManipulationSense;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.SailorLightning;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SailorLightning;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.EnvisionKingdom;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.TestItem;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderResetPotion;
 
@@ -20,6 +21,8 @@ public class ItemInit {
 
 
     public static final RegistryObject<Item> TestItem = ITEMS.register("testitem",
+            () -> new TestItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SailorLightning = ITEMS.register("sailorlightning",
             () -> new SailorLightning(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MindReading = ITEMS.register("mindreading",
             () -> new MindReading(new Item.Properties().stacksTo(1)));

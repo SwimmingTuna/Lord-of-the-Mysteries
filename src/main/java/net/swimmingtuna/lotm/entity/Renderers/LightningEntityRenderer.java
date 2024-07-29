@@ -43,10 +43,10 @@ public class LightningEntityRenderer extends EntityRenderer<LightningEntity> {
         Matrix4f matrix = poseStack.last().pose();
 
         // Render second outline (outermost)
-        renderSmoothLine(secondOutlineBuilder, matrix, positions, LINE_WIDTH + 0.2f, packedLight, 0.7f, 200, 200, 255);
+        //renderSmoothLine(secondOutlineBuilder, matrix, positions, LINE_WIDTH + 0.2f, packedLight, 0.7f, 200, 200, 255);
 
         // Render first outline
-        renderSmoothLine(firstOutlineBuilder, matrix, positions, LINE_WIDTH + 0.1f, packedLight, 0.8f, 220, 220, 255);
+        //renderSmoothLine(firstOutlineBuilder, matrix, positions, LINE_WIDTH + 0.1f, packedLight, 0.8f, 220, 220, 255);
 
         // Render main line
         renderSmoothLine(mainBuilder, matrix, positions, LINE_WIDTH, packedLight, 1.0f, 246, 255, 155);

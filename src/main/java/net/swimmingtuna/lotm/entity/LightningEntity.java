@@ -244,7 +244,6 @@ public class LightningEntity extends AbstractHurtingProjectile {
                                             float damage = Math.max(minDamage, maxDamage * (1 - damageFalloff));
                                             damage -= (sequence * 2); // Reduce damage based on sequence
                                             entity.hurt(entity.damageSources().lightningBolt(), damage);
-                                            pPlayer.sendSystemMessage(Component.literal("Damage dealt: " + damage + " at distance: " + distance1));
                                         }
                                     }
                                 }
