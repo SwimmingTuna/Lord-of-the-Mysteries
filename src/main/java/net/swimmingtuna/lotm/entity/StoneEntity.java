@@ -75,7 +75,7 @@ public class StoneEntity extends AbstractArrow {
             if (pResult.getEntity() instanceof LivingEntity entity) {
                 Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
                 DamageSource damageSource = this.level().damageSources().explosion(explosion);
-                entity.hurt(damageSource, 30.0F);
+                entity.hurt(damageSource, 10.0F * scaleData.getScale());
             }
             this.discard();
         }
@@ -95,6 +95,7 @@ public class StoneEntity extends AbstractArrow {
         return false;
     }
 
+
     public boolean isDangerous() {
         return this.entityData.get(DATA_DANGEROUS);
     }
@@ -102,13 +103,10 @@ public class StoneEntity extends AbstractArrow {
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide()) {
-            this.setXRot((this.getXRot() + 2));
-            this.setYRot((this.getYRot() + 2));
-            this.xRotO = this.getXRot();
-            this.yRotO = this.getYRot();
-            this.getOwner().sendSystemMessage(Component.literal("xRot is " + this.getXRot() + " yRot is " + this.getYRot()));
-        }
+        this.setXRot((this.getXRot() + 2));
+        this.setYRot((this.getYRot() + 2));
+        this.setOldPosAndRot();
+
     }
 
     public void setTickXRot(int xRot) {

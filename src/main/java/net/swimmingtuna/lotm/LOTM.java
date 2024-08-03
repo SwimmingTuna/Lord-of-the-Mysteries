@@ -103,6 +103,7 @@ public class LOTM {
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
                 event.accept(ItemInit.TestItem);
+                event.accept(ItemInit.Earthquake);
                 event.accept(ItemInit.SailorLightning);
                 event.accept(ItemInit.MindReading);
                 event.accept(ItemInit.Awe);

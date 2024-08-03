@@ -2,16 +2,20 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -21,12 +25,16 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.AqueousLightEntityPull;
+import net.swimmingtuna.lotm.entity.StoneEntity;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
+import virtuoel.pehkui.api.ScaleData;
+import virtuoel.pehkui.api.ScaleTypes;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class Earthquake extends Item {
@@ -76,17 +84,44 @@ public class Earthquake extends Item {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         if (event.phase == TickEvent.Phase.END && !pPlayer.level().isClientSide()) {
             int x = pPlayer.getPersistentData().getInt("sailorEarthquake");
-            if (x == 200 || x == 180 || x == 160 || x == 140 || x == 120 || x == 100 || x == 80 || x == 60 || x == 40 || x == 20) {
+            if (x == 200 || x == 180 || x == 160 || x == 140 || x == 120 || x == 100 || x == 80 || x == 60 || x == 40 || x == 20 || x == 1) {
                 int sequence = holder.getCurrentSequence();
-                pPlayer.getPersistentData().putInt("sailorEarthquake", x - 1);
-                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate((200 - (sequence * 30))))) {
+                int radius = 100 - (sequence * 20);
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate((radius)))) {
                     if (entity != pPlayer) {
                         if (entity.onGround()) {
                             entity.hurt(pPlayer.damageSources().fall(), 35 - (sequence * 5));
                         }
-                    }}
-            }
+                    }
+                }
+                // Define the area to check for blocks
+                AABB checkArea = pPlayer.getBoundingBox().inflate(radius);
+                Random random = new Random();
 
+                for (BlockPos blockPos : BlockPos.betweenClosed(
+                        new BlockPos((int) checkArea.minX, (int) checkArea.minY, (int) checkArea.minZ),
+                        new BlockPos((int) checkArea.maxX, (int) checkArea.maxY, (int) checkArea.maxZ))) {
+                    if (!pPlayer.level().getBlockState(blockPos).isAir() && isOnSurface(pPlayer.level(), blockPos) && random.nextInt(200) == 1) {
+                        pPlayer.level().destroyBlock(blockPos, false);
+                        Random random1 = new Random();
+                        if (random1.nextInt(10) == 2) {
+                            StoneEntity stoneEntity = new StoneEntity(pPlayer.level(), pPlayer);
+                            ScaleData scaleData = ScaleTypes.BASE.getScaleData(stoneEntity);
+                            stoneEntity.teleportTo(blockPos.getX(), blockPos.getY() + 3, blockPos.getZ());
+                            stoneEntity.setDeltaMovement(0, 1 + (Math.random() * (2 - (.5 * sequence))), 0);
+                            scaleData.setScale((float) (1 + (Math.random()) * 3.0f));
+                            pPlayer.level().addFreshEntity(stoneEntity);
+                        }
+                    }
+                }
+            }
+            if (x >= 0) {
+                pPlayer.sendSystemMessage(Component.literal("x is " + x));
+                pPlayer.getPersistentData().putInt("sailorEarthquake", x - 1);
+            }
         }
+    }
+    private static boolean isOnSurface(Level level, BlockPos pos) {
+        return level.canSeeSky(pos.above()) || !level.getBlockState(pos.above()).isSolid();
     }
 }

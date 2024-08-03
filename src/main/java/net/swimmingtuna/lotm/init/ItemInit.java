@@ -11,15 +11,16 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SailorLightning;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.EnvisionKingdom;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.TestItem;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderResetPotion;
+import net.swimmingtuna.lotm.item.TestItem;
 
 public class ItemInit {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, LOTM.MOD_ID);
 
-
+    public static final RegistryObject<Item> Earthquake = ITEMS.register("earthquake",
+            () -> new Earthquake(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> TestItem = ITEMS.register("testitem",
             () -> new TestItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SailorLightning = ITEMS.register("sailorlightning",
