@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.entity.StoneEntity;
 import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 
@@ -23,7 +24,7 @@ public class TestItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!pPlayer.level().isClientSide()) {
-            summonThing(pPlayer);
+            summonThing2(pPlayer);
         }
         return super.use(level, pPlayer, hand);
     }
@@ -36,6 +37,17 @@ public class TestItem extends Item {
             tornadoEntity.setTornadoRadius(20);
             tornadoEntity.setTornadoHeight(100);
             pPlayer.level().addFreshEntity(tornadoEntity);
+        }
+    }
+    private void summonThing2(Player pPlayer) {
+        if (!pPlayer.level().isClientSide()) {
+            StoneEntity stoneEntity = new StoneEntity(pPlayer.level(), pPlayer);
+            Vec3 lookVec = pPlayer.getLookAngle();
+            stoneEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
+            stoneEntity.setStoneXRot(5);
+            stoneEntity.setStoneYRot(5);
+            stoneEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
+            pPlayer.level().addFreshEntity(stoneEntity);
         }
     }
 }

@@ -24,9 +24,8 @@ import virtuoel.pehkui.api.ScaleTypes;
 
 public class StoneEntity extends AbstractArrow {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.BOOLEAN);
-
-    private int xxRot;
-    private int yyRot;
+    private static final EntityDataAccessor<Integer> DATA_STONE_XROT = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_STONE_YROT = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.INT);
 
     public StoneEntity(EntityType<? extends StoneEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -40,24 +39,26 @@ public class StoneEntity extends AbstractArrow {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_DANGEROUS, false);
+        this.entityData.define(DATA_STONE_XROT, 0);
+        this.entityData.define(DATA_STONE_YROT, 0);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         if (compound.contains("xxRot")) {
-            this.setTickXRot(compound.getInt("xxRot"));
+            this.setStoneXRot(compound.getInt("xxRot"));
         }
         if (compound.contains("yyRot")) {
-            this.setTickYRot(compound.getInt("yyRot"));
+            this.setStoneYRot(compound.getInt("yyRot"));
         }
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("xxRot", this.xxRot);
-        compound.putInt("yyRot", this.yyRot);
+        compound.putInt("xxRot", this.getStoneXRot());
+        compound.putInt("yyRot", this.getStoneYRot());
     }
 
     @Override
@@ -103,17 +104,29 @@ public class StoneEntity extends AbstractArrow {
     @Override
     public void tick() {
         super.tick();
-        this.setXRot((this.getXRot() + 2));
-        this.setYRot((this.getYRot() + 2));
-        this.setOldPosAndRot();
-
+        int xRot = this.getStoneXRot();
+        int yRot = this.getStoneXRot();
+        this.setXRot(this.getXRot() + xRot);
+        this.setYRot(this.getYRot() + yRot);
+        this.xRotO = this.getXRot();
+        this.yRotO = this.getYRot();
     }
 
-    public void setTickXRot(int xRot) {
-        this.xxRot = xRot;
+
+    public void setStoneXRot(int xRot) {
+        this.entityData.set(DATA_STONE_XROT, xRot);
     }
 
-    public void setTickYRot(int yRot) {
-        this.yyRot = yRot;
+    public void setStoneYRot(int yRot) {
+        this.entityData.set(DATA_STONE_YROT, yRot);
     }
+
+    public int getStoneXRot() {
+        return this.entityData.get(DATA_STONE_XROT);
+    }
+
+    public int getStoneYRot() {
+        return this.entityData.get(DATA_STONE_YROT);
+    }
+
 }
