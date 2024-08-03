@@ -24,16 +24,18 @@ public class TestItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!pPlayer.level().isClientSide()) {
-            summonThing2(pPlayer);
+            TornadoEntity.summonTornado(pPlayer);
         }
         return super.use(level, pPlayer, hand);
     }
 
-    private void summonThing(Player pPlayer) {
+    public static void summonThing(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
-            TornadoEntity tornadoEntity = new TornadoEntity(pPlayer.level(), pPlayer);
+            TornadoEntity tornadoEntity = new TornadoEntity(pPlayer.level(), pPlayer, 0,0,0);
             Vec3 lookVec = pPlayer.getLookAngle();
-            tornadoEntity.setDeltaMovement(lookVec.x,lookVec.y, lookVec.z);
+            tornadoEntity.setTornadoXMov((int) lookVec.x);
+            tornadoEntity.setTornadoYMov((int) lookVec.y);
+            tornadoEntity.setTornadoZMov((int) lookVec.z);
             tornadoEntity.setTornadoRadius(20);
             tornadoEntity.setTornadoHeight(100);
             pPlayer.level().addFreshEntity(tornadoEntity);

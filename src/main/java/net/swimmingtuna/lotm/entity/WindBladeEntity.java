@@ -177,24 +177,9 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide()) {
-            if (this.getOwner() instanceof Player pPlayer) {
-                float x = this.getXRot();
-                float y = this.getYRot();
-                Vec3 direction = pPlayer.getViewVector(1.0f);
-                float x1 = (float) (x - direction.x);
-                pPlayer.sendSystemMessage(Component.literal("rot is " + x1));
-            }
-            ProjectileUtil.rotateTowardsMovement(this,0.5f);
-            this.xRotO = this.getXRot();
-            this.yRotO = this.getYRot();
-            Vec3 movement = this.getDeltaMovement();
-            double d0 = this.getX() + movement.x; double d1 = this.getY() + movement.y; double d2 = this.getZ() + movement.z;
-
-            this.setDeltaMovement(movement.add(this.xPower, this.yPower, this.zPower));
-            this.setPos(d0, d1, d2);
-
-        }
+        ProjectileUtil.rotateTowardsMovement(this, 0);
+        this.xRotO = this.getXRot();
+        this.yRotO = this.getYRot();
         if (this.tickCount % 20 == 0) {
             if (this.tickCount >= 240) {
                 this.discard();

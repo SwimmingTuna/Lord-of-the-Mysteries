@@ -22,6 +22,8 @@ import net.swimmingtuna.lotm.init.EntityInit;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
+import java.util.Random;
+
 public class StoneEntity extends AbstractArrow {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_STONE_XROT = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.INT);
@@ -68,13 +70,13 @@ public class StoneEntity extends AbstractArrow {
 
     @Override
     protected void onHitEntity(EntityHitResult pResult) {
-        if (this.level() != null && !this.level().isClientSide) {
+        if (this.level() != null && !this.level().isClientSide && !(pResult.getEntity() instanceof StoneEntity)) {
             Vec3 hitPos = pResult.getLocation();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 5.0F, 5.0F);
             if (pResult.getEntity() instanceof LivingEntity entity) {
-                Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
+                Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 10.0F, true, Explosion.BlockInteraction.DESTROY);
                 DamageSource damageSource = this.level().damageSources().explosion(explosion);
                 entity.hurt(damageSource, 10.0F * scaleData.getScale());
             }
@@ -85,8 +87,10 @@ public class StoneEntity extends AbstractArrow {
     @Override
     protected void onHitBlock(BlockHitResult pResult) {
         if (this.level() != null && !this.level().isClientSide) {
+            Random random = new Random();
+            if (random.nextInt(10) == 1) {
             this.level().broadcastEntityEvent(this, (byte) 3);
-            this.level().setBlock(blockPosition(), Blocks.STONE.defaultBlockState(), 3);
+            this.level().setBlock(blockPosition(), Blocks.STONE.defaultBlockState(), 3);}
             this.discard();
         }
     }
@@ -110,6 +114,9 @@ public class StoneEntity extends AbstractArrow {
         this.setYRot(this.getYRot() + yRot);
         this.xRotO = this.getXRot();
         this.yRotO = this.getYRot();
+        if (!this.level().isClientSide() && this.tickCount > 140) {
+            this.discard();
+        }
     }
 
 

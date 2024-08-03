@@ -86,7 +86,7 @@ public class Earthquake extends Item {
             int x = pPlayer.getPersistentData().getInt("sailorEarthquake");
             if (x == 200 || x == 180 || x == 160 || x == 140 || x == 120 || x == 100 || x == 80 || x == 60 || x == 40 || x == 20 || x == 1) {
                 int sequence = holder.getCurrentSequence();
-                int radius = 100 - (sequence * 20);
+                int radius = 100 - (sequence * 10);
                 for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate((radius)))) {
                     if (entity != pPlayer) {
                         if (entity.onGround()) {
@@ -94,24 +94,23 @@ public class Earthquake extends Item {
                         }
                     }
                 }
-                // Define the area to check for blocks
                 AABB checkArea = pPlayer.getBoundingBox().inflate(radius);
                 Random random = new Random();
-
                 for (BlockPos blockPos : BlockPos.betweenClosed(
                         new BlockPos((int) checkArea.minX, (int) checkArea.minY, (int) checkArea.minZ),
                         new BlockPos((int) checkArea.maxX, (int) checkArea.maxY, (int) checkArea.maxZ))) {
-                    if (!pPlayer.level().getBlockState(blockPos).isAir() && isOnSurface(pPlayer.level(), blockPos) && random.nextInt(200) == 1) {
-                        pPlayer.level().destroyBlock(blockPos, false);
-                        Random random1 = new Random();
-                        if (random1.nextInt(10) == 2) {
+
+                    if (!pPlayer.level().getBlockState(blockPos).isAir() && isOnSurface(pPlayer.level(), blockPos)) {
+                        if (random.nextInt(200) == 1) { // 50% chance to destroy a block
+                            pPlayer.level().destroyBlock(blockPos, false);
+                        } else if (random.nextInt(200) == 2) { // 10% chance to spawn a stone entity
                             StoneEntity stoneEntity = new StoneEntity(pPlayer.level(), pPlayer);
                             ScaleData scaleData = ScaleTypes.BASE.getScaleData(stoneEntity);
                             stoneEntity.teleportTo(blockPos.getX(), blockPos.getY() + 3, blockPos.getZ());
-                            stoneEntity.setDeltaMovement(0, 1 + (Math.random() * (2 - (.5 * sequence))), 0);
+                            stoneEntity.setDeltaMovement(0, (3 + (Math.random() * (6 - 3)) ), 0);
                             stoneEntity.setStoneYRot((int) (Math.random() * 18));
                             stoneEntity.setStoneXRot((int) (Math.random() * 18));
-                            scaleData.setScale((float) (1 + (Math.random()) * 3.0f));
+                            scaleData.setScale((float) (1 + (Math.random()) * 2.0f));
                             pPlayer.level().addFreshEntity(stoneEntity);
                         }
                     }
