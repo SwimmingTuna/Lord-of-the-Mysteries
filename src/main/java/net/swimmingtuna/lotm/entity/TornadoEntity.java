@@ -16,8 +16,10 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -136,6 +138,13 @@ public class TornadoEntity extends AbstractHurtingProjectile {
 
         int tornadoRadius = getTornadoRadius();
         int tornadoHeight = getTornadoHeight();
+        double minX = this.getX() - tornadoRadius;
+        double minY = this.getY() - 10; // 10 blocks below the tornado
+        double minZ = this.getZ() - tornadoRadius;
+        double maxX = this.getX() + tornadoRadius;
+        double maxY = this.getY() + tornadoHeight;
+        double maxZ = this.getZ() + tornadoRadius;
+        AABB boundingBox = new AABB(minX, minY, minZ, maxX, maxY, maxZ);
         float tornadoX = getTornadoXMov();
         float tornadoY = getTornadoYMov();
         float tornadoZ = getTornadoZMov();
@@ -175,49 +184,67 @@ public class TornadoEntity extends AbstractHurtingProjectile {
             int blockRadius = tornadoRadius;
             int blockHeight = tornadoHeight;
             Random random = new Random();
-            List<Entity> entities = this.level().getEntities(this, this.getBoundingBox().inflate(blockRadius));
+            List<Entity> entities = this.level().getEntities(this, boundingBox);
             for (Entity entity : entities) {
                 if (entity != this && !(entity instanceof TornadoEntity)) {
                     double dx = entity.getX() - this.getX();
                     double dz = entity.getZ() - this.getZ();
                     double distance = Math.sqrt(dx * dx + dz * dz);
                     if (distance < blockRadius) {
-                        double angle = Math.atan2(dz, dx) + Math.PI / 40;
-                        double radius = Math.max(1, distance);
+                        double angle = Math.atan2(dz, dx) + Math.PI / 10; // Increase the rotation speed
+                        double radius = Math.max(1, distance * 0.95); // Slightly reduce radius to pull entities inward
                         double newX = this.getX() + radius * Math.cos(angle);
                         double newZ = this.getZ() + radius * Math.sin(angle);
-                        double motionY1 = 0.1 + (blockHeight - entity.getY() + this.getY()) / blockHeight * 0.3; // Reduced from 0.2 and 0.5
-                        double motionY = (Math.min(1 ,0.1 + (blockHeight - entity.getY() + this.getY()) / blockHeight * 0.3)); // Reduced from 0.2 and 0.5
-                        if (entity.getY() >= this.getY() + tornadoHeight / 2) {
-                            entity.setDeltaMovement(newX - entity.getX(), motionY1, newZ - entity.getZ()); // Reduced from 0.8
+
+                        double heightRatio = (entity.getY() - this.getY()) / tornadoHeight;
+                        double baseMotionY = 0.2 + (1 - heightRatio) * 0.4; // Stronger upward force at the bottom
+
+                        double motionY = baseMotionY;
+                        double horizontalForce = 0.3; // Increased for stronger inward pull
+
+                        // Apply the movement towards the center of the tornado
+                        double inwardX = (newX - entity.getX()) * horizontalForce;
+                        double inwardZ = (newZ - entity.getZ()) * horizontalForce;
+
+                        // Normalize inward force to ensure it's not pushing entities outwards
+                        double inwardDistance = Math.sqrt(inwardX * inwardX + inwardZ * inwardZ);
+                        if (inwardDistance > 0.1) { // Avoid division by zero and too small movements
+                            inwardX /= inwardDistance;
+                            inwardZ /= inwardDistance;
                         }
-                        if (entity.getY() < this.getY() + tornadoHeight / 2) {
-                            entity.setDeltaMovement(newX - entity.getX(), motionY, newZ - entity.getZ());
-                        }
+
+                        entity.setDeltaMovement(
+                                inwardX,
+                                motionY,
+                                inwardZ
+                        );
                     }
                     entity.hurtMarked = true;
                 }
             }
 
-            for (int x = -blockRadius; x <= blockRadius; x++) {
-                for (int y = 0; y < blockHeight; y++) {
-                    for (int z = -blockRadius; z <= blockRadius; z++) {
-                        Vec3 blockPos = pos.add(x, y, z).subtract(0, 1, 0);
-                        BlockState state = this.level().getBlockState(BlockPos.containing(blockPos));
-                        if (!state.isAir() && !state.is(BlockTags.TALL_FLOWERS)) {
-                            if (random.nextInt(1000) == 1) {
-                                FallingBlockEntity fallingBlock = FallingBlockEntity.fall(this.level(), BlockPos.containing(blockPos), state);
-                                fallingBlock.time = 1;
-                                fallingBlock.setDeltaMovement(0, 2, 0);
-                                this.level().setBlock(BlockPos.containing(blockPos), Blocks.AIR.defaultBlockState(), 3);
-                                this.level().addFreshEntity(fallingBlock);
-                            }
-                        }
+            for (BlockPos blockPosition : BlockPos.betweenClosed((int) minX, (int) minY, (int) minZ, (int) maxX, (int) maxY, (int) maxZ)) {
+                BlockState state = this.level().getBlockState(blockPosition);
+                if (!state.isAir() && !state.is(BlockTags.TALL_FLOWERS)) {
+                    if (random.nextInt(5000) == 1) {
+                        // Spawn a falling block entity at the destroyed block's position
+                        FallingBlockEntity fallingBlock = FallingBlockEntity.fall(this.level(), blockPosition, state);
+                        fallingBlock.time = 1;
+
+                        // Set random motion for the falling block
+                        double randomDirectionX = (random.nextDouble() - 0.5) * 2.0; // random between -1 and 1
+                        double randomDirectionY = random.nextDouble() * 2.0; // random upward motion
+                        double randomDirectionZ = (random.nextDouble() - 0.5) * 2.0; // random between -1 and 1
+                        fallingBlock.setDeltaMovement(randomDirectionX, randomDirectionY, randomDirectionZ);
+
+                        // Remove the block from the world and add the falling block entity
+                        this.level().setBlock(blockPosition, Blocks.AIR.defaultBlockState(), 3);
+                        this.level().addFreshEntity(fallingBlock);
                     }
                 }
             }
         }
-        if (!this.level().isClientSide) {
+            if (!this.level().isClientSide) {
             this.setDeltaMovement(tornadoX, tornadoY, tornadoZ);
             this.hurtMarked = true;
             if (this.tickCount >= 300) {
@@ -225,6 +252,7 @@ public class TornadoEntity extends AbstractHurtingProjectile {
             }
         }
     }
+
 
     public boolean isOnFire() {
         return false;
