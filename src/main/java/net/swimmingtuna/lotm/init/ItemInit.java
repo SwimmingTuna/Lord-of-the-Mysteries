@@ -25,6 +25,12 @@ public class ItemInit {
             () -> new TestItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SailorLightning = ITEMS.register("sailorlightning",
             () -> new SailorLightning(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WaterSphere = ITEMS.register("watersphere",
+            () -> new WaterSphere(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> Hurricane = ITEMS.register("hurricane",
+            () -> new Hurricane(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> Tornado = ITEMS.register("tornado",
+            () -> new Tornado(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MindReading = ITEMS.register("mindreading",
             () -> new MindReading(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Awe = ITEMS.register("awe",
@@ -65,6 +71,8 @@ public class ItemInit {
             () -> new DreamWeaving(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Discern = ITEMS.register("discern",
             () -> new Discern(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> Tsunami = ITEMS.register("tsunami",
+            () -> new Tsunami(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DreamIntoReality = ITEMS.register("dreamintoreality",
             () -> new DreamIntoReality(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ProphesizeTeleportBlock = ITEMS.register("prophesize",

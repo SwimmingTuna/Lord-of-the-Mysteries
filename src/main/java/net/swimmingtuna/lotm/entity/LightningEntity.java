@@ -16,6 +16,7 @@ import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -40,6 +41,7 @@ import java.util.UUID;
 public class LightningEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Integer> MAX_LENGTH = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> FALL_DOWN = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
 
     private List<Vec3> positions = new ArrayList<>();
     private List<AABB> boundingBoxes = new ArrayList<>();
@@ -70,6 +72,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
         super.defineSynchedData();
         this.entityData.define(MAX_LENGTH, 100);
         this.entityData.define(SPEED, 1.0f);
+        this.entityData.define(FALL_DOWN, false);
     }
 
     @Override
@@ -82,6 +85,9 @@ public class LightningEntity extends AbstractHurtingProjectile {
         super.readAdditionalSaveData(compound);
         if (compound.contains("MaxLength")) {
             this.setMaxLength(compound.getInt("MaxLength"));
+        }
+        if (compound.contains("fallDown")) {
+            this.setFallDown(compound.getBoolean("fallDown"));
         }
         if (compound.contains("Speed")) {
             this.setSpeed(compound.getFloat("Speed"));
@@ -197,11 +203,16 @@ public class LightningEntity extends AbstractHurtingProjectile {
                     targetVector.z * speed + random.nextGaussian() * 0.1 * speed
             );
         } else {
-            newPos = lastPos.add(
-                    this.getDeltaMovement().x * speed + random.nextGaussian() * 0.1 * speed,
-                    this.getDeltaMovement().y * speed + random.nextGaussian() * 0.1 * speed,
-                    this.getDeltaMovement().z * speed + random.nextGaussian() * 0.1 * speed
-            );
+            Vec3 movement = this.getDeltaMovement().scale(speed);
+            if (this.getFallDown()) {
+                // If fallDown is true, prioritize downward movement
+                movement = movement.add(0, -0.5, 0); // Increase downward bias
+            }
+            newPos = lastPos.add(movement.add(new Vec3(
+                    random.nextGaussian() * 0.1 * speed,
+                    random.nextGaussian() * 0.1 * speed,
+                    random.nextGaussian() * 0.1 * speed
+            )));
         }
         if (targetPos != null) {
             if (lastPos.distanceToSqr(targetPos) < 1) {
@@ -225,7 +236,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
                 AABB checkArea = createBoundingBox(currentPos);
                 if (!this.level().isClientSide()) {
                     for (BlockPos blockPos : BlockPos.betweenClosed(new BlockPos((int) checkArea.minX, (int) checkArea.minY, (int) checkArea.minZ), new BlockPos((int) checkArea.maxX, (int) checkArea.maxY, (int) checkArea.maxZ))) {
-                        if (!this.level().getBlockState(blockPos).isAir()) {
+                        if (!this.level().getBlockState(blockPos).isAir() && !this.level().getBlockState(blockPos).getBlock().equals(Blocks.WATER)) {
                             Vec3 hitPos = currentPos;
                             if (this.owner != null) {
                                 if (this.owner instanceof Player pPlayer) {
@@ -248,7 +259,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
                                     }
                                 }
                             } else {
-                                level().explode(this, hitPos.x(), hitPos.y, hitPos.z, 10, false, Level.ExplosionInteraction.TNT);
+                                level().explode(this, hitPos.x(), hitPos.y(), hitPos.z(), 10, false, Level.ExplosionInteraction.TNT);
                                 for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, new AABB(hitPos.x - 4, hitPos.y - 4, hitPos.z - 4, hitPos.x + 4, hitPos.y + 4, hitPos.z + 4))) {
                                     entity.hurt(entity.damageSources().lightningBolt(), 10);
                                 }
@@ -355,5 +366,13 @@ public class LightningEntity extends AbstractHurtingProjectile {
     public void setOwner (LivingEntity entity) {
         this.owner = entity;
     }
+    public boolean getFallDown() {
+        return this.entityData.get(FALL_DOWN);
+    }
+
+    public void setFallDown(boolean fallDown) {
+        this.entityData.set(FALL_DOWN, fallDown);
+    }
+
 }
 

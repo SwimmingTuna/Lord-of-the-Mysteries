@@ -12,8 +12,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.entity.LightningEntity;
 import net.swimmingtuna.lotm.entity.StoneEntity;
 import net.swimmingtuna.lotm.entity.TornadoEntity;
+import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 
 public class TestItem extends Item {
@@ -24,21 +26,19 @@ public class TestItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!pPlayer.level().isClientSide()) {
-            TornadoEntity.summonTornado(pPlayer);
+            summonThing(pPlayer);
         }
         return super.use(level, pPlayer, hand);
     }
 
     public static void summonThing(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
-            TornadoEntity tornadoEntity = new TornadoEntity(pPlayer.level(), pPlayer, 0,0,0);
-            Vec3 lookVec = pPlayer.getLookAngle();
-            tornadoEntity.setTornadoXMov((int) lookVec.x);
-            tornadoEntity.setTornadoYMov((int) lookVec.y);
-            tornadoEntity.setTornadoZMov((int) lookVec.z);
-            tornadoEntity.setTornadoRadius(20);
-            tornadoEntity.setTornadoHeight(100);
-            pPlayer.level().addFreshEntity(tornadoEntity);
+            LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), pPlayer.level());
+            lightningEntity.setFallDown(true);
+            lightningEntity.setNewStartPos(new Vec3(pPlayer.getX(), pPlayer.getY() + 50, pPlayer.getZ()));
+            lightningEntity.setSpeed(10);
+            lightningEntity.setTargetPos(new Vec3(pPlayer.getX(), pPlayer.getY() - 30, pPlayer.getZ()));
+            pPlayer.level().addFreshEntity(lightningEntity);
         }
     }
     private void summonThing2(Player pPlayer) {

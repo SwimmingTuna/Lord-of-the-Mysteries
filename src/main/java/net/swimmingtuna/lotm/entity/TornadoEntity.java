@@ -37,6 +37,8 @@ public class TornadoEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Float> DATA_TORNADO_X = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_TORNADO_Y = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_TORNADO_Z = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> RANDOM_MOVEMENT = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> PICK_UP_BLOCKS = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.BOOLEAN);
 
     public TornadoEntity(EntityType<? extends TornadoEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -60,12 +62,19 @@ public class TornadoEntity extends AbstractHurtingProjectile {
         this.entityData.define(DATA_TORNADO_X, 0.0f);
         this.entityData.define(DATA_TORNADO_Y, 0.0f);
         this.entityData.define(DATA_TORNADO_Z, 0.0f);
-
+        this.entityData.define(RANDOM_MOVEMENT, false);
+        this.entityData.define(PICK_UP_BLOCKS, true);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        if (compound.contains("TornadoRandomMovement")) {
+            this.setTornadoRandom(compound.getBoolean("TornadoRandomMovement"));
+        }
+        if (compound.contains("TornadoPickupBlocks")) {
+            this.setTornadoPickup(compound.getBoolean("TornadoPickupBlocks"));
+        }
         if (compound.contains("TornadoRadius")) {
             this.setTornadoRadius(compound.getInt("TornadoRadius"));
         }
@@ -144,6 +153,7 @@ public class TornadoEntity extends AbstractHurtingProjectile {
         double maxX = this.getX() + tornadoRadius;
         double maxY = this.getY() + tornadoHeight;
         double maxZ = this.getZ() + tornadoRadius;
+        boolean pickup = getTornadoPickup();
         AABB boundingBox = new AABB(minX, minY, minZ, maxX, maxY, maxZ);
         float tornadoX = getTornadoXMov();
         float tornadoY = getTornadoYMov();
@@ -186,72 +196,89 @@ public class TornadoEntity extends AbstractHurtingProjectile {
             Random random = new Random();
             List<Entity> entities = this.level().getEntities(this, boundingBox);
             for (Entity entity : entities) {
-                if (entity != this && !(entity instanceof TornadoEntity)) {
+                if (entity != this && !(entity instanceof TornadoEntity) && entity != this.getOwner()) {
                     double dx = entity.getX() - this.getX();
                     double dz = entity.getZ() - this.getZ();
                     double distance = Math.sqrt(dx * dx + dz * dz);
+                    if (this.tickCount % 10 == 0) {
+                        entity.hurt(damageSources().fall(), 5);
+                    }
                     if (distance < blockRadius) {
-                        double angle = Math.atan2(dz, dx) + Math.PI / 10; // Increase the rotation speed
-                        double radius = Math.max(1, distance * 0.95); // Slightly reduce radius to pull entities inward
-                        double newX = this.getX() + radius * Math.cos(angle);
-                        double newZ = this.getZ() + radius * Math.sin(angle);
+                        double angle = Math.atan2(dz, dx) + Math.PI / 2; // Change angle to push outward
+                        double orbitRadius = blockRadius * 0.9; // Radius slightly less than the tornado radius
+                        double newX = this.getX() + orbitRadius * Math.cos(angle);
+                        double newZ = this.getZ() + orbitRadius * Math.sin(angle);
 
                         double heightRatio = (entity.getY() - this.getY()) / tornadoHeight;
                         double baseMotionY = 0.2 + (1 - heightRatio) * 0.4; // Stronger upward force at the bottom
 
                         double motionY = baseMotionY;
-                        double horizontalForce = 0.3; // Increased for stronger inward pull
+                        double horizontalForce = 0.3; // Increased for stronger outward push
 
-                        // Apply the movement towards the center of the tornado
-                        double inwardX = (newX - entity.getX()) * horizontalForce;
-                        double inwardZ = (newZ - entity.getZ()) * horizontalForce;
+                        // Apply the movement away from the center of the tornado
+                        double outwardX = (newX - entity.getX()) * horizontalForce;
+                        double outwardZ = (newZ - entity.getZ()) * horizontalForce;
 
-                        // Normalize inward force to ensure it's not pushing entities outwards
-                        double inwardDistance = Math.sqrt(inwardX * inwardX + inwardZ * inwardZ);
-                        if (inwardDistance > 0.1) { // Avoid division by zero and too small movements
-                            inwardX /= inwardDistance;
-                            inwardZ /= inwardDistance;
+                        // Normalize outward force to ensure it's not too strong
+                        double outwardDistance = Math.sqrt(outwardX * outwardX + outwardZ * outwardZ);
+                        if (outwardDistance > 0.1) { // Avoid division by zero and too small movements
+                            outwardX /= outwardDistance;
+                            outwardZ /= outwardDistance;
                         }
 
                         entity.setDeltaMovement(
-                                inwardX,
+                                outwardX,
                                 motionY,
-                                inwardZ
+                                outwardZ
                         );
                     }
                     entity.hurtMarked = true;
                 }
             }
+            if (pickup) {
+                for (BlockPos blockPosition : BlockPos.betweenClosed((int) minX, (int) minY, (int) minZ, (int) maxX, (int) maxY, (int) maxZ)) {
+                    BlockState state = this.level().getBlockState(blockPosition);
+                    if (!state.isAir() && !state.is(BlockTags.TALL_FLOWERS)) {
+                        if (random.nextInt(5000) == 1) {
+                            // Spawn a falling block entity at the destroyed block's position
+                            FallingBlockEntity fallingBlock = FallingBlockEntity.fall(this.level(), blockPosition, state);
+                            fallingBlock.time = 1;
 
-            for (BlockPos blockPosition : BlockPos.betweenClosed((int) minX, (int) minY, (int) minZ, (int) maxX, (int) maxY, (int) maxZ)) {
-                BlockState state = this.level().getBlockState(blockPosition);
-                if (!state.isAir() && !state.is(BlockTags.TALL_FLOWERS)) {
-                    if (random.nextInt(5000) == 1) {
-                        // Spawn a falling block entity at the destroyed block's position
-                        FallingBlockEntity fallingBlock = FallingBlockEntity.fall(this.level(), blockPosition, state);
-                        fallingBlock.time = 1;
+                            // Set random motion for the falling block
+                            double randomDirectionX = (random.nextDouble() - 0.5) * 2.0; // random between -1 and 1
+                            double randomDirectionY = random.nextDouble() * 2.0; // random upward motion
+                            double randomDirectionZ = (random.nextDouble() - 0.5) * 2.0; // random between -1 and 1
+                            fallingBlock.setDeltaMovement(randomDirectionX, randomDirectionY, randomDirectionZ);
 
-                        // Set random motion for the falling block
-                        double randomDirectionX = (random.nextDouble() - 0.5) * 2.0; // random between -1 and 1
-                        double randomDirectionY = random.nextDouble() * 2.0; // random upward motion
-                        double randomDirectionZ = (random.nextDouble() - 0.5) * 2.0; // random between -1 and 1
-                        fallingBlock.setDeltaMovement(randomDirectionX, randomDirectionY, randomDirectionZ);
-
-                        // Remove the block from the world and add the falling block entity
-                        this.level().setBlock(blockPosition, Blocks.AIR.defaultBlockState(), 3);
-                        this.level().addFreshEntity(fallingBlock);
+                            // Remove the block from the world and add the falling block entity
+                            this.level().setBlock(blockPosition, Blocks.AIR.defaultBlockState(), 3);
+                            this.level().addFreshEntity(fallingBlock);
+                        }
                     }
                 }
             }
-        }
+
             if (!this.level().isClientSide) {
-            this.setDeltaMovement(tornadoX, tornadoY, tornadoZ);
-            this.hurtMarked = true;
-            if (this.tickCount >= 300) {
-                this.discard();
+                this.setDeltaMovement(tornadoX, tornadoY, tornadoZ);
+                this.hurtMarked = true;
+                boolean randomMovement = getTornadoRandomness();
+                if (randomMovement) {
+                    if (this.tickCount % 60 == 0) {
+                        float newTornadoX = (float) (Math.random() * 2 - 1); // Random value between -1 and 1
+                        float newTornadoZ = (float) (Math.random() * 2 - 1); // Random value between -1 and 1
+
+                        // Set new random movement values
+                        setTornadoXMov(newTornadoX);
+                        setTornadoZMov(newTornadoZ);
+                    }
+                }
+                if (this.tickCount >= 300) {
+                    this.discard();
+                }
             }
         }
     }
+
 
 
     public boolean isOnFire() {
@@ -297,5 +324,19 @@ public class TornadoEntity extends AbstractHurtingProjectile {
 
     public float getTornadoZMov() {
         return this.entityData.get(DATA_TORNADO_Z);
+    }
+    public void setTornadoRandom(boolean pRandom) {
+        this.entityData.set(RANDOM_MOVEMENT, pRandom);
+    }
+
+    public boolean getTornadoRandomness() {
+        return this.entityData.get(RANDOM_MOVEMENT);
+    }
+    public void setTornadoPickup(boolean pPickup) {
+        this.entityData.set(PICK_UP_BLOCKS, pPickup);
+    }
+
+    public boolean getTornadoPickup() {
+        return this.entityData.get(PICK_UP_BLOCKS);
     }
 }

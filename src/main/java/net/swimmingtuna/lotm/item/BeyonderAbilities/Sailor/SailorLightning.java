@@ -126,6 +126,20 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
             level.addFreshEntity(lightningEntity);
         }
     }
+    public static void shootLineBlockHigh(Player pPlayer, Level level) {
+        if (!level.isClientSide()) {
+            float speed = 15.0f;
+            LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), level);
+            lightningEntity.setSpeed(speed);
+            lightningEntity.setDeltaMovement(0, -2, 0);
+            lightningEntity.setMaxLength(60);
+            lightningEntity.setOwner(pPlayer);
+            lightningEntity.setOwner(pPlayer);
+            lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY() + 60, pPlayer.getZ());
+            level.addFreshEntity(lightningEntity);
+        }
+    }
+
 
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
@@ -133,38 +147,42 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
         Entity targetEntity = event.getTarget();
         ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
         if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSailorClass()) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-            if (holder.getSpirituality() < 120) {
-                pPlayer.displayClientMessage(Component.literal("You need 120 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-            if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.isSailorClass() && !pPlayer.level().isClientSide() && !targetEntity.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
-                float speed = 15.0f;
-                if (targetEntity instanceof AbstractArrow || targetEntity instanceof AbstractHurtingProjectile || targetEntity instanceof Projectile || targetEntity instanceof Arrow) {
-                    CompoundTag tag = targetEntity.getPersistentData();
-                    if (!pPlayer.getAbilities().instabuild) {
-                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 5);}
-                    int x = tag.getInt("sailorLightningProjectileCounter");
-                    tag.putInt("sailorLightningProjectileCounter", x + 1);
-                    shootLineBlock(pPlayer, pPlayer.level(), targetEntity.position());
-                } else if (targetEntity instanceof LivingEntity) {
-                    pPlayer.sendSystemMessage(Component.literal("entity check"));
-                    LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), pPlayer.level());
-                    lightningEntity.setSpeed(speed);
-                    if (!pPlayer.getAbilities().instabuild) {
-                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 10 + (holder.getCurrentSequence() * 2));}
-                    Vec3 lookVec = pPlayer.getLookAngle();
-                    lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
-                    lightningEntity.setMaxLength(30);
-                    lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
-                    lightningEntity.setTargetPos(targetEntity.position());
-                    lightningEntity.setOwner(pPlayer);
-                    lightningEntity.setOwner(pPlayer);
-                    pPlayer.level().addFreshEntity(lightningEntity);
+            if (itemStack.getItem() instanceof SailorLightning) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                if (!holder.isSailorClass()) {
+                    pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
                 }
-                event.setCanceled(true);
+                if (holder.getSpirituality() < 120) {
+                    pPlayer.displayClientMessage(Component.literal("You need 120 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                }
+                if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.isSailorClass() && !pPlayer.level().isClientSide() && !targetEntity.level().isClientSide() && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
+                    float speed = 15.0f;
+                    if (targetEntity instanceof AbstractArrow || targetEntity instanceof AbstractHurtingProjectile || targetEntity instanceof Projectile || targetEntity instanceof Arrow) {
+                        CompoundTag tag = targetEntity.getPersistentData();
+                        if (!pPlayer.getAbilities().instabuild) {
+                            pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 5);
+                        }
+                        int x = tag.getInt("sailorLightningProjectileCounter");
+                        tag.putInt("sailorLightningProjectileCounter", x + 1);
+                        shootLineBlock(pPlayer, pPlayer.level(), targetEntity.position());
+                    } else if (targetEntity instanceof LivingEntity) {
+                        pPlayer.sendSystemMessage(Component.literal("entity check"));
+                        LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), pPlayer.level());
+                        lightningEntity.setSpeed(speed);
+                        if (!pPlayer.getAbilities().instabuild) {
+                            pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 10 + (holder.getCurrentSequence() * 2));
+                        }
+                        Vec3 lookVec = pPlayer.getLookAngle();
+                        lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
+                        lightningEntity.setMaxLength(30);
+                        lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
+                        lightningEntity.setTargetPos(targetEntity.position());
+                        lightningEntity.setOwner(pPlayer);
+                        lightningEntity.setOwner(pPlayer);
+                        pPlayer.level().addFreshEntity(lightningEntity);
+                    }
+                    event.setCanceled(true);
+                }
             }
         }
     }
@@ -173,19 +191,22 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
         Player pPlayer = event.getEntity();
         ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
         if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSailorClass()) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-            if (holder.getSpirituality() < 120) {
-                pPlayer.displayClientMessage(Component.literal("You need 120 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-            if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.isSailorClass() && !pPlayer.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
-                shootLineBlock(pPlayer, pPlayer.level(), event.getPos().getCenter());
-                pPlayer.sendSystemMessage(Component.literal("block check"));
-                if (!pPlayer.getAbilities().instabuild) {
-                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 8 + holder.getCurrentSequence());}
-                event.setCanceled(true);
+            if (itemStack.getItem() instanceof SailorLightning) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                if (!holder.isSailorClass()) {
+                    pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                }
+                if (holder.getSpirituality() < 120) {
+                    pPlayer.displayClientMessage(Component.literal("You need 120 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                }
+                if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.isSailorClass() && !pPlayer.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
+                    shootLineBlock(pPlayer, pPlayer.level(), event.getPos().getCenter());
+                    pPlayer.sendSystemMessage(Component.literal("block check"));
+                    if (!pPlayer.getAbilities().instabuild) {
+                        pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 8 + holder.getCurrentSequence());
+                    }
+                    event.setCanceled(true);
+                }
             }
         }
     }

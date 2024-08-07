@@ -28,6 +28,9 @@ public class EntityInit {
     public static final RegistryObject<EntityType<MeteorEntity>> METEOR_ENTITY =
             ENTITIES.register("meteor", () -> EntityType.Builder.<MeteorEntity>of(MeteorEntity::new, MobCategory.MISC)
                     .sized(2.0f,2.0f).build("meteor"));
+    public static final RegistryObject<EntityType<CircleEntity>> CIRCLE_ENTITY =
+            ENTITIES.register("circle", () -> EntityType.Builder.<CircleEntity>of(CircleEntity::new, MobCategory.MISC)
+                    .sized(1.0f,1.0f).build("circle"));
     public static final RegistryObject<EntityType<StoneEntity>> STONE_ENTITY =
             ENTITIES.register("stone", () -> EntityType.Builder.<StoneEntity>of(StoneEntity::new, MobCategory.MISC)
                     .sized(1.0f,1.0f).clientTrackingRange(4).updateInterval(20).build("stone"));

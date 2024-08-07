@@ -105,6 +105,9 @@ public class LOTM {
                 event.accept(ItemInit.TestItem);
                 event.accept(ItemInit.Earthquake);
                 event.accept(ItemInit.SailorLightning);
+                event.accept(ItemInit.WaterSphere);
+                event.accept(ItemInit.Hurricane);
+                event.accept(ItemInit.Tornado);
                 event.accept(ItemInit.MindReading);
                 event.accept(ItemInit.Awe);
                 event.accept(ItemInit.Frenzy);
@@ -125,6 +128,7 @@ public class LOTM {
                 event.accept(ItemInit.PlagueStorm);
                 event.accept(ItemInit.DreamWeaving);
                 event.accept(ItemInit.Discern);
+                event.accept(ItemInit.Tsunami);
                 event.accept(ItemInit.DreamIntoReality);
                 event.accept(ItemInit.ProphesizeTeleportBlock);
                 event.accept(ItemInit.ProphesizeTeleportPlayer);
