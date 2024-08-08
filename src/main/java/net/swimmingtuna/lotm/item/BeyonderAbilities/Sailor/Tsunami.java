@@ -3,7 +3,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -14,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -57,7 +55,7 @@ public class Tsunami extends Item {
     }
 
     public static void startTsunami(Player pPlayer) {
-        pPlayer.getPersistentData().putInt("sailorTsunami", 200);
+        pPlayer.getPersistentData().putInt("sailorTsunami", 600);
         float yaw = pPlayer.getYRot();
         String direction = getDirectionFromYaw(yaw);
         pPlayer.getPersistentData().putString("sailorTsunamiDirection", direction);
@@ -90,7 +88,6 @@ public class Tsunami extends Item {
         return "N";
     }
 
-
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
@@ -106,17 +103,19 @@ public class Tsunami extends Item {
         Player pPlayer = event.player;
         if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
             CompoundTag tag = pPlayer.getPersistentData();
-            int playerX = tag.getInt("sailorTsunamiX");
-            int playerY = tag.getInt("sailorTsunamiY");
-            int playerZ = tag.getInt("sailorTsunamiZ");
             int tsunami = tag.getInt("sailorTsunami");
             if (tsunami >= 1) {
-                tag.putInt("sailorTsunami", tsunami - 1);
+                tag.putInt("sailorTsunami", tsunami - 5);
                 summonTsunami(pPlayer);
+            } else {
+                tag.remove("sailorTsunamiDirection");
+                tag.remove("sailorTsunamiX");
+                tag.remove("sailorTsunamiY");
+                tag.remove("sailorTsunamiZ");
             }
-
         }
     }
+
     public static void summonTsunami(Player pPlayer) {
         CompoundTag tag = pPlayer.getPersistentData();
         int playerX = tag.getInt("sailorTsunamiX");
@@ -130,48 +129,62 @@ public class Tsunami extends Item {
 
         switch (direction) {
             case "N":
-                offsetZ = -1;
+                offsetZ = 1;  // Changed from -1 to 1
                 break;
             case "NE":
-                offsetX = 1;
-                offsetZ = -1;
+                offsetX = -1;  // Changed from 1 to -1
+                offsetZ = 1;  // Changed from -1 to 1
                 break;
             case "E":
-                offsetX = 1;
+                offsetX = -1;  // Changed from 1 to -1
                 break;
             case "SE":
-                offsetX = 1;
-                offsetZ = 1;
+                offsetX = -1;  // Changed from 1 to -1
+                offsetZ = -1;  // Changed from 1 to -1
                 break;
             case "S":
-                offsetZ = 1;
+                offsetZ = -1;  // Changed from 1 to -1
                 break;
             case "SW":
-                offsetX = -1;
-                offsetZ = 1;
+                offsetX = 1;  // Changed from -1 to 1
+                offsetZ = -1;  // Changed from 1 to -1
                 break;
             case "W":
-                offsetX = -1;
+                offsetX = 1;  // Changed from -1 to 1
                 break;
             case "NW":
-                offsetX = -1;
-                offsetZ = -1;
+                offsetX = 1;  // Changed from -1 to 1
+                offsetZ = 1;  // Changed from -1 to 1
                 break;
         }
 
-        for (int height = 0; height < 10; height++) {
-            for (int width = -5; width <= 5; width++) {
-                int x = playerX + (offsetX * (tsunami / 10)) + (offsetZ == 0 ? width : 0);
-                int y = playerY + height;
-                int z = playerZ + (offsetZ * (tsunami / 10)) + (offsetX == 0 ? width : 0);
+        int waveWidth = 80;
+        int waveHeight = 10;
+        int startDistance = 85;
 
-                pPlayer.level().setBlock(new BlockPos(x, y, z), Blocks.WATER.defaultBlockState(), 3);
+        for (int w = -waveWidth / 2; w < waveWidth / 2; w++) {
+            for (int h = 0; h < waveHeight; h++) {
+                // Start the tsunami in front of the player and move it forward
+                int x = playerX + (offsetX * startDistance) + (offsetX * (200 - tsunami) / 5);
+                int y = playerY + h;
+                int z = playerZ + (offsetZ * startDistance) + (offsetZ * (200 - tsunami) / 5);
+
+                // Create a plane perpendicular to the movement direction
+                if (offsetX == 0) {
+                    x += w;
+                } else if (offsetZ == 0) {
+                    z += w;
+                } else {
+                    // For diagonal directions, create a diagonal wall
+                    x += (offsetX > 0) ? w : -w;
+                    z += (offsetZ > 0) ? w : -w;
+                }
+
+                BlockPos blockPos = new BlockPos(x, y, z);
+                if (pPlayer.level().getBlockState(blockPos).isAir()) {
+                    pPlayer.level().setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
+                }
             }
         }
-
-        if (tsunami > 0) {
-            tag.putInt("sailorTsunami", tsunami - 1);
-        }
     }
-
 }
