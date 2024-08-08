@@ -13,6 +13,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
@@ -89,6 +90,7 @@ public class LightningStorm extends Item {
             double x = tag.getInt("sailorStormVecX");
             double y = tag.getInt("sailorStormVecY");
             double z = tag.getInt("sailorStormVecZ");
+            int distance = tag.getInt("sailorLightningStormDistance");
             if (sailorLightningStorm >= 1) {
                 LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
                 lightningEntity.setSpeed(10.0f);
@@ -97,7 +99,7 @@ public class LightningStorm extends Item {
                 lightningEntity.setOwner(pPlayer);
                 lightningEntity.setOwner(pPlayer);
                 lightningEntity.setNoUp(true);
-                lightningEntity.teleportTo(x + ((Math.random() * 300) - 150), y + 80, z + ((Math.random() * 300) - 150));
+                lightningEntity.teleportTo(x + ((Math.random() * distance) - (double) distance / 2), y + 80, z + ((Math.random() * distance) - (double) distance / 2));
                 pPlayer.level().addFreshEntity(lightningEntity);
                 pPlayer.level().addFreshEntity(lightningEntity);
                 pPlayer.level().addFreshEntity(lightningEntity);
@@ -114,6 +116,22 @@ public class LightningStorm extends Item {
                         tag.putInt("sailorStormVec", 0);
                         stormVec = 0;
                     }
+                }
+            }
+        }
+    }
+    @SubscribeEvent
+    public static void leftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        if (!pPlayer.level().isClientSide()) {
+            if (pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
+                CompoundTag tag = pPlayer.getPersistentData();
+                int distance = tag.getInt("sailorLightningStormDistance");
+                tag.putInt("sailorLightningStormDistance", distance + 30);
+                pPlayer.sendSystemMessage(Component.literal("Storm Radius Is" + distance));
+                if (distance >= 300) {
+                    tag.putInt("sailorLightningStormDistance", 0);
+                    distance = 0;
                 }
             }
         }
