@@ -101,7 +101,7 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
         if (!level.isClientSide()) {
             Vec3 lookVec = pPlayer.getLookAngle();
             float speed = 15.0f;
-            LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), level);
+            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), level);
             lightningEntity.setSpeed(speed);
             lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
             lightningEntity.setMaxLength(30);
@@ -115,7 +115,7 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
         if (!level.isClientSide()) {
             Vec3 lookVec = pPlayer.getLookAngle();
             float speed = 15.0f;
-            LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), level);
+            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), level);
             lightningEntity.setSpeed(speed);
             lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
             lightningEntity.setMaxLength(30);
@@ -129,7 +129,7 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
     public static void shootLineBlockHigh(Player pPlayer, Level level) {
         if (!level.isClientSide()) {
             float speed = 10.0f;
-            LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), level);
+            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), level);
             lightningEntity.setSpeed(speed);
             lightningEntity.setDeltaMovement(0, -2, 0);
             lightningEntity.setMaxLength(60);
@@ -167,7 +167,7 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
                         shootLineBlock(pPlayer, pPlayer.level(), targetEntity.position());
                     } else if (targetEntity instanceof LivingEntity) {
                         pPlayer.sendSystemMessage(Component.literal("entity check"));
-                        LightningEntity lightningEntity = new LightningEntity(EntityInit.LINE_ENTITY.get(), pPlayer.level());
+                        LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
                         lightningEntity.setSpeed(speed);
                         if (!pPlayer.getAbilities().instabuild) {
                             pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 10 + (holder.getCurrentSequence() * 2));

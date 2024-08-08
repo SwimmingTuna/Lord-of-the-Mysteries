@@ -23,6 +23,10 @@ public class ItemInit {
             () -> new Earthquake(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> TestItem = ITEMS.register("testitem",
             () -> new TestItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LightningStorm = ITEMS.register("sailorlightningstorm",
+            () -> new LightningStorm(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LightningBranch = ITEMS.register("lightningbranch",
+            () -> new LightningBranch(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SailorLightning = ITEMS.register("sailorlightning",
             () -> new SailorLightning(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> WaterSphere = ITEMS.register("watersphere",
@@ -163,6 +167,10 @@ public class ItemInit {
             () -> new WindManipulationSense(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> AcidicRain = ITEMS.register("acidicrain",
             () -> new AcidicRain(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> AquaticLifeManipulation = ITEMS.register("aquaticlifemanipulation",
+            () -> new AquaticLifeManipulation(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> TsunamiSeal = ITEMS.register("tsunamiseal",
+            () -> new TsunamiSeal(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SirenSongHarm = ITEMS.register("siren_song_harm",
             () -> new SirenSongHarm(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SirenSongStrengthen = ITEMS.register("siren_song_strengthen",

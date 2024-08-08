@@ -96,13 +96,15 @@ public class LOTM {
         event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY.get(), AqueousLightEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY_PUSH.get(), AqueousLightEntityPushRenderer::new);
         event.registerEntityRenderer(EntityInit.AQUEOUS_LIGHT_ENTITY_PULL.get(), AqueousLightEntityPullRenderer::new);
-        event.registerEntityRenderer(EntityInit.LINE_ENTITY.get(), LightningEntityRenderer::new);
+        event.registerEntityRenderer(EntityInit.LIGHTNING_ENTITY.get(), LightningEntityRenderer::new);
 
 
     }
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
                 event.accept(ItemInit.TestItem);
+                event.accept(ItemInit.LightningStorm);
+                event.accept(ItemInit.LightningBranch);
                 event.accept(ItemInit.Earthquake);
                 event.accept(ItemInit.SailorLightning);
                 event.accept(ItemInit.WaterSphere);
@@ -174,6 +176,8 @@ public class LOTM {
                 event.accept(ItemInit.WindManipulationCushion);
                 event.accept(ItemInit.WindManipulationSense);
                 event.accept(ItemInit.AcidicRain);
+                event.accept(ItemInit.AquaticLifeManipulation);
+                event.accept(ItemInit.TsunamiSeal);
                 event.accept(ItemInit.SirenSongHarm);
                 event.accept(ItemInit.SirenSongWeaken);
                 event.accept(ItemInit.SirenSongStun);

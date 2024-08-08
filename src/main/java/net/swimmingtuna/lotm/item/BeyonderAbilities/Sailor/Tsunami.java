@@ -68,22 +68,14 @@ public class Tsunami extends Item {
         if (yaw < 0) {
             yaw += 360;
         }
-        if (yaw >= 337.5 || yaw < 22.5) {
+        if (yaw >= 315 || yaw < 45) {
             return "N";
-        } else if (yaw >= 22.5 && yaw < 67.5) {
-            return "NE";
-        } else if (yaw >= 67.5 && yaw < 112.5) {
+        } else if (yaw >= 45 && yaw < 135) {
             return "E";
-        } else if (yaw >= 112.5 && yaw < 157.5) {
-            return "SE";
-        } else if (yaw >= 157.5 && yaw < 202.5) {
+        } else if (yaw >= 135 && yaw < 225) {
             return "S";
-        } else if (yaw >= 202.5 && yaw < 247.5) {
-            return "SW";
-        } else if (yaw >= 247.5 && yaw < 292.5) {
+        } else if (yaw >= 225 && yaw < 315) {
             return "W";
-        } else if (yaw >= 292.5 && yaw < 337.5) {
-            return "NW";
         }
         return "N";
     }
@@ -129,32 +121,16 @@ public class Tsunami extends Item {
 
         switch (direction) {
             case "N":
-                offsetZ = 1;  // Changed from -1 to 1
-                break;
-            case "NE":
-                offsetX = -1;  // Changed from 1 to -1
-                offsetZ = 1;  // Changed from -1 to 1
+                offsetZ = 1;
                 break;
             case "E":
-                offsetX = -1;  // Changed from 1 to -1
-                break;
-            case "SE":
-                offsetX = -1;  // Changed from 1 to -1
-                offsetZ = -1;  // Changed from 1 to -1
+                offsetX = -1;
                 break;
             case "S":
-                offsetZ = -1;  // Changed from 1 to -1
-                break;
-            case "SW":
-                offsetX = 1;  // Changed from -1 to 1
-                offsetZ = -1;  // Changed from 1 to -1
+                offsetZ = -1;
                 break;
             case "W":
-                offsetX = 1;  // Changed from -1 to 1
-                break;
-            case "NW":
-                offsetX = 1;  // Changed from -1 to 1
-                offsetZ = 1;  // Changed from -1 to 1
+                offsetX = 1;
                 break;
         }
 
@@ -164,20 +140,14 @@ public class Tsunami extends Item {
 
         for (int w = -waveWidth / 2; w < waveWidth / 2; w++) {
             for (int h = 0; h < waveHeight; h++) {
-                // Start the tsunami in front of the player and move it forward
                 int x = playerX + (offsetX * startDistance) + (offsetX * (200 - tsunami) / 5);
                 int y = playerY + h;
                 int z = playerZ + (offsetZ * startDistance) + (offsetZ * (200 - tsunami) / 5);
 
-                // Create a plane perpendicular to the movement direction
                 if (offsetX == 0) {
                     x += w;
-                } else if (offsetZ == 0) {
-                    z += w;
                 } else {
-                    // For diagonal directions, create a diagonal wall
-                    x += (offsetX > 0) ? w : -w;
-                    z += (offsetZ > 0) ? w : -w;
+                    z += w;
                 }
 
                 BlockPos blockPos = new BlockPos(x, y, z);

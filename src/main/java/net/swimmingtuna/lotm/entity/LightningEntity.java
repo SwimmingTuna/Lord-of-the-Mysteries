@@ -3,22 +3,15 @@ package net.swimmingtuna.lotm.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.nbt.CompoundTag;
@@ -28,10 +21,9 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import org.jetbrains.annotations.NotNull;
-import virtuoel.pehkui.api.ScaleData;
-import virtuoel.pehkui.api.ScaleTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +34,9 @@ public class LightningEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Integer> MAX_LENGTH = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> FALL_DOWN = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> BRANCH_OUT = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> NO_UP = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SYNCHED_MOVEMENT = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
 
     private List<Vec3> positions = new ArrayList<>();
     private List<AABB> boundingBoxes = new ArrayList<>();
@@ -73,6 +68,9 @@ public class LightningEntity extends AbstractHurtingProjectile {
         this.entityData.define(MAX_LENGTH, 100);
         this.entityData.define(SPEED, 1.0f);
         this.entityData.define(FALL_DOWN, false);
+        this.entityData.define(BRANCH_OUT, false);
+        this.entityData.define(NO_UP, false);
+        this.entityData.define(SYNCHED_MOVEMENT, false);
     }
 
     @Override
@@ -86,11 +84,21 @@ public class LightningEntity extends AbstractHurtingProjectile {
         if (compound.contains("MaxLength")) {
             this.setMaxLength(compound.getInt("MaxLength"));
         }
+        if (compound.contains("NoUp")) {
+            this.setNoUp(compound.getBoolean("NoUp"));
+        }
+        if (compound.contains("SynchedMovement")) {
+            this.setSynchedMovement(compound.getBoolean("SynchedMovement"));
+        }
         if (compound.contains("fallDown")) {
             this.setFallDown(compound.getBoolean("fallDown"));
         }
+
         if (compound.contains("Speed")) {
             this.setSpeed(compound.getFloat("Speed"));
+        }
+        if (compound.contains("BranchOut")) {
+            this.setBranchOut(compound.getBoolean("BranchOut"));
         }
 
         if (compound.contains("Positions")) {
@@ -292,6 +300,63 @@ public class LightningEntity extends AbstractHurtingProjectile {
         if (this.tickCount > this.getMaxLength()) {
             this.discard();
         }
+        boolean branchOut = getBranchOut();
+        boolean noUp = getNoUp();
+        boolean synchedMovement = getSynchedMovement();
+        if (!this.level().isClientSide()) {
+            if (synchedMovement) {
+                if (this.tickCount >= 2) {
+                    this.setDeltaMovement(this.getPersistentData().getDouble("lightningBranchDMX"), this.getPersistentData().getDouble("lightningBranchDMY"), this.getPersistentData().getDouble("lightningBranchDMZ"));
+                }
+            }
+            if (branchOut) {
+                if (this.tickCount == getMaxLength()) {
+                    this.level().explode(this, lastPos.x(), lastPos.y(), lastPos.z(), 10, Level.ExplosionInteraction.TNT);
+                }
+                if (this.tickCount % 1 == 0) {
+                    LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), this.level());
+                    lightningEntity.setSpeed(5.0f);
+                    lightningEntity.setDeltaMovement(this.getPersistentData().getDouble("sailorLightningDMX") + (Math.random() * 0.5) - 0.25, this.getPersistentData().getDouble("sailorLightningDMY") + (Math.random() * 0.5) - 0.25, this.getPersistentData().getDouble("sailorLightningDMZ") + (Math.random() * 0.5) - 0.25);
+                    lightningEntity.setMaxLength(100);
+                    lightningEntity.teleportTo(lastPos.x(), lastPos.y(), lastPos.z());
+                    lightningEntity.setSynchedMovement(true);
+                    lightningEntity.getPersistentData().putDouble("lightningBranchDMY", this.getPersistentData().getDouble("sailorLightningDMY") + (Math.random() * 0.8) - 0.4);
+                    lightningEntity.getPersistentData().putDouble("lightningBranchDMX", this.getPersistentData().getDouble("sailorLightningDMX") + (Math.random() * 0.8) - 0.4);
+                    lightningEntity.getPersistentData().putDouble("lightningBranchDMZ", this.getPersistentData().getDouble("sailorLightningDMZ") + (Math.random() * 0.8) - 0.4);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                }
+                if (this.tickCount == 1) {
+                    this.getPersistentData().putDouble("sailorLightningDMY", this.getDeltaMovement().y());
+                    this.getPersistentData().putDouble("sailorLightningDMX", this.getDeltaMovement().x());
+                    this.getPersistentData().putDouble("sailorLightningDMZ", this.getDeltaMovement().z());
+                }
+                this.setDeltaMovement(this.getPersistentData().getDouble("sailorLightningDMX"), this.getPersistentData().getDouble("sailorLightningDMY"), this.getPersistentData().getDouble("sailorLightningDMZ"));
+            }
+            if (noUp) {
+                if (this.getDeltaMovement().y() >= -0.5f) {
+                    this.discard();
+                    LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), this.level());
+                    lightningEntity.setSpeed(5.0f);
+                    lightningEntity.setDeltaMovement((Math.random() * 0.6) - 0.3, -2, (Math.random() * 0.6) - 0.3);
+                    lightningEntity.setMaxLength(100);
+                    lightningEntity.teleportTo(lastPos.x(), lastPos.y(), lastPos.z());
+                    lightningEntity.setBranchOut(true);
+                    this.level().addFreshEntity(lightningEntity);
+                }
+            }
+        }
+    }
+    @Override
+    public boolean isNoGravity() {
+        return true;
     }
 
 
@@ -370,9 +435,30 @@ public class LightningEntity extends AbstractHurtingProjectile {
         return this.entityData.get(FALL_DOWN);
     }
 
-    public void setFallDown(boolean fallDown) {
-        this.entityData.set(FALL_DOWN, fallDown);
+    public void setFallDown(boolean branchOut) {
+        this.entityData.set(FALL_DOWN, branchOut);
+    }
+    public boolean getBranchOut() {
+        return this.entityData.get(BRANCH_OUT);
     }
 
+
+    public void setBranchOut(boolean branchOut) {
+        this.entityData.set(BRANCH_OUT, branchOut);
+    }
+    public boolean getNoUp() {
+        return this.entityData.get(NO_UP);
+    }
+
+    public void setNoUp(boolean noUp) {
+        this.entityData.set(NO_UP, noUp);
+    }
+    public boolean getSynchedMovement() {
+        return this.entityData.get(SYNCHED_MOVEMENT);
+    }
+
+    public void setSynchedMovement(boolean synchedMovement) {
+        this.entityData.set(SYNCHED_MOVEMENT, synchedMovement);
+    }
 }
 

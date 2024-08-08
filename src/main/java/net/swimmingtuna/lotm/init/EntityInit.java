@@ -46,7 +46,7 @@ public class EntityInit {
     public static final RegistryObject<EntityType<WindCushionEntity>> WIND_CUSHION_ENTITY =
             ENTITIES.register("wind_cushion", () -> EntityType.Builder.<WindCushionEntity>of(WindCushionEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build("wind_cushion"));
-    public static final RegistryObject<EntityType<LightningEntity>> LINE_ENTITY =
+    public static final RegistryObject<EntityType<LightningEntity>> LIGHTNING_ENTITY =
             ENTITIES.register("line_entity", () -> EntityType.Builder.<LightningEntity>of(LightningEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build("line_entity"));
 
