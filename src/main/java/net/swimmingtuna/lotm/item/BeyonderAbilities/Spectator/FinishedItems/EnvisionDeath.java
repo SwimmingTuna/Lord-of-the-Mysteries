@@ -79,8 +79,8 @@ public class EnvisionDeath extends Item {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionDeath) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionHealth.get()));
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionDeath) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLife.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }
@@ -91,7 +91,7 @@ public class EnvisionDeath extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionDeath) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionHealth.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLife.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }

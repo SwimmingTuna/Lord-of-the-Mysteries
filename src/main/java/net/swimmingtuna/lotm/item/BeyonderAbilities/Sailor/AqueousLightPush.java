@@ -73,8 +73,8 @@ public class AqueousLightPush extends Item {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightPush) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightDrown.get()));
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightPush) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightPull.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }
@@ -85,7 +85,7 @@ public class AqueousLightPush extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightPush) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightDrown.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightPull.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }

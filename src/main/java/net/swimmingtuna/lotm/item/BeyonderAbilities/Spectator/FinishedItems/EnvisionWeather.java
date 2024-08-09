@@ -75,6 +75,18 @@ public class EnvisionWeather extends Item {
                 }
             });
         }
+        if (!pPlayer.level().isClientSide()) {
+            String message = event.getMessage().getString().toLowerCase();
+            for (Player otherPlayer : level.players()) {
+                if (message.contains(otherPlayer.getName().getString().toLowerCase())) {
+                    BeyonderHolder otherHolder = BeyonderHolderAttacher.getHolder(otherPlayer).orElse(null);
+                    if (otherHolder != null && otherHolder.isSpectatorClass() && otherHolder.getCurrentSequence() <= 2 && !otherPlayer.level().isClientSide()) {
+                        event.setCanceled(true);
+                        otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. Their coordinates are: " + (int) pPlayer.getX() + " ," + (int) pPlayer.getY() + " ," + (int) pPlayer.getZ()));
+                    }
+                }
+            }
+        }
     }
 
     private static void setWeatherClear(Level level) {
@@ -99,7 +111,7 @@ public class EnvisionWeather extends Item {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionWeather) {
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionWeather) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionBarrier.get()));
             heldItem.shrink(1);
             event.setCanceled(true);

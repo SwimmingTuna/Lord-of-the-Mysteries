@@ -83,7 +83,7 @@ public class MeteorShower extends Item {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof MeteorShower) {
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof MeteorShower) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MeteorNoLevelShower.get()));
             heldItem.shrink(1);
             event.setCanceled(true);

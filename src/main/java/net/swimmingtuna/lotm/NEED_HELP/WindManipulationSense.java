@@ -87,8 +87,8 @@ public class WindManipulationSense extends Item {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationSense) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightDrown.get()));
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationSense) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationFlight.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }

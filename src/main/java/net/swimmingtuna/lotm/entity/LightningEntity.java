@@ -38,6 +38,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> NO_UP = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SYNCHED_MOVEMENT = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
 
+
     private List<Vec3> positions = new ArrayList<>();
     private List<AABB> boundingBoxes = new ArrayList<>();
     private Random random = new Random();
@@ -255,7 +256,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
                                     AABB damageArea = new AABB(hitPos.x - radius, hitPos.y - radius, hitPos.z - radius,
                                             hitPos.x + radius, hitPos.y + radius, hitPos.z + radius);
                                     for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, damageArea)) {
-                                        if (entity != this.owner) {
+                                        if (entity != this.owner || entity != this.getOwner()) {
                                             double distance1 = Math.sqrt(entity.distanceToSqr(hitPos));
                                             float maxDamage = 50f;
                                             float minDamage = 10f;
@@ -269,7 +270,9 @@ public class LightningEntity extends AbstractHurtingProjectile {
                             } else {
                                 level().explode(this, hitPos.x(), hitPos.y(), hitPos.z(), 10, false, Level.ExplosionInteraction.TNT);
                                 for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, new AABB(hitPos.x - 4, hitPos.y - 4, hitPos.z - 4, hitPos.x + 4, hitPos.y + 4, hitPos.z + 4))) {
-                                    entity.hurt(entity.damageSources().lightningBolt(), 10);
+                                    if (entity != this.getOwner() || entity != this.owner) {
+                                        entity.hurt(entity.damageSources().lightningBolt(), 10);
+                                    }
                                 }
                             }
                             hasExploded = true;
@@ -315,7 +318,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
                 }
                 if (this.tickCount % 1 == 0) {
                     LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), this.level());
-                    lightningEntity.setSpeed(5.0f);
+                    lightningEntity.setSpeed(8.0f);
                     lightningEntity.setDeltaMovement(this.getPersistentData().getDouble("sailorLightningDMX") + (Math.random() * 0.5) - 0.25, this.getPersistentData().getDouble("sailorLightningDMY") + (Math.random() * 0.5) - 0.25, this.getPersistentData().getDouble("sailorLightningDMZ") + (Math.random() * 0.5) - 0.25);
                     lightningEntity.setMaxLength(100);
                     lightningEntity.teleportTo(lastPos.x(), lastPos.y(), lastPos.z());

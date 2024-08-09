@@ -74,8 +74,8 @@ public class EnvisionHealth extends Item {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionHealth) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLife.get()));
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionHealth) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionWeather.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }
@@ -86,7 +86,7 @@ public class EnvisionHealth extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionHealth) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLife.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionWeather.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }

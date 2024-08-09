@@ -69,8 +69,8 @@ public class WindManipulationCushion extends Item {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationCushion) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightDrown.get()));
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationCushion) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationBlade.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }
@@ -81,7 +81,7 @@ public class WindManipulationCushion extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationCushion) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightDrown.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationBlade.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }

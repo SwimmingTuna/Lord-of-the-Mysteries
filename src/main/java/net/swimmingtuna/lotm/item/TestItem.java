@@ -7,8 +7,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.swimmingtuna.lotm.entity.CircleEntity;
 import net.swimmingtuna.lotm.entity.LightningEntity;
 import net.swimmingtuna.lotm.init.EntityInit;
+import virtuoel.pehkui.api.ScaleData;
+import virtuoel.pehkui.api.ScaleTypes;
 
 public class TestItem extends Item {
     public TestItem(Properties pProperties) {
@@ -31,18 +34,16 @@ public class TestItem extends Item {
             pPlayer.getPersistentData().putInt("sailorSealZ", (int) pPlayer.getZ());
         }
     }
+
     private void summonThing2(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
-            Vec3 lookVec = pPlayer.getLookAngle();
-            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
-            lightningEntity.setSpeed(8.0f);
-            lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
-            lightningEntity.setMaxLength(80);
-            lightningEntity.setOwner(pPlayer);
-            lightningEntity.setOwner(pPlayer);
-            lightningEntity.setBranchOut(true);
-            lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
-            pPlayer.level().addFreshEntity(lightningEntity);
+            CircleEntity circleEntity = new CircleEntity(EntityInit.CIRCLE_ENTITY.get(), pPlayer.level());
+            circleEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(circleEntity);
+            scaleData.setScale(10);
+            scaleData.shouldSync();
+
+            pPlayer.level().addFreshEntity(circleEntity);
         }
     }
 }

@@ -96,7 +96,13 @@ public class EnvisionLife extends Item {
                     if (nearestPlayer != null) {
                         mob.setLastHurtByPlayer(nearestPlayer);
                     }
-                    level.addFreshEntity(entity);
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                    if (holder.getCurrentSequence() >= ((Mob) entity).getMaxHealth() * 3) {
+                        holder.useSpirituality((int) (((Mob) entity).getMaxHealth() * 3));
+                        level.addFreshEntity(entity);
+                    } else {
+                        pPlayer.sendSystemMessage(Component.literal("You need " + (((Mob) entity).getMaxHealth() * 3 - holder.getSpirituality()) + " more spirituality in order to envision" + entity.getName().getString()));
+                    }
                 }
             }
         }
@@ -126,7 +132,7 @@ public class EnvisionLife extends Item {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLife) {
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLife) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionKingdom.get()));
             heldItem.shrink(1);
             event.setCanceled(true);

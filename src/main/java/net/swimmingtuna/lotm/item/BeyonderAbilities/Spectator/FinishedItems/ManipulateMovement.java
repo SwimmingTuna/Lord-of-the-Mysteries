@@ -188,7 +188,7 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateMovement) {
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateMovement) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ApplyManipulation.get()));
             heldItem.shrink(1);
             event.setCanceled(true);

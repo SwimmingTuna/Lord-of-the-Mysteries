@@ -377,7 +377,7 @@ public class ProphesizeDemise extends Item implements ReachChangeUUIDs {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeDemise) {
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeDemise) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeTeleportBlock.get()));
             heldItem.shrink(1);
             event.setCanceled(true);

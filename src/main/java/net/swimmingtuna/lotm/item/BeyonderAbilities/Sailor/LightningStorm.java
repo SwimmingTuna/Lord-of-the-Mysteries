@@ -120,8 +120,25 @@ public class LightningStorm extends Item {
             }
         }
     }
+
     @SubscribeEvent
     public static void leftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        if (pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
+            CompoundTag tag = pPlayer.getPersistentData();
+            int distance = tag.getInt("sailorLightningStormDistance");
+            tag.putInt("sailorLightningStormDistance", distance + 30);
+            pPlayer.sendSystemMessage(Component.literal("Storm Radius Is " + distance));
+            if (distance >= 300) {
+                tag.putInt("sailorLightningStormDistance", 0);
+                distance = 0;
+            }
+        }
+
+    }
+
+    @SubscribeEvent
+    public static void leftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         Player pPlayer = event.getEntity();
         if (!pPlayer.level().isClientSide()) {
             if (pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {

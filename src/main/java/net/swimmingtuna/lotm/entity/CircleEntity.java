@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.entity;
 
 
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -39,8 +40,6 @@ public class CircleEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> PROPHESIZE_BLOCK = SynchedEntityData.defineId(CircleEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> PROPHESIZE_PLAYER = SynchedEntityData.defineId(CircleEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> EXTREME_COLDNESS = SynchedEntityData.defineId(CircleEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> HYPNOSIS = SynchedEntityData.defineId(CircleEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> VIRTUAL_PERSONA = SynchedEntityData.defineId(CircleEntity.class, EntityDataSerializers.BOOLEAN);
 
     public CircleEntity(EntityType<? extends CircleEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -55,13 +54,6 @@ public class CircleEntity extends AbstractHurtingProjectile {
         return this.isDangerous() ? 0.73F : super.getInertia();
     }
 
-    @Override
-    public boolean canHitEntity(Entity entity) {
-        if (entity instanceof CircleEntity) {
-            return false;
-        }
-        return super.canHitEntity(entity);
-    }
 
     public boolean isOnFire() {
         return false;
@@ -73,35 +65,16 @@ public class CircleEntity extends AbstractHurtingProjectile {
     }
 
     protected void onHitEntity(EntityHitResult pResult) {
-        if (!this.level().isClientSide) {
-            Vec3 hitPos = pResult.getLocation();
-            ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
-            this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE.AMBIENT, 5.0F, 5.0F);
-            if (pResult.getEntity() instanceof LivingEntity entity) {
-                Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
-                DamageSource damageSource = damageSources().explosion(explosion);
-                entity.hurt(damageSource, 30.0F);
+        if (!this.level().isClientSide()) {
+            if (pResult.getEntity() instanceof Player pPlayer) {
+                pPlayer.sendSystemMessage(Component.literal("working"));
             }
-            this.discard();
         }
     }
 
     @Override
     protected void onHitBlock(BlockHitResult pResult) {
-        if (!this.level().isClientSide) {
-            Vec3 hitPos = pResult.getLocation();
-            ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
-            this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.BLOCK);
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE.AMBIENT, 5.0F, 5.0F);
-            for (LivingEntity entity : this.getOwner().level().getEntitiesOfClass(LivingEntity.class, this.getOwner().getBoundingBox().inflate(50))) {
-                Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
-                DamageSource damageSource = damageSources().explosion(explosion);
-                entity.hurt(damageSource, 30.0F);
-                entity.hurt(damageSource, 25.0F);
-            }
-            this.discard();
-        }
+
     }
 
     public boolean isPickable() {

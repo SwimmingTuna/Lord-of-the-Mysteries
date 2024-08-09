@@ -126,8 +126,8 @@ public class EnvisionLocationBlink extends Item {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocationBlink) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionWeather.get()));
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocationBlink) {
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionHealth.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }
@@ -138,7 +138,7 @@ public class EnvisionLocationBlink extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocationBlink) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionWeather.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionHealth.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }

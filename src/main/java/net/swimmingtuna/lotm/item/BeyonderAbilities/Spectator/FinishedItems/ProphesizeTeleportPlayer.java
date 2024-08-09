@@ -75,7 +75,7 @@ public class ProphesizeTeleportPlayer extends Item {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeDemise.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
