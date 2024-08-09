@@ -25,6 +25,8 @@ public class ItemInit {
             () -> new TestItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LightningStorm = ITEMS.register("sailorlightningstorm",
             () -> new LightningStorm(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ExtremeColdness = ITEMS.register("extremecoldness",
+            () -> new ExtremeColdness(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LightningBranch = ITEMS.register("lightningbranch",
             () -> new LightningBranch(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SailorLightning = ITEMS.register("sailorlightning",

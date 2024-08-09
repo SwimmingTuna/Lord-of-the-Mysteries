@@ -104,6 +104,7 @@ public class LOTM {
         if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
                 event.accept(ItemInit.TestItem);
                 event.accept(ItemInit.LightningStorm);
+                event.accept(ItemInit.ExtremeColdness);
                 event.accept(ItemInit.LightningBranch);
                 event.accept(ItemInit.Earthquake);
                 event.accept(ItemInit.SailorLightning);

@@ -37,13 +37,8 @@ public class TestItem extends Item {
 
     private void summonThing2(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
-            CircleEntity circleEntity = new CircleEntity(EntityInit.CIRCLE_ENTITY.get(), pPlayer.level());
-            circleEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
-            ScaleData scaleData = ScaleTypes.BASE.getScaleData(circleEntity);
-            scaleData.setScale(10);
-            scaleData.shouldSync();
+            pPlayer.setTicksFrozen(60);
 
-            pPlayer.level().addFreshEntity(circleEntity);
         }
     }
 }
