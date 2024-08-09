@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -103,6 +104,18 @@ public class ExtremeColdness extends Item {
                         int x1 = entity.getPersistentData().getInt("affectedBySailorExtremeColdness");
                         entity.getPersistentData().putInt("affectedBySailorExtremeColdness", x1 + 1);
                         entity.setTicksFrozen(1);
+                    }
+                }
+                List<Entity> entities1 = pPlayer.level().getEntitiesOfClass(Entity.class, areaOfEffect); //test thsi
+                for (Entity entity : entities1) {
+                    if (!(entity instanceof LivingEntity)) {
+                        int x1 = entity.getPersistentData().getInt("affectedBySailorColdness");
+                        entity.getPersistentData().putInt("affectedBySailorColdness", x1 + 1);
+                        if (x1 == 10) {
+                            entity.setDeltaMovement(entity.getDeltaMovement().x() / 5, entity.getDeltaMovement().y() / 5, entity.getDeltaMovement().z() / 5);
+                            entity.hurtMarked = true;
+                            entity.getPersistentData().putInt("affectedBySailorColdness", 0);
+                        }
                     }
                 }
 

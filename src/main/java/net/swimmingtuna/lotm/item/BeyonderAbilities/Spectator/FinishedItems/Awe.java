@@ -58,8 +58,9 @@ public class Awe extends Item {
         for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
             if (entity != pPlayer) {
                 entity.addEffect((new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false)));
-            entity.hurt(entity.damageSources().magic(), damage);
-        }}
+                entity.hurt(entity.damageSources().magic(), damage);
+            }
+        }
     }
 
     @Override

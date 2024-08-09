@@ -107,6 +107,7 @@ public class LOTM {
                 event.accept(ItemInit.ExtremeColdness);
                 event.accept(ItemInit.LightningBranch);
                 event.accept(ItemInit.Earthquake);
+                event.accept(ItemInit.SonicBoom);
                 event.accept(ItemInit.SailorLightning);
                 event.accept(ItemInit.WaterSphere);
                 event.accept(ItemInit.Hurricane);

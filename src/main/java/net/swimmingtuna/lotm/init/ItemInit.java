@@ -21,6 +21,8 @@ public class ItemInit {
 
     public static final RegistryObject<Item> Earthquake = ITEMS.register("earthquake",
             () -> new Earthquake(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SonicBoom = ITEMS.register("sonicboom",
+            () -> new SonicBoom(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> TestItem = ITEMS.register("testitem",
             () -> new TestItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LightningStorm = ITEMS.register("sailorlightningstorm",
