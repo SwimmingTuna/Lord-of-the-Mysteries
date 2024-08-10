@@ -67,6 +67,25 @@ public class SonicBoom extends Item implements ReachChangeUUIDs {
 
     public static void sonicBoom(Player pPlayer, int sequence) {
         if (!pPlayer.level().isClientSide()) {
+            pPlayer.level().explode(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), 40 - (sequence * 5), Level.ExplosionInteraction.TNT);
+            for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(40 - (sequence * 8)))) {
+                if (entity != pPlayer) {
+                    entity.getPersistentData().putInt("sailorSonicBoom", 5);
+                    int duration = 100 - (sequence * 20);
+                    int damage = 25 - (sequence * 5);
+                    if (!(entity instanceof Player)) {
+                        entity.addEffect((new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false)));
+                        entity.hurt(entity.damageSources().generic(), damage);
+                    } else if ((entity instanceof Player player)) {
+                        BeyonderHolder holder1 = BeyonderHolderAttacher.getHolder(player).orElse(null);
+                        int pSequence = holder1.getCurrentSequence();
+                        int pDuration = duration - (50 - (pSequence * 5));
+                        int pDamage = (int) (damage - (8 - (pSequence * 0.5)));
+                        entity.addEffect((new MobEffectInstance(ModEffects.AWE.get(), pDuration, 1, false, false)));
+                        entity.hurt(entity.damageSources().generic(), pDamage);
+                    }
+                }
+            }
             pPlayer.getPersistentData().putInt("sailorSonicBoom", 30);
             pPlayer.getPersistentData().putInt("sonicBoomBlocksDestroyed", 15);
         }
@@ -102,39 +121,22 @@ public class SonicBoom extends Item implements ReachChangeUUIDs {
     @SubscribeEvent
     public static void sonicBoomTick(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+
         if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
             CompoundTag tag = pPlayer.getPersistentData();
             AttributeInstance particleHelper = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
             int sonicBoomCounter = tag.getInt("sailorSonicBoom");
-            if (sonicBoomCounter >= 2) {
+            if (sonicBoomCounter >= 1) {
                 particleHelper.setBaseValue(1.0);
                 tag.putInt("sonicBookCounter", sonicBoomCounter - 1);
                 Vec3 lookVector = pPlayer.getLookAngle();
                 pPlayer.setDeltaMovement(lookVector.x * 100, lookVector.y * 100, lookVector.z * 100);
                 pPlayer.hurtMarked = true;
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
                 int sequence = holder.getCurrentSequence();
                 int destroyed = pPlayer.getPersistentData().getInt("sonicBoomBlocksDestroyed");
-                if (destroyed >= 0) {
-                    for (int dx = -3; dx <= 3; dx++) {
-                        for (int dy = -3; dy <= 3; dy++) {
-                            for (int dz = -3; dz <= 3; dz++) {
-                                // Get the block position relative to the player
-                                BlockPos blockPos = new BlockPos((int) (pPlayer.getX() + dx), (int) (pPlayer.getY() + dy), (int) (pPlayer.getZ() + dz));
-                                Block block = pPlayer.level().getBlockState(blockPos).getBlock();
-
-                                // Check if the block isn't obsidian and remove it
-                                if (block != Blocks.AIR && block != Blocks.OBSIDIAN) {
-                                    pPlayer.level().destroyBlock(blockPos, false);
-                                    pPlayer.sendSystemMessage(Component.literal("value is " + destroyed));
-                                    pPlayer.getPersistentData().putInt("sonicBoomBlocksDestroyed", destroyed - 1);
-                                }
-                            }
-                        }
-                    }
-                }
                 if (sonicBoomCounter % 3 == 0) {
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(40 - (sequence * 8)))) {
+                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(20 - (sequence * 3)))) {
                         if (entity != pPlayer) {
                             entity.getPersistentData().putInt("sailorSonicBoom", 5);
                             int duration = 100 - (sequence * 20);
@@ -155,9 +157,15 @@ public class SonicBoom extends Item implements ReachChangeUUIDs {
                 }
             }
             if (sonicBoomCounter <= 1) {
-                particleHelper.setBaseValue(0);
+                if (particleHelper.getBaseValue() == 1) {
+                    particleHelper.setBaseValue(0);
+                }
                 pPlayer.getPersistentData().putInt("sonicBoomBlocksDestroyed", 0);
 
+            }
+            if (sonicBoomCounter == 29 || sonicBoomCounter == 1) {
+                int sequence = holder.getCurrentSequence();
+                pPlayer.level().explode(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), 40 - (sequence * 5), Level.ExplosionInteraction.TNT);
             }
         }
     }
