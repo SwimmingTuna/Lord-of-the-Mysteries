@@ -86,7 +86,7 @@ public class SonicBoom extends Item implements ReachChangeUUIDs {
                     }
                 }
             }
-            pPlayer.getPersistentData().putInt("sailorSonicBoom", 30);
+            pPlayer.getPersistentData().putInt("sailorSonicBoom", 10);
             pPlayer.getPersistentData().putInt("sonicBoomBlocksDestroyed", 15);
         }
     }
