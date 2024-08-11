@@ -17,6 +17,7 @@ import net.swimmingtuna.lotm.entity.CircleEntity;
 import net.swimmingtuna.lotm.entity.LightningEntity;
 import net.swimmingtuna.lotm.entity.RoarEntity;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.util.ExplosionUtil;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
@@ -28,8 +29,6 @@ public class TestItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-            sonicBoom(pPlayer);
-            summonThing(pPlayer);
         return super.use(level, pPlayer, hand);
     }
 

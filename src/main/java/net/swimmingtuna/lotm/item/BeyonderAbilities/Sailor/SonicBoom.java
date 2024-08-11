@@ -5,6 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -70,19 +72,8 @@ public class SonicBoom extends Item implements ReachChangeUUIDs {
             Vec3 lookVec = pPlayer.getLookAngle().normalize().scale(100);
             pPlayer.hurtMarked = true;
             pPlayer.setDeltaMovement(lookVec.x(), lookVec.y(), lookVec.z());
-            int radius = 20 - sequence;
-            BlockPos playerPos = pPlayer.blockPosition();
-            Level level = pPlayer.level();
-            for (int x = -radius; x <= radius; x++) {
-                for (int y = -radius; y <= radius; y++) {
-                    for (int z = -radius; z <= radius; z++) {
-                        BlockPos pos = playerPos.offset(x, y, z);
-                        if (pos.distSqr(playerPos) <= radius * radius) {
-                            level.destroyBlock(pos, false);
-                        }
-                    }
-                }
-            }
+            pPlayer.level().playSound(null, pPlayer.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 30.0f, 1.0f);
+            ExplosionUtil.createNoKnockbackExplosion(pPlayer.level(), pPlayer, 40 - (sequence * 5), false);
             for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(30 - (sequence * 5)))) {
                 if (entity != pPlayer) {
                     int duration = 100 - (sequence * 20);
