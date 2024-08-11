@@ -1,0 +1,87 @@
+package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
+
+@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+public class RainEyes extends Item implements ReachChangeUUIDs {
+
+    public RainEyes(Properties pProperties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
+        super(pProperties);
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
+        if (!pPlayer.level().isClientSide()) {
+
+            // If no block or entity is targeted, proceed with the original functionality
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            if (!holder.isSailorClass()) {
+                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            }
+            if (holder.getSpirituality() < 300) {
+                pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            }
+            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
+                if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 4 && sailorSequence.useSpirituality(300)) {
+
+                    if (!pPlayer.getAbilities().instabuild)
+                        pPlayer.getCooldowns().addCooldown(this, 240);
+                }
+            });
+        }
+        return super.use(level, pPlayer, hand);
+    }
+    public static void startDownpour(Player pPlayer) {
+        if (!pPlayer.level().isClientSide()) {
+            CompoundTag tag = pPlayer.getPersistentData();
+            boolean x = tag.getBoolean("torrentialDownpour");
+            if (x) {
+                x = false;
+                tag.putBoolean("torrentialDownpour", false);
+                pPlayer.displayClientMessage(Component.literal("Rain eyes disabled").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+
+            }
+            if (!x) {
+                x = true;
+                tag.putBoolean("torrentialDownpour", true);
+                pPlayer.displayClientMessage(Component.literal("Rain eyes enabled").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+
+            }
+        }
+    }
+    @SubscribeEvent
+    public static void torrentialDownpourTicks(TickEvent.PlayerTickEvent event) {
+        Player pPlayer = event.player;
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        int sequence = holder.getCurrentSequence();
+        if (event.phase == TickEvent.Phase.END && !pPlayer.level().isClientSide() && holder.isSailorClass() && sequence <= 3 && pPlayer.tickCount % 100 == 0 && pPlayer.getPersistentData().getBoolean("torrentialDownpour")) {
+            if (pPlayer.level().isRaining()) {
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(500))) {
+                    if (entity != pPlayer) {
+                        if (entity instanceof Player player) {
+                            if (player.isInWaterOrRain()) {
+                                pPlayer.sendSystemMessage(Component.literal(player.getName().getString() + "'s location is " + player.getX() + ", " +player.getY() + ", " + player.getZ()));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

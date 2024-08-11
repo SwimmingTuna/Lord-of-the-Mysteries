@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
@@ -29,6 +30,7 @@ import net.swimmingtuna.lotm.entity.MeteorNoLevelEntity;
 import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.init.ItemInit;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class Hurricane extends Item implements ReachChangeUUIDs {
@@ -64,31 +66,68 @@ public class Hurricane extends Item implements ReachChangeUUIDs {
         Player pPlayer = event.player;
         if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
             CompoundTag tag = pPlayer.getPersistentData();
+            boolean x = tag.getBoolean("sailorHurricaneRain");
             BlockPos pos = new BlockPos((int) (pPlayer.getX() + (Math.random() * 100 - 100)), (int) (pPlayer.getY() - 100), (int) (pPlayer.getZ() + (Math.random() * 300 - 300)));
             int hurricane = tag.getInt("sailorHurricane");
             if (hurricane >= 1) {
-                tag.putInt("sailorHurricane", hurricane - 1);
+                if (x) {
+                    tag.putInt("sailorHurricane", hurricane - 1);
 
-                if (hurricane == 600) {
-                    if (pPlayer.level() instanceof ServerLevel serverLevel) {
-                        serverLevel.setWeatherParameters(0, 700, true, true);
+                    if (hurricane == 600) {
+                        if (pPlayer.level() instanceof ServerLevel serverLevel) {
+                            serverLevel.setWeatherParameters(0, 700, true, true);
+                        }
+                    }
+                    if (hurricane % 5 == 0) {
+                        SailorLightning.shootLineBlockHigh(pPlayer, pPlayer.level());
+                    }
+                    if (hurricane == 600 || hurricane == 300) {
+                        for (int i = 0; i < 5; i++) {
+                            TornadoEntity tornado = new TornadoEntity(pPlayer.level(), pPlayer, 0, 0, 0);
+                            tornado.teleportTo(pos.getX(), pos.getY() + 100, pos.getZ());
+                            tornado.setTornadoRandom(true);
+                            tornado.setTornadoHeight(300);
+                            tornado.setTornadoRadius(30);
+                            tornado.setTornadoPickup(false);
+                            pPlayer.level().addFreshEntity(tornado);
+                        }
                     }
                 }
-                if (hurricane % 5 == 0) {
-                    SailorLightning.shootLineBlockHigh(pPlayer, pPlayer.level());
-                }
-                if (hurricane == 600 || hurricane == 300) {
-                    for (int i = 0; i < 5; i++) {
-                        TornadoEntity tornado = new TornadoEntity(pPlayer.level(), pPlayer, 0, 0, 0);
-                        tornado.teleportTo(pos.getX(), pos.getY() + 100, pos.getZ());
-                        tornado.setTornadoRandom(true);
-                        tornado.setTornadoHeight(300);
-                        tornado.setTornadoRadius(30);
-                        tornado.setTornadoPickup(false);
-                        pPlayer.level().addFreshEntity(tornado);
+                if (!x) {
+                    if (pPlayer.level() instanceof ServerLevel serverLevel) {
+                        serverLevel.setWeatherParameters(0, 700, true, false);
                     }
                 }
             }
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof Hurricane) {
+            CompoundTag tag = pPlayer.getPersistentData();
+            boolean x = tag.getBoolean("sailorHurricaneRain");
+            if (x) {
+                pPlayer.displayClientMessage(Component.literal("Hurricane will only cause rain").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                tag.putBoolean("sailorHurricaneRain", false);
+                x = false;
+            }
+            if (!x) {
+                pPlayer.displayClientMessage(Component.literal("Hurricane cause lightning, tornadoes, and rain").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                tag.putBoolean("sailorHurricaneRain", true);
+                x = true;
+            }
+            event.setCanceled(true);
+        }
+    }
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player pPlayer = event.getEntity();
+        ItemStack heldItem = pPlayer.getMainHandItem();
+        int activeSlot = pPlayer.getInventory().selected;
+        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof Hurricane) {
+            event.setCanceled(true);
         }
     }
 }

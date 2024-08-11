@@ -9,6 +9,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.particle.AcidRainParticle;
 import net.swimmingtuna.lotm.particle.NullParticle;
+import net.swimmingtuna.lotm.particle.SonicBoomParticle;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientEvents2 {
@@ -17,5 +18,6 @@ public class ClientEvents2 {
         event.registerSpriteSet(ParticleInit.ACIDRAIN_PARTICLE.get(), AcidRainParticle.Provider::new);
         event.registerSpriteSet(ParticleInit.NULL_PARTICLE.get(), NullParticle.Provider::new);
         event.registerSpriteSet(ParticleInit.TORNADO_PARTICLE.get(), NullParticle.Provider::new);
+        event.registerSpriteSet(ParticleInit.SONIC_BOOM_PARTICLE.get(), SonicBoomParticle.Provider::new);
     }
 }

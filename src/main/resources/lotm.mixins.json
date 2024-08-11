@@ -6,7 +6,8 @@
   "mixins": [
     "ClientUpdateStructureBlockUnlimit",
     "StructureBlockRenderMixin",
-    "StructureBlockUnlimit"
+    "StructureBlockUnlimit",
+    "ExplosionNoKnockback"
   ],
   "client": [
     "StructureBlockRenderMixin"
