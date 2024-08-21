@@ -42,19 +42,21 @@ public class LOTM {
     public static Supplier<Integer> fadeTicks;
     public static Supplier<Double> maxBrightness;
     public static Supplier<Double> fadeRate = () -> maxBrightness.get() / fadeTicks.get();
-    public static ResourceLocation modLoc(String name) {return new ResourceLocation(MOD_ID, name);}
+
+    public static ResourceLocation modLoc(String name) {
+        return new ResourceLocation(MOD_ID, name);
+    }
 
 
     public static final String MOD_ID = "lotm";
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public static ResourceLocation rl(String name)
-    {
+    public static ResourceLocation rl(String name) {
         return new ResourceLocation(LOTM.MOD_ID, name);
     }
-    public LOTM()
-    {
+
+    public LOTM() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         BlockEntityInit.BLOCK_ENTITIES.register(modEventBus);
         ItemInit.register(modEventBus);
@@ -80,14 +82,12 @@ public class LOTM {
     }
 
 
-
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {
         ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BARRIER_BLOCK.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BLACK_STAINED_GLASS_PANE.get(), RenderType.cutout());
         LOTMNetworkHandler.register();
     }
-
 
 
     @SubscribeEvent
@@ -100,93 +100,97 @@ public class LOTM {
 
 
     }
+
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-                event.accept(ItemInit.TestItem);
-                event.accept(ItemInit.LightningStorm);
-                event.accept(ItemInit.ExtremeColdness);
-                event.accept(ItemInit.LightningBranch);
-                event.accept(ItemInit.Earthquake);
-                event.accept(ItemInit.RainEyes);
-                event.accept(ItemInit.SonicBoom);
-                event.accept(ItemInit.SailorLightning);
-                event.accept(ItemInit.WaterSphere);
-                event.accept(ItemInit.Hurricane);
-                event.accept(ItemInit.Tornado);
-                event.accept(ItemInit.MindReading);
-                event.accept(ItemInit.Awe);
-                event.accept(ItemInit.Frenzy);
-                event.accept(ItemInit.Placate);
-                event.accept(ItemInit.BattleHypnotism);
-                event.accept(ItemInit.PsychologicalInvisibility);
-                event.accept(ItemInit.Guidance);
-                event.accept(ItemInit.DreamWalking);
-                event.accept(ItemInit.Nightmare);
-                event.accept(ItemInit.ManipulateMovement);
-                event.accept(ItemInit.ManipulateEmotion);
-                event.accept(ItemInit.ApplyManipulation);
-                event.accept(ItemInit.MentalPlague);
-                event.accept(ItemInit.MindStorm);
-                event.accept(ItemInit.ManipulateFondness);
-                event.accept(ItemInit.ConsciousnessStroll);
-                event.accept(ItemInit.DragonBreath);
-                event.accept(ItemInit.PlagueStorm);
-                event.accept(ItemInit.DreamWeaving);
-                event.accept(ItemInit.Discern);
-                event.accept(ItemInit.Tsunami);
-                event.accept(ItemInit.DreamIntoReality);
-                event.accept(ItemInit.ProphesizeTeleportBlock);
-                event.accept(ItemInit.ProphesizeTeleportPlayer);
-                event.accept(ItemInit.ProphesizeDemise);
-                event.accept(ItemInit.EnvisionLife);
-                event.accept(ItemInit.MeteorShower);
-                event.accept(ItemInit.MeteorNoLevelShower);
-                event.accept(ItemInit.EnvisionWeather);
-                event.accept(ItemInit.EnvisionBarrier);
-                event.accept(ItemInit.EnvisionDeath);
-                event.accept(ItemInit.EnvisionKingdom);
-                event.accept(ItemInit.EnvisionLocation);
-                event.accept(ItemInit.EnvisionLocationBlink);
-                event.accept(ItemInit.EnvisionHealth);
-                event.accept(ItemInit.SPECTATOR_9_POTION);
-                event.accept(ItemInit.SPECTATOR_8_POTION);
-                event.accept(ItemInit.SPECTATOR_7_POTION);
-                event.accept(ItemInit.SPECTATOR_6_POTION);
-                event.accept(ItemInit.SPECTATOR_5_POTION);
-                event.accept(ItemInit.SPECTATOR_4_POTION);
-                event.accept(ItemInit.SPECTATOR_3_POTION);
-                event.accept(ItemInit.SPECTATOR_2_POTION);
-                event.accept(ItemInit.SPECTATOR_1_POTION);
-                event.accept(ItemInit.SPECTATOR_0_POTION);
-                event.accept(ItemInit.BEYONDER_RESET_POTION);
-                event.accept(ItemInit.TYRANT_9_POTION);
-                event.accept(ItemInit.TYRANT_8_POTION);
-                event.accept(ItemInit.TYRANT_7_POTION);
-                event.accept(ItemInit.TYRANT_6_POTION);
-                event.accept(ItemInit.TYRANT_5_POTION);
-                event.accept(ItemInit.TYRANT_4_POTION);
-                event.accept(ItemInit.TYRANT_3_POTION);
-                event.accept(ItemInit.TYRANT_2_POTION);
-                event.accept(ItemInit.TYRANT_1_POTION);
-                event.accept(ItemInit.TYRANT_0_POTION);
-                event.accept(ItemInit.RagingBlows);
-                event.accept(ItemInit.AqueousLightDrown);
-                event.accept(ItemInit.EnableOrDisableLightning);
-                event.accept(ItemInit.AqueousLightPull);
-                event.accept(ItemInit.AqueousLightPush);
-                event.accept(ItemInit.WindManipulationFlight);
-                event.accept(ItemInit.WindManipulationBlade);
-                event.accept(ItemInit.WindManipulationCushion);
-                event.accept(ItemInit.WindManipulationSense);
-                event.accept(ItemInit.AcidicRain);
-                event.accept(ItemInit.AquaticLifeManipulation);
-                event.accept(ItemInit.TsunamiSeal);
-                event.accept(ItemInit.SirenSongHarm);
-                event.accept(ItemInit.SirenSongWeaken);
-                event.accept(ItemInit.SirenSongStun);
-                event.accept(ItemInit.SirenSongStrengthen);
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(ItemInit.TestItem);
+            event.accept(ItemInit.LightningStorm);
+            event.accept(ItemInit.ExtremeColdness);
+            event.accept(ItemInit.LightningBranch);
+            event.accept(ItemInit.Earthquake);
+            event.accept(ItemInit.RainEyes);
+            event.accept(ItemInit.SonicBoom);
+            event.accept(ItemInit.SailorLightning);
+            event.accept(ItemInit.WaterSphere);
+            event.accept(ItemInit.ThunderClap);
+            event.accept(ItemInit.Tyranny);
+            event.accept(ItemInit.WaterColumn);
+            event.accept(ItemInit.Hurricane);
+            event.accept(ItemInit.Tornado);
+            event.accept(ItemInit.MindReading);
+            event.accept(ItemInit.Awe);
+            event.accept(ItemInit.Frenzy);
+            event.accept(ItemInit.Placate);
+            event.accept(ItemInit.BattleHypnotism);
+            event.accept(ItemInit.PsychologicalInvisibility);
+            event.accept(ItemInit.Guidance);
+            event.accept(ItemInit.DreamWalking);
+            event.accept(ItemInit.Nightmare);
+            event.accept(ItemInit.ManipulateMovement);
+            event.accept(ItemInit.ManipulateEmotion);
+            event.accept(ItemInit.ApplyManipulation);
+            event.accept(ItemInit.MentalPlague);
+            event.accept(ItemInit.MindStorm);
+            event.accept(ItemInit.ManipulateFondness);
+            event.accept(ItemInit.ConsciousnessStroll);
+            event.accept(ItemInit.DragonBreath);
+            event.accept(ItemInit.PlagueStorm);
+            event.accept(ItemInit.DreamWeaving);
+            event.accept(ItemInit.Discern);
+            event.accept(ItemInit.Tsunami);
+            event.accept(ItemInit.DreamIntoReality);
+            event.accept(ItemInit.ProphesizeTeleportBlock);
+            event.accept(ItemInit.ProphesizeTeleportPlayer);
+            event.accept(ItemInit.ProphesizeDemise);
+            event.accept(ItemInit.EnvisionLife);
+            event.accept(ItemInit.MeteorShower);
+            event.accept(ItemInit.MeteorNoLevelShower);
+            event.accept(ItemInit.EnvisionWeather);
+            event.accept(ItemInit.EnvisionBarrier);
+            event.accept(ItemInit.EnvisionDeath);
+            event.accept(ItemInit.EnvisionKingdom);
+            event.accept(ItemInit.EnvisionLocation);
+            event.accept(ItemInit.EnvisionLocationBlink);
+            event.accept(ItemInit.EnvisionHealth);
+            event.accept(ItemInit.SPECTATOR_9_POTION);
+            event.accept(ItemInit.SPECTATOR_8_POTION);
+            event.accept(ItemInit.SPECTATOR_7_POTION);
+            event.accept(ItemInit.SPECTATOR_6_POTION);
+            event.accept(ItemInit.SPECTATOR_5_POTION);
+            event.accept(ItemInit.SPECTATOR_4_POTION);
+            event.accept(ItemInit.SPECTATOR_3_POTION);
+            event.accept(ItemInit.SPECTATOR_2_POTION);
+            event.accept(ItemInit.SPECTATOR_1_POTION);
+            event.accept(ItemInit.SPECTATOR_0_POTION);
+            event.accept(ItemInit.BEYONDER_RESET_POTION);
+            event.accept(ItemInit.TYRANT_9_POTION);
+            event.accept(ItemInit.TYRANT_8_POTION);
+            event.accept(ItemInit.TYRANT_7_POTION);
+            event.accept(ItemInit.TYRANT_6_POTION);
+            event.accept(ItemInit.TYRANT_5_POTION);
+            event.accept(ItemInit.TYRANT_4_POTION);
+            event.accept(ItemInit.TYRANT_3_POTION);
+            event.accept(ItemInit.TYRANT_2_POTION);
+            event.accept(ItemInit.TYRANT_1_POTION);
+            event.accept(ItemInit.TYRANT_0_POTION);
+            event.accept(ItemInit.RagingBlows);
+            event.accept(ItemInit.AqueousLightDrown);
+            event.accept(ItemInit.EnableOrDisableLightning);
+            event.accept(ItemInit.AqueousLightPull);
+            event.accept(ItemInit.AqueousLightPush);
+            event.accept(ItemInit.WindManipulationFlight);
+            event.accept(ItemInit.WindManipulationBlade);
+            event.accept(ItemInit.WindManipulationCushion);
+            event.accept(ItemInit.WindManipulationSense);
+            event.accept(ItemInit.AcidicRain);
+            event.accept(ItemInit.AquaticLifeManipulation);
+            event.accept(ItemInit.TsunamiSeal);
+            event.accept(ItemInit.SirenSongHarm);
+            event.accept(ItemInit.SirenSongWeaken);
+            event.accept(ItemInit.SirenSongStun);
+            event.accept(ItemInit.SirenSongStrengthen);
         }
-        if(event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
+        if (event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(BlockInit.VISIONARY_BARRIER_BLOCK);
             event.accept(BlockInit.CATHEDRAL_BLOCK);
             event.accept(BlockInit.MINDSCAPE_BLOCK);

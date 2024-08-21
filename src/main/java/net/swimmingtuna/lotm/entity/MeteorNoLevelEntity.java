@@ -17,6 +17,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +69,7 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
     protected void onHitBlock(BlockHitResult pResult) {
         if (!this.level().isClientSide) {
             Vec3 hitPos = pResult.getLocation();
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE.AMBIENT, 5.0F, 5.0F);
+            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE.AMBIENT, 30.0F, 1.0F);
             for (LivingEntity entity : this.getOwner().level().getEntitiesOfClass(LivingEntity.class, this.getOwner().getBoundingBox().inflate(50))) {
                 Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
                 DamageSource damageSource = damageSources().explosion(explosion);
@@ -113,8 +115,11 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
             double randomZ = Math.random() * 60 - 30;
             meteorEntity.teleportTo(pPlayer.getX() + randomX, pPlayer.getY() + 50, pPlayer.getZ() + randomZ);
             double random = 0.5 + Math.random();
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            int sequence = holder.getCurrentSequence();
+            int scalecheck = 10 - sequence * 4;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
-            scaleData.setTargetScale((float) (scaleData.getBaseScale() * (scale * random)));
+            scaleData.setScale(scalecheck);
             scaleData.markForSync(true);
             pPlayer.level().addFreshEntity(meteorEntity);
         }

@@ -16,10 +16,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import org.jetbrains.annotations.NotNull;
+import virtuoel.pehkui.api.ScaleData;
+import virtuoel.pehkui.api.ScaleTypes;
 
 public class AqueousLightEntityPush extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(AqueousLightEntityPush.class, EntityDataSerializers.BOOLEAN);
@@ -114,7 +117,11 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
     public static void summonEntityWithSpeed(Vec3 direction, Vec3 initialVelocity, Vec3 eyePosition, double x, double y, double z, Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
             AqueousLightEntityPush aqueousLightEntity = new AqueousLightEntityPush(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
-            aqueousLightEntity.setDeltaMovement(initialVelocity) ;
+            aqueousLightEntity.setDeltaMovement(initialVelocity);
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(aqueousLightEntity);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            int sequence = holder.getCurrentSequence();
+            scaleData.setScale(8.0f - sequence);
             Vec3 lightPosition = eyePosition.add(direction.scale(2.0));
             aqueousLightEntity.setPos(lightPosition);
             aqueousLightEntity.setOwner(pPlayer);

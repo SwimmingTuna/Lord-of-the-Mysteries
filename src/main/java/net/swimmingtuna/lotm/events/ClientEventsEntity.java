@@ -30,6 +30,7 @@ public class ClientEventsEntity {
         event.registerEntityRenderer(EntityInit.TORNADO_ENTITY.get(), TornadoEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.METEOR_NO_LEVEL_ENTITY.get(), MeteorNoLevelEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.ROAR_ENTITY.get(), RoarEntityRenderer::new);
+        event.registerEntityRenderer(EntityInit.WATER_COLUMN_ENTITY.get(), WaterColumnEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.DRAGON_BREATH_ENTITY.get(), DragonBreathRenderer::new);
         event.registerEntityRenderer(EntityInit.WIND_BLADE_ENTITY.get(), WindBladeRenderer::new);
         event.registerEntityRenderer(EntityInit.WIND_CUSHION_ENTITY.get(), WindCushionRenderer::new);

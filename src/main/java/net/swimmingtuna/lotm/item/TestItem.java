@@ -29,12 +29,14 @@ public class TestItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
+        summonThing(pPlayer);
         return super.use(level, pPlayer, hand);
     }
 
     private void summonThing(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
             RoarEntity roarEntity = new RoarEntity(EntityInit.ROAR_ENTITY.get(), pPlayer.level());
+            roarEntity.setOwner(pPlayer);
             roarEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
             Vec3 lookVec = pPlayer.getLookAngle();
             roarEntity.setDeltaMovement(lookVec.scale(10).x(), lookVec.scale(10).y(), lookVec.scale(10).z());

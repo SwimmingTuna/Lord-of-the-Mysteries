@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.entity;
 
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -16,14 +17,20 @@ import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
+
+import java.util.List;
 
 public class MeteorEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(MeteorEntity.class, EntityDataSerializers.BOOLEAN);
@@ -58,37 +65,79 @@ public class MeteorEntity extends AbstractHurtingProjectile {
         return ParticleInit.NULL_PARTICLE.get();
     }
 
-    protected void onHitEntity(EntityHitResult pResult) {
-        if (!this.level().isClientSide) {
-            Vec3 hitPos = pResult.getLocation();
+    @Override
+    public void onHitBlock(BlockHitResult result) {
+        if (!this.level().isClientSide()) {
+            BlockPos hitPos = result.getBlockPos();
+            this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
-            this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE.AMBIENT, 5.0F, 5.0F);
-            if (pResult.getEntity() instanceof LivingEntity entity) {
-                Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
-                DamageSource damageSource = damageSources().explosion(explosion);
-                entity.hurt(damageSource, 30.0F);
+            float scale = scaleData.getScale();
+            // Define the radius of the sphere
+            double radius = scale * 4; // Adjust multiplier as needed
+
+            // Loop through all blocks in the spherical area
+            for (BlockPos pos : BlockPos.betweenClosed(
+                    hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                    hitPos.offset((int) radius, (int) radius, (int) radius))) {
+                if (pos.distSqr(hitPos) <= radius * radius) {
+                    if (this.level().getBlockState(pos).getDestroySpeed(this.level(), pos) >= 0) {
+                        this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                    }
+                }
+            }
+            List<Entity> entities = this.level().getEntities(this,
+                    new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                            hitPos.offset((int) radius, (int) radius, (int) radius)));
+            for (Entity entity : entities) {
+                if (entity instanceof LivingEntity livingEntity) {
+                    // Damage the entity if it's within the radius
+                    livingEntity.hurt(damageSources().generic(), 10 * scale); // Adjust damage as needed
+                }
             }
             this.discard();
         }
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
-        if (!this.level().isClientSide) {
-            Vec3 hitPos = pResult.getLocation();
+    public void onHitEntity(EntityHitResult result) {
+        if (!this.level().isClientSide()) {
+            this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+            Entity hitEntity = result.getEntity();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
-            this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.BLOCK);
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE.AMBIENT, 5.0F, 5.0F);
-            for (LivingEntity entity : this.getOwner().level().getEntitiesOfClass(LivingEntity.class, this.getOwner().getBoundingBox().inflate(50))) {
-                Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
-                DamageSource damageSource = damageSources().explosion(explosion);
-                entity.hurt(damageSource, 30.0F);
-                entity.hurt(damageSource, 25.0F);
+            float scale = scaleData.getScale();
+            if (hitEntity instanceof LivingEntity) {
+                BlockPos hitPos = hitEntity.blockPosition();
+
+                // Define the radius of the sphere
+                double radius = scale * 4; // Adjust multiplier as needed
+
+                // Loop through all blocks in the spherical area
+                for (BlockPos pos : BlockPos.betweenClosed(
+                        hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                        hitPos.offset((int) radius, (int) radius, (int) radius))) {
+                    if (pos.distSqr(hitPos) <= radius * radius) {
+                        // Destroy the block if it's within the radius
+                        if (this.level().getBlockState(pos).getDestroySpeed(this.level(), pos) >= 0) {
+                            this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                        }
+                    }
+                }
+
+                // Loop through all entities in the spherical area
+                List<Entity> entities = this.level().getEntities(this,
+                        new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                                hitPos.offset((int) radius, (int) radius, (int) radius)));
+                for (Entity entity : entities) {
+                    if (entity instanceof LivingEntity livingEntity) {
+                        // Damage the entity if it's within the radius
+                        livingEntity.hurt(damageSources().generic(), 10 * scale); // Adjust damage as needed
+                    }
+                }
             }
             this.discard();
         }
     }
+
 
     public boolean isPickable() {
         return false;
@@ -125,12 +174,16 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             double randomZ = Math.random() * 60 - 30;
             meteorEntity.teleportTo(pPlayer.getX() + randomX, pPlayer.getY() + 50, pPlayer.getZ() + randomZ);
             double random = 0.5 + Math.random();
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            int sequence = holder.getCurrentSequence();
+            int scalecheck = 10 - sequence * 4;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
-            scaleData.setTargetScale((float) (scaleData.getBaseScale() * (scale * random)));
+            scaleData.setScale(scalecheck);
             scaleData.markForSync(true);
             pPlayer.level().addFreshEntity(meteorEntity);
         }
     }
+
     @Override
     public void tick() {
         super.tick();

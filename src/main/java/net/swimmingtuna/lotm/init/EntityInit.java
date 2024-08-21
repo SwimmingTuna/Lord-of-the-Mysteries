@@ -16,6 +16,9 @@ public class EntityInit {
     public static final RegistryObject<EntityType<AqueousLightEntity>> AQUEOUS_LIGHT_ENTITY =
             ENTITIES.register("aqueous_light", () -> EntityType.Builder.<AqueousLightEntity>of(AqueousLightEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build(new ResourceLocation(LOTM.MOD_ID, "aqueous_light").toString()));
+    public static final RegistryObject<EntityType<WaterColumnEntity>> WATER_COLUMN_ENTITY =
+            ENTITIES.register("water_column", () -> EntityType.Builder.<WaterColumnEntity>of(WaterColumnEntity::new, MobCategory.MISC)
+                    .sized(0.5f,0.5f).build(new ResourceLocation(LOTM.MOD_ID, "water_column").toString()));
     public static final RegistryObject<EntityType<RoarEntity>> ROAR_ENTITY =
             ENTITIES.register("roar_entity", () -> EntityType.Builder.<RoarEntity>of(RoarEntity::new, MobCategory.MISC)
                     .sized(2.0f,2.0f).build(new ResourceLocation(LOTM.MOD_ID, "roar_entity").toString()));

@@ -27,6 +27,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -62,26 +63,32 @@ public class ModEvents implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
             AttributeInstance nightmareAttribute = pPlayer.getAttribute(ModAttributes.NIGHTMARE.get());
             AttributeInstance armorInvisAttribute = pPlayer.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
-            if (!event.player.level().isClientSide && event.phase == TickEvent.Phase.START) {
-                int nightmareTimer = pPlayer.getPersistentData().getInt("NightmareTimer");
+            int nightmareTimer = pPlayer.getPersistentData().getInt("NightmareTimer");
 
-                if (nightmareAttribute.getValue() >= 1) {
-                    nightmareTimer++;
-                    if (nightmareTimer >= 600) {
-                        nightmareAttribute.setBaseValue(0);
-                        nightmareTimer = 0;
-                    }
-                } else {
+            if (nightmareAttribute.getValue() >= 1) {
+                nightmareTimer++;
+                if (nightmareTimer >= 600) {
+                    nightmareAttribute.setBaseValue(0);
                     nightmareTimer = 0;
                 }
-                if (armorInvisAttribute.getValue() > 0 && !pPlayer.hasEffect(MobEffects.INVISIBILITY)) {
-                    removeArmor(pPlayer);
-                    armorInvisAttribute.setBaseValue(0);
-                }
-
-                // Save the updated nightmareTimer in player persistent data
-                pPlayer.getPersistentData().putInt("NightmareTimer", nightmareTimer);
+            } else {
+                nightmareTimer = 0;
             }
+            if (armorInvisAttribute.getValue() > 0 && !pPlayer.hasEffect(MobEffects.INVISIBILITY)) {
+                removeArmor(pPlayer);
+                armorInvisAttribute.setBaseValue(0);
+            }
+
+            // Save the updated nightmareTimer in player persistent data
+            pPlayer.getPersistentData().putInt("NightmareTimer", nightmareTimer);
+        }
+    }
+    @SubscribeEvent
+    public static void stunEffect(LivingEntityUseItemEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (!entity.level().isClientSide() && entity.hasEffect(ModEffects.STUN.get())) {
+            ItemStack itemStack = entity.getMainHandItem();
+            event.setCanceled(true);
         }
     }
 
@@ -278,6 +285,7 @@ public class ModEvents implements ReachChangeUUIDs {
             }
         }
     }
+
     @SubscribeEvent
     public static void projectileImpactEvent(ProjectileImpactEvent event) {
         Entity projectile = event.getProjectile();

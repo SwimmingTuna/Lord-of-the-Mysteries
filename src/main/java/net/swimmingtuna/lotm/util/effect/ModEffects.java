@@ -13,6 +13,8 @@ public class ModEffects {
 
     public static final RegistryObject<MobEffect> AWE = MOB_EFFECTS.register("awe",
             () -> new AweEffect(MobEffectCategory.HARMFUL,3124687));
+    public static final RegistryObject<MobEffect> STUN = MOB_EFFECTS.register("stun",
+            () -> new StunEffect(MobEffectCategory.HARMFUL,3124687));
     public static final RegistryObject<MobEffect> FRENZY = MOB_EFFECTS.register("frenzy",
             () -> new FrenzyEffect(MobEffectCategory.HARMFUL,3124687));
     public static final RegistryObject<MobEffect> BATTLEHYPNOTISM = MOB_EFFECTS.register("battlehypnotism",

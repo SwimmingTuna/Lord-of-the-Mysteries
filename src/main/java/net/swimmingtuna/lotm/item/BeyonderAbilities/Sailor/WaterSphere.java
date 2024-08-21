@@ -60,7 +60,6 @@ public class WaterSphere extends Item implements ReachChangeUUIDs {
         Player pPlayer = event.player;
         if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
             if (pPlayer.getPersistentData().getInt("sailorSphere") >= 5) {
-                pPlayer.sendSystemMessage(Component.literal("value is " + pPlayer.getPersistentData().getInt("sailorSphere")));
                 for (Entity entity : pPlayer.level().getEntitiesOfClass(Entity.class, pPlayer.getBoundingBox().inflate(4))) {
                     if (!(entity instanceof LivingEntity && !(entity instanceof MeteorEntity) && !(entity instanceof MeteorNoLevelEntity))) {
                         entity.remove(Entity.RemovalReason.DISCARDED);

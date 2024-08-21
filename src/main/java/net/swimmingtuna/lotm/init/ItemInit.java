@@ -37,6 +37,12 @@ public class ItemInit {
             () -> new SailorLightning(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> WaterSphere = ITEMS.register("watersphere",
             () -> new WaterSphere(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ThunderClap = ITEMS.register("thunderclap",
+            () -> new ThunderClap(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WaterColumn = ITEMS.register("watercolumn",
+            () -> new WaterColumn(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> Tyranny = ITEMS.register("tyranny",
+            () -> new Tyranny(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Hurricane = ITEMS.register("hurricane",
             () -> new Hurricane(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Tornado = ITEMS.register("tornado",
