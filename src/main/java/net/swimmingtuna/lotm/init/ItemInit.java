@@ -21,6 +21,8 @@ public class ItemInit {
 
     public static final RegistryObject<Item> Earthquake = ITEMS.register("earthquake",
             () -> new Earthquake(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> StarOfLightning = ITEMS.register("staroflightning",
+            () -> new StarOfLightning(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> RainEyes = ITEMS.register("raineyes",
             () -> new RainEyes(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SonicBoom = ITEMS.register("sonicboom",
@@ -29,6 +31,30 @@ public class ItemInit {
             () -> new TestItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LightningStorm = ITEMS.register("sailorlightningstorm",
             () -> new LightningStorm(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> Roar = ITEMS.register("roar",
+            () -> new Roar(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> TyrantTornado = ITEMS.register("tyranttornado",
+            () -> new TyrantTornado(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> CalamityIncarnationTornado = ITEMS.register("calamityincarnationtornado",
+            () -> new CalamityIncarnationTornado(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> CalamityIncarnationTsunami = ITEMS.register("calamityincarnationtsunami",
+            () -> new CalamityIncarnationTsunami(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LightningBall = ITEMS.register("lightningball",
+            () -> new LightningBall(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LightningBallAbsorb = ITEMS.register("lightningballabsorb",
+            () -> new LightningBallAbsorb(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MatterAccelerationBlocks = ITEMS.register("matteraccelerationblocks",
+            () -> new MatterAccelerationBlocks(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MatterAccelerationEntities = ITEMS.register("matteraccelerationentities",
+            () -> new MatterAccelerationEntities(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MatterAccelerationSelf = ITEMS.register("matteraccelerationself",
+            () -> new MatterAccelerationSelf(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SailorLightningTravel = ITEMS.register("sailorlightningtravel",
+            () -> new SailorLightningTravel(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> StormSeal = ITEMS.register("stormseal",
+            () -> new StormSeal(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> VolcanicEruption = ITEMS.register("volcaniceruption",
+            () -> new VolcanicEruption(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ExtremeColdness = ITEMS.register("extremecoldness",
             () -> new ExtremeColdness(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LightningBranch = ITEMS.register("lightningbranch",

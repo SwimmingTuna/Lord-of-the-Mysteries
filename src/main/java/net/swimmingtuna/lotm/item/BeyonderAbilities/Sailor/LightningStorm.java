@@ -66,6 +66,9 @@ public class LightningStorm extends Item {
             pPlayer.getPersistentData().putDouble("sailorStormVecZ", targetZ);
             CompoundTag persistentData = pPlayer.getPersistentData();
             persistentData.putInt("sailorLightningStorm", 500 - (sequence * 80));
+            if (sequence <= 0) {
+                persistentData.putInt("sailorLightningStormTyrant", 500);
+            }
         }
     }
 
@@ -85,6 +88,37 @@ public class LightningStorm extends Item {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
             CompoundTag tag = pPlayer.getPersistentData();
+            int tyrantVer = tag.getInt("sailorLightningStormTyrant");
+            int sailorMentioned = tag.getInt("tyrantMentionedInChat");
+            int sailorLightningStorm1 = tag.getInt("sailorLightningStorm1");
+            int x1 =  tag.getInt("sailorStormVecX1");
+            int y1 =  tag.getInt("sailorStormVecY1");
+            int z1 =  tag.getInt("sailorStormVecZ1");
+            if (sailorMentioned >= 1) {
+                tag.putInt("tyrantMentionedInChat",sailorMentioned - 1 );
+                if (sailorLightningStorm1 >= 1) {
+                    LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
+                    lightningEntity.setSpeed(10.0f);
+                    lightningEntity.setDeltaMovement((Math.random() * 0.4) - 0.2, -4, (Math.random() * 0.4) - 0.2);
+                    lightningEntity.setMaxLength(30);
+                    lightningEntity.setOwner(pPlayer);
+                    lightningEntity.setOwner(pPlayer);
+                    lightningEntity.setNoUp(true);
+                    lightningEntity.teleportTo(x1 + ((Math.random() * 300) - (double) 300 / 2), y1 + 80, z1 + ((Math.random() * 300) - (double) 300 / 2));
+                    pPlayer.level().addFreshEntity(lightningEntity);
+                    pPlayer.level().addFreshEntity(lightningEntity);
+                    pPlayer.level().addFreshEntity(lightningEntity);
+                    pPlayer.level().addFreshEntity(lightningEntity);
+                    if (tyrantVer >= 1) {
+                        pPlayer.level().addFreshEntity(lightningEntity);
+                        pPlayer.level().addFreshEntity(lightningEntity);
+                        pPlayer.level().addFreshEntity(lightningEntity);
+                        pPlayer.level().addFreshEntity(lightningEntity);
+                        tag.putInt("sailorLightningStormTyrant", tyrantVer - 1);
+                    }
+                    tag.putInt("sailorLightningStorm1", sailorLightningStorm1 - 1);
+                }
+            }
             int sailorLightningStorm = tag.getInt("sailorLightningStorm");
             int stormVec = tag.getInt("sailorStormVec");
             double x = tag.getInt("sailorStormVecX");

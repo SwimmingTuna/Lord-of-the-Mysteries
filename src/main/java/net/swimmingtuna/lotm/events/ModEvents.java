@@ -81,6 +81,9 @@ public class ModEvents implements ReachChangeUUIDs {
 
             // Save the updated nightmareTimer in player persistent data
             pPlayer.getPersistentData().putInt("NightmareTimer", nightmareTimer);
+            if (pPlayer.getPersistentData().getInt("calamityIncarnationTornado") >= 1) {
+                pPlayer.getPersistentData().putInt("calamityIncarnationTornado", pPlayer.getPersistentData().getInt("calamityIncarnationTornado") - 1);
+            }
         }
     }
     @SubscribeEvent

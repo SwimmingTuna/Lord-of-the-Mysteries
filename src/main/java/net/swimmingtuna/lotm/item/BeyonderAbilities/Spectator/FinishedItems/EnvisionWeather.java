@@ -81,10 +81,20 @@ public class EnvisionWeather extends Item {
                 if (message.contains(otherPlayer.getName().getString().toLowerCase())) {
                     BeyonderHolder otherHolder = BeyonderHolderAttacher.getHolder(otherPlayer).orElse(null);
                     if (otherHolder != null && otherHolder.isSpectatorClass() && otherHolder.getCurrentSequence() <= 2 && !otherPlayer.level().isClientSide()) {
-                        event.setCanceled(true);
-                        otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. Their coordinates are: " + (int) pPlayer.getX() + " ," + (int) pPlayer.getY() + " ," + (int) pPlayer.getZ()));
+                        otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. Their coordinates are: " + (int) pPlayer.getX() + " ," + (int) pPlayer.getY() + " ," + (int) pPlayer.getZ()).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA));
+                    }
+                    if (otherHolder != null && otherHolder.isSailorClass() && otherHolder.getCurrentSequence() <= 1 && !otherPlayer.level().isClientSide()) {
+                        otherPlayer.getPersistentData().putInt("tyrantMentionedInChat", 200);
+                        otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. DO you want to summon a lightning storm on them? Type Yes if so, you have 10 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                        otherPlayer.getPersistentData().putInt("sailorStormVecX1", (int) pPlayer.getX());
+                        otherPlayer.getPersistentData().putInt("sailorStormVecY1", (int) pPlayer.getY());
+                        otherPlayer.getPersistentData().putInt("sailorStormVecZ1", (int) pPlayer.getZ());
                     }
                 }
+            }
+            if (pPlayer.getPersistentData().getInt("tyrantMentionedInChat") >= 1 && message.contains("yes")) {
+                pPlayer.getPersistentData().putInt("sailorLightningStorm1", 300);
+                event.setCanceled(true);
             }
         }
     }

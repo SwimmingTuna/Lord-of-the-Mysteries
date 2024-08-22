@@ -85,7 +85,6 @@ public class ManipulateFondness extends Item implements ReachChangeUUIDs {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateFondness) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateMovement.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -96,7 +95,6 @@ public class ManipulateFondness extends Item implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateFondness) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateMovement.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

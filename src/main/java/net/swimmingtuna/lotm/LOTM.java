@@ -105,9 +105,22 @@ public class LOTM {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(ItemInit.TestItem);
             event.accept(ItemInit.LightningStorm);
+            event.accept(ItemInit.Roar);
+            event.accept(ItemInit.TyrantTornado);
+            event.accept(ItemInit.CalamityIncarnationTsunami);
+            event.accept(ItemInit.LightningBall);
+            event.accept(ItemInit.LightningBallAbsorb);
+            event.accept(ItemInit.MatterAccelerationBlocks);
+            event.accept(ItemInit.MatterAccelerationEntities);
+            event.accept(ItemInit.StormSeal);
+            event.accept(ItemInit.SailorLightningTravel);
+            event.accept(ItemInit.StormSeal);
+            event.accept(ItemInit.VolcanicEruption);
+
             event.accept(ItemInit.ExtremeColdness);
             event.accept(ItemInit.LightningBranch);
             event.accept(ItemInit.Earthquake);
+            event.accept(ItemInit.StarOfLightning);
             event.accept(ItemInit.RainEyes);
             event.accept(ItemInit.SonicBoom);
             event.accept(ItemInit.SailorLightning);

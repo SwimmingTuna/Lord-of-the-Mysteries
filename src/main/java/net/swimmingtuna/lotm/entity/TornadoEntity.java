@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -16,29 +15,30 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class TornadoEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_TORNADO_RADIUS = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_TORNADO_HEIGHT = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_LIFECOUNT = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> DATA_TORNADO_X = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_TORNADO_Y = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_TORNADO_Z = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> RANDOM_MOVEMENT = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> PICK_UP_BLOCKS = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.BOOLEAN);
+
 
     public TornadoEntity(EntityType<? extends TornadoEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
@@ -57,6 +57,7 @@ public class TornadoEntity extends AbstractHurtingProjectile {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_DANGEROUS, false);
+        this.entityData.define(DATA_LIFECOUNT, 300);
         this.entityData.define(DATA_TORNADO_RADIUS, 4);
         this.entityData.define(DATA_TORNADO_HEIGHT, 20);
         this.entityData.define(DATA_TORNADO_X, 0.0f);
@@ -81,6 +82,9 @@ public class TornadoEntity extends AbstractHurtingProjectile {
         if (compound.contains("TornadoHeight")) {
             this.setTornadoHeight(compound.getInt("TornadoHeight"));
         }
+        if (compound.contains("TornadoLifeCount")) {
+            this.setTornadoLifecount(compound.getInt("TornadoLifeCount"));
+        }
         if (compound.contains("TornadoX")) {
             this.setTornadoXMov(compound.getFloat("TornadoX"));
         }
@@ -104,11 +108,23 @@ public class TornadoEntity extends AbstractHurtingProjectile {
             pPlayer.level().addFreshEntity(tornado);
         }
     }
+    public static void summonTyrantTornado(Player pPlayer) {
+        if (!pPlayer.level().isClientSide()) {
+            TornadoEntity tornado = new TornadoEntity(pPlayer.level(), pPlayer, 0, 0, 0);
+            tornado.setTornadoHeight(300);
+            tornado.setTornadoRadius(200);
+            tornado.setTornadoXMov((float) pPlayer.getLookAngle().scale(0.5f).x());
+            tornado.setTornadoYMov((float) pPlayer.getLookAngle().scale(0.5f).y());
+            tornado.setTornadoZMov((float) pPlayer.getLookAngle().scale(0.5f).z());
+            pPlayer.level().addFreshEntity(tornado);
+        }
+    }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("TornadoRadius", this.getTornadoRadius());
+        compound.putInt("TornadoLifeCount", this.getTornadoLifecount());
         compound.putInt("TornadoHeight", this.getTornadoHeight());
         compound.putFloat("TornadoX", this.getTornadoXMov());
         compound.putFloat("TornadoY", this.getTornadoYMov());
@@ -272,8 +288,28 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                         setTornadoZMov(newTornadoZ);
                     }
                 }
-                if (this.tickCount >= 300) {
+                if (this.tickCount >= getTornadoLifecount()) {
                     this.discard();
+                }
+                if (getTornadoHeight() >= 290) {
+                    LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), this.level());
+                    lightningEntity.setSpeed(20.0f);
+                    lightningEntity.setDeltaMovement((Math.random() * 0.4) - 0.2, -4, (Math.random() * 0.4) - 0.2);
+                    lightningEntity.setMaxLength(40);
+                    lightningEntity.setNoUp(true);
+                    double x1 = this.getX() + ((Math.random() * 200) - 100);
+                    double y1 = this.getY() + 200;
+                    double z1 = this.getZ() + ((Math.random() * 200) - 100);
+                    lightningEntity.teleportTo(x1, y1, z1);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                    this.level().addFreshEntity(lightningEntity);
+                }
+                if (Objects.requireNonNull(this.getOwner()).getPersistentData().getInt("calamityIncarnationTornado") >= 0) {
+                    this.teleportTo(this.getOwner().getX(), this.getOwner().getY(), this.getOwner().getZ());
                 }
             }
         }
@@ -313,6 +349,13 @@ public class TornadoEntity extends AbstractHurtingProjectile {
     public void setTornadoYMov(float yMov) {
         this.entityData.set(DATA_TORNADO_Y, yMov);
     }
+    public int getTornadoLifecount() {
+        return this.entityData.get(DATA_LIFECOUNT);
+    }
+
+    public void setTornadoLifecount(int lifecount) {
+        this.entityData.set(DATA_LIFECOUNT, lifecount);
+    }
 
     public float getTornadoYMov() {
         return this.entityData.get(DATA_TORNADO_Y);
@@ -321,7 +364,6 @@ public class TornadoEntity extends AbstractHurtingProjectile {
     public void setTornadoZMov(float zMov) {
         this.entityData.set(DATA_TORNADO_Z, zMov);
     }
-
     public float getTornadoZMov() {
         return this.entityData.get(DATA_TORNADO_Z);
     }
