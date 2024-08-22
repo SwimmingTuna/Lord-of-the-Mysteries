@@ -34,6 +34,9 @@ public class EntityInit {
     public static final RegistryObject<EntityType<MeteorEntity>> METEOR_ENTITY =
             ENTITIES.register("meteor", () -> EntityType.Builder.<MeteorEntity>of(MeteorEntity::new, MobCategory.MISC)
                     .sized(2.0f,2.0f).build("meteor"));
+    public static final RegistryObject<EntityType<LightningBallEntity>> LIGHTNING_BALL =
+            ENTITIES.register("lightningball", () -> EntityType.Builder.<LightningBallEntity>of(LightningBallEntity::new, MobCategory.MISC)
+                    .sized(2.0f,2.0f).build("lightningball"));
     public static final RegistryObject<EntityType<CircleEntity>> CIRCLE_ENTITY =
             ENTITIES.register("circle", () -> EntityType.Builder.<CircleEntity>of(CircleEntity::new, MobCategory.MISC)
                     .sized(1.0f,1.0f).build("circle"));

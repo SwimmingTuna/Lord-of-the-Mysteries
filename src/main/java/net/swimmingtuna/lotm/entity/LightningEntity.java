@@ -428,7 +428,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
         this.targetPos = targetPos;
     }
 
-    public void setTargetEntity(LivingEntity targetEntity) {
+    public void setTargetEntity(Entity targetEntity) {
         this.targetEntity = targetEntity;
     }
     public void setOwner (LivingEntity entity) {

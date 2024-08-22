@@ -168,7 +168,6 @@ public class LightningStorm extends Item {
                 distance = 0;
             }
         }
-
     }
 
     @SubscribeEvent

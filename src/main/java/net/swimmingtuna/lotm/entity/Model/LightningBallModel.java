@@ -14,11 +14,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.swimmingtuna.lotm.LOTM;
 
-public class MeteorNoLevelModel<T extends Entity> extends EntityModel<T> {
- 	public static final ModelLayerLocation METEOR_LOCATION = new ModelLayerLocation(new ResourceLocation(LOTM.MOD_ID, "meteor_no_hurt"), "main1");
+public class LightningBallModel<T extends Entity> extends EntityModel<T> {
+	public static final ModelLayerLocation LIGHTNING_BALL_LOCATION = new ModelLayerLocation(new ResourceLocation(LOTM.MOD_ID, "lightning_ball"), "main1");
 	private final ModelPart main;
 
-	public MeteorNoLevelModel(ModelPart root) {
+	public LightningBallModel(ModelPart root) {
 		this.main = root.getChild("main");
 	}
 

@@ -108,15 +108,16 @@ public class LOTM {
             event.accept(ItemInit.Roar);
             event.accept(ItemInit.TyrantTornado);
             event.accept(ItemInit.CalamityIncarnationTsunami);
+            event.accept(ItemInit.CalamityIncarnationTornado);
             event.accept(ItemInit.LightningBall);
             event.accept(ItemInit.LightningBallAbsorb);
             event.accept(ItemInit.MatterAccelerationBlocks);
             event.accept(ItemInit.MatterAccelerationEntities);
+            event.accept(ItemInit.MatterAccelerationSelf);
             event.accept(ItemInit.StormSeal);
             event.accept(ItemInit.SailorLightningTravel);
             event.accept(ItemInit.StormSeal);
             event.accept(ItemInit.VolcanicEruption);
-
             event.accept(ItemInit.ExtremeColdness);
             event.accept(ItemInit.LightningBranch);
             event.accept(ItemInit.Earthquake);
