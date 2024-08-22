@@ -117,7 +117,7 @@ public class ItemInit {
             () -> new Tsunami(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DreamIntoReality = ITEMS.register("dreamintoreality",
             () -> new DreamIntoReality(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> ProphesizeTeleportBlock = ITEMS.register("prophesize",
+    public static final RegistryObject<Item> ProphesizeTeleportBlock = ITEMS.register("prophesizeblock",
             () -> new ProphesizeTeleportBlock(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ProphesizeTeleportPlayer = ITEMS.register("prophesizeplayer",
             () -> new ProphesizeTeleportPlayer(new Item.Properties().stacksTo(1)));
@@ -217,8 +217,7 @@ public class ItemInit {
             () -> new SirenSongStun(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SirenSongWeaken = ITEMS.register("siren_song_weaken",
             () -> new SirenSongWeaken(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> SailorEarthquake = ITEMS.register("sailorearthquake",
-            () -> new Earthquake(new Item.Properties().stacksTo(1)));
+
 
 
 

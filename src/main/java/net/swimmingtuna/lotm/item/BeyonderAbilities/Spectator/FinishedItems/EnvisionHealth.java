@@ -56,7 +56,9 @@ public class EnvisionHealth extends Item {
     private void setHealth(Player pPlayer) {
         AttributeInstance maxHP = pPlayer.getAttribute(Attributes.MAX_HEALTH);
         double maxHealth = maxHP.getValue();
-        pPlayer.setHealth((float) maxHealth);
+        double health = pPlayer.getHealth();
+        double x = (health + (maxHealth - health * 0.66));
+        pPlayer.setHealth((float) x);
     }
 
     @Override

@@ -51,6 +51,44 @@
   "item.lotm.aqueouslightdrown": "Water Manipulation: Drown",
   "item.lotm.aqueouslightpull": "Water Manipulation: Pull",
   "item.lotm.aqueouslightpush": "Water Manipulation: Push",
+  "item.lotm.windmanipulationblade": "Wind Manipulation: Blade",
+  "item.lotm.windmanipulationbladecushion": "Wind Manipulation: Cushion",
+  "item.lotm.windmanipulationsense": "Wind Manipulation: Sense",
+  "item.lotm.acidicrain": "Acidic Rain",
+  "item.lotm.aquaticlifemanipulation": "Aquatic Life Communication",
+  "item.lotm.tsunamiseal": "Tsunami: Seal",
+  "item.lotm.siren_song_harm": "Siren Song: Harm",
+  "item.lotm.siren_song_weaken": "Siren Song: Weaken",
+  "item.lotm.siren_song_stun": "Siren Song: Stun",
+  "item.lotm.siren_song_strengthen": "Siren Song: Strengthen",
+  "item.lotm.earthquake": "Earthquake",
+  "item.lotm.staroflightning": "Star Of Lightning",
+  "item.lotm.raineyes": "Rain Eyes",
+  "item.lotm.sonicboom": "Sonic Boom",
+  "item.lotm.testitem": "Test Item",
+  "item.lotm.lightningstorm": "Lightning Storm",
+  "item.lotm.roar": "Roar",
+  "item.lotm.tyranttornado": "Tornado: Empowered",
+  "item.lotm.calamityincarnationtornado": "Calamity Incarnation: Tornado",
+  "item.lotm.calamityincarnationtsunami": "Calamity Incarnation: Tsunami",
+  "item.lotm.lightningball": "Lightning Ball",
+  "item.lotm.lightningballabsorb": "Lightning Ball: Absorb",
+  "item.lotm.matteraccelerationblocks": "Matter Acceleration: Blocks",
+  "item.lotm.matteraccelerationentities": "Matter Acceleration: Entities",
+  "item.lotm.matteraccelerationself": "Matter Acceleration: Self",
+  "item.lotm.sailorlightningtravel": "Lightning: Travel",
+  "item.lotm.stormseal": "Storm Seal",
+  "item.lotm.volcaniceruption": "Volcanic Eruption",
+  "item.lotm.extremecoldness": "Extreme Coldness",
+  "item.lotm.lightningbranch": "Lightning: Branch",
+  "item.lotm.sailorlightning": "Lightning: Target",
+  "item.lotm.watersphere": "Water Manipulation: Sphere",
+  "item.lotm.thunderclap": "Thunder Clap",
+  "item.lotm.watercolumn": "Water Manipulation: Column",
+  "item.lotm.tyranny": "Tyranny",
+  "item.lotm.hurricane": "Hurricane",
+  "item.lotm.tornado": "Tornado",
+
 
 
   "item.lotm.spectator_9_potion": "Spectator 9 Potion",
@@ -102,13 +140,4 @@
   "lotm.beyonder.spectator2": "Discerner",
   "lotm.beyonder.spectator1": "Author",
   "lotm.beyonder.spectator0": "Visionary"
-
-
-
-
-
-
-
-
-
 }
