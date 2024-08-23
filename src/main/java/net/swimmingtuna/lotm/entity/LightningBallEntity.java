@@ -1,6 +1,8 @@
 package net.swimmingtuna.lotm.entity;
 
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Position;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -15,8 +17,12 @@ import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import org.jetbrains.annotations.NotNull;
+import virtuoel.pehkui.api.ScaleData;
+import virtuoel.pehkui.api.ScaleTypes;
 
 public class LightningBallEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(LightningBallEntity.class, EntityDataSerializers.BOOLEAN);
@@ -101,7 +107,7 @@ public class LightningBallEntity extends AbstractHurtingProjectile {
         return super.canHitEntity(entity);
     }
 
-    @Override //make it so lightning entities's last pos is set to the lightning, every other tick, and then in the other tick, they're discarded
+    @Override
     public void tick() {
         super.tick();
         boolean x = getSummoned();
@@ -118,36 +124,43 @@ public class LightningBallEntity extends AbstractHurtingProjectile {
                     if (this.tickCount == 41 ) {
                         this.setDeltaMovement(owner.getLookAngle().scale(3.0f));
                         this.hurtMarked = true;
-                        owner.sendSystemMessage(Component.literal("worked"));
                     }
                 }
             }
         }
-        if (!this.level().isClientSide() && y && this.tickCount <= 40) {
-            if (this.getOwner() != null) {
-                this.getOwner().sendSystemMessage(Component.literal("wokring"));
-            }
+        if (!this.level().isClientSide() && y && this.tickCount <= 40 && owner != null) {
             for (Entity entity : this.level().getEntitiesOfClass(Entity.class, this.getBoundingBox().inflate(100))) {
                 if (entity instanceof LightningEntity lightningEntity) {
-                    lightningEntity.setSpeed(30.0f);
-                    lightningEntity.setNoUp(false);
-                    if (this.getOwner() != null) {
-                        lightningEntity.setOwner(this.getOwner());
-                        lightningEntity.setOwner(this.getOwner());
+                    if (lightningEntity.getSpeed() != 1.5f && lightningEntity.getLastPos() != null) {
+                        lightningEntity.discard();
+                        ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
+                        LightningEntity lightning = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), this.level());
+                        BlockPos pos = BlockPos.containing(lightningEntity.getLastPos());
+                        lightning.teleportTo(pos.getX(), pos.getY(), pos.getZ());
+                        double a = (Math.min(1, this.getX() - pos.getX()));
+                        double b = (Math.min(1,this.getY() - pos.getY()));
+                        double c = (Math.min(1,this.getZ() - pos.getZ()));
+                        lightning.setDeltaMovement(a,b,c);
+                        lightning.hurtMarked = true;
+                        lightning.setSpeed(1.5f);
+                        lightning.setOwner(owner);
+                        lightning.setOwner(owner);
+                        lightning.setTargetEntity(owner);
+                        lightning.setMaxLength(30);
+                        this.level().addFreshEntity(lightning);
                     }
-                    lightningEntity.setTargetPos(this.getOnPos().getCenter());
-                    lightningEntity.setMaxLength(lightningEntity.getMaxLength() + 10);
-                    if (lightningEntity.distanceTo(this) <= 10) {
-
-                        //+1 scale
+                    if (lightningEntity.getLastPos() != null && lightningEntity.getLastPos().distanceToSqr(this.getX(), this.getY(), this.getZ()) <= 400) {
+                        lightningEntity.discard();
+                        owner.sendSystemMessage(Component.literal("woo"));
                     }
-                } else if (entity instanceof LightningBolt lightningBolt) {
-                    lightningBolt.teleportTo(this.getX(), this.getY(), this.getZ());
                 }
             }
         }
         this.xRotO = getXRot();
         this.yRotO = this.getYRot();
+        if (!this.level().isClientSide() && this.tickCount >= 200) {
+            this.discard();
+        }
     }
     public boolean getSummoned() {
         return this.entityData.get(SUMMONED);

@@ -38,7 +38,6 @@ public class LightningEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> NO_UP = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SYNCHED_MOVEMENT = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
 
-
     private List<Vec3> positions = new ArrayList<>();
     private List<AABB> boundingBoxes = new ArrayList<>();
     private Random random = new Random();
@@ -46,6 +45,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
     private LivingEntity owner;
     private Entity targetEntity;
     private Vec3 targetPos;
+    private Vec3 lastPos; // New field for last position
 
     public LightningEntity(EntityType<? extends LightningEntity> entityType, Level level) {
         super(entityType, level);
@@ -61,7 +61,6 @@ public class LightningEntity extends AbstractHurtingProjectile {
         this.startPos = shooter.position();
         this.owner = shooter;
     }
-
 
     @Override
     protected void defineSynchedData() {
@@ -94,14 +93,12 @@ public class LightningEntity extends AbstractHurtingProjectile {
         if (compound.contains("fallDown")) {
             this.setFallDown(compound.getBoolean("fallDown"));
         }
-
         if (compound.contains("Speed")) {
             this.setSpeed(compound.getFloat("Speed"));
         }
         if (compound.contains("BranchOut")) {
             this.setBranchOut(compound.getBoolean("BranchOut"));
         }
-
         if (compound.contains("Positions")) {
             ListTag posList = compound.getList("Positions", 10);
             this.positions.clear();
@@ -118,7 +115,6 @@ public class LightningEntity extends AbstractHurtingProjectile {
                     startPosTag.getDouble("sZ")
             );
         }
-        // Restore the owner from saved data if necessary
         if (compound.contains("OwnerUUID")) {
             UUID ownerUUID = compound.getUUID("OwnerUUID");
             Level level = this.level();
@@ -164,7 +160,6 @@ public class LightningEntity extends AbstractHurtingProjectile {
             startPosTag.putDouble("sZ", startPos.z);
             compound.put("StartPos", startPosTag);
         }
-        // Save the owner's UUID
         if (this.owner != null) {
             compound.putUUID("OwnerUUID", this.owner.getUUID());
         }
@@ -194,10 +189,9 @@ public class LightningEntity extends AbstractHurtingProjectile {
             this.positions.add(startPos);
         }
 
-        Vec3 lastPos = this.positions.get(this.positions.size() - 1);
+        this.lastPos = this.positions.get(this.positions.size() - 1);
         Vec3 targetVector = null;
 
-        // Determine the target position
         if (this.targetEntity != null) {
             targetVector = this.targetEntity.position().subtract(lastPos).normalize();
         } else if (this.targetPos != null) {
@@ -214,8 +208,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
         } else {
             Vec3 movement = this.getDeltaMovement().scale(speed);
             if (this.getFallDown()) {
-                // If fallDown is true, prioritize downward movement
-                movement = movement.add(0, -0.5, 0); // Increase downward bias
+                movement = movement.add(0, -0.5, 0);
             }
             newPos = lastPos.add(movement.add(new Vec3(
                     random.nextGaussian() * 0.1 * speed,
@@ -262,7 +255,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
                                             float minDamage = 10f;
                                             float damageFalloff = (float) (distance1 / radius);
                                             float damage = Math.max(minDamage, maxDamage * (1 - damageFalloff));
-                                            damage -= (sequence * 2); // Reduce damage based on sequence
+                                            damage -= (sequence * 2);
                                             entity.hurt(entity.damageSources().lightningBolt(), damage);
                                         }
                                     }
@@ -281,7 +274,6 @@ public class LightningEntity extends AbstractHurtingProjectile {
                         }
                     }
                 }
-                // Add particles at each AABB location with a random offset of ±2
                 double offsetX = random.nextGaussian() * 1;
                 double offsetY = random.nextGaussian() * 1;
                 double offsetZ = random.nextGaussian() * 1;
@@ -327,14 +319,6 @@ public class LightningEntity extends AbstractHurtingProjectile {
                     lightningEntity.getPersistentData().putDouble("lightningBranchDMX", this.getPersistentData().getDouble("sailorLightningDMX") + (Math.random() * 0.8) - 0.4);
                     lightningEntity.getPersistentData().putDouble("lightningBranchDMZ", this.getPersistentData().getDouble("sailorLightningDMZ") + (Math.random() * 0.8) - 0.4);
                     this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
                 }
                 if (this.tickCount == 1) {
                     this.getPersistentData().putDouble("sailorLightningDMY", this.getDeltaMovement().y());
@@ -357,11 +341,11 @@ public class LightningEntity extends AbstractHurtingProjectile {
             }
         }
     }
+
     @Override
     public boolean isNoGravity() {
         return true;
     }
-
 
     private AABB createBoundingBox(Vec3 position) {
         double boxSize = 0.2;
@@ -399,7 +383,6 @@ public class LightningEntity extends AbstractHurtingProjectile {
         this.entityData.set(MAX_LENGTH, length);
     }
 
-
     public float getSpeed() {
         return this.entityData.get(SPEED);
     }
@@ -424,6 +407,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
     public Level getLevel() {
         return this.level();
     }
+
     public void setTargetPos(Vec3 targetPos) {
         this.targetPos = targetPos;
     }
@@ -431,24 +415,27 @@ public class LightningEntity extends AbstractHurtingProjectile {
     public void setTargetEntity(Entity targetEntity) {
         this.targetEntity = targetEntity;
     }
-    public void setOwner (LivingEntity entity) {
+
+    public void setOwner(LivingEntity entity) {
         this.owner = entity;
     }
+
     public boolean getFallDown() {
         return this.entityData.get(FALL_DOWN);
     }
 
-    public void setFallDown(boolean branchOut) {
-        this.entityData.set(FALL_DOWN, branchOut);
+    public void setFallDown(boolean fallDown) {
+        this.entityData.set(FALL_DOWN, fallDown);
     }
+
     public boolean getBranchOut() {
         return this.entityData.get(BRANCH_OUT);
     }
 
-
     public void setBranchOut(boolean branchOut) {
         this.entityData.set(BRANCH_OUT, branchOut);
     }
+
     public boolean getNoUp() {
         return this.entityData.get(NO_UP);
     }
@@ -456,6 +443,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
     public void setNoUp(boolean noUp) {
         this.entityData.set(NO_UP, noUp);
     }
+
     public boolean getSynchedMovement() {
         return this.entityData.get(SYNCHED_MOVEMENT);
     }
@@ -463,5 +451,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
     public void setSynchedMovement(boolean synchedMovement) {
         this.entityData.set(SYNCHED_MOVEMENT, synchedMovement);
     }
+    public Vec3 getLastPos() {
+        return this.lastPos;
+    }
 }
-
