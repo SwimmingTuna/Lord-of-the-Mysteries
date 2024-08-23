@@ -3,10 +3,6 @@ package net.swimmingtuna.lotm.init;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderStateShard;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceLocation;
 
 public class CustomRenderType extends RenderType {
 

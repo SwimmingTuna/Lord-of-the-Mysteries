@@ -9,25 +9,14 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
-import net.swimmingtuna.lotm.util.SMath;
 import org.jetbrains.annotations.NotNull;
-import virtuoel.pehkui.api.ScaleData;
-import virtuoel.pehkui.api.ScaleTypes;
-
-import java.util.List;
 
 public class WaterColumnEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(WaterColumnEntity.class, EntityDataSerializers.BOOLEAN);

@@ -17,7 +17,7 @@
   "item.lotm.dreamweaving": "Dream Weaving",
   "item.lotm.discern": "Discern",
   "item.lotm.dreamintoreality": "Dream into Reality",
-  "item.lotm.prophesize": "Prophesize: Teleport to Block",
+  "item.lotm.prophesizeblock": "Prophesize: Teleport to Block",
   "item.lotm.prophesizeplayer": "Prophesize: Teleport to Player",
   "item.lotm.prophesizedemise": "Prophesize Demise",
   "item.lotm.envisionlife": "Envision Life",
@@ -52,7 +52,7 @@
   "item.lotm.aqueouslightpull": "Water Manipulation: Pull",
   "item.lotm.aqueouslightpush": "Water Manipulation: Push",
   "item.lotm.windmanipulationblade": "Wind Manipulation: Blade",
-  "item.lotm.windmanipulationbladecushion": "Wind Manipulation: Cushion",
+  "item.lotm.windmanipulationcushion": "Wind Manipulation: Cushion",
   "item.lotm.windmanipulationsense": "Wind Manipulation: Sense",
   "item.lotm.acidicrain": "Acidic Rain",
   "item.lotm.aquaticlifemanipulation": "Aquatic Life Communication",
@@ -66,8 +66,10 @@
   "item.lotm.raineyes": "Rain Eyes",
   "item.lotm.sonicboom": "Sonic Boom",
   "item.lotm.testitem": "Test Item",
-  "item.lotm.lightningstorm": "Lightning Storm",
+  "item.lotm.sailorlightningstorm": "Lightning: Storm",
   "item.lotm.roar": "Roar",
+  "item.lotm.tsunami": "Tsunami",
+
   "item.lotm.tyranttornado": "Tornado: Empowered",
   "item.lotm.calamityincarnationtornado": "Calamity Incarnation: Tornado",
   "item.lotm.calamityincarnationtsunami": "Calamity Incarnation: Tsunami",
@@ -101,6 +103,19 @@
   "item.lotm.spectator_2_potion": "Spectator 2 Potion",
   "item.lotm.spectator_1_potion": "Spectator 1 Potion",
   "item.lotm.spectator_0_potion": "Spectator 0 Potion",
+  "item.lotm.tyrant_9_potion": "Spectator 9 Potion",
+  "item.lotm.tyrant_8_potion": "Spectator 8 Potion",
+  "item.lotm.tyrant_7_potion": "Spectator 7 Potion",
+  "item.lotm.tyrant_6_potion": "Spectator 6 Potion",
+  "item.lotm.tyrant_5_potion": "Spectator 5 Potion",
+  "item.lotm.tyrant_4_potion": "Spectator 4 Potion",
+  "item.lotm.tyrant_3_potion": "Spectator 3 Potion",
+  "item.lotm.tyrant_2_potion": "Spectator 2 Potion",
+  "item.lotm.tyrant_1_potion": "Spectator 1 Potion",
+  "item.lotm.tyrant_0_potion": "Spectator 0 Potion",
+
+
+
   "item.lotm.beyonder_reset_potion": "Beyonder Reset Potion",
 
   "key.category.lotm.mystery": "LOTM",
@@ -139,5 +154,6 @@
   "lotm.beyonder.spectator3": "Dream Weaver",
   "lotm.beyonder.spectator2": "Discerner",
   "lotm.beyonder.spectator1": "Author",
-  "lotm.beyonder.spectator0": "Visionary"
+  "lotm.beyonder.spectator0": "Visionary",
+  "creativetab.abilities_tab": "Beyonder Abilities"
 }

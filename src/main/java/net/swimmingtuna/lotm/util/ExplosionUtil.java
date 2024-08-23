@@ -1,8 +1,8 @@
 package net.swimmingtuna.lotm.util;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.entity.Entity;
 
 public class ExplosionUtil {
     public static void createNoKnockbackExplosion(Level level, Entity source, float radius, boolean fire) {

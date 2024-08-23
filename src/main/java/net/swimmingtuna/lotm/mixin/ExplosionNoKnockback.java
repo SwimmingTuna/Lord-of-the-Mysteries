@@ -1,8 +1,6 @@
 package net.swimmingtuna.lotm.mixin;
 
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.util.NoKnockbackExplosion;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

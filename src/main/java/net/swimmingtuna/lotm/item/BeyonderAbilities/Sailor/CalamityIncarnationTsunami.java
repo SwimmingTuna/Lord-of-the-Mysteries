@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)

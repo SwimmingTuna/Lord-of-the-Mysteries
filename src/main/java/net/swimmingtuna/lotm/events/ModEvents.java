@@ -1,38 +1,24 @@
 package net.swimmingtuna.lotm.events;
 
-import com.google.common.collect.Multimap;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -44,9 +30,6 @@ import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 
-import java.util.List;
-
-import static net.minecraft.commands.arguments.EntityArgument.getEntity;
 import static net.swimmingtuna.lotm.util.BeyonderUtil.getProjectiles;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
@@ -83,6 +66,18 @@ public class ModEvents implements ReachChangeUUIDs {
             pPlayer.getPersistentData().putInt("NightmareTimer", nightmareTimer);
             if (pPlayer.getPersistentData().getInt("calamityIncarnationTornado") >= 1) {
                 pPlayer.getPersistentData().putInt("calamityIncarnationTornado", pPlayer.getPersistentData().getInt("calamityIncarnationTornado") - 1);
+            }
+            boolean x = pPlayer.getPersistentData().getBoolean("windManipulationSense");
+            if (x) {
+                if (pPlayer.tickCount % 200 == 0) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                    double radius = 100 - holder.getCurrentSequence() * 10;
+                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
+                        if (entity != pPlayer && entity instanceof Player player) {
+
+                        }
+                    }
+                }
             }
         }
     }

@@ -11,8 +11,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.entity.MeteorEntity;
-import net.swimmingtuna.lotm.entity.Model.MeteorModel;
 import net.swimmingtuna.lotm.entity.Model.StoneEntityModel;
 import net.swimmingtuna.lotm.entity.StoneEntity;
 

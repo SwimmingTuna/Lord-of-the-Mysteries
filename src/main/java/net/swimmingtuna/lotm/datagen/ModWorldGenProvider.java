@@ -8,7 +8,6 @@ import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.worldgen.dimension.DimensionInit;
 
-import javax.swing.tree.AbstractLayoutCache;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 

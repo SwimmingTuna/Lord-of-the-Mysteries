@@ -59,6 +59,7 @@ public class LOTM {
     public LOTM() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         BlockEntityInit.BLOCK_ENTITIES.register(modEventBus);
+        CreativeTabInit.register(modEventBus);
         ItemInit.register(modEventBus);
         BlockInit.register(modEventBus);
         ModEffects.register(modEventBus);

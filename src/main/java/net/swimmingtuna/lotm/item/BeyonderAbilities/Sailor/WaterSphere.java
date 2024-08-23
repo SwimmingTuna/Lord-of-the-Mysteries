@@ -22,9 +22,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.MeteorEntity;
 import net.swimmingtuna.lotm.entity.MeteorNoLevelEntity;
-import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
-import net.swimmingtuna.lotm.util.effect.ModEffects;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WaterSphere extends Item implements ReachChangeUUIDs {

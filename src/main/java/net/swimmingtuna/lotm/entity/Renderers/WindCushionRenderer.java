@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.entity.Model.WindCushionModel;
 import net.swimmingtuna.lotm.entity.WindCushionEntity;
