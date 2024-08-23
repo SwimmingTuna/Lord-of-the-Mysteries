@@ -35,8 +35,13 @@ public class Tornado extends Item implements ReachChangeUUIDs {
                 pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 4 && sailorSequence.useSpirituality(300)) {
-                    TornadoEntity.summonTornado(pPlayer);
+                if (holder.isSailorClass() && sailorSequence.useSpirituality(300)) {
+                    if (sailorSequence.getCurrentSequence() <= 4 && sailorSequence.getCurrentSequence() >=3) {
+                        TornadoEntity.summonTornado(pPlayer);
+                    }
+                    if (sailorSequence.getCurrentSequence() <= 2) {
+                        TornadoEntity.summonTyrantTornado(pPlayer);
+                    }
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 240);
                 }

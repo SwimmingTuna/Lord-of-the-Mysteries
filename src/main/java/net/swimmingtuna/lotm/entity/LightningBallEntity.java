@@ -34,7 +34,6 @@ public class LightningBallEntity extends AbstractHurtingProjectile {
 
     public LightningBallEntity(EntityType<? extends LightningBallEntity> pEntityType, Level pLevel, boolean absorb) {
         super(pEntityType, pLevel);
-        this.noPhysics = true;
         this.setAbsorbed(absorb);
     }
 
@@ -44,6 +43,10 @@ public class LightningBallEntity extends AbstractHurtingProjectile {
 
     public boolean isOnFire() {
         return false;
+    }
+
+    protected float getInertia() {
+        return this.isDangerous() ? 1.0F : super.getInertia();
     }
 
 
@@ -83,7 +86,7 @@ public class LightningBallEntity extends AbstractHurtingProjectile {
 
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(DATA_DANGEROUS, false);
+        this.entityData.define(DATA_DANGEROUS, true);
         this.entityData.define(ABSORB, false);
         this.entityData.define(SUMMONED, false);
         this.entityData.define(X_ROT, 0.0f);
@@ -129,29 +132,41 @@ public class LightningBallEntity extends AbstractHurtingProjectile {
             }
         }
         if (!this.level().isClientSide() && y && this.tickCount <= 40 && owner != null) {
+            Vec3 playerPos = new Vec3(owner.getX(), owner.getY(), owner.getZ());
             for (Entity entity : this.level().getEntitiesOfClass(Entity.class, this.getBoundingBox().inflate(100))) {
                 if (entity instanceof LightningEntity lightningEntity) {
-                    if (lightningEntity.getSpeed() != 1.5f && lightningEntity.getLastPos() != null) {
+                    if (lightningEntity.getSpeed() != 10.5f && lightningEntity.getLastPos() != null) {
+                        Vec3 direction = this.position().subtract(lightningEntity.getLastPos());
                         lightningEntity.discard();
-                        ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
                         LightningEntity lightning = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), this.level());
                         BlockPos pos = BlockPos.containing(lightningEntity.getLastPos());
                         lightning.teleportTo(pos.getX(), pos.getY(), pos.getZ());
-                        double a = (Math.min(1, this.getX() - pos.getX()));
-                        double b = (Math.min(1,this.getY() - pos.getY()));
-                        double c = (Math.min(1,this.getZ() - pos.getZ()));
-                        lightning.setDeltaMovement(a,b,c);
+                        direction = direction.normalize();
+                        lightning.setDeltaMovement(direction);
                         lightning.hurtMarked = true;
-                        lightning.setSpeed(1.5f);
+                        lightning.setSpeed(10.5f);
                         lightning.setOwner(owner);
                         lightning.setOwner(owner);
-                        lightning.setTargetEntity(owner);
                         lightning.setMaxLength(30);
                         this.level().addFreshEntity(lightning);
                     }
-                    if (lightningEntity.getLastPos() != null && lightningEntity.getLastPos().distanceToSqr(this.getX(), this.getY(), this.getZ()) <= 400) {
+                    if (lightningEntity.getLastPos() != null && lightningEntity.getLastPos().distanceToSqr(this.getX(), this.getY(), this.getZ()) <= 250) {
                         lightningEntity.discard();
-                        owner.sendSystemMessage(Component.literal("woo"));
+                        ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
+                        if (scaleData.getScale() <= 50) {
+                        scaleData.setScale(scaleData.getScale() + 1);
+                        }
+                        owner.sendSystemMessage(Component.literal("woo" + scaleData.getScale()));
+                    }
+                }
+                if (entity instanceof LightningBolt lightningBolt) {
+                    lightningBolt.discard();
+                    LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, this.level());
+                    lightning.teleportTo(this.getX(), this.getY(), this.getZ());
+                    ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
+                    if (scaleData.getScale() <= 50) {
+                        scaleData.setScale(scaleData.getScale() + 1.5f);
+                        scaleData.markForSync(true);
                     }
                 }
             }

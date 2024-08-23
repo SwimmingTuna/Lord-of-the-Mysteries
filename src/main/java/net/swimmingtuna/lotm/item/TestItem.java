@@ -9,6 +9,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.entity.LightningBallEntity;
 import net.swimmingtuna.lotm.init.EntityInit;
+import virtuoel.pehkui.api.ScaleData;
+import virtuoel.pehkui.api.ScaleTypes;
 
 public class TestItem extends Item {
     public TestItem(Properties pProperties) {
@@ -30,6 +32,9 @@ public class TestItem extends Item {
             lightningBall.setPos(pPlayer.getX(), pPlayer.getY() + 1.5, pPlayer.getZ());
             lightningBall.setOwner(pPlayer);
             lightningBall.setAbsorbed(true);
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(lightningBall);
+            scaleData.setScale(10);
+            scaleData.markForSync(true);
             pPlayer.level().addFreshEntity(lightningBall);
         }
     }

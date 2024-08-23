@@ -17,6 +17,7 @@ public class CreativeTabInit {
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemInit.Awe.get()))
                     .title(Component.translatable("creativetab.abilities_tab"))
                     .displayItems((pParameters, pOutput) -> {
+                        pOutput.accept(ItemInit.BeyonderAbilityUser.get());
                         pOutput.accept(ItemInit.MindReading.get());
                         pOutput.accept(ItemInit.Awe.get());
                         pOutput.accept(ItemInit.Frenzy.get());

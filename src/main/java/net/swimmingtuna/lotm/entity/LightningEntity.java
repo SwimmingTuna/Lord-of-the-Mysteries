@@ -340,6 +340,15 @@ public class LightningEntity extends AbstractHurtingProjectile {
                 }
             }
         }
+        if (!this.level().isClientSide() && owner != null) {
+            CompoundTag tag = owner.getPersistentData();
+            if (tag.getInt("sailorLightningTravel") >= 1 && lastPos != null) {
+                owner.teleportTo(lastPos.x(), lastPos.y, lastPos.z);
+                owner.getPersistentData().putInt("sailorLightningTravel", 10);
+                Vec3 lookVec = owner.getLookAngle();
+                this.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
+            }
+        }
     }
 
     @Override

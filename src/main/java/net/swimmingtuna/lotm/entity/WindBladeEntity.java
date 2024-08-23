@@ -42,7 +42,7 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
 
 
     protected float getInertia() {
-        return this.isDangerous() ? 0.73F : super.getInertia();
+        return this.isDangerous() ? 1.0F : super.getInertia();
     }
 
     public boolean isOnFire() {
@@ -59,6 +59,7 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
                             int currentLifeCount = this.entityData.get(DATA_LIFE_COUNT);
                             int decrease = (tyrantSequence.getCurrentSequence() * 9) + 30;
                             currentLifeCount = currentLifeCount - decrease;
+                            entity.hurt(entity.damageSources().generic(), (float) currentLifeCount /20);
                             this.entityData.set(DATA_LIFE_COUNT, currentLifeCount - decrease);
                             if (currentLifeCount <= 0) {
                                 this.discard();
@@ -105,7 +106,7 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
 
 
     protected void defineSynchedData() {
-        this.entityData.define(DATA_DANGEROUS, false);
+        this.entityData.define(DATA_DANGEROUS, true);
         this.entityData.define(DATA_LIFE_COUNT,400);
     }
 
@@ -174,7 +175,7 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
     @Override
     public void tick() {
         super.tick();
-        ProjectileUtil.rotateTowardsMovement(this, 0);
+
         this.xRotO = this.getXRot();
         this.yRotO = this.getYRot();
         if (this.tickCount % 20 == 0) {

@@ -6,6 +6,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.EnvisionKingdom;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
@@ -85,6 +86,8 @@ public class ItemInit {
             () -> new PsychologicalInvisibility(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Guidance = ITEMS.register("guidance",
             () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> BeyonderAbilityUser = ITEMS.register("beyonderabilityuser",
+            () -> new BeyonderAbilityUser(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DreamWalking = ITEMS.register("dreamwalking",
             () -> new DreamWalking(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Nightmare = ITEMS.register("nightmare",

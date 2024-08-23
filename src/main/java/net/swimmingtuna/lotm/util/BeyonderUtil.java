@@ -14,8 +14,6 @@ public class BeyonderUtil {
 
     public static Projectile getProjectiles(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            int sequence = holder.getCurrentSequence();
             for (Projectile projectile : pPlayer.level().getEntitiesOfClass(Projectile.class, pPlayer.getBoundingBox().inflate(30))) {
                 if (projectile.getOwner() == pPlayer) {
                     if (projectile.tickCount > 8 && projectile.tickCount < 50) {

@@ -43,10 +43,12 @@ public class ModEvents implements ReachChangeUUIDs {
     @SubscribeEvent
     public static void attributeHandler(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
+        CompoundTag tag = pPlayer.getPersistentData();
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
             AttributeInstance nightmareAttribute = pPlayer.getAttribute(ModAttributes.NIGHTMARE.get());
             AttributeInstance armorInvisAttribute = pPlayer.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
-            int nightmareTimer = pPlayer.getPersistentData().getInt("NightmareTimer");
+            int nightmareTimer = tag.getInt("NightmareTimer");
 
             if (nightmareAttribute.getValue() >= 1) {
                 nightmareTimer++;
@@ -63,14 +65,13 @@ public class ModEvents implements ReachChangeUUIDs {
             }
 
             // Save the updated nightmareTimer in player persistent data
-            pPlayer.getPersistentData().putInt("NightmareTimer", nightmareTimer);
-            if (pPlayer.getPersistentData().getInt("calamityIncarnationTornado") >= 1) {
-                pPlayer.getPersistentData().putInt("calamityIncarnationTornado", pPlayer.getPersistentData().getInt("calamityIncarnationTornado") - 1);
+            tag.putInt("NightmareTimer", nightmareTimer);
+            if (tag.getInt("calamityIncarnationTornado") >= 1) {
+                tag.putInt("calamityIncarnationTornado", pPlayer.getPersistentData().getInt("calamityIncarnationTornado") - 1);
             }
-            boolean x = pPlayer.getPersistentData().getBoolean("windManipulationSense");
+            boolean x = tag.getBoolean("windManipulationSense");
             if (x) {
                 if (pPlayer.tickCount % 200 == 0) {
-                    BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
                     double radius = 100 - holder.getCurrentSequence() * 10;
                     for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
                         if (entity != pPlayer && entity instanceof Player player) {
@@ -78,6 +79,32 @@ public class ModEvents implements ReachChangeUUIDs {
                         }
                     }
                 }
+            }
+            if (pPlayer.getPersistentData().getInt("sailorLightningTravel") >= 1) {
+                pPlayer.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 3, 1, false,false));
+                pPlayer.getPersistentData().putInt("sailorLightningTravel",pPlayer.getPersistentData().getInt("sailorLightningTravel") - 1);
+            }
+            if (tag.getBoolean("armorStored")) {
+                pPlayer.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, 1, false,false));
+                holder.useSpirituality((int) holder.getMaxSpirituality() / 100);
+            }
+            int cushion = tag.getInt("windManipulationCushion");
+            if (cushion >= 1) {
+                tag.putInt("windManipulationCushion", cushion - 1);
+                pPlayer.resetFallDistance();
+            }
+            if (cushion >= 80 && pPlayer.getDeltaMovement().y <= 0) {
+                AttributeInstance cushionParticles = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
+                cushionParticles.setBaseValue(1.0f);
+                pPlayer.setDeltaMovement(pPlayer.getDeltaMovement().x(), pPlayer.getDeltaMovement().y() * 0.9, pPlayer.getDeltaMovement().z());
+                pPlayer.hurtMarked = true;
+            }
+            if (cushion == 79) {
+                pPlayer.setDeltaMovement(pPlayer.getLookAngle().scale(2.0f));
+                pPlayer.hurtMarked = true;
+                pPlayer.resetFallDistance();
+                AttributeInstance cushionParticles = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
+                cushionParticles.setBaseValue(0.0f);
             }
         }
     }

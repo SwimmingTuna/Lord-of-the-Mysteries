@@ -3,41 +3,30 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PsychologicalInvisibility extends Item  {
-    private static final String HAD_ARMOR_TAG = "HadArmor";
-    private AtomicInteger spiritualityUseCounter;
-
 
     public PsychologicalInvisibility(Properties pProperties) {
         super(pProperties);
-        this.spiritualityUseCounter = new AtomicInteger(0);
     }
 
     @Override
@@ -47,61 +36,55 @@ public class PsychologicalInvisibility extends Item  {
             if (!holder.isSpectatorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-        }
-        ItemStack itemStack = pPlayer.getItemInHand(hand);
-        if (!pPlayer.level().isClientSide) {
-        boolean hadArmor = pPlayer.getPersistentData().getBoolean("HAD_ARMOR_TAG");
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                if (spectatorSequence.getCurrentSequence() <= 5 && holder.isSpectatorClass()) {
-                if (hadArmor || !storedArmor.isEmpty()) {
-                    restoreArmor(pPlayer);
-                    storedArmor.clear();
-                } else {
-                    storeArmor(pPlayer);
-                }
-                pPlayer.getCooldowns().addCooldown(this,20);
+            if (holder.getSpirituality() < 75) {
+                pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
+            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
+                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 5 && spectatorSequence.useSpirituality(0)) {
+                    storeAndReleaseArmor(pPlayer);
+                    if (!pPlayer.getAbilities().instabuild)
+                        pPlayer.getCooldowns().addCooldown(this, 240);
+                }
             });
         }
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemStack);
+        return super.use(level, pPlayer, hand);
     }
 
-    public List<ItemStack> storedArmor = new ArrayList<>();
+    private static void storeAndReleaseArmor(Player pPlayer) {
+        CompoundTag tag = pPlayer.getPersistentData();
+        boolean armorStored = tag.getBoolean("armorStored");
 
-    private void storeArmor(Player pPlayer) {
-        AttributeInstance armorInvisAttribute = pPlayer.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
-        pPlayer.getPersistentData().putBoolean(HAD_ARMOR_TAG, true);
-        pPlayer.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY,10000,-1,false,false));
-        storedArmor.clear();
-        for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.getType() == EquipmentSlot.Type.ARMOR) {
-                ItemStack armorStack = pPlayer.getItemBySlot(slot);
-                if (!armorStack.isEmpty()) {
-                    storedArmor.add(armorStack.copy());
-                    pPlayer.setItemSlot(slot, ItemStack.EMPTY);
-                }
-                if (armorStack.isEmpty()) {
-                    storedArmor.add(Items.LEATHER_BOOTS.getDefaultInstance());
-                    armorInvisAttribute.setBaseValue(1);
-                }
-            }
-        }
-    }
-
-    private void restoreArmor(Player pPlayer) {
-        pPlayer.getPersistentData().putBoolean(HAD_ARMOR_TAG, false);
-        pPlayer.removeEffect(MobEffects.INVISIBILITY);
-        for (ItemStack storedStack : storedArmor) {
-            if (!storedStack.isEmpty() && storedStack.getItem() instanceof ArmorItem) {
-                EquipmentSlot slot = ((ArmorItem) storedStack.getItem()).getEquipmentSlot();
+        if (!armorStored) {
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
                 if (slot.getType() == EquipmentSlot.Type.ARMOR) {
-                    pPlayer.setItemSlot(slot, storedStack.copy());
+                    ItemStack armorPiece = pPlayer.getItemBySlot(slot);
+                    if (!armorPiece.isEmpty()) {
+                        ResourceLocation armorIdentifier = ForgeRegistries.ITEMS.getKey(armorPiece.getItem());
+                        if (armorIdentifier != null) {
+                            tag.putString(slot.getName() + "_armor", armorIdentifier.toString());
+                            pPlayer.setItemSlot(slot, ItemStack.EMPTY);
+                        }
+                    }
                 }
             }
+            pPlayer.displayClientMessage(Component.literal("Armor stored."), true);
+            tag.putBoolean("armorStored", true);
+        } else {
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                if (slot.getType() == EquipmentSlot.Type.ARMOR) {
+                    String storedArmor = tag.getString(slot.getName() + "_armor");
+                    if (!storedArmor.isEmpty()) {
+                        ItemStack armorPiece = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(storedArmor)));
+                        pPlayer.setItemSlot(slot, armorPiece);
+                        tag.remove(slot.getName() + "_armor");
+                    }
+                }
+            }
+            pPlayer.displayClientMessage(Component.literal("Armor restored."), true);
+            tag.putBoolean("armorStored", false);
         }
-        storedArmor.clear();
     }
+
 
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
@@ -111,61 +94,5 @@ public class PsychologicalInvisibility extends Item  {
                     "Cooldown: 10 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
-    }
-
-    @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player) {
-            Player pPlayer = (Player) entity;
-            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-            if (!pPlayer.level().isClientSide) {
-                boolean hadArmor = pPlayer.getPersistentData().getBoolean(HAD_ARMOR_TAG);
-
-                final int[] counterValue = {spiritualityUseCounter.get()};
-
-                if (hadArmor) {
-                    BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                        if (!pPlayer.getAbilities().instabuild) {
-                            if (spectatorSequence.getSpirituality() > 41) {
-                                counterValue[0]++;
-                                if (counterValue[0] >= 20) {
-                                    spectatorSequence.useSpirituality((int) (40 / dreamIntoReality.getValue()));
-                                    counterValue[0] = 0;
-                                }
-                            } else {
-                                restoreArmor(pPlayer);
-                                counterValue[0] = 0;
-                            }
-                        }
-                    });
-                }
-                spiritualityUseCounter.set(counterValue[0]);
-            }
-        }
-        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
-    }
-
-    @SubscribeEvent
-    public static void resetArmor(LivingDeathEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player pPlayer = (Player) event.getEntity();
-            PsychologicalInvisibility itemInstance = getPlayerHeldItem(pPlayer);
-        if (itemInstance != null) {
-            itemInstance.clearStoredArmor(pPlayer);
-        }
-        }
-    }
-
-    private void clearStoredArmor(Player pPlayer) {
-        storedArmor.clear();
-    }
-
-    private static PsychologicalInvisibility getPlayerHeldItem(Player pPlayer) {
-        for (ItemStack stack : pPlayer.getInventory().items) {
-            if (stack.getItem() instanceof PsychologicalInvisibility) {
-                return (PsychologicalInvisibility) stack.getItem();
-            }
-        }
-        return null;
     }
 }

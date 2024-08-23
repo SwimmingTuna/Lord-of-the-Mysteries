@@ -43,6 +43,9 @@ public class EntityInit {
     public static final RegistryObject<EntityType<StoneEntity>> STONE_ENTITY =
             ENTITIES.register("stone", () -> EntityType.Builder.<StoneEntity>of(StoneEntity::new, MobCategory.MISC)
                     .sized(1.0f,1.0f).clientTrackingRange(4).updateInterval(20).build("stone"));
+    public static final RegistryObject<EntityType<LavaEntity>> LAVA_ENTITY =
+            ENTITIES.register("lava", () -> EntityType.Builder.<LavaEntity>of(LavaEntity::new, MobCategory.MISC)
+                    .sized(1.0f,1.0f).clientTrackingRange(4).updateInterval(20).build("lava"));
     public static final RegistryObject<EntityType<TornadoEntity>> TORNADO_ENTITY =
             ENTITIES.register("tornado", () -> EntityType.Builder.<TornadoEntity>of(TornadoEntity::new, MobCategory.MISC)
                     .sized(1.0f,1.0f).clientTrackingRange(4).updateInterval(20).build("tornado"));

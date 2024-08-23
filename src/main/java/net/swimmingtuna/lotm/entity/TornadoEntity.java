@@ -8,6 +8,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,6 +23,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -307,6 +309,11 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                     this.level().addFreshEntity(lightningEntity);
                     this.level().addFreshEntity(lightningEntity);
                     this.level().addFreshEntity(lightningEntity);
+                    for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(getTornadoRadius() * 1.5))) {
+                        if (entity != this.getOwner() && this.tickCount % 40 == 0) {
+                            entity.addEffect(new MobEffectInstance(ModEffects.STUN.get(), 10,1,false,false));
+                        }
+                    }
                 }
                 if (Objects.requireNonNull(this.getOwner()).getPersistentData().getInt("calamityIncarnationTornado") >= 0) {
                     this.teleportTo(this.getOwner().getX(), this.getOwner().getY(), this.getOwner().getZ());
