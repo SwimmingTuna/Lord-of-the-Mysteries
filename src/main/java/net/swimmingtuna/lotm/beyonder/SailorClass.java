@@ -49,21 +49,14 @@ public class SailorClass implements BeyonderClass {
     @Override
     public void tick(Player pPlayer, int sequenceLevel) {
         if (pPlayer.level().getGameTime() % 50 == 0) {
+            CompoundTag tag = pPlayer.getPersistentData();
+            Abilities playerAbilites = pPlayer.getAbilities();
+            boolean x = tag.getBoolean("sailorFlight1");
             if (pPlayer.isInWater() || pPlayer.level().isRaining()) {
-                CompoundTag tag = pPlayer.getPersistentData();
-                boolean x = tag.getBoolean("sailorFlight1");
-                Abilities playerAbilites = pPlayer.getAbilities();
                 playerAbilites.setFlyingSpeed(0.2F);
                 pPlayer.onUpdateAbilities();
                 if (pPlayer instanceof ServerPlayer serverPlayer) {
                     serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(serverPlayer.getAbilities()));
-                }
-                if (!pPlayer.level().isRaining() && !x) {
-                    playerAbilites.setFlyingSpeed(0.05F);
-                    pPlayer.onUpdateAbilities();
-                    if (pPlayer instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(serverPlayer.getAbilities()));
-                    }
                 }
                 MobEffectInstance dolphinsGrace = pPlayer.getEffect(MobEffects.DOLPHINS_GRACE);
                 MobEffectInstance speed = pPlayer.getEffect(MobEffects.MOVEMENT_SPEED);
@@ -83,6 +76,13 @@ public class SailorClass implements BeyonderClass {
                     pPlayer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, strength.getAmplifier() + 2, false, false));}
                 if (pPlayer.hasEffect(MobEffects.REGENERATION)) {
                     pPlayer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, regen.getAmplifier() + 2, false, false));}
+            }
+            if (!pPlayer.level().isRaining() && !x) {
+                playerAbilites.setFlyingSpeed(0.05F);
+                pPlayer.onUpdateAbilities();
+                if (pPlayer instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(serverPlayer.getAbilities()));
+                }
             }
             if (sequenceLevel == 9) {
                 pPlayer.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 15 * 20, 0, false, false));

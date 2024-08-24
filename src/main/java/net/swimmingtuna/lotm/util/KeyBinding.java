@@ -6,10 +6,10 @@ import net.minecraftforge.client.settings.KeyConflictContext;
 import org.lwjgl.glfw.GLFW;
 
 public class KeyBinding {
-        public static final String KEY_CATEGORY_TUTORIAL = "key.category.lotm.mystery";
-        public static final String KEY_SPIRITUALITY_CHECK = "key.lotm.spirituality_check";
+        public static final String KEY_CATEGORY_LOTM = "key.category.lotm.mystery";
+        public static final String ABILITY_KEY = "key.lotm.ability_check";
 
-        public static final KeyMapping SPIRITUALITY_KEY = new KeyMapping(KEY_SPIRITUALITY_CHECK, KeyConflictContext.IN_GAME,
-                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_O, KEY_CATEGORY_TUTORIAL); //defines what the key is and what key is used for something to happen which is defined in above files
+        public static final KeyMapping ABILITIES_KEY = new KeyMapping(ABILITY_KEY, KeyConflictContext.IN_GAME,
+                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C, KEY_CATEGORY_LOTM);
     }
 

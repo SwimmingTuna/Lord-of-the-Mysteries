@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item;
 
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -9,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.entity.LightningBallEntity;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
@@ -19,7 +21,7 @@ public class TestItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        summonThing(pPlayer);
+        sonicBoom(pPlayer);
         return super.use(level, pPlayer, hand);
     }
 
@@ -39,6 +41,7 @@ public class TestItem extends Item {
         }
     }
     public static void sonicBoom(Player pPlayer) {
-        pPlayer.level().addParticle(ParticleTypes.EXPLOSION, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), 0, 0, 0);
+        String string = BeyonderUtil.getAbilities(pPlayer).toString();
+        pPlayer.sendSystemMessage(Component.literal("thing is " + string));
     }
 }

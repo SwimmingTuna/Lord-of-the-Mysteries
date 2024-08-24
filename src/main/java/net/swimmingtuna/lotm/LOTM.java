@@ -140,6 +140,7 @@ public class LOTM {
             event.accept(ItemInit.PsychologicalInvisibility);
             event.accept(ItemInit.Guidance);
             event.accept(ItemInit.BeyonderAbilityUser);
+            event.accept(ItemInit.Alteration);
             event.accept(ItemInit.DreamWalking);
             event.accept(ItemInit.Nightmare);
             event.accept(ItemInit.ManipulateMovement);

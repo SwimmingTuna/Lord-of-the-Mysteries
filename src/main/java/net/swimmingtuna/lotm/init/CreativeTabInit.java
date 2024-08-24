@@ -22,11 +22,11 @@ public class CreativeTabInit {
                         pOutput.accept(ItemInit.Awe.get());
                         pOutput.accept(ItemInit.Frenzy.get());
                         pOutput.accept(ItemInit.Placate.get());
+                        pOutput.accept(ItemInit.PsychologicalInvisibility.get());
                         pOutput.accept(ItemInit.BattleHypnotism.get());
                         pOutput.accept(ItemInit.Guidance.get());
-                        //idea for alteration: make it so that if they stay still for 10 seconds, they teleport back to where they were when alteration was used
+                        pOutput.accept(ItemInit.Alteration.get());
                         pOutput.accept(ItemInit.DreamWalking.get());
-                        pOutput.accept(ItemInit.PsychologicalInvisibility.get());
                         pOutput.accept(ItemInit.Nightmare.get());
                         pOutput.accept(ItemInit.ApplyManipulation.get());
                         pOutput.accept(ItemInit.ManipulateEmotion.get());
@@ -88,8 +88,8 @@ public class CreativeTabInit {
                         pOutput.accept(ItemInit.LightningBall.get());
                         pOutput.accept(ItemInit.SailorLightningTravel.get());
                         pOutput.accept(ItemInit.LightningBallAbsorb.get());
-                        pOutput.accept(ItemInit.StormSeal.get());
                         pOutput.accept(ItemInit.StarOfLightning.get());
+                        pOutput.accept(ItemInit.StormSeal.get());
                         pOutput.accept(ItemInit.WaterColumn.get());
                         pOutput.accept(ItemInit.MatterAccelerationBlocks.get());
                         pOutput.accept(ItemInit.MatterAccelerationEntities.get());
