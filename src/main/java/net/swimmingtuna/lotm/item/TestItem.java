@@ -41,7 +41,11 @@ public class TestItem extends Item {
         }
     }
     public static void sonicBoom(Player pPlayer) {
-        String string = BeyonderUtil.getAbilities(pPlayer).toString();
-        pPlayer.sendSystemMessage(Component.literal("thing is " + string));
+        pPlayer.sendSystemMessage(Component.literal("Starting sonicBoom ability"));
+        for (int i = 1; i <= 32; i++) {
+            pPlayer.sendSystemMessage(Component.literal("Attempting to use ability " + i));
+            BeyonderUtil.useAbilityByNumber(pPlayer, i);
+        }
+        pPlayer.sendSystemMessage(Component.literal("Finished sonicBoom ability"));
     }
 }

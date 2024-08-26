@@ -30,6 +30,8 @@ public class BeyonderHolder extends PlayerCapability {
     private double maxSpirituality = 100;
     private double spiritualityRegen = 1;
     private final RandomSource random;
+    private static final String REGISTERED_ABILITIES_KEY = "RegisteredAbilities";
+
 
     protected BeyonderHolder(Player entity) {
         super(entity);
@@ -42,6 +44,10 @@ public class BeyonderHolder extends PlayerCapability {
         this.spirituality = 100;
         this.maxSpirituality = 100;
         this.spiritualityRegen = 1;
+        CompoundTag persistentData = player.getPersistentData();
+        if (persistentData.contains(REGISTERED_ABILITIES_KEY, 9)) {
+            persistentData.remove(REGISTERED_ABILITIES_KEY);
+        }
         updateTracking();
     }
     public void setClassAndSequence(BeyonderClass newClass, int sequence) {
@@ -52,6 +58,10 @@ public class BeyonderHolder extends PlayerCapability {
         spiritualityRegen = currentClass.spiritualityRegen().get(currentSequence);
         player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(currentClass.maxHealth().get(sequence));
         player.setHealth(player.getMaxHealth());
+        CompoundTag persistentData = player.getPersistentData();
+        if (persistentData.contains(REGISTERED_ABILITIES_KEY, 9)) {
+            persistentData.remove(REGISTERED_ABILITIES_KEY);
+        }
         updateTracking();
     }
 

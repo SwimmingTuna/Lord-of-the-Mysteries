@@ -2,14 +2,21 @@ package net.swimmingtuna.lotm.util;
 
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.ItemInit;
@@ -176,5 +183,60 @@ public class BeyonderUtil {
     private static String getItemName(Item item) {
         return I18n.get(item.getDescriptionId()).toLowerCase();
     }
+    private static final String REGISTERED_ABILITIES_KEY = "RegisteredAbilities";
+
+    public static void useAbility1(Player player) { useAbilityByNumber(player, 1); }
+    public static void useAbility2(Player player) { useAbilityByNumber(player, 2); }
+    public static void useAbility3(Player player) { useAbilityByNumber(player, 3); }
+    public static void useAbility4(Player player) { useAbilityByNumber(player, 4); }
+    public static void useAbility5(Player player) { useAbilityByNumber(player, 5); }
+    public static void useAbility6(Player player) { useAbilityByNumber(player, 6); }
+    public static void useAbility7(Player player) { useAbilityByNumber(player, 7); }
+    public static void useAbility8(Player player) { useAbilityByNumber(player, 8); }
+    public static void useAbility9(Player player) { useAbilityByNumber(player, 9); }
+    public static void useAbility10(Player player) { useAbilityByNumber(player, 10); }
+    public static void useAbility11(Player player) { useAbilityByNumber(player, 11); }
+    public static void useAbility12(Player player) { useAbilityByNumber(player, 12); }
+    public static void useAbility13(Player player) { useAbilityByNumber(player, 13); }
+    public static void useAbility14(Player player) { useAbilityByNumber(player, 14); }
+    public static void useAbility15(Player player) { useAbilityByNumber(player, 15); }
+    public static void useAbility16(Player player) { useAbilityByNumber(player, 16); }
+    public static void useAbility17(Player player) { useAbilityByNumber(player, 17); }
+    public static void useAbility18(Player player) { useAbilityByNumber(player, 18); }
+    public static void useAbility19(Player player) { useAbilityByNumber(player, 19); }
+    public static void useAbility20(Player player) { useAbilityByNumber(player, 20); }
+    public static void useAbility21(Player player) { useAbilityByNumber(player, 21); }
+    public static void useAbility22(Player player) { useAbilityByNumber(player, 22); }
+    public static void useAbility23(Player player) { useAbilityByNumber(player, 23); }
+    public static void useAbility24(Player player) { useAbilityByNumber(player, 24); }
+    public static void useAbility25(Player player) { useAbilityByNumber(player, 25); }
+    public static void useAbility26(Player player) { useAbilityByNumber(player, 26); }
+    public static void useAbility27(Player player) { useAbilityByNumber(player, 27); }
+    public static void useAbility28(Player player) { useAbilityByNumber(player, 28); }
+    public static void useAbility29(Player player) { useAbilityByNumber(player, 29); }
+    public static void useAbility30(Player player) { useAbilityByNumber(player, 30); }
+    public static void useAbility31(Player player) { useAbilityByNumber(player, 31); }
+    public static void useAbility32(Player player) { useAbilityByNumber(player, 32); }
+
+    public static void useAbilityByNumber(Player player, int abilityNumber) {
+        CompoundTag persistentData = player.getPersistentData();
+        if (persistentData.contains(REGISTERED_ABILITIES_KEY, 9)) { // 9 is the ID for ListTag
+            ListTag registeredAbilities = persistentData.getList(REGISTERED_ABILITIES_KEY, 8); // 8 is the ID for StringTag
+
+            for (int i = 0; i < registeredAbilities.size(); i++) {
+                String entry = registeredAbilities.getString(i);
+                String[] parts = entry.split(":");
+                if (parts.length == 2 && Integer.parseInt(parts[0]) == abilityNumber) {
+                    String registryName = parts[1];
+                    Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(registryName));
+                    if (item != null) {
+                        ItemStack itemStack = new ItemStack(item);
+                        itemStack.getItem().use(player.level(), player, InteractionHand.MAIN_HAND);
+                        return;
+                    }
+                }
+            }
+        }
+        player.sendSystemMessage(Component.literal("Ability " + abilityNumber + " not found or not registered."));
+    }
 }
-//make a command that is like: /abilityput (Item Name) (LLRLL or something like that)

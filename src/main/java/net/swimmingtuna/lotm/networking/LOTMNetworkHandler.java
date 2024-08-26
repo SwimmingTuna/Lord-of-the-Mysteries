@@ -3,10 +3,12 @@ package net.swimmingtuna.lotm.networking;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.networking.packet.LeftClickC2S;
 import net.swimmingtuna.lotm.networking.packet.SpiritualityC2S;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.network.SimpleEntityCapabilityStatusPacket;
 
@@ -31,10 +33,16 @@ public class LOTMNetworkHandler {
                 .add(SimpleEntityCapabilityStatusPacket::register)
                 .add(SpiritualityC2S::register)
                 .build();
-
         packets.forEach(consumer -> consumer.accept(INSTANCE, id()));
 
+        INSTANCE.messageBuilder(LeftClickC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(LeftClickC2S::new)
+                .encoder(LeftClickC2S::toByte)
+                .consumerMainThread(LeftClickC2S::handle)
+                .add();
+
     }
+
 
     public static <MSG> void sendToServer(MSG message) {
         INSTANCE.sendToServer(message);

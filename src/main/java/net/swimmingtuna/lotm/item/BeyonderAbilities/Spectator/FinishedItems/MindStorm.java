@@ -69,6 +69,7 @@ public class MindStorm extends Item implements ReachChangeUUIDs {
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
+
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         Player pPlayer = event.getEntity();
@@ -82,26 +83,40 @@ public class MindStorm extends Item implements ReachChangeUUIDs {
             }
         }
         ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
+        boolean x = !pPlayer.getCooldowns().isOnCooldown(itemStack.getItem());
         Entity targetEntity = event.getTarget();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MindStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(250)) {
-            int sequence = spectatorSequence.getCurrentSequence();
-            int duration = 300 - (sequence * 25);
-            int damage = 30 - (sequence * 2);
-            if (dreamIntoReality.getValue() == 2) {
-                damage = 50 - (sequence * 2);
+            if (x && holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MindStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(250)) {
+                int sequence = spectatorSequence.getCurrentSequence();
+                int duration = 300 - (sequence * 25);
+                int damage = 30 - (sequence * 2);
+                if (dreamIntoReality.getValue() == 2) {
+                    damage = 50 - (sequence * 2);
+                }
+                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false));
+                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
+                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
+                targetEntity.hurt(targetEntity.damageSources().magic(), damage);
+                if (!pPlayer.getAbilities().instabuild) {
+                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 200);
+                    event.setCanceled(true);
+                    event.setCancellationResult(InteractionResult.SUCCESS);
+                }
             }
-            ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.AWE.get(), duration,1,false,false));
-            ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS,duration,1,false,false));
-            ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.CONFUSION,duration,1,false,false));
-            targetEntity.hurt(targetEntity.damageSources().magic(), damage);
-            if (!pPlayer.getAbilities().instabuild) {
-                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 200);
-            event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.SUCCESS);
-             }
+            if (x && holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.getCurrentSequence() > 4 && spectatorSequence.useSpirituality(120)) {
+                Placate.halfHarmfulEffects((LivingEntity) targetEntity);
+                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 120 / (int) dreamIntoReality.getValue());
+                event.setCanceled(true);
+                event.setCancellationResult(InteractionResult.SUCCESS);
             }
-    });
-}}
+            if (x && holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(250)) {
+                Placate.halfHarmfulEffects((LivingEntity) targetEntity);
+                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 120 / (int) dreamIntoReality.getValue());
+                event.setCanceled(true);
+                event.setCancellationResult(InteractionResult.SUCCESS);
+            }
+        });
+    }
+}
