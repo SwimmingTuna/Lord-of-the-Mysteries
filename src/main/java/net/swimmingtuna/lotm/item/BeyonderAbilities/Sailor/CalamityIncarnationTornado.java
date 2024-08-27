@@ -22,8 +22,6 @@ public class CalamityIncarnationTornado extends Item implements ReachChangeUUIDs
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!pPlayer.level().isClientSide()) {
-
-            // If no block or entity is targeted, proceed with the original functionality
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
@@ -34,12 +32,16 @@ public class CalamityIncarnationTornado extends Item implements ReachChangeUUIDs
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
                 if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 4 && sailorSequence.useSpirituality(300)) {
                     TornadoEntity.summonTornado(pPlayer);
-                    pPlayer.getPersistentData().putInt("calamityIncarnationTornado", 300);
+                    useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 240);
                 }
             });
         }
         return super.use(level, pPlayer, hand);
+    }
+    public static void useItem(Player pPlayer) {
+        pPlayer.getPersistentData().putInt("calamityIncarnationTornado", 300);
+
     }
 }

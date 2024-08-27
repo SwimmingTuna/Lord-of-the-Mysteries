@@ -78,7 +78,6 @@ public class ProphesizeTeleportPlayer extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeDemise.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -89,7 +88,6 @@ public class ProphesizeTeleportPlayer extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeDemise.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

@@ -36,29 +36,7 @@ public class EnvisionLocationBlink extends Item {
         super(pProperties);
     }
 
-    @SubscribeEvent
-    public static void blinkTimer(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (!event.player.level().isClientSide && event.phase == TickEvent.Phase.START) {
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (spectatorSequence.getCurrentSequence() == 0) {
-                    int blinkDistance = pPlayer.getPersistentData().getInt("BlinkDistance");
-                    if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLocationBlink) {
-                        blinkDistance++;
-                        blinkDistance++;
-                        blinkDistance++;
-                        blinkDistance++;
-                        blinkDistance++;
-                        pPlayer.sendSystemMessage(Component.literal("Blink Distance is" + blinkDistance));
-                    }
-                    if (blinkDistance >= 200) {
-                        blinkDistance = 0;
-                    }
-                    pPlayer.getPersistentData().putInt("BlinkDistance", blinkDistance);
-                }
-            });
-        }
-    }
+
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
@@ -129,7 +107,6 @@ public class EnvisionLocationBlink extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocationBlink) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionHealth.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -140,7 +117,6 @@ public class EnvisionLocationBlink extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocationBlink) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionHealth.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

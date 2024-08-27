@@ -156,7 +156,6 @@ public class EnvisionBarrier extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionBarrier) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionDeath.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -167,7 +166,6 @@ public class EnvisionBarrier extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionBarrier) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionDeath.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

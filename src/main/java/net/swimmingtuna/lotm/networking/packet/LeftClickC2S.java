@@ -1,11 +1,14 @@
 package net.swimmingtuna.lotm.networking.packet;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.LightningStorm;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 
 import java.util.function.Supplier;
 
@@ -54,6 +57,15 @@ public class LeftClickC2S {
                 if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked != 0 && fifthKeyClicked == 0) {
                     pPlayer.getPersistentData().putInt("fifthKeyClicked", 1);
                     pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                }
+            }
+            if (pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
+                CompoundTag tag = pPlayer.getPersistentData();
+                double distance = tag.getDouble("sailorLightningStormDistance");
+                tag.putDouble("sailorLightningStormDistance", (int) (distance + 30));
+                pPlayer.sendSystemMessage(Component.literal("Storm Radius Is " + distance).withStyle(BeyonderUtil.getStyle(pPlayer)));
+                if (distance > 300) {
+                    tag.putDouble("sailorLightningStormDistance", 0);
                 }
             }
         });

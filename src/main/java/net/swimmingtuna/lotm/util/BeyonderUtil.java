@@ -1,21 +1,27 @@
 package net.swimmingtuna.lotm.util;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
@@ -220,23 +226,158 @@ public class BeyonderUtil {
 
     public static void useAbilityByNumber(Player player, int abilityNumber) {
         CompoundTag persistentData = player.getPersistentData();
-        if (persistentData.contains(REGISTERED_ABILITIES_KEY, 9)) { // 9 is the ID for ListTag
-            ListTag registeredAbilities = persistentData.getList(REGISTERED_ABILITIES_KEY, 8); // 8 is the ID for StringTag
-
-            for (int i = 0; i < registeredAbilities.size(); i++) {
-                String entry = registeredAbilities.getString(i);
-                String[] parts = entry.split(":");
-                if (parts.length == 2 && Integer.parseInt(parts[0]) == abilityNumber) {
-                    String registryName = parts[1];
-                    Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(registryName));
-                    if (item != null) {
-                        ItemStack itemStack = new ItemStack(item);
-                        itemStack.getItem().use(player.level(), player, InteractionHand.MAIN_HAND);
-                        return;
+        if (!player.level().isClientSide()) {
+            if (persistentData.contains(REGISTERED_ABILITIES_KEY, 9)) {
+                ListTag registeredAbilities = persistentData.getList(REGISTERED_ABILITIES_KEY, 8);
+                for (int i = 0; i < registeredAbilities.size(); i++) {
+                    String entry = registeredAbilities.getString(i);
+                    String[] parts = entry.split(":", 2);
+                    if (parts.length == 2) {
+                        if (Integer.parseInt(parts[0]) == abilityNumber) {
+                            String registryName = parts[1];
+                            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(registryName));
+                            if (item != null) {
+                                ItemStack itemStack = new ItemStack(item);
+                                itemStack.getItem().use(player.level(), player, InteractionHand.MAIN_HAND);
+                                return;
+                            } else {
+                                player.sendSystemMessage(Component.literal("Item not found in registry for ability " + abilityNumber + " with registry name: " + registryName).withStyle(getStyle(player)));
+                            }
+                        }
+                    } else {
+                        player.sendSystemMessage(Component.literal("Entry did not split into two parts: " + entry).withStyle(getStyle(player)));
                     }
+                }
+            } else {
+                player.sendSystemMessage(Component.literal("No registered abilities found.").withStyle(getStyle(player)));
+            }
+            player.sendSystemMessage(Component.literal("Ability " + abilityNumber + " not found or not registered.").withStyle(getStyle(player)));
+        }
+    }
+    public static Style getStyle(Player pPlayer) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+
+        // Check if holder is not null and the player is of the Spectator class
+        if (holder != null) {
+            if (holder.isSpectatorClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.AQUA);
+            }
+            if (holder.isSailorClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.AQUA);
+            }
+            if (holder.isApothecaryClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_GREEN);
+            }
+            if (holder.isApprenticeClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.BLUE);
+            }
+            if (holder.isArbiterClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD);
+            }
+            if (holder.isAssassinClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.RED);
+            }
+            if (holder.isBardClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.YELLOW);
+            }
+            if (holder.isCorpseCollectorClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_BLUE);
+            }
+            if (holder.isCriminalClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.GRAY);
+            }
+            if (holder.isHunterClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.AQUA);
+            }
+            if (holder.isLawyerClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_BLUE);
+            }
+            if (holder.isMarauderClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_PURPLE);
+            }
+            if (holder.isMonsterClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.WHITE);
+            }
+            if (holder.isMysteryPryerClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_PURPLE);
+            }
+            if (holder.isPlanterClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.GREEN);
+            }
+            if (holder.isPrisonerClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_PURPLE);
+            }
+            if (holder.isReaderClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.WHITE);
+            }
+            if (holder.isSavantClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD);
+            }
+            if (holder.isSeerClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_PURPLE);
+            }
+            if (holder.isSleeplessClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_BLUE);
+            }
+            if (holder.isSecretsSupplicantClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.RED);
+            }
+            if (holder.isWarriorClass()) {
+                // Create a Style object with multiple formatting options
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_RED);
+            }
+        }
+        return Style.EMPTY;
+    }
+
+    public static boolean isPlayerLookingAtEntityWithinDistance(Player player, double maxDistance) {
+        // Get the player's eye position
+        Vec3 eyePosition = player.getEyePosition(1.0F);
+        // Get the direction the player is looking
+        Vec3 lookDirection = player.getViewVector(1.0F);
+        // Calculate the bounding box of the viewing area
+        Vec3 lookEnd = eyePosition.add(lookDirection.scale(maxDistance));
+        AABB boundingBox = new AABB(eyePosition, lookEnd).inflate(1.0D);
+
+        // Check all entities within the bounding box
+        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, boundingBox)) {
+            if (entity == player) {
+                continue; // Skip the player itself
+            }
+
+            // Create an AABB around the entity
+            AABB entityBox = entity.getBoundingBox().inflate(0.1D);
+
+            // Check if the entity is within the line of sight of the player
+            BlockHitResult hitResult = player.level().clip(new ClipContext(eyePosition, lookEnd, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+            if (hitResult.getType() == BlockHitResult.Type.MISS) {
+                if (entityBox.intersects(eyePosition, lookEnd)) {
+                    return true; // The player is looking at this entity
                 }
             }
         }
-        player.sendSystemMessage(Component.literal("Ability " + abilityNumber + " not found or not registered."));
+
+        return false; // No entity found within the distance
     }
 }

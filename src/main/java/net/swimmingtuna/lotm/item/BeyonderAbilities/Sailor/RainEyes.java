@@ -39,7 +39,7 @@ public class RainEyes extends Item implements ReachChangeUUIDs {
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
                 if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 4 && sailorSequence.useSpirituality(300)) {
-                    startDownpour(pPlayer);
+                    useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 240);
                 }
@@ -47,7 +47,7 @@ public class RainEyes extends Item implements ReachChangeUUIDs {
         }
         return super.use(level, pPlayer, hand);
     }
-    public static void startDownpour(Player pPlayer) {
+    public static void useItem(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
             CompoundTag tag = pPlayer.getPersistentData();
             boolean x = tag.getBoolean("torrentialDownpour");

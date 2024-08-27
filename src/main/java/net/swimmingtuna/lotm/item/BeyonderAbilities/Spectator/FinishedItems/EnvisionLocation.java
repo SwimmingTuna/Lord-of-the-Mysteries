@@ -104,7 +104,6 @@ public class EnvisionLocation extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocation) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLocationBlink.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -115,7 +114,6 @@ public class EnvisionLocation extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocation) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLocationBlink.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

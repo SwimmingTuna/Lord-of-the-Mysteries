@@ -38,7 +38,7 @@ public class AquaticLifeManipulation extends Item {
                 } else if (holder.getSpirituality() < 50) {
                     pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
                 } else if (holder.isSailorClass() && holder.getCurrentSequence() <= 5 && holder.useSpirituality(150)) {
-                    notifyNearestPlayer(pPlayer, holder.getCurrentSequence());
+                    useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild) {
                         pPlayer.getCooldowns().addCooldown(this, 40);
                     }
@@ -48,7 +48,9 @@ public class AquaticLifeManipulation extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    private static void notifyNearestPlayer(Player pPlayer, int sequence) {
+    public static void useItem(Player pPlayer) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        int sequence = holder.getCurrentSequence();
         if (!pPlayer.level().isClientSide()) {
             List<LivingEntity> aquaticEntities = pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(100), entity -> entity instanceof WaterAnimal);
             if (!aquaticEntities.isEmpty()) {
@@ -57,7 +59,6 @@ public class AquaticLifeManipulation extends Item {
                     List<Player> nearbyPlayers = nearestAquaticEntity.level().getEntitiesOfClass(Player.class, nearestAquaticEntity.getBoundingBox().inflate(100 + (sequence * 5)));
                     Player nearestPlayer = nearbyPlayers.stream().filter(player -> player != pPlayer).min(Comparator.comparingDouble(nearestAquaticEntity::distanceTo)).orElse(null);
                     if (nearestPlayer != null) {
-                        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(nearestPlayer).orElse(null);
                         if (holder != null) {
                             if (sequence >= 2) {
                                 pPlayer.sendSystemMessage(Component.literal("Nearest Player is " + nearestPlayer.getName().getString() + ". Pathway is " + holder.getCurrentClass()));

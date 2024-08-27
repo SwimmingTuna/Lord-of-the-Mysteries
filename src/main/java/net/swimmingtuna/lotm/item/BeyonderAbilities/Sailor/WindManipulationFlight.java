@@ -205,7 +205,6 @@ public class WindManipulationFlight extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationFlight) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationCushion.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -216,7 +215,6 @@ public class WindManipulationFlight extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationFlight) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationCushion.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

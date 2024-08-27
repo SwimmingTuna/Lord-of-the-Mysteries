@@ -61,7 +61,6 @@ public class Hurricane extends Item implements ReachChangeUUIDs {
             if (hurricane >= 1) {
                 if (x) {
                     tag.putInt("sailorHurricane", hurricane - 1);
-
                     if (hurricane == 600) {
                         if (pPlayer.level() instanceof ServerLevel serverLevel) {
                             serverLevel.setWeatherParameters(0, 700, true, true);
@@ -107,16 +106,25 @@ public class Hurricane extends Item implements ReachChangeUUIDs {
                 tag.putBoolean("sailorHurricaneRain", true);
                 x = true;
             }
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof Hurricane) {
-            event.setCanceled(true);
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof Hurricane) {
+            CompoundTag tag = pPlayer.getPersistentData();
+            boolean x = tag.getBoolean("sailorHurricaneRain");
+            if (x) {
+                pPlayer.displayClientMessage(Component.literal("Hurricane will only cause rain").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                tag.putBoolean("sailorHurricaneRain", false);
+                x = false;
+            }
+            if (!x) {
+                pPlayer.displayClientMessage(Component.literal("Hurricane cause lightning, tornadoes, and rain").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                tag.putBoolean("sailorHurricaneRain", true);
+                x = true;
+            }
         }
     }
 }

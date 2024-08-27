@@ -79,7 +79,6 @@ public class EnvisionHealth extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionHealth) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionWeather.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -90,7 +89,6 @@ public class EnvisionHealth extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionHealth) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionWeather.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

@@ -43,7 +43,7 @@ public class AqueousLightPull extends Item {
 
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
             if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7 && tyrantSequence.useSpirituality(75)) {
-                shootLight(pPlayer);
+                useItem(pPlayer);
             }
             if (!pPlayer.getAbilities().instabuild)
                 pPlayer.getCooldowns().addCooldown(this, 60);
@@ -53,7 +53,7 @@ public class AqueousLightPull extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    public static void shootLight(Player pPlayer) {
+    public static void useItem(Player pPlayer) {
         Vec3 eyePosition = pPlayer.getEyePosition(1.0f);
         Vec3 direction = pPlayer.getViewVector(1.0f);
         Vec3 initialVelocity = direction.scale(2.0);
@@ -77,7 +77,6 @@ public class AqueousLightPull extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightPull) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightDrown.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent

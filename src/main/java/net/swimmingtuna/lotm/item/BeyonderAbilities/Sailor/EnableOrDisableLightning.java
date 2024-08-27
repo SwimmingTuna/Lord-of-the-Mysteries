@@ -32,7 +32,7 @@ public class EnableOrDisableLightning extends Item {
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
                 if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 7) {
-                    turnOnOrOffLightning(pPlayer);
+                    useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 240);
                 }
@@ -41,7 +41,7 @@ public class EnableOrDisableLightning extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    private void turnOnOrOffLightning(Player pPlayer) {
+    private void useItem(Player pPlayer) {
         CompoundTag tag = pPlayer.getPersistentData();
         boolean lightning = tag.getBoolean("SailorLightning");
         if (lightning) {

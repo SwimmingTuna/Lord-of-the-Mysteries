@@ -179,7 +179,6 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateMovement) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ApplyManipulation.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 
@@ -191,7 +190,6 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateMovement) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ApplyManipulation.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 

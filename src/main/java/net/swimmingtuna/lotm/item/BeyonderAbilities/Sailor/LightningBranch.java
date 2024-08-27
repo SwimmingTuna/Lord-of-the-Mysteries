@@ -32,7 +32,7 @@ public class LightningBranch extends Item {
 
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
                 if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 3 && tyrantSequence.useSpirituality(75)) {
-                    summonLightningBranches(pPlayer, holder.getCurrentSequence());
+                    summonLightningBranches(pPlayer);
                 }
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 60);
@@ -41,7 +41,9 @@ public class LightningBranch extends Item {
         }
         return super.use(level, pPlayer, hand);
     }
-    private void summonLightningBranches(Player pPlayer, int sequence) {
+    private void summonLightningBranches(Player pPlayer) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        int sequence = holder.getCurrentSequence();
         if (!pPlayer.level().isClientSide()) {
             Vec3 lookVec = pPlayer.getLookAngle();
             LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());

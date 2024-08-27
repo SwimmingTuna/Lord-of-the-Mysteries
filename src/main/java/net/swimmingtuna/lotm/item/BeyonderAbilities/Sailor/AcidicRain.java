@@ -44,7 +44,7 @@ public class AcidicRain extends Item {
                 } else if (holder.getSpirituality() < 50) {
                     pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
                 } else if (holder.isSailorClass() && holder.getCurrentSequence() <= 5 && holder.useSpirituality(100)) {
-                    shootAcidicRain(pPlayer, level);
+                    shootAcidicRain(pPlayer);
                     if (!pPlayer.getAbilities().instabuild) {
                         pPlayer.getCooldowns().addCooldown(this, 40);
                     }
@@ -54,7 +54,7 @@ public class AcidicRain extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    private static void shootAcidicRain(Player pPlayer, Level level) {
+    private static void shootAcidicRain(Player pPlayer) {
         pPlayer.getPersistentData().putInt("sailorAcidicRain", 1);
         AttributeInstance particleAttribute = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER.get());
         particleAttribute.setBaseValue(1);

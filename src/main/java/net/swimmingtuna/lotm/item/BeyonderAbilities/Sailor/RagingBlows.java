@@ -52,7 +52,7 @@ public class RagingBlows extends Item {
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
                 if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 8 && tyrantSequence.useSpirituality(20)) {
-                    ragingBlows(pPlayer);
+                    useItem(pPlayer);
                 }
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 200);
@@ -61,7 +61,7 @@ public class RagingBlows extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    public static void ragingBlows(Player pPlayer) {
+    public static void useItem(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
             CompoundTag persistentData = pPlayer.getPersistentData();
             int ragingBlows = persistentData.getInt("ragingBlows");

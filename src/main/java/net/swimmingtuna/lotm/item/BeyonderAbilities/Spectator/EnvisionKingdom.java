@@ -90,7 +90,6 @@ public class EnvisionKingdom extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionKingdom) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLocation.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -101,7 +100,6 @@ public class EnvisionKingdom extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionKingdom) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLocation.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

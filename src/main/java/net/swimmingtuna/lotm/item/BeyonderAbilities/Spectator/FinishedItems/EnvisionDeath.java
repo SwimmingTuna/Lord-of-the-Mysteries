@@ -82,7 +82,6 @@ public class EnvisionDeath extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionDeath) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLife.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -93,7 +92,6 @@ public class EnvisionDeath extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionDeath) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionLife.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

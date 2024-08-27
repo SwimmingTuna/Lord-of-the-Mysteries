@@ -4,6 +4,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -21,6 +23,9 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.LightningEntity;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
+import net.swimmingtuna.lotm.networking.packet.LeftClickC2S;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -45,7 +50,7 @@ public class LightningStorm extends Item {
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
                 if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 8 && tyrantSequence.useSpirituality(20)) {
-                    sailorLightningStormSummoning(pPlayer, holder.getCurrentSequence());
+                    useItem(pPlayer);
                 }
                 if (!pPlayer.getAbilities().instabuild)
                     pPlayer.getCooldowns().addCooldown(this, 200);
@@ -54,10 +59,12 @@ public class LightningStorm extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    public static void sailorLightningStormSummoning(Player pPlayer, int sequence) { //add logic to add persitatent data of targetX,
+    public static void useItem(Player pPlayer) { //add logic to add persitatent data of targetX,
         if (!pPlayer.level().isClientSide()) {
             int sailorStormVec = pPlayer.getPersistentData().getInt("sailorStormVec");
             Vec3 lookVec = pPlayer.getLookAngle();
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            int sequence = holder.getCurrentSequence();
             double targetX = pPlayer.getX() + sailorStormVec * lookVec.x();
             double targetY = pPlayer.getY() + sailorStormVec * lookVec.y();
             double targetZ = pPlayer.getZ() + sailorStormVec * lookVec.z();
@@ -85,9 +92,15 @@ public class LightningStorm extends Item {
     @SubscribeEvent
     public static void sailorLightningStorm(TickEvent.PlayerTickEvent event) {
         Player pPlayer = event.player;
+        Style style = BeyonderUtil.getStyle(pPlayer);
+        double distance = pPlayer.getPersistentData().getDouble("sailorLightningStormDistance");
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
             CompoundTag tag = pPlayer.getPersistentData();
+            if (distance > 300) {
+                tag.putDouble("sailorLightningStormDistance", 0);
+                pPlayer.sendSystemMessage(Component.literal("Storm Radius Is 0").withStyle(style));
+            }
             int tyrantVer = tag.getInt("sailorLightningStormTyrant");
             int sailorMentioned = tag.getInt("tyrantMentionedInChat");
             int sailorLightningStorm1 = tag.getInt("sailorLightningStorm1");
@@ -124,7 +137,6 @@ public class LightningStorm extends Item {
             double x = tag.getInt("sailorStormVecX");
             double y = tag.getInt("sailorStormVecY");
             double z = tag.getInt("sailorStormVecZ");
-            int distance = tag.getInt("sailorLightningStormDistance");
             if (sailorLightningStorm >= 1) {
                 LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
                 lightningEntity.setSpeed(10.0f);
@@ -144,9 +156,9 @@ public class LightningStorm extends Item {
                 if (holder.isSailorClass() && holder.getCurrentSequence() <= 3 && pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
                     if (pPlayer.isShiftKeyDown()) {
                         tag.putInt("sailorStormVec", stormVec + 10);
-                        pPlayer.sendSystemMessage(Component.literal("Sailor Storm Spawn Distance is " + stormVec));
+                        pPlayer.sendSystemMessage(Component.literal("Sailor Storm Spawn Distance is " + stormVec).withStyle(style));
                     }
-                    if (stormVec >= 400) {
+                    if (stormVec > 300) {
                         tag.putInt("sailorStormVec", 0);
                         stormVec = 0;
                     }
@@ -158,30 +170,24 @@ public class LightningStorm extends Item {
     @SubscribeEvent
     public static void leftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
         Player pPlayer = event.getEntity();
+        Style style = BeyonderUtil.getStyle(pPlayer);
         if (pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
-            CompoundTag tag = pPlayer.getPersistentData();
-            int distance = tag.getInt("sailorLightningStormDistance");
-            tag.putInt("sailorLightningStormDistance", distance + 30);
-            pPlayer.sendSystemMessage(Component.literal("Storm Radius Is " + distance));
-            if (distance >= 300) {
-                tag.putInt("sailorLightningStormDistance", 0);
-                distance = 0;
-            }
+            LOTMNetworkHandler.sendToServer(new LeftClickC2S());
         }
     }
 
     @SubscribeEvent
     public static void leftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         Player pPlayer = event.getEntity();
+        Style style = BeyonderUtil.getStyle(pPlayer);
         if (!pPlayer.level().isClientSide()) {
             if (pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
                 CompoundTag tag = pPlayer.getPersistentData();
-                int distance = tag.getInt("sailorLightningStormDistance");
-                tag.putInt("sailorLightningStormDistance", distance + 30);
-                pPlayer.sendSystemMessage(Component.literal("Storm Radius Is" + distance));
-                if (distance >= 300) {
-                    tag.putInt("sailorLightningStormDistance", 0);
-                    distance = 0;
+                double distance = tag.getDouble("sailorLightningStormDistance");
+                tag.putDouble("sailorLightningStormDistance", (int) (distance + 30));
+                pPlayer.sendSystemMessage(Component.literal("Storm Radius Is" + distance).withStyle(style));
+                if (distance > 300) {
+                    tag.putDouble("sailorLightningStormDistance", 0);
                 }
             }
         }

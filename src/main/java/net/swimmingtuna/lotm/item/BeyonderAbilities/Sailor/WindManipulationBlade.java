@@ -78,7 +78,6 @@ public class WindManipulationBlade extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationBlade) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationSense.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -89,7 +88,6 @@ public class WindManipulationBlade extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationBlade) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationSense.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

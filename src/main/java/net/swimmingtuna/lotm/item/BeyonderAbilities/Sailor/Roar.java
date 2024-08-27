@@ -38,17 +38,22 @@ public class Roar extends Item implements ReachChangeUUIDs {
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
                 if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 4 && sailorSequence.useSpirituality(300)) {
-                    RoarEntity roarEntity = new RoarEntity(EntityInit.ROAR_ENTITY.get(), pPlayer.level());
-                    roarEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
-                    Vec3 lookVec = pPlayer.getLookAngle();
-                    roarEntity.setDeltaMovement(lookVec.scale(10 - holder.getCurrentSequence()).x,lookVec.scale(10 - holder.getCurrentSequence()).y,lookVec.scale(10 - holder.getCurrentSequence()).z);
-                    roarEntity.hurtMarked = true;
-                    pPlayer.level().addFreshEntity(roarEntity);
+                    useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 240);
                 }
             });
         }
         return super.use(level, pPlayer, hand);
+    }
+    public static void useItem(Player pPlayer) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        int sequence = holder.getCurrentSequence();
+        RoarEntity roarEntity = new RoarEntity(EntityInit.ROAR_ENTITY.get(), pPlayer.level());
+        roarEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
+        Vec3 lookVec = pPlayer.getLookAngle();
+        roarEntity.setDeltaMovement(lookVec.scale(10 - holder.getCurrentSequence()).x,lookVec.scale(10 - holder.getCurrentSequence()).y,lookVec.scale(10 - holder.getCurrentSequence()).z);
+        roarEntity.hurtMarked = true;
+        pPlayer.level().addFreshEntity(roarEntity);
     }
 }

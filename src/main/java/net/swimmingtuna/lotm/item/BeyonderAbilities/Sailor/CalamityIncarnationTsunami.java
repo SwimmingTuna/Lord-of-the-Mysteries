@@ -40,19 +40,22 @@ public class CalamityIncarnationTsunami extends Item implements ReachChangeUUIDs
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
                 if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 4 && sailorSequence.useSpirituality(300)) {
-                    int x = pPlayer.getPersistentData().getInt("calamityIncarnationTsunami");
-                    if (x == 0) {
-                        pPlayer.getPersistentData().putInt("calamityIncarnationTsunami", 200);
-                    } else {
-                        pPlayer.getPersistentData().putInt("calamityIncarnationTsunami", 0);
-                        pPlayer.displayClientMessage(Component.literal("Tsunami Incarnation Cancelled").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-                    }
+                   useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 240);
                 }
             });
         }
         return super.use(level, pPlayer, hand);
+    }
+    public static void useItem(Player pPlayer) {
+        int x = pPlayer.getPersistentData().getInt("calamityIncarnationTsunami");
+        if (x == 0) {
+            pPlayer.getPersistentData().putInt("calamityIncarnationTsunami", 200);
+        } else {
+            pPlayer.getPersistentData().putInt("calamityIncarnationTsunami", 0);
+            pPlayer.displayClientMessage(Component.literal("Tsunami Incarnation Cancelled").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+        }
     }
     @SubscribeEvent
     public static void selfTsunamiEvent(TickEvent.PlayerTickEvent event) {

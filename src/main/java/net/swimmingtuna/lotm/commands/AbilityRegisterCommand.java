@@ -9,9 +9,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 
 import java.util.HashMap;
@@ -41,10 +44,11 @@ public class AbilityRegisterCommand {
 
     private static int registerAbility(CommandSourceStack source, String combination, String itemName) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
+        Style style = BeyonderUtil.getStyle(player);
 
         // Validate combination
         if (!COMBINATION_MAP.containsKey(combination)) {
-            source.sendFailure(Component.literal("Invalid combination. Please use a valid 5-character combination of L and R."));
+            source.sendFailure(Component.literal("Invalid combination. Please use a valid 5-character combination of L and R.").withStyle(style));
             return 0;
         }
 
@@ -53,31 +57,35 @@ public class AbilityRegisterCommand {
         // Get the player's available abilities
         List<String> availableAbilities = BeyonderUtil.getAbilities(player);
 
-        // Find the matching ability
+        // Find the matching ability by comparing localized names
         String matchingAbility = availableAbilities.stream()
                 .filter(ability -> ability.equalsIgnoreCase(itemName.trim()))
                 .findFirst()
                 .orElse(null);
 
         if (matchingAbility == null) {
-            source.sendFailure(Component.literal("Ability not available or not found: " + itemName));
+            source.sendFailure(Component.literal("Ability not available or not found: " + itemName).withStyle(style));
             return 0;
         }
 
-        // Find the corresponding item
+        // Find the corresponding item by comparing localization keys
         Item foundItem = null;
         String registryName = null;
+        String localizedAbilityName = null;
         for (Item item : ForgeRegistries.ITEMS) {
-            String localizedName = Component.translatable(item.getDescriptionId()).getString().toLowerCase(Locale.ROOT);
-            if (localizedName.equals(matchingAbility)) {
+            String descriptionId = item.getDescriptionId();
+            String localizedName = Component.translatable(descriptionId).getString();
+
+            if (localizedName.equalsIgnoreCase(matchingAbility)) {
                 foundItem = item;
                 registryName = ForgeRegistries.ITEMS.getKey(item).toString();
+                localizedAbilityName = localizedName;
                 break;
             }
         }
 
         if (foundItem == null) {
-            source.sendFailure(Component.literal("Item not found for ability: " + matchingAbility));
+            source.sendFailure(Component.literal("Item not found for ability: " + matchingAbility).withStyle(style));
             return 0;
         }
 
@@ -93,30 +101,59 @@ public class AbilityRegisterCommand {
             persistentData.put(REGISTERED_ABILITIES_KEY, registeredAbilities);
         }
 
-        // Create the new ability entry with combination number
+        // Create the new ability entry with combination number and full registry name
         String newAbilityEntry = combinationNumber + ":" + registryName;
 
-        // Check if the ability is already registered
-        boolean alreadyRegistered = false;
+        // Check if there's already an ability registered for this combination
+        String removedAbility = null;
         for (int i = 0; i < registeredAbilities.size(); i++) {
-            if (registeredAbilities.getString(i).split(":")[1].equals(registryName)) {
-                alreadyRegistered = true;
+            String entry = registeredAbilities.getString(i);
+            String[] parts = entry.split(":");
+            if (parts[0].equals(String.valueOf(combinationNumber))) {
+                removedAbility = parts.length > 1 ? parts[1] + ":" + parts[2] : null;
+                registeredAbilities.remove(i);
                 break;
             }
         }
 
-        if (!alreadyRegistered) {
-            // Add the new ability to the list
-            registeredAbilities.add(StringTag.valueOf(newAbilityEntry));
-            String finalRegistryName1 = registryName;
-            source.sendSuccess(() -> Component.literal("Registered new ability: " + matchingAbility + " (" + finalRegistryName1 + ") with combination " + combination + " (number: " + combinationNumber + ")"), true);
+        // Add the new ability to the list
+        registeredAbilities.add(StringTag.valueOf(newAbilityEntry));
+
+        // Save the persistent data
+        persistentData.put(REGISTERED_ABILITIES_KEY, registeredAbilities);
+
+        // Notify the player
+        if (removedAbility != null) {
+            // Debugging output to verify removedAbility
+            String finalRemovedAbility2 = removedAbility;
+            source.sendSuccess(() -> Component.literal("Debug: removedAbility = " + finalRemovedAbility2), true);
+
+            ResourceLocation removedItemRL = new ResourceLocation(removedAbility);
+            Item removedItem = ForgeRegistries.ITEMS.getValue(removedItemRL);
+
+            if (removedItem != null) {
+                String removedItemName = Component.translatable(removedItem.getDescriptionId()).getString();
+
+                // Debugging output
+                String finalRemovedAbility1 = removedAbility;
+                source.sendSuccess(() -> Component.literal("Debug: Removed item registry name = " + finalRemovedAbility1), true);
+                source.sendSuccess(() -> Component.literal("Debug: Removed item localized name = " + removedItemName), true);
+
+                String finalLocalizedAbilityName2 = localizedAbilityName;
+                source.sendSuccess(() -> Component.literal("Replaced ability: " + removedItemName + " with " + finalLocalizedAbilityName2 + " for combination " + combination).withStyle(style), true);
+            } else {
+                String finalRemovedAbility = removedAbility;
+                source.sendSuccess(() -> Component.literal("Debug: Could not find item for registry name: " + finalRemovedAbility), true);
+                String finalLocalizedAbilityName1 = localizedAbilityName;
+                source.sendSuccess(() -> Component.literal("Added ability: " + finalLocalizedAbilityName1 + " for combination " + combination + " (previous ability not found)").withStyle(style), true);
+            }
         } else {
-            String finalRegistryName = registryName;
-            source.sendSuccess(() -> Component.literal("Ability already registered: " + matchingAbility + " (" + finalRegistryName + ")"), true);
+            String finalLocalizedAbilityName = localizedAbilityName;
+            source.sendSuccess(() -> Component.literal("Added ability: " + finalLocalizedAbilityName + " for combination " + combination).withStyle(style), true);
         }
+
         return 1;
     }
-
     private static void initializeCombinationMap() {
         String[] combinations = {
                 "LLLLL", "LLLLR", "LLLRL", "LLLRR", "LLRLL", "LLRLR", "LLRRL", "LLRRR",

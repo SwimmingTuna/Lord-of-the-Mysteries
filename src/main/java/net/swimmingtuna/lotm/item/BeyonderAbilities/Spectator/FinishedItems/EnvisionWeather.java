@@ -124,7 +124,6 @@ public class EnvisionWeather extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionWeather) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionBarrier.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -135,7 +134,6 @@ public class EnvisionWeather extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionWeather) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionBarrier.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

@@ -47,7 +47,7 @@ public class Earthquake extends Item {
 
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
             if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 4 && tyrantSequence.useSpirituality(75)) {
-                shootLight(pPlayer);
+                useItem(pPlayer);
             }
             if (!pPlayer.getAbilities().instabuild)
                 pPlayer.getCooldowns().addCooldown(this, 60);
@@ -57,7 +57,7 @@ public class Earthquake extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    public static void shootLight(Player pPlayer) {
+    public static void useItem(Player pPlayer) {
         pPlayer.getPersistentData().putInt("sailorEarthquake", 200);
     }
 

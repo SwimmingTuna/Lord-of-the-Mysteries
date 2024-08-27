@@ -76,7 +76,6 @@ public class WindManipulationCushion extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationCushion) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationBlade.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
@@ -107,7 +106,6 @@ public class WindManipulationCushion extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationCushion) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationBlade.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

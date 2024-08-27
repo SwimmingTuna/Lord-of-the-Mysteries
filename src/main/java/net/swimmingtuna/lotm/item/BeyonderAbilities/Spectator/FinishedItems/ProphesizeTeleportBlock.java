@@ -113,7 +113,6 @@ public class ProphesizeTeleportBlock extends Item implements ReachChangeUUIDs {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportBlock) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeTeleportPlayer.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -124,7 +123,6 @@ public class ProphesizeTeleportBlock extends Item implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportBlock) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeTeleportPlayer.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
 }

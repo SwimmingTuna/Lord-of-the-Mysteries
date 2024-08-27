@@ -42,7 +42,7 @@ public class Awe extends Item {
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
                 if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(75)) {
                     AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                    applyPotionEffectToEntities(pPlayer, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
+                    applyPotionEffectToEntities(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 240);
                 }
@@ -51,7 +51,15 @@ public class Awe extends Item {
         return super.use(level, pPlayer, hand);
     }
 
-    private void applyPotionEffectToEntities(Player pPlayer, int sequence, int dir) {
+    public static void applyPotionEffectToEntities(Player pPlayer) {
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        int sequence = holder.getCurrentSequence();
+        pPlayer.sendSystemMessage(Component.literal("WORKING WORKING"));
+        pPlayer.sendSystemMessage(Component.literal("WORKING WORKING"));
+        pPlayer.sendSystemMessage(Component.literal("WORKING WORKING"));
+        pPlayer.sendSystemMessage(Component.literal("WORKING WORKING"));
+        int dir = (int) dreamIntoReality.getValue();
         double radius = (15.0 - sequence) * dir;
         float damage = (float) (12.0 - (sequence/2));
         int duration = 250 - (sequence * 15);

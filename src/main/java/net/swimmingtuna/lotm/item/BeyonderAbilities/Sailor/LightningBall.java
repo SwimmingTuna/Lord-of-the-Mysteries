@@ -13,7 +13,6 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.LightningBallEntity;
-import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.EntityInit;
 import virtuoel.pehkui.api.ScaleData;
@@ -40,7 +39,7 @@ public class LightningBall extends Item implements ReachChangeUUIDs {
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
                 if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 4 && sailorSequence.useSpirituality(300)) {
-                    summonLightningBall(pPlayer);
+                    useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 240);
                 }
@@ -49,7 +48,7 @@ public class LightningBall extends Item implements ReachChangeUUIDs {
         return super.use(level, pPlayer, hand);
     }
 
-    public static void summonLightningBall(Player pPlayer) {
+    public static void useItem(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
             LightningBallEntity lightningBall = new LightningBallEntity(EntityInit.LIGHTNING_BALL.get(), pPlayer.level(), true);
             lightningBall.setSummoned(true);

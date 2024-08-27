@@ -340,25 +340,4 @@ public class ModEvents implements ReachChangeUUIDs {
             }
         }
     }
-    private static final String REGISTERED_ABILITIES_KEY = "RegisteredAbilities";
-    private static void sendAbilityListMessage(Player player) {
-        CompoundTag persistentData = player.getPersistentData();
-        if (persistentData.contains(REGISTERED_ABILITIES_KEY, 9)) { // 9 is the ID for ListTag
-            ListTag registeredAbilities = persistentData.getList(REGISTERED_ABILITIES_KEY, 8); // 8 is the ID for StringTag
-            StringBuilder message = new StringBuilder("Registered Abilities: ");
-            for (int i = 0; i < registeredAbilities.size(); i++) {
-                message.append(registeredAbilities.getString(i));
-                if (i < registeredAbilities.size() - 1) {
-                    message.append(", ");
-                }
-            }
-            player.sendSystemMessage(Component.literal(message.toString()));
-        }
-    }
-    @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (!event.player.level().isClientSide && event.phase == TickEvent.Phase.END) {
-            sendAbilityListMessage(event.player);
-        }
-    }
 }

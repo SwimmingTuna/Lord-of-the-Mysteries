@@ -135,7 +135,6 @@ public class EnvisionLife extends Item {
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLife) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionKingdom.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
@@ -146,7 +145,6 @@ public class EnvisionLife extends Item {
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLife) {
             pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionKingdom.get()));
             heldItem.shrink(1);
-            event.setCanceled(true);
         }
     }
     @SubscribeEvent
