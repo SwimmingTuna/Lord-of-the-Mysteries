@@ -165,7 +165,7 @@ public class ProphesizeDemise extends Item implements ReachChangeUUIDs {
 
                             persistentTag.putInt("tickCounter", 0);
                         }
-                        if (Math.abs(prevX - currentX) > 0.006 || Math.abs(prevY - currentY) > 0.006 || Math.abs(prevZ - currentZ) > 0.006) {
+                        if (Math.abs(prevX - currentX) > 0.0023 || Math.abs(prevY - currentY) > 0.0023 || Math.abs(prevZ - currentZ) > 0.0023 ) { //movement check more accurate
                             demise++;
                             persistentTag.putInt("EntityDemise", demise);
                          } else { nonDemise++;

@@ -110,12 +110,14 @@ public class MindStorm extends Item implements ReachChangeUUIDs {
                 pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 120 / (int) dreamIntoReality.getValue());
                 event.setCanceled(true);
                 event.setCancellationResult(InteractionResult.SUCCESS);
+                pPlayer.sendSystemMessage(Component.literal("hi")); //test this
             }
             if (x && holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(250)) {
                 Placate.halfHarmfulEffects((LivingEntity) targetEntity);
                 pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 120 / (int) dreamIntoReality.getValue());
                 event.setCanceled(true);
                 event.setCancellationResult(InteractionResult.SUCCESS);
+                pPlayer.sendSystemMessage(Component.literal("hi")); //test this
             }
         });
     }

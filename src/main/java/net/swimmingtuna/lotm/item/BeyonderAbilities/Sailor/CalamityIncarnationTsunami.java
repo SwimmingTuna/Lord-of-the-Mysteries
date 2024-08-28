@@ -67,7 +67,7 @@ public class CalamityIncarnationTsunami extends Item implements ReachChangeUUIDs
                 tag.putInt("calamityIncarnationTsunami", x1 - 1);
                 Level level = pPlayer.level();
                 BlockPos playerPos = pPlayer.blockPosition();
-                double radius = 3.0;
+                double radius = 23.0;
                 double minRemovalRadius = 25.0;
                 double maxRemovalRadius = 30.0;
 

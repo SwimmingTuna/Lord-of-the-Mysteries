@@ -17,7 +17,7 @@ public class AcidRainParticle extends TextureSheetParticle {
         this.yd = yd;
         this.zd = zd;
         this.quadSize *= 1;
-        this.lifetime = 100;
+        this.lifetime = 300;
         this.setSpriteFromAge(spriteSet);
 
         this.rCol = 1f;

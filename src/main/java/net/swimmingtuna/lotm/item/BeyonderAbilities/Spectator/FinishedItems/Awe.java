@@ -55,10 +55,6 @@ public class Awe extends Item {
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         int sequence = holder.getCurrentSequence();
-        pPlayer.sendSystemMessage(Component.literal("WORKING WORKING"));
-        pPlayer.sendSystemMessage(Component.literal("WORKING WORKING"));
-        pPlayer.sendSystemMessage(Component.literal("WORKING WORKING"));
-        pPlayer.sendSystemMessage(Component.literal("WORKING WORKING"));
         int dir = (int) dreamIntoReality.getValue();
         double radius = (15.0 - sequence) * dir;
         float damage = (float) (12.0 - (sequence/2));

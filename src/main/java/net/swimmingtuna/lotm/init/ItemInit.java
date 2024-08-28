@@ -105,7 +105,7 @@ public class ItemInit {
     public static final RegistryObject<Item> MindStorm = ITEMS.register("mindstorm",
             () -> new MindStorm(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ConsciousnessStroll = ITEMS.register("consciousnessstroll",
-            () -> new ConciousnessStroll(new Item.Properties().stacksTo(1)));
+            () -> new ConsciousnessStroll(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DragonBreath = ITEMS.register("dragonbreath",
             () -> new DragonBreath(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PlagueStorm = ITEMS.register("plaguestorm",

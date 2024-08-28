@@ -5,11 +5,11 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -19,19 +19,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
-import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +39,6 @@ import java.util.List;
 public class ManipulateMovement extends Item implements ReachChangeUUIDs {
     private final LazyOptional<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = LazyOptional.of(() -> createAttributeMap());
 
-    boolean anyEntitesAffected = false;
 
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(@NotNull EquipmentSlot pSlot) {
@@ -60,7 +55,6 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
         attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BeyonderBlockReach, "Reach modifier", 300, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
         return attributeBuilder.build();
     }
-    private static CompoundTag targetPos;  // Store the target position for continuous effect
 
     public ManipulateMovement(Properties pProperties) {
         super(pProperties);
@@ -69,36 +63,36 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
     @Override
     public InteractionResult useOn(UseOnContext pContext) {
         Player pPlayer = pContext.getPlayer();
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        int sequence = holder.getCurrentSequence();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
             if (!holder.isSpectatorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-            if (holder.getSpirituality() < (int) 200/dreamIntoReality.getValue()) {
-                pPlayer.displayClientMessage(Component.literal("You need spirituality" + ((int) 200/ dreamIntoReality.getValue()) + " in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            if (holder.getSpirituality() < (int) 200 / dreamIntoReality.getValue()) {
+                pPlayer.displayClientMessage(Component.literal("You need spirituality" + ((int) 200 / dreamIntoReality.getValue()) + " in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
         }
-        CompoundTag pos = new CompoundTag();
-        pos.putInt("x", pContext.getClickedPos().getX());
-        pos.putInt("y", pContext.getClickedPos().getY());
-        pos.putInt("z", pContext.getClickedPos().getZ());
-        targetPos = pos;
-        Level level = pContext.getLevel();
+        if (holder.isSpectatorClass() && sequence <= 4 && holder.useSpirituality(200)) {
+            boolean x = pPlayer.getPersistentData().getBoolean("manipulateMovementBoolean");
+            if (!x) {
+                pPlayer.getPersistentData().putBoolean("manipulateMovementBoolean", true);
+                BlockPos pos = pContext.getClickedPos();
+                pPlayer.getPersistentData().putInt("manipulateMovementX", pos.getX());
+                pPlayer.getPersistentData().putInt("manipulateMovementY", pos.getY());
+                pPlayer.getPersistentData().putInt("manipulateMovementZ", pos.getZ());
+                pPlayer.displayClientMessage(Component.literal("Manipulate Movement Position is " + pos.getX() + " " + pos.getY() + " " + pos.getZ()).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
 
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 4 && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality((int) (200/ dreamIntoReality.getValue()))) {
-                    manipulateEntities(pPlayer, level, targetPos, spectatorSequence.getCurrentSequence());
-                    resetTargetPos(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 600);
-                    }
-                }
-            });
+            }
+            if (x) {
+                pPlayer.getPersistentData().remove("manipulateMovementX");
+                pPlayer.getPersistentData().remove("manipulateMovementY");
+                pPlayer.getPersistentData().remove("manipulateMovementZ");
+                pPlayer.getPersistentData().putBoolean("manipulateMovementBoolean", false);
+                pPlayer.displayClientMessage(Component.literal("Manipulate Movement Position Reset").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            }
         }
-
         return InteractionResult.SUCCESS;
     }
 
@@ -113,123 +107,55 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
 
-    private static void manipulateEntities(Player pPlayer, Level level, CompoundTag targetPos, int sequence) {
-        if (!pPlayer.level().isClientSide) {
-            for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(150))) {
-                CompoundTag tag = entity.getPersistentData();
-                if (entity != pPlayer && !entity.level().isClientSide) {
-                    if (entity.hasEffect(ModEffects.MANIPULATION.get()) || tag.getBoolean("spectatorManipulateMovement"))
-                        tag.putBoolean("spectatorManipulatingMovement", true);
-                    entity.removeEffect(ModEffects.MANIPULATION.get());
-                    double deltaX = targetPos.getInt("x") - entity.getX();
-                    double deltaY = targetPos.getInt("y") - entity.getY();
-                    double deltaZ = targetPos.getInt("z") - entity.getZ();
+    @SubscribeEvent
+    public static void tickEvent(TickEvent.PlayerTickEvent event) {
+        Player pPlayer = event.player;
+        Level level = pPlayer.level();
+        if (!level.isClientSide() && event.phase == TickEvent.Phase.END) {
+            for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
+                if (entity != pPlayer && entity.hasEffect(ModEffects.MANIPULATION.get()) && pPlayer.getPersistentData().getBoolean("manipulateMovementBoolean")) {
+                    int targetX = pPlayer.getPersistentData().getInt("manipulateMovementX");
+                    int targetY = pPlayer.getPersistentData().getInt("manipulateMovementY");
+                    int targetZ = pPlayer.getPersistentData().getInt("manipulateMovementZ");
 
-                    double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+                    if (entity.distanceToSqr(targetX, targetY, targetZ) <= 10) {
+                        entity.removeEffect(ModEffects.MANIPULATION.get());
+                        continue;
+                    }
 
-                    if (distance > 0) {
-                        double speed = 0.25;
-                        double normalizedX = deltaX / distance * speed;
-                        double normalizedY = deltaY / distance * speed;
-                        double normalizedZ = deltaZ / distance * speed;
+                    if (entity instanceof Player) {
+                        // Existing logic for players
+                        double entityX = entity.getX();
+                        double entityY = entity.getY();
+                        double entityZ = entity.getZ();
 
-                        BlockPos frontBlockPos = new BlockPos((int) (entity.getX() + normalizedX), (int) (entity.getY() + normalizedY), (int) (entity.getZ() + normalizedZ));
-                        BlockPos frontBlockPos1 = new BlockPos((int) (entity.getX() + normalizedX * 2), (int) (entity.getY() + normalizedY * 2), (int) (entity.getZ() + normalizedZ * 2));
+                        double dx = targetX - entityX;
+                        double dy = targetY - entityY;
+                        double dz = targetZ - entityZ;
 
-                        // Check if the path is clear
+                        double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                        if (distance > 0) {
+                            dx /= distance;
+                            dy /= distance;
+                            dz /= distance;
+                        }
+
+                        double speed = 3.0 / 20;
+
+                        BlockPos frontBlockPos = new BlockPos((int) (entityX + dx), (int) (entityY + dy), (int) (entityZ + dz));
+                        BlockPos frontBlockPos1 = new BlockPos((int) (entityX + dx * 2), (int) (entityY + dy * 2), (int) (entityZ + dz * 2));
                         boolean pathIsClear = level.getBlockState(frontBlockPos).isAir() && level.getBlockState(frontBlockPos1).isAir();
 
                         if (pathIsClear) {
-                            entity.setDeltaMovement(normalizedX, normalizedY, normalizedZ);
+                            entity.setDeltaMovement(dx * speed, Math.min(0, dy * speed), dz * speed);
                         } else {
-                            // Adjust the entity's motion upwards when obstructed
-                            entity.setDeltaMovement(normalizedX, 0.25, normalizedZ);
+                            entity.setDeltaMovement(dx * speed, 0.25, dz * speed);
                         }
-
-                        if (entity.position().distanceTo(new Vec3(targetPos.getInt("x"), targetPos.getInt("y"), targetPos.getInt("z"))) < 2.0) {
-                            entity.removeEffect(ModEffects.MANIPULATION.get());
-                            tag.putBoolean("spectatorManipulatingMovement", false);
-                        }
+                    } else if (entity instanceof Mob mob) {
+                        mob.getNavigation().moveTo(targetX, targetY, targetZ, 1.7);
                     }
                 }
             }
-        }
-    }
-    @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (!pPlayer.level().isClientSide && pPlayer.level().getGameTime() % 2 == 0) {
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (ManipulateMovement.targetPos != null) {
-                    int x = ManipulateMovement.targetPos.getInt("x");
-                    int y = ManipulateMovement.targetPos.getInt("y");
-                    int z = ManipulateMovement.targetPos.getInt("z");
-                    BlockPos targetBlockPos = new BlockPos(x, y, z);
-                    ManipulateMovement.manipulateEntities(pPlayer, pPlayer.level(), ManipulateMovement.targetPos, spectatorSequence.getCurrentSequence());
-                }
-            });
-        }
-    }
-
-    @SubscribeEvent
-    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateMovement) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ApplyManipulation.get()));
-            heldItem.shrink(1);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateMovement) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ApplyManipulation.get()));
-            heldItem.shrink(1);
-        }
-    }
-
-    private static CompoundTag anyEntityAffected = new CompoundTag();
-
-// ...
-
-    private static void resetTargetPos(Player pPlayer) {
-        if (!pPlayer.level().isClientSide) {
-            anyEntityAffected.putBoolean("affected", false);
-
-            for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
-                if (entity.hasEffect(ModEffects.MANIPULATION.get()) && !entity.level().isClientSide) {
-                    anyEntityAffected.putBoolean("affected", true);
-                    break;
-                }
-            }
-
-            if (!anyEntityAffected.getBoolean("affected")) {
-                targetPos = null;
-                pPlayer.sendSystemMessage(Component.literal("Manipulation Position Reset"));
-            }
-        }
-    }
-    @SubscribeEvent
-    public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
-        LivingEntity entity = event.getEntity();
-        CompoundTag tag = entity.getPersistentData();
-        int spectatorCounter = tag.getInt("spectatorManipulateMovementCounter");
-        if (tag.getBoolean("spectatorManipulateMovement")) {
-            tag.putInt("spectatorManipulateMovementCounter", spectatorCounter + 1);
-        } else
-            spectatorCounter = 0;
-            tag.putInt("spectatorManipulateMovementCounter", 0);
-
-        if (spectatorCounter >= 600) {
-            tag.putInt("spectatorManipulateMovementCounter", 0);
-            spectatorCounter = 0;
-            tag.putBoolean("spectatorManipulateMovement", false);
-
         }
     }
 }

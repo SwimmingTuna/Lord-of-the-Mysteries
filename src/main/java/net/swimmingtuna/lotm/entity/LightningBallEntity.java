@@ -122,7 +122,8 @@ public class LightningBallEntity extends AbstractHurtingProjectile {
             if (!this.level().isClientSide()) {
                 if (owner != null) {
                     if (this.tickCount <= 40) {
-                        this.teleportTo(owner.getX(), owner.getY() + (this.tickCount * 0.3), owner.getZ());
+                        ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
+                        this.teleportTo(owner.getX(), owner.getY() + scaleData.getScale() * 2, owner.getZ());
                     }
                     if (this.tickCount == 41 ) {
                         this.setDeltaMovement(owner.getLookAngle().scale(3.0f));
