@@ -184,6 +184,16 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
                     event.setCanceled(true);
                 }
             }
+            if (itemStack.getItem() instanceof LightningRedirection) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                if (holder != null && holder.isSailorClass() && holder.getCurrentSequence() <= 1) {
+                    for (Entity entity : pPlayer.level().getEntitiesOfClass(Entity.class, pPlayer.getBoundingBox().inflate(200))) {
+                        if (entity instanceof LightningEntity lightning) {
+                            lightning.setTargetEntity(targetEntity);
+                        }
+                    }
+                }
+            }
         }
     }
     @SubscribeEvent
@@ -206,6 +216,16 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
                         pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 8 + holder.getCurrentSequence());
                     }
                     event.setCanceled(true);
+                }
+            }
+            if (itemStack.getItem() instanceof LightningRedirection) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                if (holder != null && holder.isSailorClass() && holder.getCurrentSequence() <= 1) {
+                    for (Entity entity : pPlayer.level().getEntitiesOfClass(Entity.class, pPlayer.getBoundingBox().inflate(200))) {
+                        if (entity instanceof LightningEntity lightning) {
+                            lightning.setTargetPos(event.getPos().getCenter());
+                        }
+                    }
                 }
             }
         }

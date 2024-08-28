@@ -22,6 +22,8 @@ public class ItemInit {
             () -> new Earthquake(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> StarOfLightning = ITEMS.register("staroflightning",
             () -> new StarOfLightning(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LightningRedirection = ITEMS.register("lightningredirection",
+            () -> new LightningRedirection(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> RainEyes = ITEMS.register("raineyes",
             () -> new RainEyes(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SonicBoom = ITEMS.register("sonicboom",

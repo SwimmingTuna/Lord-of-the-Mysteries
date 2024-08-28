@@ -33,6 +33,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         stairsBlock(((StairBlock) BlockInit.LOTM_OAK_STAIRS.get()), blockTexture(Blocks.OAK_PLANKS));
         stairsBlock(((StairBlock) BlockInit.LOTM_QUARTZ_STAIRS.get()), blockTexture(Blocks.DARK_OAK_PLANKS));
 
+        //CARPET
 
         //SLAB BLOCKS
         slabBlock(((SlabBlock) BlockInit.LOTM_QUARTZ_SLAB.get()), blockTexture(Blocks.DARK_OAK_PLANKS), blockTexture(Blocks.DARK_OAK_PLANKS));

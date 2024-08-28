@@ -228,6 +228,9 @@ public class LOTM {
             event.accept(BlockInit.VISIONARY_ORANGE_STAINED_GLASS_PANE);
             event.accept(BlockInit.VISIONARY_PINK_STAINED_GLASS_PANE);
             event.accept(BlockInit.VISIONARY_MAGENTA_STAINED_GLASS_PANE);
+            event.accept(BlockInit.LOTM_LIGHT_BLUE_CARPET);
+            event.accept(BlockInit.LOTM_CHAIN);
+            event.accept(BlockInit.LOTM_LANTERN);
 
             event.accept(BlockInit.LOTM_DARKOAK_SLAB);
             event.accept(BlockInit.LOTM_QUARTZ_SLAB);
