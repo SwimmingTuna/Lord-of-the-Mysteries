@@ -193,6 +193,7 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
                         }
                     }
                 }
+                event.setCanceled(true);
             }
         }
     }
@@ -227,6 +228,7 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
                         }
                     }
                 }
+                event.setCanceled(true);
             }
         }
     }
