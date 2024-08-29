@@ -21,6 +21,8 @@ public class ClientEventsEntity {
         event.registerLayerDefinition(WindBladeModel.WIND_BLADE_LOCATION, WindBladeModel::createBodyLayer);
         event.registerLayerDefinition(WindCushionModel.WIND_CUSHION_LOCATION, WindCushionModel::createBodyLayer);
         event.registerLayerDefinition(StoneEntityModel.STONE_MODEL_LOCATION, StoneEntityModel::createBodyLayer);
+        event.registerLayerDefinition(EndstoneEntityModel.ENDSTONE_MODEL_LOCATION, EndstoneEntityModel::createBodyLayer);
+        event.registerLayerDefinition(NetherrackEntityModel.NETHERRACK_MODEL_LOCATION, NetherrackEntityModel::createBodyLayer);
         event.registerLayerDefinition(LavaEntityModel.LAVA_ENTITY_LOCATION, LavaEntityModel::createBodyLayer);
         event.registerLayerDefinition(LightningBallModel.LIGHTNING_BALL_LOCATION, LightningBallModel::createBodyLayer);
     }
@@ -28,6 +30,8 @@ public class ClientEventsEntity {
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(EntityInit.METEOR_ENTITY.get(), MeteorEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.CIRCLE_ENTITY.get(), CircleEntityRenderer::new);
+        event.registerEntityRenderer(EntityInit.ENDSTONE_ENTITY.get(), EndstoneEntityRenderer::new);
+        event.registerEntityRenderer(EntityInit.NETHERRACK_ENTITY.get(), NetherrackEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.STONE_ENTITY.get(), StoneEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.LIGHTNING_BALL.get(), LightningBallRenderer::new);
         event.registerEntityRenderer(EntityInit.LAVA_ENTITY.get(), LavaEntityRenderer::new);

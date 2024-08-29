@@ -9,6 +9,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.networking.packet.LeftClickC2S;
+import net.swimmingtuna.lotm.networking.packet.MatterAccelerationBlockC2S;
 import net.swimmingtuna.lotm.networking.packet.SpiritualityC2S;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.network.SimpleEntityCapabilityStatusPacket;
 
@@ -39,6 +40,11 @@ public class LOTMNetworkHandler {
                 .decoder(LeftClickC2S::new)
                 .encoder(LeftClickC2S::toByte)
                 .consumerMainThread(LeftClickC2S::handle)
+                .add();
+        INSTANCE.messageBuilder(MatterAccelerationBlockC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(MatterAccelerationBlockC2S::new)
+                .encoder(MatterAccelerationBlockC2S::toByte)
+                .consumerMainThread(MatterAccelerationBlockC2S::handle)
                 .add();
 
     }

@@ -71,6 +71,10 @@ repositories {
 }
 
 dependencies {
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.4.1")) {
+        jarJar.ranged(it, "[0.4.1,)")
+    }
     implementation fg.deobf("com.github.Virtuoel:Pehkui:${pehkui_version}")
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
@@ -92,7 +96,7 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
+    add sourceSets.main, "lotm.refmap.json"
 
     config 'lotm.mixins.json'
 

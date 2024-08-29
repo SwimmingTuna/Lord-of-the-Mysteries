@@ -43,6 +43,12 @@ public class EntityInit {
     public static final RegistryObject<EntityType<StoneEntity>> STONE_ENTITY =
             ENTITIES.register("stone", () -> EntityType.Builder.<StoneEntity>of(StoneEntity::new, MobCategory.MISC)
                     .sized(1.0f,1.0f).clientTrackingRange(4).updateInterval(20).build("stone"));
+    public static final RegistryObject<EntityType<NetherrackEntity>> NETHERRACK_ENTITY =
+            ENTITIES.register("netherrack", () -> EntityType.Builder.<NetherrackEntity>of(NetherrackEntity::new, MobCategory.MISC)
+                    .sized(1.0f,1.0f).clientTrackingRange(4).updateInterval(20).build("netherrack"));
+    public static final RegistryObject<EntityType<EndStoneEntity>> ENDSTONE_ENTITY =
+            ENTITIES.register("endstone", () -> EntityType.Builder.<EndStoneEntity>of(EndStoneEntity::new, MobCategory.MISC)
+                    .sized(1.0f,1.0f).clientTrackingRange(4).updateInterval(20).build("endstone"));
     public static final RegistryObject<EntityType<LavaEntity>> LAVA_ENTITY =
             ENTITIES.register("lava", () -> EntityType.Builder.<LavaEntity>of(LavaEntity::new, MobCategory.MISC)
                     .sized(1.0f,1.0f).clientTrackingRange(4).updateInterval(20).build("lava"));

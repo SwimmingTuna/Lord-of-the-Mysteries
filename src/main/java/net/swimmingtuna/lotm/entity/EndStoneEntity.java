@@ -26,23 +26,24 @@ import virtuoel.pehkui.api.ScaleTypes;
 
 import java.util.Random;
 
-public class StoneEntity extends AbstractArrow {
-    private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> DATA_STONE_XROT = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_STONE_YROT = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Float> DATA_STONE_STAYATX = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> DATA_STONE_STAYATY = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> DATA_STONE_STAYATZ = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Boolean> REMOVE_AND_HURT = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> SENT = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> SHOULDNT_DAMAGE = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.BOOLEAN);
+public class EndStoneEntity extends AbstractArrow {
+    private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_ENDSTONE_XROT = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_ENDSTONE_YROT = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_ENDSTONE_STAYATX = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_ENDSTONE_STAYATY = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_ENDSTONE_STAYATZ = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> REMOVE_AND_HURT = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SENT = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SHOULDNT_DAMAGE = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.BOOLEAN);
 
-    public StoneEntity(EntityType<? extends StoneEntity> pEntityType, Level pLevel) {
+
+    public EndStoneEntity(EntityType<? extends EndStoneEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public StoneEntity(Level pLevel, LivingEntity pShooter) {
-        super(EntityInit.STONE_ENTITY.get(), pShooter, pLevel);
+    public EndStoneEntity(Level pLevel, LivingEntity pShooter) {
+        super(EntityInit.ENDSTONE_ENTITY.get(), pShooter, pLevel);
     }
 
     @Override
@@ -52,29 +53,29 @@ public class StoneEntity extends AbstractArrow {
         this.entityData.define(REMOVE_AND_HURT, false);
         this.entityData.define(SENT, false);
         this.entityData.define(SHOULDNT_DAMAGE, false);
-        this.entityData.define(DATA_STONE_XROT, 0);
-        this.entityData.define(DATA_STONE_STAYATX, 0.0f);
-        this.entityData.define(DATA_STONE_STAYATY, 0.0f);
-        this.entityData.define(DATA_STONE_STAYATZ, 0.0f);
-        this.entityData.define(DATA_STONE_YROT, 0);
+        this.entityData.define(DATA_ENDSTONE_XROT, 0);
+        this.entityData.define(DATA_ENDSTONE_STAYATX, 0.0f);
+        this.entityData.define(DATA_ENDSTONE_STAYATY, 0.0f);
+        this.entityData.define(DATA_ENDSTONE_STAYATZ, 0.0f);
+        this.entityData.define(DATA_ENDSTONE_YROT, 0);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         if (compound.contains("xxRot")) {
-            this.setStoneXRot(compound.getInt("xxRot"));
+            this.setEndstoneXRot(compound.getInt("xxRot"));
         }
         if (compound.contains("yyRot")) {
-            this.setStoneYRot(compound.getInt("yyRot"));
+            this.setEndstoneYRot(compound.getInt("yyRot"));
         }
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("xxRot", this.getStoneXRot());
-        compound.putInt("yyRot", this.getStoneYRot());
+        compound.putInt("xxRot", this.getEndstoneXRot());
+        compound.putInt("yyRot", this.getEndstoneYRot());
     }
 
     @Override
@@ -84,7 +85,7 @@ public class StoneEntity extends AbstractArrow {
 
     @Override
     protected void onHitEntity(EntityHitResult pResult) {
-        if (this.level() != null && !this.level().isClientSide && !(pResult.getEntity() instanceof StoneEntity) && !(pResult.getEntity() instanceof LavaEntity) && !getShouldntDamage()) {
+        if (this.level() != null && !this.level().isClientSide() && !getShouldntDamage()) {
             Vec3 hitPos = pResult.getLocation();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
@@ -104,7 +105,7 @@ public class StoneEntity extends AbstractArrow {
             Random random = new Random();
             if (random.nextInt(10) == 1) {
                 this.level().broadcastEntityEvent(this, (byte) 3);
-                this.level().setBlock(blockPosition(), Blocks.STONE.defaultBlockState(), 3);
+                this.level().setBlock(blockPosition(), Blocks.END_STONE.defaultBlockState(), 3);
             }
             this.discard();
         }
@@ -123,8 +124,8 @@ public class StoneEntity extends AbstractArrow {
     @Override
     public void tick() {
         super.tick();
-        int xRot = this.getStoneXRot();
-        int yRot = this.getStoneXRot();
+        int xRot = this.getEndstoneXRot();
+        int yRot = this.getEndstoneXRot();
         this.setXRot(this.getXRot() + xRot);
         this.setYRot(this.getYRot() + yRot);
         this.xRotO = this.getXRot();
@@ -135,8 +136,7 @@ public class StoneEntity extends AbstractArrow {
         if (!this.level().isClientSide()) {
             if (getRemoveAndHurt()) {
                 if (!getSent() && this.getOwner() != null) {
-                    this.hurtMarked = true;
-                    this.setDeltaMovement(this.getOwner().getX() - this.getX() + getStoneStayAtX(), this.getOwner().getY() - this.getY() + getStoneStayAtY(), this.getOwner().getZ() - this.getZ() + getStoneStayAtX());
+                this.setDeltaMovement(this.getOwner().getX() - this.getX() + getEndstoneStayAtX(),this.getOwner().getY() - this.getY() + getEndstoneStayAtY(),this.getOwner().getZ() - this.getZ() + getEndstoneStayAtZ());
                 }
                 BlockPos entityPos = this.blockPosition();
                 for (int x = -2; x <= 2; x++) {
@@ -156,9 +156,9 @@ public class StoneEntity extends AbstractArrow {
                         }
                     }
                 }
-                for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(5))) {
+                for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(3))) {
                     if (entity != this.getOwner()) {
-                        entity.hurt(entity.damageSources().lightningBolt(), 10);
+                        this.level().explode(this, this.getX(), this.getY(), this.getZ(), 8, Level.ExplosionInteraction.TNT);
                     }
                 }
                 if (this.tickCount >= 480) {
@@ -169,45 +169,20 @@ public class StoneEntity extends AbstractArrow {
     }
 
 
-    public void setStoneXRot(int xRot) {
-        this.entityData.set(DATA_STONE_XROT, xRot);
+    public void setEndstoneXRot(int xRot) {
+        this.entityData.set(DATA_ENDSTONE_XROT, xRot);
     }
 
-    public void setStoneYRot(int yRot) {
-        this.entityData.set(DATA_STONE_YROT, yRot);
+    public void setEndstoneYRot(int yRot) {
+        this.entityData.set(DATA_ENDSTONE_YROT, yRot);
     }
 
-    public int getStoneXRot() {
-        return this.entityData.get(DATA_STONE_XROT);
+    public int getEndstoneXRot() {
+        return this.entityData.get(DATA_ENDSTONE_XROT);
     }
 
-    public float getStoneStayAtX() {
-        return this.entityData.get(DATA_STONE_STAYATX);
-    }
-
-    public float getStoneStayAtY() {
-        return this.entityData.get(DATA_STONE_STAYATY);
-    }
-
-    public float getStoneStayAtZ() {
-        return this.entityData.get(DATA_STONE_STAYATZ);
-    }
-
-    public void setStoneStayAtX(float stayAtX) {
-        this.entityData.set(DATA_STONE_STAYATX, stayAtX);
-    }
-
-    public void setStoneStayAtY(float stayAtY) {
-        this.entityData.set(DATA_STONE_STAYATY, stayAtY);
-    }
-
-    public void setStoneStayAtZ(float stayAtZ) {
-        this.entityData.set(DATA_STONE_STAYATZ, stayAtZ);
-    }
-
-
-    public int getStoneYRot() {
-        return this.entityData.get(DATA_STONE_YROT);
+    public int getEndstoneYRot() {
+        return this.entityData.get(DATA_ENDSTONE_YROT);
     }
 
     public void setRemoveAndHurt(boolean removeAndHurt) {
@@ -225,7 +200,6 @@ public class StoneEntity extends AbstractArrow {
     public boolean getSent() {
         return this.entityData.get(SENT);
     }
-
     public void setShouldntDamage(boolean shouldntDamage) {
         this.entityData.set(SHOULDNT_DAMAGE, shouldntDamage);
     }
@@ -233,9 +207,25 @@ public class StoneEntity extends AbstractArrow {
     public boolean getShouldntDamage() {
         return this.entityData.get(SHOULDNT_DAMAGE);
     }
+    public float getEndstoneStayAtX() {
+        return this.entityData.get(DATA_ENDSTONE_STAYATX);
+    }
+    public float getEndstoneStayAtY() {
+        return this.entityData.get(DATA_ENDSTONE_STAYATY);
+    }
+    public float getEndstoneStayAtZ() {
+        return this.entityData.get(DATA_ENDSTONE_STAYATZ);
+    }
+    public void setEndstoneStayAtX(float stayAtX) {
+        this.entityData.set(DATA_ENDSTONE_STAYATX, stayAtX);
+    }
+    public void setEndstoneStayAtY(float stayAtY) {
+        this.entityData.set(DATA_ENDSTONE_STAYATY, stayAtY);
+    }
+    public void setEndstoneStayAtZ(float stayAtZ) {
+        this.entityData.set(DATA_ENDSTONE_STAYATZ, stayAtZ);
+    }
     public void setTickCount(int tickCount) {
         this.tickCount = tickCount;
     }
-
-
 }

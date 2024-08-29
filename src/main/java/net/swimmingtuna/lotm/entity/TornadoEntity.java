@@ -40,6 +40,7 @@ public class TornadoEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Float> DATA_TORNADO_Z = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> RANDOM_MOVEMENT = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> PICK_UP_BLOCKS = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SUMMON_LIGHTNING = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.BOOLEAN);
 
 
     public TornadoEntity(EntityType<? extends TornadoEntity> pEntityType, Level pLevel) {
@@ -59,6 +60,7 @@ public class TornadoEntity extends AbstractHurtingProjectile {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_DANGEROUS, false);
+        this.entityData.define(SUMMON_LIGHTNING, false);
         this.entityData.define(DATA_LIFECOUNT, 300);
         this.entityData.define(DATA_TORNADO_RADIUS, 4);
         this.entityData.define(DATA_TORNADO_HEIGHT, 20);
@@ -77,6 +79,9 @@ public class TornadoEntity extends AbstractHurtingProjectile {
         }
         if (compound.contains("TornadoPickupBlocks")) {
             this.setTornadoPickup(compound.getBoolean("TornadoPickupBlocks"));
+        }
+        if (compound.contains("SummonLightning")) {
+            this.setTornadoLightning(compound.getBoolean("SummonLightning"));
         }
         if (compound.contains("TornadoRadius")) {
             this.setTornadoRadius(compound.getInt("TornadoRadius"));
@@ -110,11 +115,23 @@ public class TornadoEntity extends AbstractHurtingProjectile {
             pPlayer.level().addFreshEntity(tornado);
         }
     }
+    public static void summonCalamityTornado(Player pPlayer) {
+        if (!pPlayer.level().isClientSide()) {
+            TornadoEntity tornado = new TornadoEntity(pPlayer.level(), pPlayer, 0, 0, 0);
+            tornado.setTornadoHeight(100);
+            tornado.setTornadoRadius(25);
+            tornado.setTornadoLifecount(300);
+            tornado.setTornadoPickup(true);
+            pPlayer.level().addFreshEntity(tornado);
+        }
+    }
     public static void summonTyrantTornado(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
             TornadoEntity tornado = new TornadoEntity(pPlayer.level(), pPlayer, 0, 0, 0);
-            tornado.setTornadoHeight(300);
-            tornado.setTornadoRadius(200);
+            tornado.setTornadoHeight(200);
+            tornado.setTornadoLightning(true);
+            tornado.setTornadoRadius(75);
+            tornado.setTornadoLifecount(400);
             tornado.setTornadoXMov((float) pPlayer.getLookAngle().scale(0.5f).x());
             tornado.setTornadoYMov((float) pPlayer.getLookAngle().scale(0.5f).y());
             tornado.setTornadoZMov((float) pPlayer.getLookAngle().scale(0.5f).z());
@@ -293,21 +310,16 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                 if (this.tickCount >= getTornadoLifecount()) {
                     this.discard();
                 }
-                if (getTornadoHeight() >= 290) {
+                if (getTornadoLightning()) {
                     LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), this.level());
                     lightningEntity.setSpeed(20.0f);
                     lightningEntity.setDeltaMovement((Math.random() * 0.4) - 0.2, -4, (Math.random() * 0.4) - 0.2);
                     lightningEntity.setMaxLength(40);
                     lightningEntity.setNoUp(true);
-                    double x1 = this.getX() + ((Math.random() * 200) - 100);
+                    double x1 = this.getX() + ((Math.random() * getTornadoRadius()) - (double) getTornadoRadius() / 2);
                     double y1 = this.getY() + 200;
-                    double z1 = this.getZ() + ((Math.random() * 200) - 100);
+                    double z1 = this.getZ() + ((Math.random() * getTornadoRadius()) - (double) getTornadoRadius() / 2);
                     lightningEntity.teleportTo(x1, y1, z1);
-                    this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
-                    this.level().addFreshEntity(lightningEntity);
                     this.level().addFreshEntity(lightningEntity);
                     for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(getTornadoRadius() * 1.5))) {
                         if (entity != this.getOwner() && this.tickCount % 40 == 0) {
@@ -315,9 +327,11 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                         }
                     }
                 }
-                if (Objects.requireNonNull(this.getOwner()).getPersistentData().getInt("calamityIncarnationTornado") >= 0) {
-                    this.teleportTo(this.getOwner().getX(), this.getOwner().getY(), this.getOwner().getZ());
-                }
+            }
+        }
+        if (!this.level().isClientSide() && this.getOwner() != null) {
+            if (this.getOwner().getPersistentData().getInt("calamityIncarnationTornado") >= 1) {
+                this.teleportTo(this.getOwner().getX(),this.getOwner().getY() - 30,this.getOwner().getZ());
             }
         }
     }
@@ -387,5 +401,12 @@ public class TornadoEntity extends AbstractHurtingProjectile {
 
     public boolean getTornadoPickup() {
         return this.entityData.get(PICK_UP_BLOCKS);
+    }
+    public void setTornadoLightning(boolean summonLightning) {
+        this.entityData.set(SUMMON_LIGHTNING, summonLightning);
+    }
+
+    public boolean getTornadoLightning() {
+        return this.entityData.get(SUMMON_LIGHTNING);
     }
 }

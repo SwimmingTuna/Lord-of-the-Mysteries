@@ -31,7 +31,7 @@ public class CalamityIncarnationTornado extends Item implements ReachChangeUUIDs
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
                 if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 4 && sailorSequence.useSpirituality(300)) {
-                    TornadoEntity.summonTornado(pPlayer);
+                    TornadoEntity.summonCalamityTornado(pPlayer);
                     useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 240);

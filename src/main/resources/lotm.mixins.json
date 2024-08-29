@@ -2,7 +2,7 @@
   "required": true,
   "package": "net.swimmingtuna.lotm.mixin",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "${mod_id}.refmap.json",
+  "refmap": "lotm.refmap.json",
   "mixins": [
     "ClientUpdateStructureBlockUnlimit",
     "StructureBlockRenderMixin",

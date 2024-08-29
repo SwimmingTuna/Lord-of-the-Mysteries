@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.events;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -11,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -26,6 +28,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.entity.MeteorEntity;
 import net.swimmingtuna.lotm.events.custom_events.ModEventFactory;
 import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
@@ -50,6 +53,11 @@ public class ModEvents implements ReachChangeUUIDs {
             AttributeInstance nightmareAttribute = pPlayer.getAttribute(ModAttributes.NIGHTMARE.get());
             AttributeInstance armorInvisAttribute = pPlayer.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
             int nightmareTimer = tag.getInt("NightmareTimer");
+            int matterAccelerationBlockTimer = pPlayer.getPersistentData().getInt("matterAccelerationBlockTimer");
+            pPlayer.sendSystemMessage(Component.literal("value is " + matterAccelerationBlockTimer));
+            if (matterAccelerationBlockTimer >= 1) {
+                pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", matterAccelerationBlockTimer - 1);
+            }
 
             if (nightmareAttribute.getValue() >= 1) {
                 nightmareTimer++;
@@ -123,6 +131,40 @@ public class ModEvents implements ReachChangeUUIDs {
         LivingEntity entity = event.getEntity();
 
         if (!entity.level().isClientSide) {
+            int matterAceelrationEntities = entity.getPersistentData().getInt("matterAccelerationEntities");
+            if (matterAceelrationEntities >= 1) {
+                entity.getPersistentData().putInt("matterAccelerationEntities", matterAceelrationEntities - 1);
+                double movementX = Math.abs(entity.getDeltaMovement().x());
+                double movementY = Math.abs(entity.getDeltaMovement().y());
+                double movementZ = Math.abs(entity.getDeltaMovement().z());
+                if (movementX >= 6 || movementY >= 6 || movementZ >= 6) {
+                    BlockPos entityPos = entity.blockPosition();
+                    for (int x = -2; x <= 2; x++) {
+                        for (int y = -2; y <= 2; y++) {
+                            for (int z = -2; z <= 2; z++) {
+                                BlockPos pos = entityPos.offset(x, y, z);
+
+                                // Remove the block (replace with air)
+                                entity.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                            }
+                        }
+                    }
+                    for (LivingEntity entity1 : entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(5))) {
+                        if (entity1 != entity) {
+                            if (entity1 instanceof Player player) {
+                                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(player).orElse(null);
+                                if (holder != null) {
+                                    if (!holder.isSailorClass() && holder.getCurrentSequence() == 0) {
+                                        player.hurt(player.damageSources().lightningBolt(), 10);
+                                    }
+                                }
+                            } else {
+                                entity1.hurt(entity1.damageSources().lightningBolt(), 10);
+                            }
+                        }
+                    }
+                }
+            }
             int mentalPlagueTimer = entity.getPersistentData().getInt("MentalPlagueTimer");
             if (entity.hasEffect(ModEffects.MENTALPLAGUE.get())) {
                 mentalPlagueTimer++;
@@ -292,12 +334,41 @@ public class ModEvents implements ReachChangeUUIDs {
         if (projectile != null) {
             ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile);
             projectile = projectileEvent.getProjectile();
-
             Player player = (Player) projectileEvent.getOwner();
             if (projectile != null) {
                 if (!player.level().isClientSide()) {
                     ModEventFactory.onSailorShootProjectile(projectile);
                     if (!projectile.level().isClientSide()) {
+                        if (projectile.getPersistentData().getInt("matterAccelerationEntities") >= 10) {
+                            double movementX = Math.abs(projectile.getDeltaMovement().x());
+                            double movementY = Math.abs(projectile.getDeltaMovement().y());
+                            double movementZ = Math.abs(projectile.getDeltaMovement().z());
+                            if (movementX >= 6 || movementY >= 6 || movementZ >= 6) {
+                                BlockPos entityPos = projectile.blockPosition();
+                                for (int x = -2; x <= 2; x++) {
+                                    for (int y = -2; y <= 2; y++) {
+                                        for (int z = -2; z <= 2; z++) {
+                                            BlockPos pos = entityPos.offset(x, y, z);
+
+                                            // Remove the block (replace with air)
+                                            projectile.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                                        }
+                                    }
+                                }
+                                for (LivingEntity entity1 : projectile.level().getEntitiesOfClass(LivingEntity.class, projectile.getBoundingBox().inflate(5))) {
+                                        if (entity1 instanceof Player playerEntity) {
+                                            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(playerEntity).orElse(null);
+                                            if (holder != null) {
+                                                if (!holder.isSailorClass() && holder.getCurrentSequence() == 0) {
+                                                    playerEntity.hurt(playerEntity.damageSources().lightningBolt(), 10);
+                                                }
+                                            }
+                                        } else {
+                                            entity1.hurt(entity1.damageSources().lightningBolt(), 10);
+                                        }
+                                }
+                            }
+                        }
                         LivingEntity target = projectileEvent.getTarget(75, 0);
                         if (target != null) {
                             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(player).orElse(null);

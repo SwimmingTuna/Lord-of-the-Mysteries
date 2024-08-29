@@ -4,6 +4,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -14,9 +17,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.entity.MeteorEntity;
 import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.util.effect.ModEffects;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MatterAccelerationEntities extends Item implements ReachChangeUUIDs {
@@ -48,7 +53,13 @@ public class MatterAccelerationEntities extends Item implements ReachChangeUUIDs
         return super.use(level, pPlayer, hand);
     }
     public static void useItem(Player pPlayer) {
-
+        for (Entity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(300))) {
+            if (entity != pPlayer) {
+               entity.setDeltaMovement(entity.getDeltaMovement().x() * 10, entity.getDeltaMovement().y() * 10, entity.getDeltaMovement().z());
+               if (!(entity instanceof MeteorEntity) || !(entity instanceof TornadoEntity)) {
+               entity.getPersistentData().putInt("matterAccelerationEntities", 10);}
+            }
+        }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
@@ -56,7 +67,7 @@ public class MatterAccelerationEntities extends Item implements ReachChangeUUIDs
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationEntities) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MatterAccelerationBlocks.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MatterAccelerationSelf.get()));
             heldItem.shrink(1);
         }
     }
@@ -67,7 +78,7 @@ public class MatterAccelerationEntities extends Item implements ReachChangeUUIDs
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationEntities) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MatterAccelerationBlocks.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MatterAccelerationSelf.get()));
             heldItem.shrink(1);
         }
     }
