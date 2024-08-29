@@ -149,7 +149,7 @@ public class RoarEntity extends AbstractHurtingProjectile {
                 }
             }
 
-            if (this.tickCount >= 100) {
+            if (this.tickCount >= 75) {
                 this.discard();
             }
         }

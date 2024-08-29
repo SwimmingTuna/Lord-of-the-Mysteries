@@ -123,6 +123,7 @@ public class NetherrackEntity extends AbstractArrow {
     @Override
     public void tick() {
         super.tick();
+        this.setOldPosAndRot();
         int xRot = this.getNetherrackXRot();
         int yRot = this.getNetherrackXRot();
         this.setXRot(this.getXRot() + xRot);

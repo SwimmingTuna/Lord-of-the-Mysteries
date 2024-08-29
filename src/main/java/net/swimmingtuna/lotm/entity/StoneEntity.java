@@ -123,6 +123,7 @@ public class StoneEntity extends AbstractArrow {
     @Override
     public void tick() {
         super.tick();
+        this.setOldPosAndRot();
         int xRot = this.getStoneXRot();
         int yRot = this.getStoneXRot();
         this.setXRot(this.getXRot() + xRot);

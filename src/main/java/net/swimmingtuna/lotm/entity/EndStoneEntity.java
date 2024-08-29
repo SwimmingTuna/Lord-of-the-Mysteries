@@ -130,6 +130,7 @@ public class EndStoneEntity extends AbstractArrow {
         this.setYRot(this.getYRot() + yRot);
         this.xRotO = this.getXRot();
         this.yRotO = this.getYRot();
+        this.setOldPosAndRot();
         if (!this.level().isClientSide() && this.tickCount > 140 && !getRemoveAndHurt()) {
             this.discard();
         }
