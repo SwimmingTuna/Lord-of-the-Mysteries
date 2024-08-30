@@ -88,8 +88,7 @@ public class MatterAccelerationBlocks extends Item implements ReachChangeUUIDs {
                         stoneEntity.setSent(false);
                         stoneEntity.setPos(surfacePos.getX() + 0.5, surfacePos.getY() + 1, surfacePos.getZ() + 0.5);
                         stoneEntity.setShouldntDamage(true);
-                        stoneEntity.setStoneXRot(randomXRot);
-                        stoneEntity.setStoneYRot(randomYRot);
+
 
                         pPlayer.level().addFreshEntity(stoneEntity);
                     }

@@ -42,7 +42,7 @@ public class EntityInit {
                     .sized(1.0f,1.0f).build("circle"));
     public static final RegistryObject<EntityType<StoneEntity>> STONE_ENTITY =
             ENTITIES.register("stone", () -> EntityType.Builder.<StoneEntity>of(StoneEntity::new, MobCategory.MISC)
-                    .sized(1.0f,1.0f).clientTrackingRange(4).updateInterval(20).build("stone"));
+                    .sized(1.0f,1.0f).clientTrackingRange(64).updateInterval(1).build("stone"));
     public static final RegistryObject<EntityType<NetherrackEntity>> NETHERRACK_ENTITY =
             ENTITIES.register("netherrack", () -> EntityType.Builder.<NetherrackEntity>of(NetherrackEntity::new, MobCategory.MISC)
                     .sized(1.0f,1.0f).clientTrackingRange(4).updateInterval(20).build("netherrack"));

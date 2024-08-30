@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
+import net.swimmingtuna.lotm.commands.BeyonderClassArgument;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.core.PlayerCapability;
@@ -44,10 +45,6 @@ public class BeyonderHolder extends PlayerCapability {
         this.spirituality = 100;
         this.maxSpirituality = 100;
         this.spiritualityRegen = 1;
-        CompoundTag persistentData = player.getPersistentData();
-        if (persistentData.contains(REGISTERED_ABILITIES_KEY, 9)) {
-            persistentData.remove(REGISTERED_ABILITIES_KEY);
-        }
         updateTracking();
     }
     public void setClassAndSequence(BeyonderClass newClass, int sequence) {
@@ -58,10 +55,6 @@ public class BeyonderHolder extends PlayerCapability {
         spiritualityRegen = currentClass.spiritualityRegen().get(currentSequence);
         player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(currentClass.maxHealth().get(sequence));
         player.setHealth(player.getMaxHealth());
-        CompoundTag persistentData = player.getPersistentData();
-        if (persistentData.contains(REGISTERED_ABILITIES_KEY, 9)) {
-            persistentData.remove(REGISTERED_ABILITIES_KEY);
-        }
         updateTracking();
     }
 
@@ -204,6 +197,10 @@ public class BeyonderHolder extends PlayerCapability {
     }
     public boolean isSailorClass() {
         return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SAILOR.get());
+    }
+    public boolean isSailorClass1(Player pPlayer) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        return holder != null && holder.getCurrentClass() == BeyonderClassInit.SAILOR.get();
     }
     public boolean isApothecaryClass() {
         return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.APOTHECARY.get());

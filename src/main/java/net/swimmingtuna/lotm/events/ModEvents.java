@@ -54,7 +54,6 @@ public class ModEvents implements ReachChangeUUIDs {
             AttributeInstance armorInvisAttribute = pPlayer.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
             int nightmareTimer = tag.getInt("NightmareTimer");
             int matterAccelerationBlockTimer = pPlayer.getPersistentData().getInt("matterAccelerationBlockTimer");
-            pPlayer.sendSystemMessage(Component.literal("value is " + matterAccelerationBlockTimer));
             if (matterAccelerationBlockTimer >= 1) {
                 pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", matterAccelerationBlockTimer - 1);
             }
