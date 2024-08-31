@@ -147,17 +147,4 @@ public class EnvisionLife extends Item {
             heldItem.shrink(1);
         }
     }
-    @SubscribeEvent
-    public static void tickCounter(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (event.phase == TickEvent.Phase.START && !pPlayer.level().isClientSide()) {
-            int waitMakeLifeCounter = pPlayer.getPersistentData().getInt("waitMakeLifeTimer");
-            if (waitMakeLifeCounter >= 1) {
-                waitMakeLifeCounter++;}
-            if (waitMakeLifeCounter >= 600) {
-                pPlayer.getPersistentData().putInt("waitMakeLifeTimer", 0);
-                waitMakeLifeCounter = 0;
-            }
-        }
-    }
 }

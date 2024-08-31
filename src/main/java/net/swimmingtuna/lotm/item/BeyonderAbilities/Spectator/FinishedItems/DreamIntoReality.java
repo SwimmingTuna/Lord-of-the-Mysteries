@@ -99,7 +99,7 @@ public class DreamIntoReality extends Item {
             serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));}}
     }
 
-    private void stopFlying(Player pPlayer) {
+    public static void stopFlying(Player pPlayer) {
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         pPlayer.getPersistentData().putBoolean(CAN_FLY, false);
         Abilities playerAbilities = pPlayer.getAbilities();
@@ -119,35 +119,6 @@ public class DreamIntoReality extends Item {
         }
     }
 
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player) {
-            Player pPlayer = (Player) entity;
-            if (!pPlayer.level().isClientSide) {
-                boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
-
-                final int[] counterValue = {spiritualityUseCounter.get()};
-
-                if (canFly) {
-                    BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                        if (!pPlayer.getAbilities().instabuild) {
-                            if (spectatorSequence.getSpirituality() > 300) {
-                                counterValue[0]++;
-                                if (counterValue[0] >= 20) {
-                                    spectatorSequence.useSpirituality(301);
-                                    counterValue[0] = 0;
-                                }
-                            } else {
-                                stopFlying(pPlayer);
-                                counterValue[0] = 0;
-                            }
-                        }
-                    });
-                }
-                spiritualityUseCounter.set(counterValue[0]);
-            }
-        }
-        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
-    }
 
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
@@ -157,31 +128,5 @@ public class DreamIntoReality extends Item {
                     "Cooldown: 30 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
-    }
-    @SubscribeEvent
-    public static void tickEvent(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
-        if (!pPlayer.level().isClientSide) {
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (canFly) {
-                    if (spectatorSequence.getCurrentSequence() == 2) {
-                        pPlayer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 100, 2, false, false));
-                        pPlayer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 3, false, false));
-                        pPlayer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 100, 4, false, false));
-                    }
-                    if (spectatorSequence.getCurrentSequence() == 1) {
-                        pPlayer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 100, 3, false, false));
-                        pPlayer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 3, false, false));
-                        pPlayer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 100, 4, false, false));
-                    }
-                    if (spectatorSequence.getCurrentSequence() == 0) {
-                        pPlayer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 100, 3, false, false));
-                        pPlayer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 4, false, false));
-                        pPlayer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 100, 5, false, false));
-                    }
-                }
-            });
-        }
     }
 }

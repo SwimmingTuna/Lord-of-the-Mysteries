@@ -83,30 +83,30 @@ public class ExtremeColdness extends Item {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         if (event.phase == TickEvent.Phase.END && !pPlayer.level().isClientSide()) {
             CompoundTag tag = pPlayer.getPersistentData();
-            int x = tag.getInt("sailorExtremeColdness");
-            if (x >= 150 - (holder.getCurrentSequence()) * 20) {
+            int extremeColdness = tag.getInt("sailorExtremeColdness");
+            if (extremeColdness >= 150 - (holder.getCurrentSequence()) * 20) {
                 tag.putInt("sailorExtremeColdness", 0);
-                x = 0;
+                extremeColdness = 0;
             }
-            if (x >= 1) {
-                pPlayer.sendSystemMessage(Component.literal("x is " + x));
-                tag.putInt("sailorExtremeColdness", x + 1);
+            if (extremeColdness >= 1) {
+                pPlayer.sendSystemMessage(Component.literal("x is " + extremeColdness));
+                tag.putInt("sailorExtremeColdness", extremeColdness + 1);
 
-                AABB areaOfEffect = pPlayer.getBoundingBox().inflate(x);
+                AABB areaOfEffect = pPlayer.getBoundingBox().inflate(extremeColdness);
                 List<LivingEntity> entities = pPlayer.level().getEntitiesOfClass(LivingEntity.class, areaOfEffect);
                 for (LivingEntity entity : entities) {
                     if (entity != pPlayer) {
-                        int x1 = entity.getPersistentData().getInt("affectedBySailorExtremeColdness");
-                        entity.getPersistentData().putInt("affectedBySailorExtremeColdness", x1 + 1);
+                        int affectedBySailorExtremeColdness = entity.getPersistentData().getInt("affectedBySailorExtremeColdness");
+                        entity.getPersistentData().putInt("affectedBySailorExtremeColdness", affectedBySailorExtremeColdness + 1);
                         entity.setTicksFrozen(1);
                     }
                 }
                 List<Entity> entities1 = pPlayer.level().getEntitiesOfClass(Entity.class, areaOfEffect); //test thsi
                 for (Entity entity : entities1) {
                     if (!(entity instanceof LivingEntity)) {
-                        int x1 = entity.getPersistentData().getInt("affectedBySailorColdness");
-                        entity.getPersistentData().putInt("affectedBySailorColdness", x1 + 1);
-                        if (x1 == 10) {
+                        int affectedBySailorColdness = entity.getPersistentData().getInt("affectedBySailorColdness");
+                        entity.getPersistentData().putInt("affectedBySailorColdness", affectedBySailorColdness + 1);
+                        if (affectedBySailorColdness == 10) {
                             entity.setDeltaMovement(entity.getDeltaMovement().x() / 5, entity.getDeltaMovement().y() / 5, entity.getDeltaMovement().z() / 5);
                             entity.hurtMarked = true;
                             entity.getPersistentData().putInt("affectedBySailorColdness", 0);
@@ -116,7 +116,7 @@ public class ExtremeColdness extends Item {
 
                 // Additional part: Turn the top 3 surface blocks within radius into ice
                 BlockPos playerPos = pPlayer.blockPosition();
-                int radius = x; // Adjust the division factor as needed
+                int radius = extremeColdness; // Adjust the division factor as needed
                 int blocksToProcessPerTick = 2000;  // Adjust as needed
                 int processedBlocks = 0;
 
@@ -162,24 +162,24 @@ public class ExtremeColdness extends Item {
     public static void freezeTick2(LivingEvent.LivingTickEvent event) {
         LivingEntity entity = event.getEntity();
         CompoundTag tag = entity.getPersistentData();
-        int x = tag.getInt("affectedBySailorExtremeColdness");
+        int affectedBySailorExtremeColdness = tag.getInt("affectedBySailorExtremeColdness");
         if (!entity.level().isClientSide()) {
             if (entity instanceof Player pPlayer) {
                 pPlayer.setTicksFrozen(3);
             }
-            if (x == 5) {
+            if (affectedBySailorExtremeColdness == 5) {
                 entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1,false,false));
             }
-            if (x == 10) {
+            if (affectedBySailorExtremeColdness == 10) {
                 entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2,false,false));
             }
-            if (x == 15) {
+            if (affectedBySailorExtremeColdness == 15) {
                 entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 3,false,false));
             }
-            if (x >= 20) {
+            if (affectedBySailorExtremeColdness >= 20) {
                 entity.addEffect(new MobEffectInstance(ModEffects.AWE.get(), 100, 1,false,false));
                 tag.putInt("affectedBySailorExtremeColdness", 0);
-                x = 0;
+                affectedBySailorExtremeColdness = 0;
                 entity.hurt(entity.damageSources().freeze(), 30);
             }
         }

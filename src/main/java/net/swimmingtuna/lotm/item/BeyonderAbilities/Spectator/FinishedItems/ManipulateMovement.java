@@ -108,54 +108,55 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
     }
 
     @SubscribeEvent
-    public static void tickEvent(TickEvent.PlayerTickEvent event) {
+    public static void tickEvent(TickEvent.PlayerTickEvent event) { //ADD THIS TO MOD EVENTS AND CHANGE LOGIC SO THAT IT ONLY WORKS UNDER CERTAIN CONDITIONS TO AVOID LAG
         Player pPlayer = event.player;
         Level level = pPlayer.level();
         if (!level.isClientSide() && event.phase == TickEvent.Phase.END) {
-            for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
-                if (entity != pPlayer && entity.hasEffect(ModEffects.MANIPULATION.get()) && pPlayer.getPersistentData().getBoolean("manipulateMovementBoolean")) {
-                    int targetX = pPlayer.getPersistentData().getInt("manipulateMovementX");
-                    int targetY = pPlayer.getPersistentData().getInt("manipulateMovementY");
-                    int targetZ = pPlayer.getPersistentData().getInt("manipulateMovementZ");
+            if (pPlayer.getPersistentData().getBoolean("manipulateMovementBoolean"))
+                for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
+                    if (entity != pPlayer && entity.hasEffect(ModEffects.MANIPULATION.get())) {
+                        int targetX = pPlayer.getPersistentData().getInt("manipulateMovementX");
+                        int targetY = pPlayer.getPersistentData().getInt("manipulateMovementY");
+                        int targetZ = pPlayer.getPersistentData().getInt("manipulateMovementZ");
 
-                    if (entity.distanceToSqr(targetX, targetY, targetZ) <= 10) {
-                        entity.removeEffect(ModEffects.MANIPULATION.get());
-                        continue;
-                    }
-
-                    if (entity instanceof Player) {
-                        // Existing logic for players
-                        double entityX = entity.getX();
-                        double entityY = entity.getY();
-                        double entityZ = entity.getZ();
-
-                        double dx = targetX - entityX;
-                        double dy = targetY - entityY;
-                        double dz = targetZ - entityZ;
-
-                        double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                        if (distance > 0) {
-                            dx /= distance;
-                            dy /= distance;
-                            dz /= distance;
+                        if (entity.distanceToSqr(targetX, targetY, targetZ) <= 10) {
+                            entity.removeEffect(ModEffects.MANIPULATION.get());
+                            continue;
                         }
 
-                        double speed = 3.0 / 20;
+                        if (entity instanceof Player) {
+                            // Existing logic for players
+                            double entityX = entity.getX();
+                            double entityY = entity.getY();
+                            double entityZ = entity.getZ();
 
-                        BlockPos frontBlockPos = new BlockPos((int) (entityX + dx), (int) (entityY + dy), (int) (entityZ + dz));
-                        BlockPos frontBlockPos1 = new BlockPos((int) (entityX + dx * 2), (int) (entityY + dy * 2), (int) (entityZ + dz * 2));
-                        boolean pathIsClear = level.getBlockState(frontBlockPos).isAir() && level.getBlockState(frontBlockPos1).isAir();
+                            double dx = targetX - entityX;
+                            double dy = targetY - entityY;
+                            double dz = targetZ - entityZ;
 
-                        if (pathIsClear) {
-                            entity.setDeltaMovement(dx * speed, Math.min(0, dy * speed), dz * speed);
-                        } else {
-                            entity.setDeltaMovement(dx * speed, 0.25, dz * speed);
+                            double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                            if (distance > 0) {
+                                dx /= distance;
+                                dy /= distance;
+                                dz /= distance;
+                            }
+
+                            double speed = 3.0 / 20;
+
+                            BlockPos frontBlockPos = new BlockPos((int) (entityX + dx), (int) (entityY + dy), (int) (entityZ + dz));
+                            BlockPos frontBlockPos1 = new BlockPos((int) (entityX + dx * 2), (int) (entityY + dy * 2), (int) (entityZ + dz * 2));
+                            boolean pathIsClear = level.getBlockState(frontBlockPos).isAir() && level.getBlockState(frontBlockPos1).isAir();
+
+                            if (pathIsClear) {
+                                entity.setDeltaMovement(dx * speed, Math.min(0, dy * speed), dz * speed);
+                            } else {
+                                entity.setDeltaMovement(dx * speed, 0.25, dz * speed);
+                            }
+                        } else if (entity instanceof Mob mob) {
+                            mob.getNavigation().moveTo(targetX, targetY, targetZ, 1.7);
                         }
-                    } else if (entity instanceof Mob mob) {
-                        mob.getNavigation().moveTo(targetX, targetY, targetZ, 1.7);
                     }
                 }
-            }
         }
     }
 }

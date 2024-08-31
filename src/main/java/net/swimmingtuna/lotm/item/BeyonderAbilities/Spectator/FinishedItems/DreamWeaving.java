@@ -267,18 +267,7 @@ public class DreamWeaving extends Item implements ReachChangeUUIDs {
             ravager.setTarget(entity);
         }
     }
-    @SubscribeEvent
-    public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
-        LivingEntity entity = event.getEntity();
-        AttributeInstance maxHP = entity.getAttribute(Attributes.MAX_HEALTH);
-        if (!(entity instanceof Player) && maxHP.getBaseValue() == 551) {
-            int deathTimer = entity.getPersistentData().getInt("DeathTimer");
-            entity.getPersistentData().putInt("DeathTimer", deathTimer + 1);
-            if (deathTimer >= 300) {
-                entity.remove(Entity.RemovalReason.KILLED);
-            }
-        }
-    }
+
 
     private static void spawnEntityInRadius(Mob entity, Level level, double x, double y, double z) {
         Random random = new Random();

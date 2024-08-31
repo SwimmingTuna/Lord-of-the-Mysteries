@@ -198,10 +198,6 @@ public class BeyonderHolder extends PlayerCapability {
     public boolean isSailorClass() {
         return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SAILOR.get());
     }
-    public boolean isSailorClass1(Player pPlayer) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-        return holder != null && holder.getCurrentClass() == BeyonderClassInit.SAILOR.get();
-    }
     public boolean isApothecaryClass() {
         return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.APOTHECARY.get());
     }

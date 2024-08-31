@@ -129,25 +129,7 @@ public class EnvisionBarrier extends Item {
     private List<BlockPos> replacedAirBlocks = new ArrayList<>();
     private BlockPos domeCenter = null;
 
-    @SubscribeEvent
-    public static void barrierRadius(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (!event.player.level().isClientSide && event.phase == TickEvent.Phase.START) {
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (spectatorSequence.getCurrentSequence() == 0) {
-                    int barrierRadius = pPlayer.getPersistentData().getInt("BarrierRadius");
-                    if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof EnvisionBarrier) {
-                        barrierRadius++;
-                        pPlayer.sendSystemMessage(Component.literal("Barrier Radius " + barrierRadius));
-                    }
-                    if (barrierRadius > 100) {
-                        barrierRadius = 0;
-                    }
-                    pPlayer.getPersistentData().putInt("BarrierRadius", barrierRadius);
-                }
-            });
-        }
-    }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player pPlayer = event.getEntity();

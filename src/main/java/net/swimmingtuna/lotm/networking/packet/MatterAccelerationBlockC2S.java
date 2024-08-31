@@ -39,7 +39,7 @@ public class MatterAccelerationBlockC2S {
         context.enqueueWork(() -> {
            int x = pPlayer.getPersistentData().getInt("matterAccelerationBlockTimer");
            if (x >= 1) {
-               Vec3 lookDirection = pPlayer.getLookAngle().normalize().scale(7);
+               Vec3 lookDirection = pPlayer.getLookAngle().normalize().scale(20);
                if (pPlayer.level().dimension() == Level.OVERWORLD) {
                    StoneEntity stoneEntity = pPlayer.level().getEntitiesOfClass(StoneEntity.class, pPlayer.getBoundingBox().inflate(10))
                            .stream()

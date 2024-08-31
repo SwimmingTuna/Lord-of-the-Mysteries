@@ -55,7 +55,7 @@ public class WindManipulationCushion extends Item {
     }
 
     public static void cushion(Player pPlayer) {
-        pPlayer.getPersistentData().putInt("windManipulationCushion", 140);
+        pPlayer.getPersistentData().putInt("windManipulationCushion", 100);
     }
 
     @Override

@@ -67,24 +67,4 @@ public class ConsciousnessStroll extends Item {
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
-
-    @SubscribeEvent
-    public static void tickCounter(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (event.phase == TickEvent.Phase.START && !pPlayer.level().isClientSide()) {
-            CompoundTag tag = pPlayer.getPersistentData();
-            int strollCounter = tag.getInt("consciousnessStrollActivated");
-            int x = tag.getInt("consciousnessStrollActivatedX");
-            int y = tag.getInt("consciousnessStrollActivatedY");
-            int z = tag.getInt("consciousnessStrollActivatedZ");
-            if (strollCounter >= 1) {
-                tag.putInt("consciousnessStrollActivated", strollCounter - 1);
-                ((ServerPlayer) pPlayer).setGameMode(GameType.SPECTATOR);
-            }
-            if (strollCounter == 1) {
-                pPlayer.teleportTo(x,y,z);
-                ((ServerPlayer) pPlayer).setGameMode(GameType.SURVIVAL);
-            }
-        }
-    }
 }
