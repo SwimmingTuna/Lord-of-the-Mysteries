@@ -65,23 +65,4 @@ public class RainEyes extends Item implements ReachChangeUUIDs {
             }
         }
     }
-    @SubscribeEvent
-    public static void torrentialDownpourTicks(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-        int sequence = holder.getCurrentSequence();
-        if (event.phase == TickEvent.Phase.END && !pPlayer.level().isClientSide() && holder.isSailorClass() && sequence <= 3 && pPlayer.tickCount % 100 == 0 && pPlayer.getPersistentData().getBoolean("torrentialDownpour")) {
-            if (pPlayer.level().isRaining()) {
-                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(500))) {
-                    if (entity != pPlayer) {
-                        if (entity instanceof Player player) {
-                            if (player.isInWaterOrRain()) {
-                                pPlayer.sendSystemMessage(Component.literal(player.getName().getString() + "'s location is " + player.getX() + ", " +player.getY() + ", " + player.getZ()));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }

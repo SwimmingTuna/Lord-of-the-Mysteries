@@ -11,10 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.blocks.glass_pane.*;
-import net.swimmingtuna.lotm.blocks.spectator_blocks.CathedralBlock;
-import net.swimmingtuna.lotm.blocks.spectator_blocks.MindscapeBlock;
-import net.swimmingtuna.lotm.blocks.spectator_blocks.MindscapeOutsideBlock;
-import net.swimmingtuna.lotm.blocks.spectator_blocks.VisionaryBB;
+import net.swimmingtuna.lotm.blocks.spectator_blocks.*;
 
 import java.util.function.Supplier;
 
@@ -24,6 +21,12 @@ public class BlockInit {
 
     public static final RegistryObject<Block> VISIONARY_BARRIER_BLOCK = registerBlock("visionary_barrier_block",
             () -> new VisionaryBB(BlockBehaviour.Properties.copy(Blocks.GLASS).noLootTable()));
+    public static final RegistryObject<Block> LOTM_BLUE_STAINED_GLASS = registerBlock("lotm_blue_stained_glass",
+            () -> new BlueStainedGlass(BlockBehaviour.Properties.copy(Blocks.GLASS).noLootTable()));
+    public static final RegistryObject<Block> LOTM_WHITE_STAINED_GLASS = registerBlock("lotm_white_stained_glass",
+            () -> new WhiteStainedGlass(BlockBehaviour.Properties.copy(Blocks.GLASS).noLootTable()));
+    public static final RegistryObject<Block> LOTM_LIGHT_BLUE_STAINED_GLASS = registerBlock("lotm_light_blue_stained_glass",
+            () -> new LightBlueStainedGlass(BlockBehaviour.Properties.copy(Blocks.GLASS).noLootTable()));
 
     public static final RegistryObject<Block> CATHEDRAL_BLOCK = registerBlock("cathedral_block",
             () -> new CathedralBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
@@ -108,7 +111,7 @@ public class BlockInit {
 
 
     public static final RegistryObject<Block> LOTM_LIGHT_BLUE_CARPET = registerBlock("lotm_light_blue_carpet",
-            () -> new CarpetBlock(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_BLOCK.get()).sound(SoundType.WOOL)));
+            () -> new WoolCarpetBlock(DyeColor.LIGHT_BLUE, BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_BLOCK.get())));
 
 
     public static final RegistryObject<Block> LOTM_QUARTZ_STAIRS = registerBlock("lotm_quartz_stairs",
@@ -137,6 +140,8 @@ public class BlockInit {
 
     public static final RegistryObject<Block> VISIONARY_BLACK_STAINED_GLASS_PANE = registerBlock("lotm_black_stained_glass_pane",
             () -> new LOTMBlackStainedGlassPane(DyeColor.BLACK, BlockBehaviour.Properties.copy(Blocks.GLASS).noLootTable()));
+    public static final RegistryObject<Block> VISIONARY_GLASS_PANE = registerBlock("lotm_glass_pane",
+            () -> new LOTMGlassPane(DyeColor.WHITE, BlockBehaviour.Properties.copy(Blocks.GLASS).noLootTable()));
     public static final RegistryObject<Block> VISIONARY_WHITE_STAINED_GLASS_PANE = registerBlock("lotm_white_stained_glass_pane",
             () -> new LOTMWhiteStainedGlassPane(DyeColor.WHITE, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
     public static final RegistryObject<Block> VISIONARY_LIGHT_GRAY_STAINED_GLASS_PANE = registerBlock("lotm_light_gray_stained_glass_pane",

@@ -78,10 +78,10 @@ public class AqueousLightDrown extends Item {
     public static void lightTickEvent(LivingEvent.LivingTickEvent event) {
         LivingEntity entity = event.getEntity();
         Level level = entity.level();
-        CompoundTag compoundTag = entity.getPersistentData();
+        CompoundTag tag = entity.getPersistentData();
         if (!entity.level().isClientSide()) {
             BlockPos headPos = BlockPos.containing(entity.getEyePosition());
-            int aqueousLight = compoundTag.getInt("lightDrowning");
+            int aqueousLight = tag.getInt("lightDrowning");
             if (aqueousLight == 1) {
                 entity.setAirSupply(0);
             }
@@ -89,7 +89,7 @@ public class AqueousLightDrown extends Item {
                 if (entity.getDeltaMovement().y <= 0.2) {
                     entity.setDeltaMovement(entity.getDeltaMovement().x, entity.getDeltaMovement().y - 0.01, entity.getDeltaMovement().z);
                 }
-                compoundTag.putInt("lightDrowning", aqueousLight + 1);
+                tag.putInt("lightDrowning", aqueousLight + 1);
                 if (level.getBlockState(headPos).is(Blocks.AIR)) {
                     level.setBlockAndUpdate(headPos, Blocks.WATER.defaultBlockState());
                 }
@@ -108,7 +108,7 @@ public class AqueousLightDrown extends Item {
             }
             if (aqueousLight >= 200) {
                 aqueousLight = 0;
-                compoundTag.putInt("lightDrowning", 0);
+                tag.putInt("lightDrowning", 0);
                 for (int x = -3; x <= 3; x++) {
                     for (int y = -3; y <= 3; y++) {
                         for (int z = -3; z <= 3; z++) {

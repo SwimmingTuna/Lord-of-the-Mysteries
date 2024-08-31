@@ -1,8 +1,6 @@
 package net.swimmingtuna.lotm.networking.packet;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -12,10 +10,7 @@ import net.swimmingtuna.lotm.entity.EndStoneEntity;
 import net.swimmingtuna.lotm.entity.NetherrackEntity;
 import net.swimmingtuna.lotm.entity.StoneEntity;
 import net.swimmingtuna.lotm.init.ItemInit;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.LightningStorm;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.MatterAccelerationBlocks;
-import net.swimmingtuna.lotm.util.BeyonderUtil;
 
 import java.util.Comparator;
 import java.util.function.Supplier;

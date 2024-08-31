@@ -42,6 +42,5 @@ public class CalamityIncarnationTornado extends Item implements ReachChangeUUIDs
     }
     public static void useItem(Player pPlayer) {
         pPlayer.getPersistentData().putInt("calamityIncarnationTornado", 300);
-
     }
 }

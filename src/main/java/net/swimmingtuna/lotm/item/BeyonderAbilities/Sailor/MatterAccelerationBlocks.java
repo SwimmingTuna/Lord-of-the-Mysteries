@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -10,9 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,7 +19,6 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.EndStoneEntity;
 import net.swimmingtuna.lotm.entity.NetherrackEntity;
 import net.swimmingtuna.lotm.entity.StoneEntity;
-import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ItemInit;
@@ -30,7 +26,6 @@ import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.networking.packet.MatterAccelerationBlockC2S;
 
 import java.util.Comparator;
-import java.util.Random;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MatterAccelerationBlocks extends Item implements ReachChangeUUIDs {

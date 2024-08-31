@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.entity;
 
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Position;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;

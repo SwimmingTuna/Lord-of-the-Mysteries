@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +20,6 @@ import net.swimmingtuna.lotm.entity.MeteorEntity;
 import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.ItemInit;
-import net.swimmingtuna.lotm.util.effect.ModEffects;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MatterAccelerationEntities extends Item implements ReachChangeUUIDs {
@@ -56,6 +54,7 @@ public class MatterAccelerationEntities extends Item implements ReachChangeUUIDs
         for (Entity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(300))) {
             if (entity != pPlayer) {
                entity.setDeltaMovement(entity.getDeltaMovement().x() * 10, entity.getDeltaMovement().y() * 10, entity.getDeltaMovement().z());
+               entity.hurtMarked = true;
                if (!(entity instanceof MeteorEntity) || !(entity instanceof TornadoEntity)) {
                entity.getPersistentData().putInt("matterAccelerationEntities", 10);}
             }

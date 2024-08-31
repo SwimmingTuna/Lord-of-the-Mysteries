@@ -13,8 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
@@ -88,24 +86,6 @@ public class Tsunami extends Item {
                     "Cooldown: 60 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
-    }
-
-    @SubscribeEvent
-    public static void tsunamiTick(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
-            CompoundTag tag = pPlayer.getPersistentData();
-            int tsunami = tag.getInt("sailorTsunami");
-            if (tsunami >= 1) {
-                tag.putInt("sailorTsunami", tsunami - 5);
-                summonTsunami(pPlayer);
-            } else {
-                tag.remove("sailorTsunamiDirection");
-                tag.remove("sailorTsunamiX");
-                tag.remove("sailorTsunamiY");
-                tag.remove("sailorTsunamiZ");
-            }
-        }
     }
 
     public static void summonTsunami(Player pPlayer) {

@@ -61,37 +61,6 @@ public class StarOfLightning extends Item implements ReachChangeUUIDs {
         }
     }
 
-    @SubscribeEvent
-    public static void lightningThing(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
-            CompoundTag tag = pPlayer.getPersistentData();
-            AttributeInstance attributeInstance = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
-            int x = tag.getInt("sailorLightningStar");
-            double y = (Math.random() * 2 - 1);
-            if (x >= 2) {
-                attributeInstance.setBaseValue(1.0f);
-                tag.putInt("sailorLightningStar", x - 1);
-            }
-            if (x == 1) {
-                tag.putInt("sailorLightningStar", 0);
-                attributeInstance.setBaseValue(0);
-                for (int i = 0; i < 500; i++) {
-                    LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
-                    lightningEntity.setSpeed(50);
-                    double x1 = (Math.random() * 2 - 1);
-                    double y1 = (Math.random() * 2 - 1); // You might want different random values for y and z
-                    double z1 = (Math.random() * 2 - 1);
-                    lightningEntity.setDeltaMovement(x1, y1, z1);
-                    lightningEntity.setMaxLength(10);
-                    lightningEntity.setOwner(pPlayer);
-                    lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
-                    pPlayer.level().addFreshEntity(lightningEntity);
-                }
-            }
-        }
-    }
-
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
         if (entity instanceof Player pPlayer) {
             AttributeInstance attributeInstance = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER4.get());

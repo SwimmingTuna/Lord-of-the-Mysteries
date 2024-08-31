@@ -13,7 +13,6 @@ import net.minecraft.util.Mth;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.entity.EndStoneEntity;
 import net.swimmingtuna.lotm.entity.Model.EndstoneEntityModel;
-import net.swimmingtuna.lotm.entity.Model.StoneEntityModel;
 
 
 public class EndstoneEntityRenderer extends EntityRenderer<EndStoneEntity> {

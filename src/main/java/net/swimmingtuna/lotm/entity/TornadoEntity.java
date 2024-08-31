@@ -27,7 +27,6 @@ import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 public class TornadoEntity extends AbstractHurtingProjectile {

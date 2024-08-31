@@ -40,33 +40,6 @@ public class MatterAccelerationSelf extends Item {
         super(pProperties);
     }
 
-    @SubscribeEvent
-    public static void blinkTimer(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        Style style = BeyonderUtil.getStyle(pPlayer);
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-        if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END && holder.getCurrentSequence() == 0) {
-            int matterAccelerationDistance = pPlayer.getPersistentData().getInt("tyrantSelfAcceleration");
-            int blinkDistance = pPlayer.getPersistentData().getInt("BlinkDistance");
-            if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof MatterAccelerationSelf && holder.isSailorClass()) {
-                pPlayer.getPersistentData().putInt("tyrantSelfAcceleration", matterAccelerationDistance + 50);
-                pPlayer.sendSystemMessage(Component.literal("Matter Acceleration Distance is " + matterAccelerationDistance).withStyle(style));
-            }
-            if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLocationBlink && holder.isSpectatorClass()) {
-                pPlayer.getPersistentData().putInt("BlinkDistance", blinkDistance + 5);
-                pPlayer.sendSystemMessage(Component.literal("Blink Distance is " + blinkDistance).withStyle(style));
-            }
-            if (matterAccelerationDistance >= 1000) {
-                matterAccelerationDistance = 0;
-                pPlayer.getPersistentData().putInt("tyrantSelfAcceleration", 0);
-            }
-            if (blinkDistance > 200) {
-                blinkDistance = 0;
-                pPlayer.getPersistentData().putInt("BlinkDistance", 0);
-            }
-        }
-    }
-
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {

@@ -100,46 +100,4 @@ public class WindManipulationSense extends Item {
             heldItem.shrink(1);
         }
     }
-    @SubscribeEvent
-    public static void windGlowingTick(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (!pPlayer.level().isClientSide && event.phase == TickEvent.Phase.END) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            CompoundTag tag = pPlayer.getPersistentData();
-            boolean x = tag.getBoolean("windManipulationSense");
-            if (x) {
-                double radius = 100 - (holder.getCurrentSequence() * 10);
-                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-                    if (entity != pPlayer && entity instanceof Player player) {
-                        Vec3 directionToPlayer = entity.position().subtract(pPlayer.position()).normalize();
-                        Vec3 lookAngle = pPlayer.getLookAngle();
-                        double horizontalAngle = Math.atan2(directionToPlayer.x, directionToPlayer.z) - Math.atan2(lookAngle.x, lookAngle.z);
-
-                        String horizontalDirection;
-                        if (Math.abs(horizontalAngle) < Math.PI / 4) {
-                            horizontalDirection = "in front of";
-                        } else if (horizontalAngle < -Math.PI * 3 / 4 || horizontalAngle > Math.PI * 3 / 4) {
-                            horizontalDirection = "behind";
-                        } else if (horizontalAngle < 0) {
-                            horizontalDirection = "to the right of";
-                        } else {
-                            horizontalDirection = "to the left of";
-                        }
-
-                        String verticalDirection;
-                        if (directionToPlayer.y > 0.2) {
-                            verticalDirection = "above";
-                        } else if (directionToPlayer.y < -0.2) {
-                            verticalDirection = "below";
-                        } else {
-                            verticalDirection = "at the same level as";
-                        }
-
-                        String message = player.getName().getString() + " is " + horizontalDirection + " and " + verticalDirection + " you.";
-                        pPlayer.sendSystemMessage(Component.literal(message).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
-                    }
-                }
-            }
-        }
-    }
 }

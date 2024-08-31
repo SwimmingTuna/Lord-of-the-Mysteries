@@ -51,45 +51,6 @@ public class Hurricane extends Item implements ReachChangeUUIDs {
         return super.use(level, pPlayer, hand);
     }
     @SubscribeEvent
-    public static void hurricaneTick (TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
-            CompoundTag tag = pPlayer.getPersistentData();
-            boolean x = tag.getBoolean("sailorHurricaneRain");
-            BlockPos pos = new BlockPos((int) (pPlayer.getX() + (Math.random() * 100 - 100)), (int) (pPlayer.getY() - 100), (int) (pPlayer.getZ() + (Math.random() * 300 - 300)));
-            int hurricane = tag.getInt("sailorHurricane");
-            if (hurricane >= 1) {
-                if (x) {
-                    tag.putInt("sailorHurricane", hurricane - 1);
-                    if (hurricane == 600) {
-                        if (pPlayer.level() instanceof ServerLevel serverLevel) {
-                            serverLevel.setWeatherParameters(0, 700, true, true);
-                        }
-                    }
-                    if (hurricane % 5 == 0) {
-                        SailorLightning.shootLineBlockHigh(pPlayer, pPlayer.level());
-                    }
-                    if (hurricane == 600 || hurricane == 300) {
-                        for (int i = 0; i < 5; i++) {
-                            TornadoEntity tornado = new TornadoEntity(pPlayer.level(), pPlayer, 0, 0, 0);
-                            tornado.teleportTo(pos.getX(), pos.getY() + 100, pos.getZ());
-                            tornado.setTornadoRandom(true);
-                            tornado.setTornadoHeight(300);
-                            tornado.setTornadoRadius(30);
-                            tornado.setTornadoPickup(false);
-                            pPlayer.level().addFreshEntity(tornado);
-                        }
-                    }
-                }
-                if (!x) {
-                    if (pPlayer.level() instanceof ServerLevel serverLevel) {
-                        serverLevel.setWeatherParameters(0, 700, true, false);
-                    }
-                }
-            }
-        }
-    }
-    @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();

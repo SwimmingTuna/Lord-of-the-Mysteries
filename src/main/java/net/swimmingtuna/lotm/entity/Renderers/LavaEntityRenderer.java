@@ -13,8 +13,6 @@ import net.minecraft.util.Mth;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.entity.LavaEntity;
 import net.swimmingtuna.lotm.entity.Model.LavaEntityModel;
-import net.swimmingtuna.lotm.entity.Model.StoneEntityModel;
-import net.swimmingtuna.lotm.entity.StoneEntity;
 
 
 public class LavaEntityRenderer extends EntityRenderer<LavaEntity> {

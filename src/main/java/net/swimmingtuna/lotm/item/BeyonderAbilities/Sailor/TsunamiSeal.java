@@ -7,8 +7,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -18,7 +16,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -70,7 +67,7 @@ public class TsunamiSeal extends Item {
         pPlayer.getPersistentData().putInt("sailorTsunamiZ", (int) pPlayer.getZ());
     }
 
-    private static String getDirectionFromYaw(float yaw) {
+    public static String getDirectionFromYaw(float yaw) {
         if (yaw < 0) {
             yaw += 360;
         }
@@ -94,24 +91,6 @@ public class TsunamiSeal extends Item {
                     "Cooldown: 60 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
-    }
-
-    @SubscribeEvent
-    public static void tsunamiTick(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
-            CompoundTag tag = pPlayer.getPersistentData();
-            int tsunami = tag.getInt("sailorTsunami");
-            if (tsunami >= 1) {
-                tag.putInt("sailorTsunami", tsunami - 5);
-                summonTsunami(pPlayer);
-            } else {
-                tag.remove("sailorTsunamiDirection");
-                tag.remove("sailorTsunamiX");
-                tag.remove("sailorTsunamiY");
-                tag.remove("sailorTsunamiZ");
-            }
-        }
     }
 
     public static void summonTsunami(Player pPlayer) {
@@ -183,78 +162,6 @@ public class TsunamiSeal extends Item {
                 }
             }
         });
-    }
-
-    @SubscribeEvent // seal effect is happening too far ahead, also sending entities into the air for some reason?? also try to get rid of water spawned after seal effect.
-    public static void sealHandler(LivingEvent.LivingTickEvent event) {
-        LivingEntity livingEntity = event.getEntity();
-        if (!livingEntity.level().isClientSide()) {
-            CompoundTag tag = livingEntity.getPersistentData();
-            int sealCounter = tag.getInt("sailorSeal");
-            if (sealCounter >= 3) {
-                int sealX = tag.getInt("sailorSealX");
-                int sealY = tag.getInt("sailorSealY");
-                int sealZ = tag.getInt("sailorSealZ");
-                livingEntity.teleportTo(sealX, sealY, sealZ);
-                BlockPos playerPos = livingEntity.blockPosition();
-                Level level = livingEntity.level();
-                double radius = 6.0;
-                double minRemovalRadius = 6.0;
-                double maxRemovalRadius = 11.0;
-
-                // Create a sphere of water around the player
-                for (int x = (int) -radius; x <= radius; x++) {
-                    for (int y = (int) -radius; y <= radius; y++) {
-                        for (int z = (int) -radius; z <= radius; z++) {
-                            double distance = Math.sqrt(x * x + y * y + z * z);
-                            if (distance <= radius) {
-                                BlockPos blockPos = playerPos.offset(x, y, z);
-                                if (level.getBlockState(blockPos).isAir() && !level.getBlockState(blockPos).is(Blocks.WATER)) {
-                                    level.setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
-                                }
-                            }
-                        }
-                    }
-                }
-                for (int x = (int) -maxRemovalRadius; x <= maxRemovalRadius; x++) {
-                    for (int y = (int) -maxRemovalRadius; y <= maxRemovalRadius; y++) {
-                        for (int z = (int) -maxRemovalRadius; z <= maxRemovalRadius; z++) {
-                            double distance = Math.sqrt(x * x + y * y + z * z);
-                            if (distance <= maxRemovalRadius && distance >= minRemovalRadius) {
-                                BlockPos blockPos = playerPos.offset(x, y, z);
-                                if (level.getBlockState(blockPos).getBlock() == Blocks.WATER) {
-                                    level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
-                                }
-                            }
-                        }
-                    }
-                }
-                tag.putInt("sailorSeal", sealCounter - 1);
-                if (sealCounter % 20 == 0) {
-                    livingEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 40, 1, false, false));
-                    livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 3, false, false));
-                }
-            }
-            if (sealCounter == 1) {
-                double minRemovalRadius = 6.0;
-                double maxRemovalRadius = 11.0;
-                BlockPos playerPos = livingEntity.blockPosition();
-                Level level = livingEntity.level();
-                for (int x = (int) -maxRemovalRadius; x <= maxRemovalRadius; x++) {
-                    for (int y = (int) -maxRemovalRadius; y <= maxRemovalRadius; y++) {
-                        for (int z = (int) -maxRemovalRadius; z <= maxRemovalRadius; z++) {
-                            double distance = Math.sqrt(x * x + y * y + z * z);
-                            if (distance <= maxRemovalRadius && distance >= minRemovalRadius) {
-                                BlockPos blockPos = playerPos.offset(x, y, z);
-                                if (level.getBlockState(blockPos).getBlock() == Blocks.WATER) {
-                                    level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     @SubscribeEvent

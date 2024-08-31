@@ -57,48 +57,4 @@ public class CalamityIncarnationTsunami extends Item implements ReachChangeUUIDs
             pPlayer.displayClientMessage(Component.literal("Tsunami Incarnation Cancelled").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
         }
     }
-    @SubscribeEvent
-    public static void selfTsunamiEvent(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
-            CompoundTag tag = pPlayer.getPersistentData();
-            int x1 = tag.getInt("calamityIncarnationTsunami");
-            if (x1 >= 1) {
-                tag.putInt("calamityIncarnationTsunami", x1 - 1);
-                Level level = pPlayer.level();
-                BlockPos playerPos = pPlayer.blockPosition();
-                double radius = 23.0;
-                double minRemovalRadius = 25.0;
-                double maxRemovalRadius = 30.0;
-
-                // Create a sphere of water around the player
-                for (int x = (int) -radius; x <= radius; x++) {
-                    for (int y = (int) -radius; y <= radius; y++) {
-                        for (int z = (int) -radius; z <= radius; z++) {
-                            double distance = Math.sqrt(x * x + y * y + z * z);
-                            if (distance <= radius) {
-                                BlockPos blockPos = playerPos.offset(x, y, z);
-                                if (level.getBlockState(blockPos).isAir() && !level.getBlockState(blockPos).is(Blocks.WATER)) {
-                                    level.setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
-                                }
-                            }
-                        }
-                    }
-                }
-                for (int x = (int) -maxRemovalRadius; x <= maxRemovalRadius; x++) {
-                    for (int y = (int) -maxRemovalRadius; y <= maxRemovalRadius; y++) {
-                        for (int z = (int) -maxRemovalRadius; z <= maxRemovalRadius; z++) {
-                            double distance = Math.sqrt(x * x + y * y + z * z);
-                            if (distance <= maxRemovalRadius && distance >= minRemovalRadius) {
-                                BlockPos blockPos = playerPos.offset(x, y, z);
-                                if (level.getBlockState(blockPos).getBlock() == Blocks.WATER) {
-                                    level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }

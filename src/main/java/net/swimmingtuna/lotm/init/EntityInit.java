@@ -16,12 +16,18 @@ public class EntityInit {
     public static final RegistryObject<EntityType<AqueousLightEntity>> AQUEOUS_LIGHT_ENTITY =
             ENTITIES.register("aqueous_light", () -> EntityType.Builder.<AqueousLightEntity>of(AqueousLightEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build(new ResourceLocation(LOTM.MOD_ID, "aqueous_light").toString()));
+    public static final RegistryObject<EntityType<MCLightningBoltEntity>> MC_LIGHTNING_BOLT =
+            ENTITIES.register("mc_lightning_bolt", () -> EntityType.Builder.<MCLightningBoltEntity>of(MCLightningBoltEntity::new, MobCategory.MISC)
+                    .sized(0.5f,0.5f).build(new ResourceLocation(LOTM.MOD_ID, "mc_lightning_bolt").toString()));
     public static final RegistryObject<EntityType<WaterColumnEntity>> WATER_COLUMN_ENTITY =
             ENTITIES.register("water_column", () -> EntityType.Builder.<WaterColumnEntity>of(WaterColumnEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build(new ResourceLocation(LOTM.MOD_ID, "water_column").toString()));
     public static final RegistryObject<EntityType<RoarEntity>> ROAR_ENTITY =
             ENTITIES.register("roar_entity", () -> EntityType.Builder.<RoarEntity>of(RoarEntity::new, MobCategory.MISC)
                     .sized(2.0f,2.0f).build(new ResourceLocation(LOTM.MOD_ID, "roar_entity").toString()));
+    public static final RegistryObject<EntityType<StormSealEntity>> STORM_SEAL_ENTITY =
+            ENTITIES.register("storm_seal_entity", () -> EntityType.Builder.<StormSealEntity>of(StormSealEntity::new, MobCategory.MISC)
+                    .sized(2.0f,2.0f).build(new ResourceLocation(LOTM.MOD_ID, "storm_seal_entity").toString()));
     public static final RegistryObject<EntityType<AqueousLightEntityPull>> AQUEOUS_LIGHT_ENTITY_PULL =
             ENTITIES.register("aqueous_light_pull", () -> EntityType.Builder.<AqueousLightEntityPull>of(AqueousLightEntityPull::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build("aqueous_light_pull"));

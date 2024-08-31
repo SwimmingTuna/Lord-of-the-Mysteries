@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -12,7 +11,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;

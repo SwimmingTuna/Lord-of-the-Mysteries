@@ -143,60 +143,6 @@ public class WindManipulationFlight extends Item {
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
-
-    @SubscribeEvent
-    public static void tickEvent(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
-            Vec3 lookVector = pPlayer.getLookAngle();
-            double x = pPlayer.getX() + 5 * lookVector.x();
-            double y = pPlayer.getY() + 5 * lookVector.y();
-            double z = pPlayer.getZ() + 5 * lookVector.z();
-
-            CompoundTag tag = pPlayer.getPersistentData();
-            int flight = tag.getInt("sailorFlight");
-            int flightCancel = tag.getInt("sailorFlightDamageCancel");
-            if (flightCancel >= 1) {
-                tag.putInt("sailorFlightDamageCancel", flightCancel + 1);
-            }
-            if (flightCancel >= 300) {
-                tag.putInt("sailorFlightDamageCancel", 0);
-            }
-            if (flight >= 1) {
-                tag.putInt("sailorFlight", flight + 1);
-            }
-            if (flight == 20) {
-                pPlayer.setDeltaMovement(lookVector.x * 2, lookVector.y * 2, lookVector.z * 2);
-                pPlayer.hurtMarked = true;
-            }
-            if (flight == 40) {
-                pPlayer.setDeltaMovement(lookVector.x * 2, lookVector.y * 2, lookVector.z * 2);
-                pPlayer.hurtMarked = true;
-            }
-            if (flight == 60) {
-                pPlayer.setDeltaMovement(lookVector.x * 2, lookVector.y * 2, lookVector.z * 2);
-                pPlayer.hurtMarked = true;
-            }
-            if (flight > 60) {
-                tag.putInt("sailorFlight", 0);
-            }
-        }
-
-    }
-    @SubscribeEvent
-    public static void sailorFallCanceler(LivingHurtEvent event) {
-        Entity entity = event.getEntity();
-        if (entity instanceof Player pPlayer) {
-            CompoundTag tag = pPlayer.getPersistentData();
-            int flightCancel = tag.getInt("sailorFlightDamageCancel");
-            if (!pPlayer.level().isClientSide()) {
-                if (flightCancel != 0 && event.getSource() == pPlayer.damageSources().fall()) {
-                    event.setCanceled(true);
-                    tag.putInt("sailorFlightDamageCancel", 0);
-                }
-            }
-        }
-    }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player pPlayer = event.getEntity();

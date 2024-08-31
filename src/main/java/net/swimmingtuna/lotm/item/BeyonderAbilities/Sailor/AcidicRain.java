@@ -5,18 +5,13 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
@@ -68,50 +63,6 @@ public class AcidicRain extends Item {
                     "Cooldown: 2 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
-    }
-
-    @SubscribeEvent
-    public static void acidicRainTick(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
-            int acidicRain = pPlayer.getPersistentData().getInt("sailorAcidicRain");
-            AttributeInstance particleAttribute = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER.get());
-            if (acidicRain > 0 && particleAttribute.getValue() == 1) {
-                pPlayer.getPersistentData().putInt("sailorAcidicRain", acidicRain + 1);
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                int sequence = holder.getCurrentSequence();
-                double radius1 = 50 - (sequence * 7);
-                double radius2 = 10 - sequence;
-
-
-                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius1))) {
-                    if (entity != pPlayer) {
-                        if (entity.hasEffect(MobEffects.POISON)) {
-                            int poisonAmp = entity.getEffect(MobEffects.POISON).getAmplifier();
-                            if (poisonAmp == 0) {
-                                entity.addEffect((new MobEffectInstance(MobEffects.POISON, 60, 1, false, false)));
-                            }
-                        } else entity.addEffect((new MobEffectInstance(MobEffects.POISON, 60, 1, false, false)));
-                    }
-                }
-                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius2))) {
-                    if (entity != pPlayer) {
-                        if (entity.hasEffect(MobEffects.POISON)) {
-                            int poisonAmp = entity.getEffect(MobEffects.POISON).getAmplifier();
-                            if (poisonAmp <= 2) {
-                                entity.addEffect((new MobEffectInstance(MobEffects.POISON, 60, 2, false, false)));
-                            }
-                        } else entity.addEffect((new MobEffectInstance(MobEffects.POISON, 60, 2, false, false)));
-                    }
-                }
-
-
-                if (acidicRain > 300) {
-                    pPlayer.getPersistentData().putInt("sailorAcidicRain", 0);
-                    particleAttribute.setBaseValue(0);
-                }
-            }
-        }
     }
 
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {

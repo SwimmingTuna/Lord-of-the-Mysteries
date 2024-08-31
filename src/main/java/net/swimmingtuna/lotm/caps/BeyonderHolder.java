@@ -14,7 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
-import net.swimmingtuna.lotm.commands.BeyonderClassArgument;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.core.PlayerCapability;

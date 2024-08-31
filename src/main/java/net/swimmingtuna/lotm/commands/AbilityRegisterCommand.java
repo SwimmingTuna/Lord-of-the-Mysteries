@@ -14,12 +14,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class AbilityRegisterCommand {

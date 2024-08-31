@@ -99,107 +99,7 @@ public class SirenSongHarm extends Item {
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
-
-    @SubscribeEvent
-    public static void sirenSongTick(TickEvent.PlayerTickEvent event) {
-        Player pPlayer = event.player;
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-        int sequence = holder.getCurrentSequence();
-        CompoundTag tag = pPlayer.getPersistentData();
-        int ssHarm = tag.getInt("sirenSongHarm");
-        int ssWeaken = tag.getInt("sirenSongWeaken");
-        int ssStun = tag.getInt("sirenSongStun");
-        int ssStrengthen = tag.getInt("sirenSongStrengthen");
-
-        if (event.phase == TickEvent.Phase.END && !pPlayer.level().isClientSide() && holder.isSailorClass() && sequence <= 5) {
-            if (ssHarm % 20 == 0 && ssHarm != 0) {
-                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(50 - (sequence * 6)))) {
-                    if (entity != pPlayer) {
-                        entity.hurt(entity.damageSources().magic(), 10 - sequence);
-                    }
-                }
-
-            }
-            if (ssHarm == 400) {
-                pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM.get(), SoundSource.NEUTRAL, 1f, 1f);
-            }
-            if (ssHarm >= 1) {
-                tag.putInt("sirenSongHarm", ssHarm - 1);
-            }
-
-            if (ssWeaken % 20 == 0 && ssWeaken != 0) { //make it for 380,360,430 etc.
-                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(50 - (sequence * 6)))) {
-                    if (entity != pPlayer) {
-                        entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,19,2, false,false));
-                        entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION,19,2, false,false));
-                    }
-                }
-            }
-            if (ssWeaken == 400) {
-                pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(),pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN.get(), SoundSource.NEUTRAL,1f,1f);
-            }
-            if (ssWeaken >= 1) {
-                tag.putInt("sirenSongWeaken", ssWeaken - 1);
-            }
-
-            if (ssStun % 20 == 0 && ssStun != 0) {
-                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(50 - (sequence * 6)))) {
-                    if (entity != pPlayer) {
-                        entity.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(),19 - (sequence * 2),2, false,false));
-                    }
-                }
-            }
-            if (ssStun == 400) {
-                pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(),pPlayer.getZ(), SoundInit.SIREN_SONG_STUN.get(), SoundSource.NEUTRAL,1f,1f);
-            }
-            if (ssStun >= 1) {
-                tag.putInt("sirenSongStun", ssStun - 1);
-            }
-            if (ssStrengthen % 20 == 0 && ssStrengthen != 0) {
-                if (pPlayer.hasEffect(MobEffects.DAMAGE_BOOST)) {
-                    int x = pPlayer.getEffect(MobEffects.DAMAGE_BOOST).getAmplifier();
-                    pPlayer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 19,x + 2));
-                } else if (!pPlayer.hasEffect(MobEffects.DAMAGE_BOOST)) {
-                    pPlayer.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,19,2));
-                }
-                if (pPlayer.hasEffect(MobEffects.REGENERATION)) {
-                    int x = pPlayer.getEffect(MobEffects.REGENERATION).getAmplifier();
-                    pPlayer.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 19,x + 2));
-                }
-                else if (!pPlayer.hasEffect(MobEffects.REGENERATION)) {
-                    pPlayer.addEffect(new MobEffectInstance(MobEffects.REGENERATION,19,2));
-                }
-            }
-            if (ssStrengthen == 400) {
-                pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(),pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN.get(), SoundSource.NEUTRAL,1f,1f);
-            }
-            if (ssStrengthen >= 1) {
-                tag.putInt("sirenSongStrengthen", ssStrengthen - 1);
-            }
-        }
-        if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.END) {
-            int x = tag.getInt("ssParticleAttributeHelper");
-            if (x >= 1) {
-                tag.putInt("ssParticleAttributeHelper", x - 1);
-                pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).setBaseValue(1);
-            }
-            if (x < 1) {
-                pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).setBaseValue(0);
-            }
-        }
-
-
-        if (event.phase == TickEvent.Phase.END && holder.isSailorClass() && sequence <= 5) {
-            AttributeInstance particleAttribute = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER2.get());
-            int y = 50 - (sequence * 6);
-            if (particleAttribute.getBaseValue() == 1) {
-                spawnParticlesInSphere(pPlayer, y);
-            } else {
-                particleAttribute.setBaseValue(0);
-            }
-        }
-    }
-    private static void spawnParticlesInSphere(Player player, int radius) {
+    public static void spawnParticlesInSphere(Player player, int radius) {
         Level level = player.level();
         Random random = new Random();
 
@@ -217,7 +117,7 @@ public class SirenSongHarm extends Item {
     }
 
     // Helper method to check if a point is inside the sphere
-    private static boolean isInsideSphere(double centerX, double centerY, double centerZ, double x, double y, double z, double radius) {
+    public static boolean isInsideSphere(double centerX, double centerY, double centerZ, double x, double y, double z, double radius) {
         double distance = Math.sqrt(
                 Math.pow(x - centerX, 2) +
                         Math.pow(y - centerY, 2) +

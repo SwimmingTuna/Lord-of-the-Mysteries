@@ -10,7 +10,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -142,7 +141,7 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
     public static void testShoot(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
             Vec3 direction = pPlayer.getViewVector(1.0f);
-            Vec3 velocity = direction.scale(2.0);
+            Vec3 velocity = direction.scale(3.0);
             Vec3 lookVec = pPlayer.getLookAngle();
             WindBladeEntity windBladeEntity = new WindBladeEntity(pPlayer.level(), pPlayer, velocity.x(), velocity.y(), velocity.z());
             windBladeEntity.shoot(lookVec.x, lookVec.y, lookVec.z, 2.0f, 0.1f);

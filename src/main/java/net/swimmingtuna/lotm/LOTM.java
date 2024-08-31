@@ -86,6 +86,9 @@ public class LOTM {
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {
         ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BARRIER_BLOCK.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_BLUE_STAINED_GLASS.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_WHITE_STAINED_GLASS.get(), RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_LIGHT_BLUE_STAINED_GLASS.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BLACK_STAINED_GLASS_PANE.get(), RenderType.cutout());
         LOTMNetworkHandler.register();
     }
@@ -209,6 +212,9 @@ public class LOTM {
         }
         if (event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(BlockInit.VISIONARY_BARRIER_BLOCK);
+            event.accept(BlockInit.LOTM_LIGHT_BLUE_STAINED_GLASS);
+            event.accept(BlockInit.LOTM_WHITE_STAINED_GLASS);
+            event.accept(BlockInit.LOTM_BLUE_STAINED_GLASS);
             event.accept(BlockInit.CATHEDRAL_BLOCK);
             event.accept(BlockInit.MINDSCAPE_BLOCK);
             event.accept(BlockInit.MINDSCAPE_OUTSIDE);
