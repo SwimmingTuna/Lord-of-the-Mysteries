@@ -9,7 +9,6 @@ import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -56,7 +55,6 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.Envi
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
-import net.swimmingtuna.lotm.util.SoundManager;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
@@ -842,10 +840,38 @@ public class ModEvents implements ReachChangeUUIDs {
                             }
                         }
                     }
-
                     if (ssHarm == 400) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_1.get(), SoundSource.NEUTRAL, 1f, 1f);
                     }
+                    if (ssHarm == 360) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_2.get(), SoundSource.NEUTRAL, 1f, 1f);
+                    }
+                    if (ssHarm == 320) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_3.get(), SoundSource.NEUTRAL, 1f, 1f);
+                    }
+                    if (ssHarm == 280) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_4.get(), SoundSource.NEUTRAL, 1f, 1f);
+                    }
+                    if (ssHarm == 240) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_5.get(), SoundSource.NEUTRAL, 1f, 1f);
+                    }
+                    if (ssHarm == 200) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_6.get(), SoundSource.NEUTRAL, 1f, 1f);
+                    }
+                    if (ssHarm == 160) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_7.get(), SoundSource.NEUTRAL, 1f, 1f);
+                    }
+                    if (ssHarm == 120) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_8.get(), SoundSource.NEUTRAL, 1f, 1f);
+                    }
+                    if (ssHarm == 80) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_9.get(), SoundSource.NEUTRAL, 1f, 1f);
+                    }
+                    if (ssHarm == 40) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_10.get(), SoundSource.NEUTRAL, 1f, 1f);
+                    }
+
+
                     if (ssHarm >= 1) {
                         tag.putInt("sirenSongHarm", ssHarm - 1);
                     }

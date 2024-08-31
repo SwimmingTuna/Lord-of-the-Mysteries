@@ -62,7 +62,6 @@ public class SirenSongHarm extends Item {
         if (!pPlayer.level().isClientSide()) {
             CompoundTag tag = pPlayer.getPersistentData();
             if (tag.getInt("sirenSongHarm") == 0) {
-                pPlayer.sendSystemMessage(Component.literal("worked"));
                 tag.putInt("sirenSongHarm", 400);
                 tag.putInt("ssParticleAttributeHelper", 400);
             }

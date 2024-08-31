@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.item;
 
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -11,6 +12,7 @@ import net.swimmingtuna.lotm.entity.MCLightningBoltEntity;
 import net.swimmingtuna.lotm.entity.StoneEntity;
 import net.swimmingtuna.lotm.entity.StormSealEntity;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.init.SoundInit;
 
 public class TestItem extends Item {
     public TestItem(Properties pProperties) {
@@ -33,9 +35,8 @@ public class TestItem extends Item {
     }
     public static void useAbilities2(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
-            MCLightningBoltEntity mcLightningBolt = new MCLightningBoltEntity(EntityInit.MC_LIGHTNING_BOLT.get(), pPlayer.level());
-            mcLightningBolt.teleportTo(pPlayer.getX(), pPlayer.getY(),pPlayer.getZ());
-            pPlayer.level().addFreshEntity(mcLightningBolt);
+            pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_1.get(), SoundSource.NEUTRAL, 1f, 1f);
+
         }
     }
 }
