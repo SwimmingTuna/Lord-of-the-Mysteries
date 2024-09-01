@@ -35,12 +35,12 @@ public class AquaticLifeManipulation extends Item {
             if (holder != null) {
                 if (!holder.isSailorClass()) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-                } else if (holder.getSpirituality() < 50) {
-                    pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-                } else if (holder.isSailorClass() && holder.getCurrentSequence() <= 5 && holder.useSpirituality(150)) {
+                } else if (holder.getSpirituality() < 125) {
+                    pPlayer.displayClientMessage(Component.literal("You need 125 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                } else if (holder.isSailorClass() && holder.getCurrentSequence() <= 3 && holder.useSpirituality(125)) {
                     useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 40);
+                        pPlayer.getCooldowns().addCooldown(this, 200);
                     }
                 }
             }
@@ -52,11 +52,11 @@ public class AquaticLifeManipulation extends Item {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         int sequence = holder.getCurrentSequence();
         if (!pPlayer.level().isClientSide()) {
-            List<LivingEntity> aquaticEntities = pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(100), entity -> entity instanceof WaterAnimal);
+            List<LivingEntity> aquaticEntities = pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(50), entity -> entity instanceof WaterAnimal);
             if (!aquaticEntities.isEmpty()) {
                 LivingEntity nearestAquaticEntity = aquaticEntities.stream().min(Comparator.comparingDouble(pPlayer::distanceTo)).orElse(null);
                 if (nearestAquaticEntity != null) {
-                    List<Player> nearbyPlayers = nearestAquaticEntity.level().getEntitiesOfClass(Player.class, nearestAquaticEntity.getBoundingBox().inflate(100 + (sequence * 5)));
+                    List<Player> nearbyPlayers = nearestAquaticEntity.level().getEntitiesOfClass(Player.class, nearestAquaticEntity.getBoundingBox().inflate(200 - (sequence * 20)));
                     Player nearestPlayer = nearbyPlayers.stream().filter(player -> player != pPlayer).min(Comparator.comparingDouble(nearestAquaticEntity::distanceTo)).orElse(null);
                     if (nearestPlayer != null) {
                         if (holder != null) {
@@ -75,8 +75,8 @@ public class AquaticLifeManipulation extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summons an acid rain effect around the player\n" +
-                    "Spirituality Used: 50\n" +
+            componentList.add(Component.literal("Upon use, communicates with any aquatic life around the player, if there is any, they communicate back with the information of any player within a range of the spoken to aquatic animal\n" +
+                    "Spirituality Used: 100\n" +
                     "Cooldown: 2 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);

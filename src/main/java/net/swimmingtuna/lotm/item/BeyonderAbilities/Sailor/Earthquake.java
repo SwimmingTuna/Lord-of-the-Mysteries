@@ -41,16 +41,16 @@ public class Earthquake extends Item {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
-            if (holder.getSpirituality() < 75) {
-                pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < 600) {
+                pPlayer.displayClientMessage(Component.literal("You need 600 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
 
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-            if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 4 && tyrantSequence.useSpirituality(75)) {
+            if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 4 && tyrantSequence.useSpirituality(600)) {
                 useItem(pPlayer);
             }
             if (!pPlayer.getAbilities().instabuild)
-                pPlayer.getCooldowns().addCooldown(this, 60);
+                pPlayer.getCooldowns().addCooldown(this, 500);
 
         });
             }
@@ -64,9 +64,9 @@ public class Earthquake extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, shoots a projectile that upon hit, pulls the target towards the user\n" +
-                    "Spirituality Used: 75\n" +
-                    "Cooldown: 3 seconds"));
+            componentList.add(Component.literal("Upon use, summons an earthquake shooting stone into the ground\n" +
+                    "Spirituality Used: 600\n" +
+                    "Cooldown: 25 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

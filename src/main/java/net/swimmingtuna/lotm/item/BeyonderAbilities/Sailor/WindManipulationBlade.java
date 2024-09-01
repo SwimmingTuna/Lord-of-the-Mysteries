@@ -37,12 +37,12 @@ public class WindManipulationBlade extends Item {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
-            if (holder.getSpirituality() < 50) {
-                pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < 100) {
+                pPlayer.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
 
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7 && tyrantSequence.useSpirituality(50)) {
+                if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7 && tyrantSequence.useSpirituality(100)) {
                     shootLight(pPlayer);
                 }
                 if (!pPlayer.getAbilities().instabuild)
@@ -53,19 +53,14 @@ public class WindManipulationBlade extends Item {
     }
 
     public static void shootLight(Player pPlayer) {
-        Vec3 eyePosition = pPlayer.getEyePosition(1.0f);
-        Vec3 direction = pPlayer.getViewVector(1.0f);
-        Vec3 initialVelocity = direction.scale(2.0);
-        float x = pPlayer.getXRot();
-        float y = pPlayer.getYRot();
         WindBladeEntity.testShoot(pPlayer);
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, shoots a projectile that upon hit, pushes the target away from the user\n" +
-                    "Spirituality Used: 50\n" +
+            componentList.add(Component.literal("Upon use, shoot out a wind blade that cuts through blocks and players\n" +
+                    "Spirituality Used: 100\n" +
                     "Cooldown: 2 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);

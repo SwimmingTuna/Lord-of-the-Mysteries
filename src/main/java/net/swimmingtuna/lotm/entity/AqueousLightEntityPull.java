@@ -40,7 +40,7 @@ public class AqueousLightEntityPull extends AbstractHurtingProjectile {
      * Return the motion factor for this projectile. The factor is multiplied by the original motion.
      */
     protected float getInertia() {
-        return this.isDangerous() ? 0.73F : super.getInertia();
+        return this.isDangerous() ? 0.99F : super.getInertia();
     }
 
     /**
@@ -60,7 +60,7 @@ public class AqueousLightEntityPull extends AbstractHurtingProjectile {
             if (pResult.getEntity() instanceof LivingEntity entity) {
                 LivingEntity owner = (LivingEntity) this.getOwner();
                 double x = owner.getX() - entity.getX();
-                double y = owner.getY() - entity.getY();
+                double y = Math.min(5,owner.getY() - entity.getY());
                 double z = owner.getZ() - entity.getZ();
                 entity.setDeltaMovement(x * 0.3,y * 0.3,z * 0.3);
                 CompoundTag ownerTag = owner.getPersistentData();

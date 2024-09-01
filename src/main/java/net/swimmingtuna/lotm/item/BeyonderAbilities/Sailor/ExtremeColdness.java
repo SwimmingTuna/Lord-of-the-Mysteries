@@ -47,16 +47,16 @@ public class ExtremeColdness extends Item {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
-            if (holder.getSpirituality() < 75) {
-                pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < 1250) {
+                pPlayer.displayClientMessage(Component.literal("You need 1250 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
 
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-            if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 4 && tyrantSequence.useSpirituality(75)) {
+            if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 2 && tyrantSequence.useSpirituality(1250)) {
                 useItem(pPlayer);
             }
             if (!pPlayer.getAbilities().instabuild)
-                pPlayer.getCooldowns().addCooldown(this, 60);
+                pPlayer.getCooldowns().addCooldown(this, 1200);
 
         });
             }
@@ -70,9 +70,9 @@ public class ExtremeColdness extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, shoots a projectile that upon hit, pulls the target towards the user\n" +
-                    "Spirituality Used: 75\n" +
-                    "Cooldown: 3 seconds"));
+            componentList.add(Component.literal("Upon use, lets out an area of below freezing temperatures that freezes everything in it's range\n" +
+                    "Spirituality Used: 1250\n" +
+                    "Cooldown: 1 minute"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

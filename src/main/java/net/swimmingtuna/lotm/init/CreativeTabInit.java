@@ -95,7 +95,6 @@ public class CreativeTabInit {
                         pOutput.accept(ItemInit.MatterAccelerationEntities.get());
                         pOutput.accept(ItemInit.MatterAccelerationSelf.get());
                         pOutput.accept(ItemInit.Tyranny.get());
-                        pOutput.accept(ItemInit.TyrantTornado.get());
 
 
 

@@ -41,17 +41,17 @@ public class TsunamiSeal extends Item {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
                 return super.use(level, pPlayer, hand);
             }
-            if (holder.getSpirituality() < 75) {
-                pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < 1100) {
+                pPlayer.displayClientMessage(Component.literal("You need 1100 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
                 return super.use(level, pPlayer, hand);
             }
 
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (tyrantSequence.getCurrentSequence() <= 4 && tyrantSequence.useSpirituality(75)) {
+                if (tyrantSequence.getCurrentSequence() <= 4 && tyrantSequence.useSpirituality(1100)) {
                     startTsunami(pPlayer);
                 }
                 if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 60 * 20); // 60 seconds cooldown
+                    pPlayer.getCooldowns().addCooldown(this, 1800);
             });
         }
         return super.use(level, pPlayer, hand);
@@ -86,9 +86,9 @@ public class TsunamiSeal extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Creates a massive wave of water in front of you\n" +
-                    "Spirituality Used: 75\n" +
-                    "Cooldown: 60 seconds"));
+            componentList.add(Component.literal("Creates a massive wave of water in front of you, trapping any entity with more than 100 health in a seal or they're a player\n" +
+                    "Spirituality Used: 1100\n" +
+                    "Cooldown: 90 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
@@ -153,7 +153,7 @@ public class TsunamiSeal extends Item {
         );
         pPlayer.level().getEntitiesOfClass(LivingEntity.class, tsunamiAABB).forEach(livingEntity -> {
             if (livingEntity != pPlayer) {
-                if (livingEntity.getMaxHealth() >= 300 || livingEntity instanceof Player) {
+                if (livingEntity.getMaxHealth() >= 100 || livingEntity instanceof Player) {
                     pPlayer.getPersistentData().putInt("sailorTsunami", 0);
                     livingEntity.getPersistentData().putInt("sailorSeal", 1200);
                     livingEntity.getPersistentData().putInt("sailorSealX", (int) livingEntity.getX());

@@ -92,7 +92,7 @@ public class EnvisionLocationBlink extends Item {
             componentList.add(Component.literal("Upon use, teleport in front of you\n" +
                     "Shift to Increase Blink Distance\n" +
                     "Left Click for Envision Weather\n" +
-                    "Spirituality Used: 150\n" +
+                    "Spirituality Used: 8 for every block traveled\n" +
                     "Cooldown: 1 second"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);

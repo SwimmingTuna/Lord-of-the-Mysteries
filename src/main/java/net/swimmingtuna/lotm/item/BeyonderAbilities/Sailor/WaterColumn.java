@@ -103,9 +103,9 @@ public class WaterColumn extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes water columns rise above existing water sources.\n" +
+            componentList.add(Component.literal("Upon use, cause the water to intersect with the sky\n" +
                     "Spirituality Used: 2000\n" +
-                    "Cooldown: 500 ticks"));
+                    "Cooldown: 25 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

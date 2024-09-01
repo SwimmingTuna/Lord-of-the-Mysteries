@@ -118,7 +118,7 @@ public class DreamIntoReality extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes your dreams into reality, turning into a giant with shorter cooldowns on abilities and more health as well as strengthed damage resistance, regeneration, and strength\n" +
+            componentList.add(Component.literal("Upon use, turns your dreams into reality, making you a giant with strengthened abilities, quicker regeneration, and stronger melee hits\n" +
                     "Spirituality Used: 300 every second\n" +
                     "Cooldown: 30 seconds"));
         }

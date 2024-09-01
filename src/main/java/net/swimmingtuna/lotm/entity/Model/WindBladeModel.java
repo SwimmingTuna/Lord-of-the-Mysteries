@@ -53,7 +53,8 @@ public class WindBladeModel<T extends Entity> extends EntityModel<T> {
 		.texOffs(3, 3).addBox(0.0F, -13.0F, 2.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
 		.texOffs(3, 1).addBox(0.0F, -13.0F, 1.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
 		.texOffs(0, 2).addBox(0.0F, -13.0F, 0.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 0).addBox(0.0F, -13.0F, -1.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+		.texOffs(0, 0).addBox(0.0F, -13.0F, -1.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
+				PartPose.offsetAndRotation(-1F, 6.0F, -1.0F,0,0,0));
 
 		return LayerDefinition.create(meshdefinition, 16, 16);
 	}

@@ -37,12 +37,12 @@ public class AqueousLightPull extends Item {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
-            if (holder.getSpirituality() < 75) {
-                pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < 50) {
+                pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
 
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-            if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7 && tyrantSequence.useSpirituality(75)) {
+            if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7 && tyrantSequence.useSpirituality(50)) {
                 useItem(pPlayer);
             }
             if (!pPlayer.getAbilities().instabuild)
@@ -63,8 +63,8 @@ public class AqueousLightPull extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, shoots a projectile that upon hit, pulls the target towards the user\n" +
-                    "Spirituality Used: 75\n" +
+            componentList.add(Component.literal("Upon use, shoots a water bubble that upon hit, pulls the target towards the user\n" +
+                    "Spirituality Used: 50\n" +
                     "Cooldown: 3 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);

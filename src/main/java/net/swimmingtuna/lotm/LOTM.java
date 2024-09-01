@@ -126,7 +126,6 @@ public class LOTM {
             event.accept(ItemInit.TestItem);
             event.accept(ItemInit.LightningStorm);
             event.accept(ItemInit.Roar);
-            event.accept(ItemInit.TyrantTornado);
             event.accept(ItemInit.CalamityIncarnationTsunami);
             event.accept(ItemInit.CalamityIncarnationTornado);
             event.accept(ItemInit.LightningBall);

@@ -1,12 +1,14 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
@@ -15,8 +17,12 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.LightningBallEntity;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.EntityInit;
+import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class LightningBallAbsorb extends Item implements ReachChangeUUIDs {
@@ -32,18 +38,28 @@ public class LightningBallAbsorb extends Item implements ReachChangeUUIDs {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
-            if (holder.getSpirituality() < 300) {
-                pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < 1500) {
+                pPlayer.displayClientMessage(Component.literal("You need 1500 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 4 && sailorSequence.useSpirituality(300)) {
+                if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 1 && sailorSequence.useSpirituality(1500)) {
                     useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 240);
+                        pPlayer.getCooldowns().addCooldown(this, 900);
                 }
             });
         }
         return super.use(level, pPlayer, hand);
+    }
+
+    @Override
+    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+        if (!Screen.hasShiftDown()) {
+            componentList.add(Component.literal("Upon use, summons a lightning ball that absorbs all lightning around it, growing in size for each one absorbed, before launching\n" +
+                    "Spirituality Used: 800\n" +
+                    "Cooldown: 20 seconds"));
+        }
+        super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
     public static void useItem(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {

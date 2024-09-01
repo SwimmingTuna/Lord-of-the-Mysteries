@@ -129,6 +129,7 @@ public class ModEvents implements ReachChangeUUIDs {
                 //WIND MANIPULATION SENSE
                 boolean windManipulationSense = tag.getBoolean("windManipulationSense");
                 if (windManipulationSense) {
+                    holder.useSpirituality(2);
                     double radius = 100 - (holder.getCurrentSequence() * 10);
                     for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
                         if (entity != pPlayer && entity instanceof Player player) {
@@ -1645,7 +1646,7 @@ public class ModEvents implements ReachChangeUUIDs {
                 int sealX = tag.getInt("sailorSealX");
                 int sealY = tag.getInt("sailorSealY");
                 int sealZ = tag.getInt("sailorSealZ");
-                entity.teleportTo(sealX, sealY, sealZ);
+                entity.teleportTo(sealX, sealY + 1000, sealZ);
                 BlockPos playerPos = entity.blockPosition();
                 double radius = 6.0;
                 double minRemovalRadius = 6.0;
@@ -1681,7 +1682,7 @@ public class ModEvents implements ReachChangeUUIDs {
                 tag.putInt("sailorSeal", sealCounter - 1);
                 if (sealCounter % 20 == 0) {
                     entity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 40, 1, false, false));
-                    entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 3, false, false));
+                    entity.addEffect(new MobEffectInstance(ModEffects.STUN.get(), 40, 3, false, false));
                 }
             }
             if (sealCounter == 1) {

@@ -70,7 +70,7 @@ public class Awe extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes all living entities around the user freeze in place\n" +
+            componentList.add(Component.literal("Upon use, makes all living entities around the user freeze in place and take damage\n" +
                     "Spirituality Used: 75\n" +
                     "Cooldown: 12 seconds"));
         }

@@ -40,20 +40,19 @@ public class MatterAccelerationSelf extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!pPlayer.level().isClientSide()) {
-
-            // If no block or entity is targeted, proceed with the original functionality
+            int matterAccelerationDistance = pPlayer.getPersistentData().getInt("tyrantSelfAcceleration");
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
-            if (holder.getSpirituality() < 300) {
-                pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < matterAccelerationDistance * 15) {
+                pPlayer.displayClientMessage(Component.literal("You need " + matterAccelerationDistance * 15 + "spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.isSailorClass() && sailorSequence.useSpirituality(300) && sailorSequence.getCurrentSequence() == 0) {
+                if (holder.isSailorClass() && sailorSequence.useSpirituality(2500) && sailorSequence.getCurrentSequence() == 0) {
                     useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 240);
+                        pPlayer.getCooldowns().addCooldown(this, 300);
                 }
             });
         }
@@ -113,11 +112,9 @@ public class MatterAccelerationSelf extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, teleport in front of you\n" +
-                    "Shift to Increase Blink Distance\n" +
-                    "Left Click for Envision Weather\n" +
-                    "Spirituality Used: 150\n" +
-                    "Cooldown: 1 second"));
+            componentList.add(Component.literal("Upon use, moves you at an inhuman speed, instantly getting you to your destination and leaving behind destruction in your path\n" +
+                    "Spirituality Used: 2500\n" +
+                    "Cooldown: 15 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

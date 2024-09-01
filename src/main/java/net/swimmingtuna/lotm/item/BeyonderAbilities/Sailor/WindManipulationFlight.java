@@ -53,7 +53,7 @@ public class WindManipulationFlight extends Item {
                 CompoundTag tag = pPlayer.getPersistentData();
                 boolean x = tag.getBoolean("sailorFlight1");
                 if (!pPlayer.getAbilities().instabuild && !x) {
-                    pPlayer.getCooldowns().addCooldown(this, 240);
+                    pPlayer.getCooldowns().addCooldown(this, 10);
                 }
             });
         }
@@ -135,9 +135,9 @@ public class WindManipulationFlight extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, uses the wind to burst forward in the direction the player is looking three times\n" +
-                    "Spirituality Used: 120\n" +
-                    "Cooldown: 6 seconds"));
+            componentList.add(Component.literal("Upon use, uses the wind to burst forward in the direction the player is looking three times or allow the user to fly, depending on the sequence\n" +
+                    "Spirituality Used: 100 every second\n" +
+                    "Cooldown: 0.5 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

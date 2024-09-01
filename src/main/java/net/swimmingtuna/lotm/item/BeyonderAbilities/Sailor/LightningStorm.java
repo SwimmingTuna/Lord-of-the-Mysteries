@@ -41,15 +41,15 @@ public class LightningStorm extends Item {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
-            if (holder.getSpirituality() < 20) {
-                pPlayer.displayClientMessage(Component.literal("You need 20 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < 1000) {
+                pPlayer.displayClientMessage(Component.literal("You need 1000 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 8 && tyrantSequence.useSpirituality(20)) {
+                if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 3 && tyrantSequence.useSpirituality(1000)) {
                     useItem(pPlayer);
                 }
                 if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 200);
+                    pPlayer.getCooldowns().addCooldown(this, 600);
             });
         }
         return super.use(level, pPlayer, hand);
@@ -78,9 +78,11 @@ public class LightningStorm extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, causes the user to shoot punches powerfully all around the user, damaging everything around them\n" +
-                    "Spirituality Used: 20\n" +
-                    "Cooldown: 10 seconds"));
+            componentList.add(Component.literal("Upon use, summons a lightning storm, leaving mass destruction\n" +
+                    "Left Click to Increase Distance Spawned At\n" +
+                    "Shift to Increase Storm Radius\n" +
+                    "Spirituality Used: 1000\n" +
+                    "Cooldown: 30 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

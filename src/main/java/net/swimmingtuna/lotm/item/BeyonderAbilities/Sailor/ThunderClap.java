@@ -34,14 +34,14 @@ public class ThunderClap extends Item {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-            if (holder.getSpirituality() < 500) {
-                pPlayer.displayClientMessage(Component.literal("You need 500 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            if (holder.getSpirituality() < 700) {
+                pPlayer.displayClientMessage(Component.literal("You need 700 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder.isSailorClass() && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(500)) {
+                if (holder.isSailorClass() && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(700)) {
                     applyPotionEffectToEntities(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 300);
+                        pPlayer.getCooldowns().addCooldown(this, 400);
                 }
             });
         }
@@ -62,9 +62,9 @@ public class ThunderClap extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes all living entities around the user freeze in place\n" +
-                    "Spirituality Used: 75\n" +
-                    "Cooldown: 12 seconds"));
+            componentList.add(Component.literal("Upon use, claps together in order to create a thunder clap, stunning all entities freezing them in place and preventing them from using their abilities\n" +
+                    "Spirituality Used: 400\n" +
+                    "Cooldown: 20 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

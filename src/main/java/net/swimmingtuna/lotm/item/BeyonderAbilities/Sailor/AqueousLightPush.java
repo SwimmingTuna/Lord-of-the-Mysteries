@@ -46,7 +46,7 @@ public class AqueousLightPush extends Item {
                     useItem(pPlayer);
                 }
                 if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 40);
+                    pPlayer.getCooldowns().addCooldown(this, 60);
             });
         }
         return super.use(level, pPlayer, hand);
@@ -62,9 +62,9 @@ public class AqueousLightPush extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, shoots a projectile that upon hit, pushes the target away from the user\n" +
+            componentList.add(Component.literal("Upon use, shoots a water bubble that upon hit, pushes the target away from the user\n" +
                     "Spirituality Used: 50\n" +
-                    "Cooldown: 2 seconds"));
+                    "Cooldown: 3 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

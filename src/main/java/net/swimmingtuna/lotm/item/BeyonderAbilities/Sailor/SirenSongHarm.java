@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
@@ -45,9 +46,9 @@ public class SirenSongHarm extends Item {
             if (holder != null) {
                 if (!holder.isSailorClass()) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-                } else if (holder.getSpirituality() < 50) {
-                    pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-                } else if (holder.isSailorClass() && holder.getCurrentSequence() <= 5 && holder.useSpirituality(150)) {
+                } else if (holder.getSpirituality() < 300) {
+                    pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                } else if (holder.isSailorClass() && holder.getCurrentSequence() <= 5 && holder.useSpirituality(300)) {
                     shootAcidicRain(pPlayer, level);
                     if (!pPlayer.getAbilities().instabuild) {
                         pPlayer.getCooldowns().addCooldown(this, 40);
@@ -88,15 +89,14 @@ public class SirenSongHarm extends Item {
             }
         }
     }
-
-    @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summons an acid rain effect around the player\n" +
-                    "Spirituality Used: 50\n" +
-                    "Cooldown: 2 seconds"));
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
+        if (entity instanceof Player pPlayer) {
+            if (pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).getValue() == 1) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                spawnParticlesInSphere(pPlayer, 50 - (holder.getCurrentSequence() * 6));
+            }
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
     public static void spawnParticlesInSphere(Player player, int radius) {
         Level level = player.level();
@@ -114,8 +114,6 @@ public class SirenSongHarm extends Item {
             }
         }
     }
-
-    // Helper method to check if a point is inside the sphere
     public static boolean isInsideSphere(double centerX, double centerY, double centerZ, double x, double y, double z, double radius) {
         double distance = Math.sqrt(
                 Math.pow(x - centerX, 2) +
@@ -124,4 +122,16 @@ public class SirenSongHarm extends Item {
         );
         return distance <= radius;
     }
+
+    @Override
+    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+        if (!Screen.hasShiftDown()) {
+            componentList.add(Component.literal("Upon use, start singing a song that causes harm to all entities around you\n" +
+                    "Spirituality Used: 300\n" +
+                    "Cooldown: 50 seconds"));
+        }
+        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+    }
+
+
 }

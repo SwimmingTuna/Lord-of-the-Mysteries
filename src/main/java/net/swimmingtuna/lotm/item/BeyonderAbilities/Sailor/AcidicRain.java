@@ -36,12 +36,12 @@ public class AcidicRain extends Item {
             if (holder != null) {
                 if (!holder.isSailorClass()) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-                } else if (holder.getSpirituality() < 50) {
-                    pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-                } else if (holder.isSailorClass() && holder.getCurrentSequence() <= 5 && holder.useSpirituality(100)) {
+                } else if (holder.getSpirituality() < 175) {
+                    pPlayer.displayClientMessage(Component.literal("You need 175 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                } else if (holder.isSailorClass() && holder.getCurrentSequence() <= 5 && holder.useSpirituality(175)) {
                     shootAcidicRain(pPlayer);
                     if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 40);
+                        pPlayer.getCooldowns().addCooldown(this, 500);
                     }
                 }
             }
@@ -58,9 +58,9 @@ public class AcidicRain extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summons an acid rain effect around the player\n" +
-                    "Spirituality Used: 50\n" +
-                    "Cooldown: 2 seconds"));
+            componentList.add(Component.literal("Upon use, summons an acidic rain around the player that persists for 15 seconds\n" +
+                    "Spirituality Used: 175\n" +
+                    "Cooldown: 25 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

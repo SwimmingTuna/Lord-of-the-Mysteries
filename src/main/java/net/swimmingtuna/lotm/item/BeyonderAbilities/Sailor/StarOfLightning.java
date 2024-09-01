@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -24,6 +26,10 @@ import net.swimmingtuna.lotm.entity.LightningEntity;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class StarOfLightning extends Item implements ReachChangeUUIDs {
@@ -41,14 +47,14 @@ public class StarOfLightning extends Item implements ReachChangeUUIDs {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
-            if (holder.getSpirituality() < 300) {
-                pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < 3000) {
+                pPlayer.displayClientMessage(Component.literal("You need 3000 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 4 && sailorSequence.useSpirituality(300)) {
+                if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 1 && sailorSequence.useSpirituality(3000)) {
                     summonLightning(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 240);
+                        pPlayer.getCooldowns().addCooldown(this, 800);
                 }
             });
         }
@@ -84,5 +90,13 @@ public class StarOfLightning extends Item implements ReachChangeUUIDs {
         }
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
-
+    @Override
+    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+        if (!Screen.hasShiftDown()) {
+            componentList.add(Component.literal("Upon use, gathers lightning in your body before letting it out in every direction\n" +
+                    "Spirituality Used: 3000\n" +
+                    "Cooldown: 40 seconds"));
+        }
+        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+    }
 }

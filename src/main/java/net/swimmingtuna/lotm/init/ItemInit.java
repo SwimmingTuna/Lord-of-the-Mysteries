@@ -8,7 +8,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.EnvisionKingdom;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionKingdom;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderResetPotion;
@@ -34,8 +34,6 @@ public class ItemInit {
             () -> new LightningStorm(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> Roar = ITEMS.register("roar",
             () -> new Roar(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> TyrantTornado = ITEMS.register("tyranttornado",
-            () -> new TyrantTornado(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> CalamityIncarnationTornado = ITEMS.register("calamityincarnationtornado",
             () -> new CalamityIncarnationTornado(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> CalamityIncarnationTsunami = ITEMS.register("calamityincarnationtsunami",

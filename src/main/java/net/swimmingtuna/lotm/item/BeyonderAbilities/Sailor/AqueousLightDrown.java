@@ -43,11 +43,11 @@ public class AqueousLightDrown extends Item {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
-            if (holder.getSpirituality() < 100) {
-                pPlayer.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < 75) {
+                pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7 && tyrantSequence.useSpirituality(100)) {
+                if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7 && tyrantSequence.useSpirituality(75)) {
                     useItem(pPlayer);
                 }
                 if (!pPlayer.getAbilities().instabuild)
@@ -67,8 +67,8 @@ public class AqueousLightDrown extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, shoots a projectile that upon hit, summons a water bubble around the target's head that causes them to drown\n" +
-                    "Spirituality Used: 100\n" +
+            componentList.add(Component.literal("Upon use, shoots a water bubble that upon hit, summons a water bubble around the target's head that causes them to drown\n" +
+                    "Spirituality Used: 75\n" +
                     "Cooldown: 15 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
@@ -86,7 +86,7 @@ public class AqueousLightDrown extends Item {
                 entity.setAirSupply(0);
             }
             if (aqueousLight >= 1) {
-                if (entity.getDeltaMovement().y <= 0.2) {
+                if (entity.getDeltaMovement().y <= 0.15) {
                     entity.setDeltaMovement(entity.getDeltaMovement().x, entity.getDeltaMovement().y - 0.01, entity.getDeltaMovement().z);
                 }
                 tag.putInt("lightDrowning", aqueousLight + 1);

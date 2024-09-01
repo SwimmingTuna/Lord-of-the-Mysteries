@@ -34,7 +34,7 @@ public class EnableOrDisableLightning extends Item {
                 if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 7) {
                     useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 240);
+                        pPlayer.getCooldowns().addCooldown(this, 10);
                 }
             });
         }
@@ -60,7 +60,7 @@ public class EnableOrDisableLightning extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, disables or enables lightning spawning upon users hitting targets\n" +
                     "Spirituality Used: 0\n" +
-                    "Cooldown: 0 seconds"));
+                    "Cooldown: 0.5 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

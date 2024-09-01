@@ -34,14 +34,14 @@ public class Tyranny extends Item {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
-            if (holder.getSpirituality() < 2000) {
-                pPlayer.displayClientMessage(Component.literal("You need 500 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            if (holder.getSpirituality() < 3500) {
+                pPlayer.displayClientMessage(Component.literal("You need 3500 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder.isSailorClass() && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(2000)) {
+                if (holder.isSailorClass() && spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality(3500)) {
                     applyPotionEffectToEntities(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 500);
+                        pPlayer.getCooldowns().addCooldown(this, 2400);
                 }
             });
         }
@@ -60,9 +60,9 @@ public class Tyranny extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes all living entities around the user freeze in place\n" +
-                    "Spirituality Used: 75\n" +
-                    "Cooldown: 12 seconds"));
+            componentList.add(Component.literal("Upon use, exude an aura of tyranny, not giving any entity permission to move, implanting fear strong enough to not allow them to use their abilities\n" +
+                    "Spirituality Used: 3500\n" +
+                    "Cooldown: 2 Minutes"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

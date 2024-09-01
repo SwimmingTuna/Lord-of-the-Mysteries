@@ -38,16 +38,16 @@ public class WindManipulationCushion extends Item {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
-            if (holder.getSpirituality() < 50) {
-                pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < 150) {
+                pPlayer.displayClientMessage(Component.literal("You need 150 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
 
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7 && tyrantSequence.useSpirituality(50)) {
+                if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7 && tyrantSequence.useSpirituality(150)) {
                     cushion(pPlayer);
                 }
                 if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 40);
+                    pPlayer.getCooldowns().addCooldown(this, 120);
             });
         }
         return super.use(level, pPlayer, hand);
@@ -60,9 +60,9 @@ public class WindManipulationCushion extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, shoots a projectile that upon hit, pushes the target away from the user\n" +
-                    "Spirituality Used: 50\n" +
-                    "Cooldown: 2 seconds"));
+            componentList.add(Component.literal("Upon use, create a cushion of wind that absorbs your fall then sends you in the direction you're looking\n" +
+                    "Spirituality Used: 150\n" +
+                    "Cooldown: 6 seconds"));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

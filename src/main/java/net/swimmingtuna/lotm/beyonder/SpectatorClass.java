@@ -46,7 +46,7 @@ public class SpectatorClass implements BeyonderClass {
     public void tick(Player pPlayer, int sequenceLevel) {
         if (pPlayer.level().getGameTime() % 80 == 0) {
             if (sequenceLevel >= 0) {
-                pPlayer.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, -1,false,false));
+                pPlayer.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 30 * 20, -1,false,false));
                 if (pPlayer.isCrouching()) {
                     pPlayer.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 60, -1,false,false));
                 }

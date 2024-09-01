@@ -95,7 +95,8 @@ public class EnvisionWeather extends Item {
                     }
                 }
             }
-            if (pPlayer.getPersistentData().getInt("tyrantMentionedInChat") >= 1 && message.contains("yes")) {
+            if (pPlayer.getPersistentData().getInt("tyrantMentionedInChat") >= 1 && message.contains("yes") && holder.getSpirituality() >= 1200) {
+                holder.useSpirituality(1200);
                 pPlayer.getPersistentData().putInt("sailorLightningStorm1", 300);
                 event.setCanceled(true);
             }

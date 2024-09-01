@@ -158,6 +158,7 @@ public class BeyonderUtil {
                     abilityNames.add(getItemName(ItemInit.ThunderClap.get()));
                 }
                 if (sequence <= 2) {
+                    abilityNames.add(getItemName(ItemInit.RainEyes.get()));
                     abilityNames.add(getItemName(ItemInit.VolcanicEruption.get()));
                     abilityNames.add(getItemName(ItemInit.ExtremeColdness.get()));
                     abilityNames.add(getItemName(ItemInit.LightningBall.get()));
@@ -166,6 +167,7 @@ public class BeyonderUtil {
                     abilityNames.add(getItemName(ItemInit.LightningBallAbsorb.get()));
                     abilityNames.add(getItemName(ItemInit.SailorLightningTravel.get()));
                     abilityNames.add(getItemName(ItemInit.StarOfLightning.get()));
+                    abilityNames.add(getItemName(ItemInit.LightningRedirection.get()));
                 }
                 if (sequence <= 0) {
                     abilityNames.add(getItemName(ItemInit.StormSeal.get()));
@@ -174,7 +176,6 @@ public class BeyonderUtil {
                     abilityNames.add(getItemName(ItemInit.MatterAccelerationBlocks.get()));
                     abilityNames.add(getItemName(ItemInit.MatterAccelerationEntities.get()));
                     abilityNames.add(getItemName(ItemInit.Tyranny.get()));
-                    abilityNames.add(getItemName(ItemInit.TyrantTornado.get()));
                 }
             }
         }
