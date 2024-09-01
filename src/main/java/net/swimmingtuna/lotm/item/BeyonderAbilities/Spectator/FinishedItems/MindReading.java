@@ -82,7 +82,7 @@ public class MindReading extends Item implements ReachChangeUUIDs {
                             ItemStack itemStack = ((Player) pInteractionTarget).getInventory().getItem(i);
                             if (!itemStack.isEmpty()) {
                                 String playerName = pInteractionTarget.getName().getString();
-                                pPlayer.sendSystemMessage(Component.literal(playerName + "'s inventory is" + itemStack).withStyle(style));
+                                pPlayer.sendSystemMessage(Component.literal(playerName + "'s inventory is" + itemStack).withStyle(ChatFormatting.BOLD));
                             }
                             if (dreamIntoReality.getValue() == 2) {
                                 pInteractionTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1, false, false));

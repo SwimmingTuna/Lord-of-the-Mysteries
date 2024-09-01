@@ -116,8 +116,6 @@ public class WindManipulationFlight extends Item {
                     BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
                         if (!pPlayer.getAbilities().instabuild) {
                             if (sailorSequence.getSpirituality() > 101) {
-                                pPlayer.sendSystemMessage(Component.literal("sailor value is" + spiritualityUseCounter));
-                                pPlayer.sendSystemMessage(Component.literal("sailor boolean is" + canFly));
                                 tag.putInt("sailorWindSpiritualityCounter", spiritualityUseCounter + 1);
                                 if (spiritualityUseCounter >= 20) {
                                     sailorSequence.useSpirituality(100);

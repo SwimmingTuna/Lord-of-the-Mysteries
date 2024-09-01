@@ -310,7 +310,7 @@ public class ModEvents implements ReachChangeUUIDs {
                         int barrierRadius = pPlayer.getPersistentData().getInt("BarrierRadius");
                         if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof EnvisionBarrier) {
                             barrierRadius++;
-                            pPlayer.sendSystemMessage(Component.literal("Barrier Radius " + barrierRadius));
+                            pPlayer.displayClientMessage(Component.literal("Barrier Radius " + barrierRadius).withStyle(style), true);
                         }
                         if (barrierRadius > 100) {
                             barrierRadius = 0;
@@ -561,7 +561,6 @@ public class ModEvents implements ReachChangeUUIDs {
                     }
                 }
                 if (sailorEarthquake >= 0) {
-                    pPlayer.sendSystemMessage(Component.literal("x is " + sailorEarthquake));
                     pPlayer.getPersistentData().putInt("sailorEarthquake", sailorEarthquake - 1);
                 }
 
@@ -573,7 +572,6 @@ public class ModEvents implements ReachChangeUUIDs {
                     extremeColdness = 0;
                 }
                 if (extremeColdness >= 1) {
-                    pPlayer.sendSystemMessage(Component.literal("x is " + extremeColdness));
                     tag.putInt("sailorExtremeColdness", extremeColdness + 1);
 
                     AABB areaOfEffect = pPlayer.getBoundingBox().inflate(extremeColdness);
@@ -672,7 +670,7 @@ public class ModEvents implements ReachChangeUUIDs {
                 double distance = pPlayer.getPersistentData().getDouble("sailorLightningStormDistance");
                 if (distance > 300) {
                     tag.putDouble("sailorLightningStormDistance", 0);
-                    pPlayer.sendSystemMessage(Component.literal("Storm Radius Is 0").withStyle(style));
+                    pPlayer.displayClientMessage(Component.literal("Storm Radius Is 0").withStyle(style), true);
                 }
                 int tyrantVer = tag.getInt("sailorLightningStormTyrant");
                 int sailorMentioned = tag.getInt("tyrantMentionedInChat");
@@ -729,7 +727,7 @@ public class ModEvents implements ReachChangeUUIDs {
                     if (holder.isSailorClass() && holder.getCurrentSequence() <= 3 && pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
                         if (pPlayer.isShiftKeyDown()) {
                             tag.putInt("sailorStormVec", stormVec + 10);
-                            pPlayer.sendSystemMessage(Component.literal("Sailor Storm Spawn Distance is " + stormVec).withStyle(style));
+                            pPlayer.displayClientMessage(Component.literal("Sailor Storm Spawn Distance is " + stormVec).withStyle(style), true);
                         }
                         if (stormVec > 300) {
                             tag.putInt("sailorStormVec", 0);
@@ -744,11 +742,11 @@ public class ModEvents implements ReachChangeUUIDs {
                 int blinkDistance = pPlayer.getPersistentData().getInt("BlinkDistance");
                 if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof MatterAccelerationSelf && holder.isSailorClass()) {
                     pPlayer.getPersistentData().putInt("tyrantSelfAcceleration", matterAccelerationDistance + 50);
-                    pPlayer.sendSystemMessage(Component.literal("Matter Acceleration Distance is " + matterAccelerationDistance).withStyle(style));
+                    pPlayer.displayClientMessage(Component.literal("Matter Acceleration Distance is " + matterAccelerationDistance).withStyle(style), true);
                 }
                 if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLocationBlink && holder.isSpectatorClass()) {
                     pPlayer.getPersistentData().putInt("BlinkDistance", blinkDistance + 5);
-                    pPlayer.sendSystemMessage(Component.literal("Blink Distance is " + blinkDistance).withStyle(style));
+                    pPlayer.displayClientMessage(Component.literal("Blink Distance is " + blinkDistance).withStyle(style), true);
                 }
                 if (matterAccelerationDistance >= 1000) {
                     matterAccelerationDistance = 0;
@@ -819,7 +817,7 @@ public class ModEvents implements ReachChangeUUIDs {
                         if (entity != pPlayer) {
                             if (entity instanceof Player player) {
                                 if (player.isInWaterOrRain()) {
-                                    pPlayer.sendSystemMessage(Component.literal(player.getName().getString() + "'s location is " + player.getX() + ", " + player.getY() + ", " + player.getZ()));
+                                    pPlayer.sendSystemMessage(Component.literal(player.getName().getString() + "'s location is " + player.getX() + ", " + player.getY() + ", " + player.getZ()).withStyle(ChatFormatting.BOLD));
                                 }
                             }
                         }

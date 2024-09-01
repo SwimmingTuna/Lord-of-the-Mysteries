@@ -76,9 +76,6 @@ public class AqueousLightEntity extends AbstractHurtingProjectile {
                     });
                 }
 
-                if (compoundTag.getInt("lightDrowning") >= 1) {
-                    this.getOwner().sendSystemMessage(Component.literal("hasInt"));
-                }
             }
         }
     }

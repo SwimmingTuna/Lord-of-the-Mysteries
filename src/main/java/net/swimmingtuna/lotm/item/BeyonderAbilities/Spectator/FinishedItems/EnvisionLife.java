@@ -96,7 +96,7 @@ public class EnvisionLife extends Item {
                         mob.setLastHurtByPlayer(nearestPlayer);
                     }
                     BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                    if (holder.getCurrentSequence() >= ((Mob) entity).getMaxHealth() * 3) {
+                    if (holder.getSpirituality() >= ((Mob) entity).getMaxHealth() * 3) {
                         holder.useSpirituality((int) (((Mob) entity).getMaxHealth() * 3));
                         level.addFreshEntity(entity);
                     } else {

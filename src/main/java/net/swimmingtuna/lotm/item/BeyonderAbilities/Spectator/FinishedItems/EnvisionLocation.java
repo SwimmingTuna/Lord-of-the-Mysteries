@@ -15,6 +15,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.ItemInit;
@@ -65,7 +66,7 @@ public class EnvisionLocation extends Item {
                         int y = Integer.parseInt(coordinates[1]);
                         int z = Integer.parseInt(coordinates[2]);
                         pPlayer.teleportTo(x, y, z);
-                        event.getPlayer().sendSystemMessage(Component.literal("Teleported to " + x + ", " + y + ", " + z), true);
+                        event.getPlayer().displayClientMessage(Component.literal("Teleported to " + x + ", " + y + ", " + z).withStyle(BeyonderUtil.getStyle(pPlayer)), true);
                         spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
                         event.setCanceled(true);
                     }
@@ -84,7 +85,7 @@ public class EnvisionLocation extends Item {
                         pPlayer.teleportTo(x,y,z);
                         spectatorSequence.useSpirituality(500);
                     } else {
-                        event.getPlayer().sendSystemMessage(Component.literal("Player:" + message + " not found"), true);
+                        event.getPlayer().displayClientMessage(Component.literal("Player:" + message + " not found").withStyle(BeyonderUtil.getStyle(pPlayer)), true);
                     }
                     event.setCanceled(true);
                 }

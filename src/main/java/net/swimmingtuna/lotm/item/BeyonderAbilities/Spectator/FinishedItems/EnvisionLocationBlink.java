@@ -73,7 +73,6 @@ public class EnvisionLocationBlink extends Item {
                                 level.destroyBlock(targetPos, false);
                                 level.destroyBlock(targetPos1, false);
                                 level.destroyBlock(playerPos1, false);
-                                pPlayer.sendSystemMessage(Component.literal("Working1"));
                             }
                         }
                     }

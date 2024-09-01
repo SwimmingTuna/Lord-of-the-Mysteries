@@ -156,7 +156,6 @@ public class LightningBallEntity extends AbstractHurtingProjectile {
                         if (scaleData.getScale() <= 50) {
                         scaleData.setScale(scaleData.getScale() + 1);
                         }
-                        owner.sendSystemMessage(Component.literal("woo" + scaleData.getScale()));
                     }
                 }
                 if (entity instanceof LightningBolt lightningBolt) {

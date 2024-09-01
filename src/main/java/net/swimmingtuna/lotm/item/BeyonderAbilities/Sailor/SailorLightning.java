@@ -166,7 +166,6 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
                         tag.putInt("sailorLightningProjectileCounter", x + 1);
                         shootLineBlock(pPlayer, pPlayer.level(), targetEntity.position());
                     } else if (targetEntity instanceof LivingEntity) {
-                        pPlayer.sendSystemMessage(Component.literal("entity check"));
                         LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
                         lightningEntity.setSpeed(speed);
                         if (!pPlayer.getAbilities().instabuild) {
@@ -212,7 +211,6 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
                 }
                 if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.isSailorClass() && !pPlayer.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
                     shootLineBlock(pPlayer, pPlayer.level(), event.getPos().getCenter());
-                    pPlayer.sendSystemMessage(Component.literal("block check"));
                     if (!pPlayer.getAbilities().instabuild) {
                         pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 8 + holder.getCurrentSequence());
                     }

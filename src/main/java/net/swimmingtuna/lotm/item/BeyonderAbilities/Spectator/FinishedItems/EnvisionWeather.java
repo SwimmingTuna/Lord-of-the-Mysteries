@@ -4,6 +4,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +17,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.ItemInit;
@@ -46,6 +48,7 @@ public class EnvisionWeather extends Item {
         Player pPlayer = event.getPlayer();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        Style style = BeyonderUtil.getStyle(pPlayer);
         if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather) {
             if (!holder.isSpectatorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
@@ -58,17 +61,17 @@ public class EnvisionWeather extends Item {
                 if (holder.isSpectatorClass() && pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather && spectatorSequence.getCurrentSequence() == 0) {
                     if (message.equals("clear") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
                         setWeatherClear(level);
-                        event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Clear"), true);
+                        event.getPlayer().displayClientMessage(Component.literal("Set Weather to Clear").withStyle(style), true);
                         spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
                         event.setCanceled(true);
                     }
                     if (message.equals("rain") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
-                        event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Rain"), true);
+                        event.getPlayer().displayClientMessage(Component.literal("Set Weather to Rain").withStyle(style), true);
                         setWeatherRain(level);
                         event.setCanceled(true);
                     }
                     if (message.equals("thunder") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
-                        event.getPlayer().sendSystemMessage(Component.literal("Set Weather to Thunder"), true);
+                        event.getPlayer().displayClientMessage(Component.literal("Set Weather to Thunder").withStyle(style), true);
                         setWeatherThunder(level);
                         event.setCanceled(true);
                     }
@@ -81,11 +84,11 @@ public class EnvisionWeather extends Item {
                 if (message.contains(otherPlayer.getName().getString().toLowerCase())) {
                     BeyonderHolder otherHolder = BeyonderHolderAttacher.getHolder(otherPlayer).orElse(null);
                     if (otherHolder != null && otherHolder.isSpectatorClass() && otherHolder.getCurrentSequence() <= 2 && !otherPlayer.level().isClientSide()) {
-                        otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. Their coordinates are: " + (int) pPlayer.getX() + " ," + (int) pPlayer.getY() + " ," + (int) pPlayer.getZ()).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA));
+                        otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. Their coordinates are: " + (int) pPlayer.getX() + " ," + (int) pPlayer.getY() + " ," + (int) pPlayer.getZ()).withStyle(style));
                     }
                     if (otherHolder != null && otherHolder.isSailorClass() && otherHolder.getCurrentSequence() <= 1 && !otherPlayer.level().isClientSide()) {
                         otherPlayer.getPersistentData().putInt("tyrantMentionedInChat", 200);
-                        otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. DO you want to summon a lightning storm on them? Type Yes if so, you have 10 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                        otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. Do you want to summon a lightning storm on them? Type Yes if so, you have 10 seconds").withStyle(style));
                         otherPlayer.getPersistentData().putInt("sailorStormVecX1", (int) pPlayer.getX());
                         otherPlayer.getPersistentData().putInt("sailorStormVecY1", (int) pPlayer.getY());
                         otherPlayer.getPersistentData().putInt("sailorStormVecZ1", (int) pPlayer.getZ());

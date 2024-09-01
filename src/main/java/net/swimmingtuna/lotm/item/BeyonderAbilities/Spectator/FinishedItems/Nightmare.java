@@ -23,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.LazyOptional;
+import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
@@ -104,7 +105,7 @@ public class Nightmare extends Item implements ReachChangeUUIDs {
                     livingEntity.hurt(livingEntity.damageSources().magic(), damagePlayer);
                     nightmareAttribute.setBaseValue(0);
                 }
-                    pPlayer.sendSystemMessage(Component.literal(playerName + "'s nightmare value is:" + nightmareAttribute.getValue()));
+                    pPlayer.sendSystemMessage(Component.literal(playerName + "'s nightmare value is:" + nightmareAttribute.getValue()).withStyle(BeyonderUtil.getStyle(pPlayer)));
 
                 }
                 else {
