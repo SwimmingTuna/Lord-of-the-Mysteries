@@ -23,10 +23,9 @@ public class ReachChangeEvent {
                 AttributeModifier beyonderModifier = attackRange.getModifier(BeyonderEntityReach); // calls BeyonderEntityReach and sets it to be able to change attack range and calls it beyonderModifier when its used for that
                 if (beyonderModifier != null) { //if beyonderModifier is active
                     attackRange.removeModifier(beyonderModifier.getId()); //tbh idk
-                    double range = pPlayer.getAttributeValue(ForgeMod.ENTITY_REACH.get()); //gets the default entity range
-                    double trueReach = range == 0 ? 0 : range + (pPlayer.isCreative() ? 3 : 0); //defines the default player range
-                    attackRange.addTransientModifier(beyonderModifier); //when beyonderModifier is called, able to write stuff to be able to change the range which is shown later
-
+                    double range = pPlayer.getAttributeValue(ForgeMod.ENTITY_REACH.get());
+                    double trueReach = range == 0 ? 0 : range + (pPlayer.isCreative() ? 3 : 0);
+                    attackRange.addTransientModifier(beyonderModifier);
                 }
             }
         }

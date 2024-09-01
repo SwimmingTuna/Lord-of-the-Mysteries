@@ -841,36 +841,65 @@ public class ModEvents implements ReachChangeUUIDs {
                         }
                     }
                     if (ssHarm == 400) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_1.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_1.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssHarm == 380) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_2.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
                     if (ssHarm == 360) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_2.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_3.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssHarm == 340) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_4.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
                     if (ssHarm == 320) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_3.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_5.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssHarm == 300) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_6.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
                     if (ssHarm == 280) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_4.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_7.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssHarm == 260) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_8.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
                     if (ssHarm == 240) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_5.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_9.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssHarm == 220) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_10.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
                     if (ssHarm == 200) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_6.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_11.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssHarm == 180) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_12.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
                     if (ssHarm == 160) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_7.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_13.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssHarm == 140) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_14.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
                     if (ssHarm == 120) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_8.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_15.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssHarm == 100) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_16.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
                     if (ssHarm == 80) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_9.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_17.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssHarm == 60) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_18.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
                     if (ssHarm == 40) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_10.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_19.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
-
+                    if (ssHarm == 20) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_HARM_20.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
 
                     if (ssHarm >= 1) {
                         tag.putInt("sirenSongHarm", ssHarm - 1);
@@ -885,8 +914,66 @@ public class ModEvents implements ReachChangeUUIDs {
                         }
                     }
                     if (ssWeaken == 400) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_1.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
+                    if (ssWeaken == 380) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_2.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 360) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_3.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 340) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_4.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 320) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_5.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 300) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_6.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 280) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_7.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 260) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_8.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 240) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_9.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 220) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_10.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 200) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_11.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 180) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_12.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 160) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_13.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 140) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_14.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 120) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_15.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 100) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_16.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 80) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_17.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 60) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_18.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 40) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_19.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssWeaken == 20) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_WEAKEN_20.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+
                     if (ssWeaken >= 1) {
                         tag.putInt("sirenSongWeaken", ssWeaken - 1);
                     }
@@ -899,8 +986,66 @@ public class ModEvents implements ReachChangeUUIDs {
                         }
                     }
                     if (ssStun == 400) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_1.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
+                    if (ssStun == 380) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_2.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 360) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_3.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 340) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_4.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 320) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_5.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 300) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_6.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 280) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_7.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 260) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_8.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 240) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_9.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 220) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_10.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 200) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_11.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 180) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_12.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 160) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_13.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 140) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_14.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 120) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_15.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 100) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_16.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 80) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_17.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 60) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_18.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 40) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_19.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStun == 20) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STUN_20.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+
                     if (ssStun >= 1) {
                         tag.putInt("sirenSongStun", ssStun - 1);
                     }
@@ -919,12 +1064,71 @@ public class ModEvents implements ReachChangeUUIDs {
                         }
                     }
                     if (ssStrengthen == 400) {
-                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN.get(), SoundSource.NEUTRAL, 1f, 1f);
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_1.get(), SoundSource.NEUTRAL, 6f, 1f);
                     }
+                    if (ssStrengthen == 380) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_2.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 360) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_3.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 340) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_4.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 320) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_5.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 300) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_6.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 280) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_7.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 260) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_8.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 240) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_9.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 220) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_10.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 200) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_11.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 180) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_12.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 160) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_13.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 140) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_14.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 120) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_15.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 100) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_16.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 80) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_17.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 60) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_18.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 40) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_19.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+                    if (ssStrengthen == 20) {
+                        pPlayer.level().playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundInit.SIREN_SONG_STRENGTHEN_20.get(), SoundSource.NEUTRAL, 6f, 1f);
+                    }
+
                     if (ssStrengthen >= 1) {
                         tag.putInt("sirenSongStrengthen", ssStrengthen - 1);
                     }
                 }
+
                 int ssParticleAttributeHelper = tag.getInt("ssParticleAttributeHelper");
                 if (ssParticleAttributeHelper >= 1) {
                     tag.putInt("ssParticleAttributeHelper", ssParticleAttributeHelper - 1);
@@ -1509,7 +1713,7 @@ public class ModEvents implements ReachChangeUUIDs {
                 int x = tag.getInt("stormSealX");
                 int y = tag.getInt("stormSealY");
                 int z = tag.getInt("stormSealZ");
-                entity.teleportTo(x, y + 10, z);
+                entity.teleportTo(x, y + 4000, z);
                 BlockPos lightningSpawnPos = new BlockPos((int) (entity.getX() + (Math.random() * 20) - 10), (int) (entity.getY() + (Math.random() * 20) - 10), (int) (entity.getZ() + (Math.random() * 20) - 10));
                 MCLightningBoltEntity lightningBolt = new MCLightningBoltEntity(EntityInit.MC_LIGHTNING_BOLT.get(), entity.level());
                 lightningBolt.teleportTo(lightningSpawnPos.getX(), lightningSpawnPos.getY(), lightningSpawnPos.getZ());
@@ -1654,6 +1858,37 @@ public class ModEvents implements ReachChangeUUIDs {
                 event.setCanceled(true);
                 System.out.println("death canceled");
                 entity.setHealth(5.0f);
+            }
+
+            if (entity instanceof Player pPlayer) {
+
+
+                //REMOVE ALL TAGS
+                tag.getAllKeys().removeIf(key -> key.startsWith("lotm:"));
+
+
+                //RESET PARTICLE ATTRIBUTES
+                AttributeInstance particleAttributeInstance = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER.get());
+                AttributeInstance particleAttributeInstance1 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER1.get());
+                AttributeInstance particleAttributeInstance2 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER2.get());
+                AttributeInstance particleAttributeInstance3 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
+                AttributeInstance particleAttributeInstance4 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
+                AttributeInstance particleAttributeInstance5 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER5.get());
+                AttributeInstance particleAttributeInstance6 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER6.get());
+                AttributeInstance particleAttributeInstance7 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER7.get());
+                AttributeInstance particleAttributeInstance8 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER8.get());
+                AttributeInstance particleAttributeInstance9 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER9.get());
+                particleAttributeInstance.setBaseValue(0.0f);
+                particleAttributeInstance1.setBaseValue(0.0f);
+                particleAttributeInstance2.setBaseValue(0.0f);
+                particleAttributeInstance3.setBaseValue(0.0f);
+                particleAttributeInstance4.setBaseValue(0.0f);
+                particleAttributeInstance5.setBaseValue(0.0f);
+                particleAttributeInstance6.setBaseValue(0.0f);
+                particleAttributeInstance7.setBaseValue(0.0f);
+                particleAttributeInstance8.setBaseValue(0.0f);
+                particleAttributeInstance9.setBaseValue(0.0f);
+
             }
         }
     }

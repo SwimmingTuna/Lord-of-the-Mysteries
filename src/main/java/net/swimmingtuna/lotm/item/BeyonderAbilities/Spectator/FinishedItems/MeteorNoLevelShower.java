@@ -55,17 +55,15 @@ public class MeteorNoLevelShower extends Item {
     }
 
     public static void meteorShower(Player pPlayer) {
-        Vec3 eyePosition = pPlayer.getEyePosition(1.0f);
-        Vec3 direction = pPlayer.getViewVector(1.0f).scale(-1);
-        MeteorNoLevelEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
-        MeteorNoLevelEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
-        MeteorNoLevelEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
-        MeteorNoLevelEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
-        MeteorNoLevelEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
-        MeteorNoLevelEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
-        MeteorNoLevelEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
-        MeteorNoLevelEntity.summonMultipleMeteors(direction, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer, 4);
-
+        MeteorNoLevelEntity.summonMultipleMeteors(pPlayer);
+        MeteorNoLevelEntity.summonMultipleMeteors(pPlayer);
+        MeteorNoLevelEntity.summonMultipleMeteors(pPlayer);
+        MeteorNoLevelEntity.summonMultipleMeteors(pPlayer);
+        MeteorNoLevelEntity.summonMultipleMeteors(pPlayer);
+        MeteorNoLevelEntity.summonMultipleMeteors(pPlayer);
+        MeteorNoLevelEntity.summonMultipleMeteors(pPlayer);
+        MeteorNoLevelEntity.summonMultipleMeteors(pPlayer);
+        MeteorNoLevelEntity.summonMultipleMeteors(pPlayer);
     }
 
     @Override

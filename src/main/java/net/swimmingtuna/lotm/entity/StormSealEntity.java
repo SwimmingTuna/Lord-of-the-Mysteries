@@ -61,18 +61,18 @@ public class StormSealEntity extends AbstractHurtingProjectile {
             Entity entity = pResult.getEntity();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
 
-            // Check if the entity is a player, projectile, or a mob with max health > 100
             if (entity instanceof Projectile projectile) {
                 float explosionRadius = 3 * scaleData.getScale();
                 this.level().explode(this, this.getX(), this.getY(), this.getZ(), explosionRadius, Level.ExplosionInteraction.TNT);
                 projectile.discard();
             }
             if (entity instanceof LivingEntity livingEntity) {
-                livingEntity.getPersistentData().putInt("inStormSeal", 3600);
-                livingEntity.getPersistentData().putInt("stormSealX", (int) livingEntity.getX());
-                livingEntity.getPersistentData().putInt("stormSealY", (int) livingEntity.getY());
-                livingEntity.getPersistentData().putInt("stormSealZ", (int) livingEntity.getZ());
-
+                if (this.getOwner() != null && livingEntity != this.getOwner()) {
+                    livingEntity.getPersistentData().putInt("inStormSeal", 3600);
+                    livingEntity.getPersistentData().putInt("stormSealX", (int) livingEntity.getX());
+                    livingEntity.getPersistentData().putInt("stormSealY", (int) livingEntity.getY());
+                    livingEntity.getPersistentData().putInt("stormSealZ", (int) livingEntity.getZ());
+                }
             }
             this.discard();
         }

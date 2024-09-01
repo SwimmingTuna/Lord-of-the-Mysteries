@@ -53,6 +53,7 @@ public class StormSeal extends Item implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide()) {
             StormSealEntity stormSealEntity = new StormSealEntity(EntityInit.STORM_SEAL_ENTITY.get(), pPlayer.level());
             Vec3 lookVec = pPlayer.getLookAngle().normalize().scale(3.0f);
+            stormSealEntity.setOwner(pPlayer);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(stormSealEntity);
             scaleData.setTargetScale(3.0f);
             stormSealEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());

@@ -38,7 +38,7 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
 
 
     protected float getInertia() {
-        return this.isDangerous() ? 0.73F : super.getInertia();
+        return this.isDangerous() ? 1.0F : super.getInertia();
     }
 
 
@@ -98,29 +98,25 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
         return false;
     }
 
-    public static void summonMultipleMeteors(Vec3 direction, Vec3 eyePosition, double x, double y, double z, Player pPlayer, int scale) {
+    public static void summonMultipleMeteors(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
-            double randomXOffset = (Math.random() * 0.4) - 0.2;
-            double randomZOffset = (Math.random() * 0.4) - 0.2;
-            double randomAngle = Math.toRadians(Math.random() * 20 - 10); // Random angle between -10 and 10 degrees
-            double randomVelocityX = -direction.x + randomXOffset * Math.cos(randomAngle);
-            double randomVelocityZ = -direction.z + randomZOffset * Math.cos(randomAngle);
-            Vec3 initialVelocity = new Vec3(randomVelocityX, -direction.y, randomVelocityZ);
-            MeteorNoLevelEntity meteorEntity = new MeteorNoLevelEntity(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
-            meteorEntity.setDeltaMovement(initialVelocity);
-            Vec3 lightPosition = eyePosition.add(direction.scale(2.0));
-            meteorEntity.setPos(lightPosition);
-            meteorEntity.setOwner(pPlayer);
             double randomX = Math.random() * 60 - 30;
             double randomZ = Math.random() * 60 - 30;
-            meteorEntity.teleportTo(pPlayer.getX() + randomX, pPlayer.getY() + 50, pPlayer.getZ() + randomZ);
-            double random = 0.5 + Math.random();
+            double randomAngle = Math.toRadians(Math.random() * 20 - 10);
+            Vec3 lookVec = pPlayer.getLookAngle().normalize().scale(100);
+            MeteorNoLevelEntity meteorEntity = new MeteorNoLevelEntity(EntityInit.METEOR_NO_LEVEL_ENTITY.get(), pPlayer.level());
+            meteorEntity.teleportTo(pPlayer.getX() + randomX, pPlayer.getY() + 60, pPlayer.getZ() + randomZ);
+            meteorEntity.setOwner(pPlayer);
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            int sequence = holder.getCurrentSequence();
-            int scalecheck = 10 - sequence * 4;
+            int scalecheck = 10 - holder.getCurrentSequence() * 4;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
             scaleData.setScale(scalecheck);
             scaleData.markForSync(true);
+            Vec3 meteorPos = meteorEntity.position();
+            Vec3 targetPos = pPlayer.getEyePosition().add(lookVec);
+            Vec3 directionToTarget = targetPos.subtract(meteorPos).normalize();
+            double speed = 7.0;
+            meteorEntity.setDeltaMovement(directionToTarget.scale(speed));
             pPlayer.level().addFreshEntity(meteorEntity);
         }
     }
