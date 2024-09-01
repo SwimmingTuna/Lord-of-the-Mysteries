@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.commands;
+package net.swimmingtuna.lotm.REQUEST_FILES;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.swimmingtuna.lotm.util.BeyonderUtil;
 
 import java.util.HashMap;
 import java.util.List;

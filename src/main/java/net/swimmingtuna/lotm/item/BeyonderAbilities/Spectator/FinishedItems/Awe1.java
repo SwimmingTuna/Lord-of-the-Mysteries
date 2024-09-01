@@ -14,41 +14,24 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.swimmingtuna.lotm.ability.Ability;
+import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class Awe1 extends Item {
+public class Awe1 extends Ability {
+
 
     public Awe1(Properties pProperties) {
-        super(pProperties);
-    }
-
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSpectatorClass()) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 75) {
-                pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-            }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.useSpirituality(75)) {
-                    AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                    applyPotionEffectToEntities(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 240);
-                }
-            });
-        }
-        return super.use(level, pPlayer, hand);
+        super(pProperties,"spectator", 7, 100, false);
     }
 
     public static void applyPotionEffectToEntities(Player pPlayer) {
@@ -77,4 +60,9 @@ public class Awe1 extends Item {
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
 
+    @Override
+    protected InteractionResultHolder<ItemStack> useAbility(Level level, Player pPlayer, InteractionHand hand) {
+        applyPotionEffectToEntities(pPlayer);
+        return null;
+    }
 }

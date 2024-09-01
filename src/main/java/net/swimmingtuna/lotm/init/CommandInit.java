@@ -9,7 +9,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.commands.AbilitiesCommand;
-import net.swimmingtuna.lotm.commands.AbilityRegisterCommand;
+import net.swimmingtuna.lotm.REQUEST_FILES.AbilityRegisterCommand;
 import net.swimmingtuna.lotm.commands.BeyonderClassArgument;
 import net.swimmingtuna.lotm.commands.BeyonderCommand;
 

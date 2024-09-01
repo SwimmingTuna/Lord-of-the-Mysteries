@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.util;
+package net.swimmingtuna.lotm.REQUEST_FILES;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
@@ -9,19 +9,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
@@ -265,7 +260,7 @@ public class BeyonderUtil {
             }
             if (holder.isSailorClass()) {
                 // Create a Style object with multiple formatting options
-                return Style.EMPTY.withBold(true).withColor(ChatFormatting.AQUA);
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.BLUE);
             }
             if (holder.isApothecaryClass()) {
                 // Create a Style object with multiple formatting options
@@ -297,7 +292,7 @@ public class BeyonderUtil {
             }
             if (holder.isHunterClass()) {
                 // Create a Style object with multiple formatting options
-                return Style.EMPTY.withBold(true).withColor(ChatFormatting.AQUA);
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_RED);
             }
             if (holder.isLawyerClass()) {
                 // Create a Style object with multiple formatting options
@@ -321,7 +316,7 @@ public class BeyonderUtil {
             }
             if (holder.isPrisonerClass()) {
                 // Create a Style object with multiple formatting options
-                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_PURPLE);
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_GRAY);
             }
             if (holder.isReaderClass()) {
                 // Create a Style object with multiple formatting options
@@ -341,7 +336,7 @@ public class BeyonderUtil {
             }
             if (holder.isSecretsSupplicantClass()) {
                 // Create a Style object with multiple formatting options
-                return Style.EMPTY.withBold(true).withColor(ChatFormatting.RED);
+                return Style.EMPTY.withBold(true).withColor(ChatFormatting.LIGHT_PURPLE);
             }
             if (holder.isWarriorClass()) {
                 // Create a Style object with multiple formatting options
@@ -351,33 +346,4 @@ public class BeyonderUtil {
         return Style.EMPTY;
     }
 
-    public static boolean isPlayerLookingAtEntityWithinDistance(Player player, double maxDistance) {
-        // Get the player's eye position
-        Vec3 eyePosition = player.getEyePosition(1.0F);
-        // Get the direction the player is looking
-        Vec3 lookDirection = player.getViewVector(1.0F);
-        // Calculate the bounding box of the viewing area
-        Vec3 lookEnd = eyePosition.add(lookDirection.scale(maxDistance));
-        AABB boundingBox = new AABB(eyePosition, lookEnd).inflate(1.0D);
-
-        // Check all entities within the bounding box
-        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, boundingBox)) {
-            if (entity == player) {
-                continue; // Skip the player itself
-            }
-
-            // Create an AABB around the entity
-            AABB entityBox = entity.getBoundingBox().inflate(0.1D);
-
-            // Check if the entity is within the line of sight of the player
-            BlockHitResult hitResult = player.level().clip(new ClipContext(eyePosition, lookEnd, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-            if (hitResult.getType() == BlockHitResult.Type.MISS) {
-                if (entityBox.intersects(eyePosition, lookEnd)) {
-                    return true; // The player is looking at this entity
-                }
-            }
-        }
-
-        return false; // No entity found within the distance
-    }
 }

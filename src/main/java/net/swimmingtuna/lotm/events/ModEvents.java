@@ -54,7 +54,7 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.Drea
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionBarrier;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
-import net.swimmingtuna.lotm.util.BeyonderUtil;
+import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
@@ -64,7 +64,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static net.swimmingtuna.lotm.util.BeyonderUtil.getProjectiles;
+import static net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil.getProjectiles;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
 public class ModEvents implements ReachChangeUUIDs {

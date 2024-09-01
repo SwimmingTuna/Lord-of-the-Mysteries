@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.item.BeyonderAbilities;
+package net.swimmingtuna.lotm.REQUEST_FILES;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -17,7 +17,6 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.networking.packet.LeftClickC2S;
-import net.swimmingtuna.lotm.util.BeyonderUtil;
 
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)

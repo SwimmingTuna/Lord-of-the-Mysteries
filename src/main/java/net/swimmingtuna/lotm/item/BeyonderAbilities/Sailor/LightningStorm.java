@@ -21,7 +21,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.networking.packet.LeftClickC2S;
-import net.swimmingtuna.lotm.util.BeyonderUtil;
+import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;

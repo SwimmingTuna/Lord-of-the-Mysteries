@@ -142,35 +142,35 @@ public class BlockInit {
             () -> new LOTMBlackStainedGlassPane(DyeColor.BLACK, BlockBehaviour.Properties.copy(Blocks.GLASS).noLootTable()));
     public static final RegistryObject<Block> VISIONARY_GLASS_PANE = registerBlock("lotm_glass_pane",
             () -> new LOTMGlassPane(DyeColor.WHITE, BlockBehaviour.Properties.copy(Blocks.GLASS).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_WHITE_STAINED_GLASS_PANE = registerBlock("lotm_white_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_WHITE_STAINED_GLASS_PANE = registerBlock("lotm_white_stained_pane",
             () -> new LOTMWhiteStainedGlassPane(DyeColor.WHITE, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_LIGHT_GRAY_STAINED_GLASS_PANE = registerBlock("lotm_light_gray_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_LIGHT_GRAY_STAINED_GLASS_PANE = registerBlock("lotm_light_gray_stained_pane",
             () -> new LOTMLightGrayStainedGlassPane(DyeColor.LIGHT_GRAY, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_GRAY_STAINED_GLASS_PANE = registerBlock("lotm_gray_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_GRAY_STAINED_GLASS_PANE = registerBlock("lotm_gray_stained_pane",
             () -> new LOTMGrayStainedGlassPane(DyeColor.GRAY, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_BROWN_STAINED_GLASS_PANE = registerBlock("lotm_brown_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_BROWN_STAINED_GLASS_PANE = registerBlock("lotm_brown_stained_pane",
             () -> new LOTMBrownStainedGlassPane(DyeColor.BROWN, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_PURPLE_STAINED_GLASS_PANE = registerBlock("lotm_purple_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_PURPLE_STAINED_GLASS_PANE = registerBlock("lotm_purple_stained_pane",
             () -> new LOTMPurpleStainedGlassPane(DyeColor.PURPLE, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_MAGENTA_STAINED_GLASS_PANE = registerBlock("lotm_magenta_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_MAGENTA_STAINED_GLASS_PANE = registerBlock("lotm_magenta_stained_pane",
             () -> new LOTMMagentaStainedGlassPane(DyeColor.MAGENTA, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_BLUE_STAINED_GLASS_PANE = registerBlock("lotm_blue_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_BLUE_STAINED_GLASS_PANE = registerBlock("lotm_blue_stained_pane",
             () -> new LOTMBlueStainedGlassPane(DyeColor.BLUE, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_CYAN_STAINED_GLASS_PANE = registerBlock("lotm_cyan_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_CYAN_STAINED_GLASS_PANE = registerBlock("lotm_cyan_stained_pane",
             () -> new LOTMCyanStainedGlassPane(DyeColor.CYAN, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_LIGHT_BLUE_STAINED_GLASS_PANE = registerBlock("lotm_light_blue_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_LIGHT_BLUE_STAINED_GLASS_PANE = registerBlock("lotm_light_blue_stained_pane",
             () -> new LOTMLightBlueStainedGlassPane(DyeColor.LIGHT_BLUE, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_GREEN_STAINED_GLASS_PANE = registerBlock("lotm_green_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_GREEN_STAINED_GLASS_PANE = registerBlock("lotm_green_stained_pane",
             () -> new LOTMGreenStainedGlassPane(DyeColor.GREEN, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_YELLOW_STAINED_GLASS_PANE = registerBlock("lotm_yellow_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_YELLOW_STAINED_GLASS_PANE = registerBlock("lotm_yellow_stained_pane",
             () -> new LOTMYellowStainedGlassPane(DyeColor.YELLOW, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_PINK_STAINED_GLASS_PANE = registerBlock("lotm_pink_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_PINK_STAINED_GLASS_PANE = registerBlock("lotm_pink_stained_pane",
             () -> new LOTMPinkStainedGlassPane(DyeColor.PINK, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_ORANGE_STAINED_GLASS_PANE = registerBlock("lotm_orange_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_ORANGE_STAINED_GLASS_PANE = registerBlock("lotm_orange_stained_pane",
             () -> new LOTMOrangeStainedGlassPane(DyeColor.ORANGE, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_RED_STAINED_GLASS_PANE = registerBlock("lotm_red_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_RED_STAINED_GLASS_PANE = registerBlock("lotm_red_stained_pane",
             () -> new LOTMRedStainedGlassPane(DyeColor.RED, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
-    public static final RegistryObject<Block> VISIONARY_LIME_STAINED_GLASS_PANE = registerBlock("lotm_lime_stained_glass_pane",
+    public static final RegistryObject<Block> VISIONARY_LIME_STAINED_GLASS_PANE = registerBlock("lotm_lime_stained_pane",
             () -> new LOTMLimeStainedGlassPane(DyeColor.LIME, BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {

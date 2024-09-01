@@ -58,6 +58,8 @@ public class LOTM {
 
     public LOTM() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        BeyonderClassInit.BEYONDER_CLASS.register(modEventBus);
+        BeyonderHolderAttacher.register();
         BlockEntityInit.BLOCK_ENTITIES.register(modEventBus);
         CreativeTabInit.register(modEventBus);
         ItemInit.register(modEventBus);
@@ -66,7 +68,6 @@ public class LOTM {
         ModAttributes.register(modEventBus);
         EntityInit.register(modEventBus);
         CommandInit.ARGUMENT_TYPES.register(modEventBus);
-        BeyonderClassInit.BEYONDER_CLASS.register(modEventBus);
         ParticleInit.register(modEventBus);
         SoundInit.register(modEventBus);
 
@@ -78,7 +79,6 @@ public class LOTM {
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
-        BeyonderHolderAttacher.register();
         MinecraftForge.EVENT_BUS.addListener(CommandInit::onCommandRegistration);
     }
 
