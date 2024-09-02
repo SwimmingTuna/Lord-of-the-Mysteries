@@ -50,11 +50,7 @@ public class AbilityRegisterCommand {
         }
 
         int combinationNumber = COMBINATION_MAP.get(combination);
-
-        // Get the player's available abilities
         List<String> availableAbilities = BeyonderUtil.getAbilities(player);
-
-        // Find the matching ability by comparing localized names
         String matchingAbility = availableAbilities.stream()
                 .filter(ability -> ability.equalsIgnoreCase(itemName.trim()))
                 .findFirst()
@@ -64,8 +60,6 @@ public class AbilityRegisterCommand {
             source.sendFailure(Component.literal("Ability not available or not found: " + itemName).withStyle(style));
             return 0;
         }
-
-        // Find the corresponding item by comparing localization keys
         Item foundItem = null;
         String registryName = null;
         String localizedAbilityName = null;
@@ -85,23 +79,17 @@ public class AbilityRegisterCommand {
             source.sendFailure(Component.literal("Item not found for ability: " + matchingAbility).withStyle(style));
             return 0;
         }
-
-        // Get the player's persistent data
-        CompoundTag persistentData = player.getPersistentData();
-
-        // Get or create the list of registered abilities
+        CompoundTag tag = player.getPersistentData();
         ListTag registeredAbilities;
-        if (persistentData.contains(REGISTERED_ABILITIES_KEY, 9)) { // 9 is the ID for ListTag
-            registeredAbilities = persistentData.getList(REGISTERED_ABILITIES_KEY, 8); // 8 is the ID for StringTag
+        if (tag.contains(REGISTERED_ABILITIES_KEY, 9)) {
+            registeredAbilities = tag.getList(REGISTERED_ABILITIES_KEY, 8);
         } else {
             registeredAbilities = new ListTag();
-            persistentData.put(REGISTERED_ABILITIES_KEY, registeredAbilities);
+            tag.put(REGISTERED_ABILITIES_KEY, registeredAbilities);
         }
 
-        // Create the new ability entry with combination number and full registry name
         String newAbilityEntry = combinationNumber + ":" + registryName;
 
-        // Check if there's already an ability registered for this combination
         String removedAbility = null;
         for (int i = 0; i < registeredAbilities.size(); i++) {
             String entry = registeredAbilities.getString(i);
@@ -113,25 +101,16 @@ public class AbilityRegisterCommand {
             }
         }
 
-        // Add the new ability to the list
         registeredAbilities.add(StringTag.valueOf(newAbilityEntry));
-
-        // Save the persistent data
-        persistentData.put(REGISTERED_ABILITIES_KEY, registeredAbilities);
-
-        // Notify the player
+        tag.put(REGISTERED_ABILITIES_KEY, registeredAbilities);
         if (removedAbility != null) {
-            // Debugging output to verify removedAbility
             String finalRemovedAbility2 = removedAbility;
             source.sendSuccess(() -> Component.literal("Debug: removedAbility = " + finalRemovedAbility2), true);
-
             ResourceLocation removedItemRL = new ResourceLocation(removedAbility);
             Item removedItem = ForgeRegistries.ITEMS.getValue(removedItemRL);
 
             if (removedItem != null) {
                 String removedItemName = Component.translatable(removedItem.getDescriptionId()).getString();
-
-                // Debugging output
                 String finalRemovedAbility1 = removedAbility;
                 source.sendSuccess(() -> Component.literal("Debug: Removed item registry name = " + finalRemovedAbility1), true);
                 source.sendSuccess(() -> Component.literal("Debug: Removed item localized name = " + removedItemName), true);

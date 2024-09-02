@@ -256,59 +256,45 @@ public class BeyonderUtil {
         // Check if holder is not null and the player is of the Spectator class
         if (holder != null) {
             if (holder.isSpectatorClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.AQUA);
             }
             if (holder.isSailorClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.BLUE);
             }
             if (holder.isApothecaryClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_GREEN);
             }
             if (holder.isApprenticeClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.BLUE);
             }
             if (holder.isArbiterClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD);
             }
             if (holder.isAssassinClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.RED);
             }
             if (holder.isBardClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.YELLOW);
             }
             if (holder.isCorpseCollectorClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_BLUE);
             }
             if (holder.isCriminalClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.GRAY);
             }
             if (holder.isHunterClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_RED);
             }
             if (holder.isLawyerClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_BLUE);
             }
             if (holder.isMarauderClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_PURPLE);
             }
             if (holder.isMonsterClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.WHITE);
             }
             if (holder.isMysteryPryerClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_PURPLE);
             }
             if (holder.isPlanterClass()) {
@@ -316,31 +302,24 @@ public class BeyonderUtil {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.GREEN);
             }
             if (holder.isPrisonerClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_GRAY);
             }
             if (holder.isReaderClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.WHITE);
             }
             if (holder.isSavantClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD);
             }
             if (holder.isSeerClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_PURPLE);
             }
             if (holder.isSleeplessClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_BLUE);
             }
             if (holder.isSecretsSupplicantClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.LIGHT_PURPLE);
             }
             if (holder.isWarriorClass()) {
-                // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_RED);
             }
         }
