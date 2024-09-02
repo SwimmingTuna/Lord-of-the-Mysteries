@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.init;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -13,6 +14,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.blocks.glass_pane.*;
 import net.swimmingtuna.lotm.blocks.spectator_blocks.*;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class BlockInit {
@@ -39,6 +41,8 @@ public class BlockInit {
 
     public static final RegistryObject<Block> LOTM_DEEPSLATE_BRICKS = registerBlock("lotm_deepslate_bricks",
             () -> new Block(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_OUTSIDE.get()).sound(SoundType.DEEPSLATE_BRICKS)));
+    public static final RegistryObject<Block> LOTM_RED_NETHER_BRICKS = registerBlock("lotm_red_nether_bricks",
+            () -> new Block(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_OUTSIDE.get()).sound(SoundType.DEEPSLATE_BRICKS)));
 
     public static final RegistryObject<Block> LOTM_REDSTONE_BLOCK = registerBlock("lotm_redstone_block",
             () -> new Block(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_OUTSIDE.get()).sound(SoundType.NETHER_ORE)));
@@ -50,6 +54,9 @@ public class BlockInit {
             () -> new Block(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_OUTSIDE.get()).sound(SoundType.STONE)));
 
     public static final RegistryObject<Block> LOTM_DARK_OAK_PLANKS = registerBlock("lotm_dark_oak_planks",
+            () -> new Block(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_OUTSIDE.get()).sound(SoundType.WOOD)));
+
+    public static final RegistryObject<Block> LOTM_OAK_PLANKS = registerBlock("lotm_oak_planks",
             () -> new Block(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_OUTSIDE.get()).sound(SoundType.WOOD)));
 
     public static final RegistryObject<Block> LOTM_QUARTZ = registerBlock("lotm_quartz",
@@ -71,6 +78,15 @@ public class BlockInit {
             () -> new Block(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_OUTSIDE.get()).sound(SoundType.STONE)));
 
     public static final RegistryObject<Block> LOTM_STONE = registerBlock("lotm_stone_block",
+            () -> new Block(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_OUTSIDE.get()).sound(SoundType.STONE)));
+
+    public static final RegistryObject<Block> LOTM_STONE_BRICKS = registerBlock("lotm_stone_bricks",
+            () -> new Block(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_OUTSIDE.get()).sound(SoundType.STONE)));
+
+    public static final RegistryObject<Block> LOTM_CRACKED_STONE_BRICKS = registerBlock("lotm_cracked_stone_bricks",
+            () -> new Block(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_OUTSIDE.get()).sound(SoundType.STONE)));
+
+    public static final RegistryObject<Block> LOTM_LIGHT_BLUE_CONCRETE = registerBlock("lotm_light_blue_concrete",
             () -> new Block(BlockBehaviour.Properties.copy(BlockInit.MINDSCAPE_OUTSIDE.get()).sound(SoundType.STONE)));
 
     public static final RegistryObject<Block> LOTM_BLUE_CONCRETE = registerBlock("lotm_blue_concrete",
@@ -186,4 +202,67 @@ public class BlockInit {
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
     }
+
+
+    public static final List<RegistryObject<Block>> BLOCK_LIST = List.of(
+            LOTM_STONE_BRICKS,
+            LOTM_OAK_PLANKS,
+            LOTM_RED_NETHER_BRICKS,
+            LOTM_LIGHT_BLUE_CONCRETE,
+            LOTM_CRACKED_STONE_BRICKS,
+            LOTM_BLUE_STAINED_GLASS,
+            LOTM_WHITE_STAINED_GLASS,
+            LOTM_LIGHT_BLUE_STAINED_GLASS,
+            MINDSCAPE_BLOCK,
+            MINDSCAPE_OUTSIDE,
+            LOTM_DEEPSLATE_BRICKS,
+            LOTM_REDSTONE_BLOCK,
+            LOTM_SANDSTONE,
+            LOTM_POLISHED_DIORITE,
+            LOTM_DARK_OAK_PLANKS,
+            LOTM_QUARTZ,
+            LOTM_CHISELED_STONE_BRICKS,
+            LOTM_MANGROVE_PLANKS,
+            LOTM_SPRUCE_PLANKS,
+            LOTM_BIRCH_PLANKS,
+            LOTM_BLACK_CONCRETE,
+            LOTM_STONE,
+            LOTM_BLUE_CONCRETE,
+            LOTM_BLACKSTONE,
+            LOTM_WHITE_CONCRETE,
+            LOTM_POLISHED_ANDESITE,
+            LOTM_SPRUCE_LOG,
+            LOTM_POLISHED_BLACKSTONE,
+            LOTM_SEA_LANTERN,
+            LOTM_OAK_LOG,
+            LOTM_BOOKSHELF,
+            LOTM_CHAIN,
+            LOTM_LANTERN,
+            LOTM_LIGHT_BLUE_CARPET,
+            LOTM_QUARTZ_STAIRS,
+            LOTM_DEEPSLATEBRICK_STAIRS,
+            LOTM_DARKOAK_STAIRS,
+            LOTM_OAK_STAIRS,
+            LOTM_DARKOAK_SLAB,
+            LOTM_QUARTZ_SLAB,
+            VISIONARY_BLACK_STAINED_GLASS_PANE,
+            VISIONARY_GLASS_PANE,
+            VISIONARY_WHITE_STAINED_GLASS_PANE,
+            VISIONARY_LIGHT_GRAY_STAINED_GLASS_PANE,
+            VISIONARY_GRAY_STAINED_GLASS_PANE,
+            VISIONARY_BROWN_STAINED_GLASS_PANE,
+            VISIONARY_PURPLE_STAINED_GLASS_PANE,
+            VISIONARY_MAGENTA_STAINED_GLASS_PANE,
+            VISIONARY_BLUE_STAINED_GLASS_PANE,
+            VISIONARY_CYAN_STAINED_GLASS_PANE,
+            VISIONARY_LIGHT_BLUE_STAINED_GLASS_PANE,
+            VISIONARY_GREEN_STAINED_GLASS_PANE,
+            VISIONARY_YELLOW_STAINED_GLASS_PANE,
+            VISIONARY_PINK_STAINED_GLASS_PANE,
+            VISIONARY_ORANGE_STAINED_GLASS_PANE,
+            VISIONARY_RED_STAINED_GLASS_PANE,
+            VISIONARY_LIME_STAINED_GLASS_PANE
+
+    );
+
 }

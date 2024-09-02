@@ -158,25 +158,32 @@ public class MeteorEntity extends AbstractHurtingProjectile {
 
     public static void summonMultipleMeteors(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
-            double randomX = Math.random() * 60 - 30;
-            double randomZ = Math.random() * 60 - 30;
+            double scatterRadius = 100.0;
+            double randomX, randomY, randomZ;
             Vec3 lookVec = pPlayer.getLookAngle().normalize().scale(100);
+            Vec3 targetPos = pPlayer.getEyePosition().add(lookVec);
+            randomX = Math.random() * scatterRadius * 2 - scatterRadius;
+            randomY = Math.random() * scatterRadius * 2 - scatterRadius;
+            randomZ = Math.random() * scatterRadius * 2 - scatterRadius;
+            Vec3 meteorSpawnPos = targetPos.add(randomX, randomY, randomZ);
             MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), pPlayer.level());
-            meteorEntity.teleportTo(pPlayer.getX() + randomX, pPlayer.getY() + 60, pPlayer.getZ() + randomZ);
+            meteorEntity.teleportTo(meteorSpawnPos.x, meteorSpawnPos.y, meteorSpawnPos.z);
             meteorEntity.setOwner(pPlayer);
+            meteorEntity.noPhysics = true;
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
             int scalecheck = 10 - holder.getCurrentSequence() * 4;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
             scaleData.setScale(scalecheck);
             scaleData.markForSync(true);
             Vec3 meteorPos = meteorEntity.position();
-            Vec3 targetPos = pPlayer.getEyePosition().add(lookVec);
             Vec3 directionToTarget = targetPos.subtract(meteorPos).normalize();
             double speed = 7.0;
             meteorEntity.setDeltaMovement(directionToTarget.scale(speed));
             pPlayer.level().addFreshEntity(meteorEntity);
+
         }
     }
+
 
     @Override
     public void tick() {

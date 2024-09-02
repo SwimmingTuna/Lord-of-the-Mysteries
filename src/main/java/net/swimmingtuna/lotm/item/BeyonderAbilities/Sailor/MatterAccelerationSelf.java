@@ -70,39 +70,45 @@ public class MatterAccelerationSelf extends Item {
         }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
             if (holder.isSailorClass() && !pPlayer.level().isClientSide() && sailorSequence.getCurrentSequence() == 0 && sailorSequence.useSpirituality(blinkDistance * 2)) {
+
                 Vec3 lookVector = pPlayer.getLookAngle();
                 BlockPos startPos = pPlayer.blockPosition();
                 BlockPos endPos = new BlockPos(
                         (int) (pPlayer.getX() + blinkDistance * lookVector.x()),
-                        (int) ((pPlayer.getY() + 1) + blinkDistance * lookVector.y()),
+                        (int) (pPlayer.getY() + 1 + blinkDistance * lookVector.y()),
                         (int) (pPlayer.getZ() + blinkDistance * lookVector.z())
                 );
 
-                // Calculate the path between start and end positions
-                BlockPos.betweenClosed(startPos, endPos).forEach(pos -> {
-                    // Destroy blocks in a 10x10 area around each block in the path
-                    for (int x = -2; x <= 2; x++) {
-                        for (int y = -2; y <= 2; y++) {
-                            for (int z = -2; z <= 2; z++) {
-                                BlockPos targetPos = pos.offset(x, y, z);
-                                BlockState blockState = level.getBlockState(targetPos);
-                                if (!blockState.is(Blocks.BEDROCK)) {
-                                    level.destroyBlock(targetPos, false);
-                                }
-                            }
-                        }
+                // Calculate the positions along the line between startPos and endPos
+                BlockPos blockPos = new BlockPos(endPos.getX(), endPos.getY(), endPos.getZ());
+                double distance = startPos.distSqr(blockPos);
+                Vec3 direction = new Vec3(
+                        endPos.getX() - startPos.getX(),
+                        endPos.getY() - startPos.getY(),
+                        endPos.getZ() - startPos.getZ()
+                ).normalize();
+
+                for (double i = 0; i <= distance; i += 0.5) { // Adjust step size for smoother or coarser destruction
+                    BlockPos pos = new BlockPos(
+                            (int) (startPos.getX() + i * direction.x),
+                            (int) (startPos.getY() + i * direction.y),
+                            (int) (startPos.getZ() + i * direction.z)
+                    );
+
+                    BlockState blockState = level.getBlockState(pos);
+                    if (!blockState.is(Blocks.BEDROCK)) {
+                        level.destroyBlock(pos, false);
                     }
 
-                    // Deal damage to living entities in the 10x10 area
-                    AABB boundingBox = new AABB(pos).inflate(5);
+                    // Check for entities around the destroyed block
+                    AABB boundingBox = new AABB(pos).inflate(1); // Adjust size as needed
                     List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, boundingBox);
                     for (LivingEntity entity : entities) {
                         if (entity != pPlayer) {
                             entity.hurt(level.damageSources().magic(), 10.0f); // Adjust damage amount as needed
                         }
                     }
-                });
-
+                }
                 // Teleport the player
                 pPlayer.teleportTo(endPos.getX(), endPos.getY(), endPos.getZ());
             }
