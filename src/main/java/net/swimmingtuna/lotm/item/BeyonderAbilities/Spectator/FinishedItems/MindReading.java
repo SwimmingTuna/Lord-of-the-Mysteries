@@ -104,7 +104,7 @@ public class MindReading extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, tells you the inventory of the target player\n" +
                     "Spirituality Used: 20\n" +
-                    "Cooldown: 3 seconds"));
+                    "Cooldown: 3 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

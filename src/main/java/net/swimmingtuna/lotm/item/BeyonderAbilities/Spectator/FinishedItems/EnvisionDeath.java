@@ -70,7 +70,7 @@ public class EnvisionDeath extends Item {
             componentList.add(Component.literal("Upon use, all living around you with less than 100 health die\n" +
                     "Left Click for Envision Health\n" +
                     "Spirituality Used: 2000\n" +
-                    "Cooldown: 2 minutes"));
+                    "Cooldown: 2 minutes").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

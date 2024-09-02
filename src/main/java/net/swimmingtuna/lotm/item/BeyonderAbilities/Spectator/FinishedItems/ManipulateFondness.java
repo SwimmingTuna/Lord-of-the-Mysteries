@@ -63,7 +63,7 @@ public class ManipulateFondness extends Item implements ReachChangeUUIDs {
             componentList.add(Component.literal("Upon use, all living entities within 250 blocks of the user that are able to be manipulated are attacked by all mobs nearby\n" +
                     "Left Click for Manipulate Movement\n" +
                     "Spirituality Used: 100\n" +
-                    "Cooldown: 5 seconds"));
+                    "Cooldown: 5 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

@@ -57,7 +57,7 @@ public class LightningBallAbsorb extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons a lightning ball that absorbs all lightning around it, growing in size for each one absorbed, before launching\n" +
                     "Spirituality Used: 800\n" +
-                    "Cooldown: 20 seconds"));
+                    "Cooldown: 20 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

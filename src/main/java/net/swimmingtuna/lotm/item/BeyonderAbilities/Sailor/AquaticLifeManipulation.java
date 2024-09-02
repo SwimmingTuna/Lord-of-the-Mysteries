@@ -77,7 +77,7 @@ public class AquaticLifeManipulation extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, communicates with any aquatic life around the player, if there is any, they communicate back with the information of any player within a range of the spoken to aquatic animal\n" +
                     "Spirituality Used: 100\n" +
-                    "Cooldown: 2 seconds"));
+                    "Cooldown: 2 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

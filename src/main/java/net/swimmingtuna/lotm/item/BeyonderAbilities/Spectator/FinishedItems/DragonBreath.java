@@ -54,7 +54,7 @@ public class DragonBreath extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, shoots a dragons breath\n" +
                     "Spirituality Used: 100\n" +
-                    "Cooldown: 0.5 seconds"));
+                    "Cooldown: 0.5 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

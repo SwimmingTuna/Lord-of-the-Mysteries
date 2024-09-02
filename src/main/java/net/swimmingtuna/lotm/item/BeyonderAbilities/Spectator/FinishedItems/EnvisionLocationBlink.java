@@ -93,7 +93,7 @@ public class EnvisionLocationBlink extends Item {
                     "Shift to Increase Blink Distance\n" +
                     "Left Click for Envision Weather\n" +
                     "Spirituality Used: 8 for every block traveled\n" +
-                    "Cooldown: 1 second"));
+                    "Cooldown: 1 second").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

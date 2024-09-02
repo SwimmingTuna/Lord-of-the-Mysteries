@@ -101,7 +101,7 @@ public class ProphesizeTeleportBlock extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, makes all living entities around the user teleport to a clicked block\n" +
                     "Spirituality Used: 600\n" +
-                    "Cooldown: 15 seconds"));
+                    "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

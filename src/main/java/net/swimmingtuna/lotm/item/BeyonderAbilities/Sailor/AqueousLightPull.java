@@ -65,7 +65,7 @@ public class AqueousLightPull extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, shoots a water bubble that upon hit, pulls the target towards the user\n" +
                     "Spirituality Used: 50\n" +
-                    "Cooldown: 3 seconds"));
+                    "Cooldown: 3 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

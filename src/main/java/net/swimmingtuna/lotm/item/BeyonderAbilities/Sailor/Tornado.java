@@ -61,7 +61,7 @@ public class Tornado extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, shoots out a tornado in the direction you're looking at\n" +
                     "Spirituality Used: 500\n" +
-                    "Cooldown: 10 seconds"));
+                    "Cooldown: 10 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

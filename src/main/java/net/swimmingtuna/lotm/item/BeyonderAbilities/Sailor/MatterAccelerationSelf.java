@@ -127,7 +127,7 @@ public class MatterAccelerationSelf extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, moves you at an inhuman speed, instantly getting you to your destination and leaving behind destruction in your path\n" +
                     "Spirituality Used: 2500\n" +
-                    "Cooldown: 15 seconds"));
+                    "Cooldown: 15 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

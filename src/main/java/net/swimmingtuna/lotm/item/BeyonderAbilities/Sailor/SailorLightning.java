@@ -107,7 +107,7 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Shoots out a lightning bolt, if used on a block or entity, the lightning bolt travels towards it in exchange for 100 extra spirituality and higher cooldown, otherwise, it moves randomly in the direction you look \n" +
                     "Spirituality Used: 200\n" +
-                    "Cooldown: 2 seconds"));
+                    "Cooldown: 2 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

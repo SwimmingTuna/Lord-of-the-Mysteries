@@ -53,7 +53,7 @@ public class LightningBranch extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons a lightning that branches out as it goes on\n" +
                     "Spirituality Used: 450\n" +
-                    "Cooldown: 8 seconds"));
+                    "Cooldown: 8 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

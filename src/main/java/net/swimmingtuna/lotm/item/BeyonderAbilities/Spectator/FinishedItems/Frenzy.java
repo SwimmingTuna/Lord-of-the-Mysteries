@@ -104,7 +104,7 @@ public class Frenzy extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, makes all living entities around the targeted block lose control of their movement\n" +
                     "Spirituality Used: 125\n" +
-                    "Cooldown: 15 seconds"));
+                    "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

@@ -62,7 +62,7 @@ public class Tyranny extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, exude an aura of tyranny, not giving any entity permission to move, implanting fear strong enough to not allow them to use their abilities\n" +
                     "Spirituality Used: 3500\n" +
-                    "Cooldown: 2 Minutes"));
+                    "Cooldown: 2 Minutes").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

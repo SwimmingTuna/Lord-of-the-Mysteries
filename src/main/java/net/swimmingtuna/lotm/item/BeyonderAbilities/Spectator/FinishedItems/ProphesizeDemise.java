@@ -68,7 +68,7 @@ public class ProphesizeDemise extends Item implements ReachChangeUUIDs {
             componentList.add(Component.literal("Upon use on a living entity, prophesizes their demise, making it so they have to stay still for 10 seconds out of 30 seconds, otherwise they die\n" +
                     "Left Click for Prophesize Teleport Block" +
                     "Spirituality Used: 70\n" +
-                    "Cooldown: 2 seconds"));
+                    "Cooldown: 2 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

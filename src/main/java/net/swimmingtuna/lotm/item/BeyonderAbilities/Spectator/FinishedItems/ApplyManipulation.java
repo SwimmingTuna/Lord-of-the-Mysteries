@@ -64,7 +64,7 @@ public class ApplyManipulation extends Item implements ReachChangeUUIDs {
             componentList.add(Component.literal("Upon use on a living entity, gives you the ability to manipulate them for 30 seconds\n" +
                     "Left Click for Manipulate Emotion\n" +
                     "Spirituality Used: 50\n" +
-                    "Cooldown: None"));
+                    "Cooldown: None").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

@@ -56,7 +56,7 @@ public class SailorLightningTravel extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, become a lightning bolt, controlling your movement by looking in the direction you want to move\n" +
                     "Spirituality Used: 400\n" +
-                    "Cooldown: 5 seconds"));
+                    "Cooldown: 5 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

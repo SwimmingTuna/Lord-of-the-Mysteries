@@ -102,7 +102,7 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
             componentList.add(Component.literal("Upon use, all living entities 150 blocks around you move to the location you clicked on\n" +
                     "Left Click for Apply Manipulation\n" +
                     "Spirituality Used: 200\n" +
-                    "Cooldown: 30 seconds"));
+                    "Cooldown: 30 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

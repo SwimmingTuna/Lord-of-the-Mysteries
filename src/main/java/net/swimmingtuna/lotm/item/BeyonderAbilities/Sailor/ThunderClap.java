@@ -64,7 +64,7 @@ public class ThunderClap extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, claps together in order to create a thunder clap, stunning all entities freezing them in place and preventing them from using their abilities\n" +
                     "Spirituality Used: 400\n" +
-                    "Cooldown: 20 seconds"));
+                    "Cooldown: 20 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

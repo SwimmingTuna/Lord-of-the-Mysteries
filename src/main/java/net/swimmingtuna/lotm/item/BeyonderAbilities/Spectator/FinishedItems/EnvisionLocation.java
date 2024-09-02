@@ -38,7 +38,7 @@ public class EnvisionLocation extends Item {
             componentList.add(Component.literal("While holding this item, type in three coordinates, e.g. (100, 100, 100) or a player's name, and you'll teleport to that location\n" +
                     "Spirituality Used: 500\n" +
                     "Left Click for Envision Location (Blink)\n" +
-                    "Cooldown: 0 seconds"));
+                    "Cooldown: 0 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

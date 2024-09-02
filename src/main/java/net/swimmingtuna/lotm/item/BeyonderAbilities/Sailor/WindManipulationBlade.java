@@ -61,7 +61,7 @@ public class WindManipulationBlade extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, shoot out a wind blade that cuts through blocks and players\n" +
                     "Spirituality Used: 100\n" +
-                    "Cooldown: 2 seconds"));
+                    "Cooldown: 2 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

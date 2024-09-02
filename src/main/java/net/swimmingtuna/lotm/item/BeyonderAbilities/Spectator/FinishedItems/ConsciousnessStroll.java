@@ -61,7 +61,7 @@ public class ConsciousnessStroll extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Type a player's name in chat to teleport to their location and turn invincible and invulnerable, teleporting back after 3 seconds\n" +
                     "Spirituality Used: 500\n" +
-                    "Cooldown: 20 seconds"));
+                    "Cooldown: 20 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

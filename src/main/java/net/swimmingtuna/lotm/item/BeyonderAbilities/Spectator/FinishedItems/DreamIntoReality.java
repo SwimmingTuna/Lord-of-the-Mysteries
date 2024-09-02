@@ -120,7 +120,7 @@ public class DreamIntoReality extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, turns your dreams into reality, making you a giant with strengthened abilities, quicker regeneration, and stronger melee hits\n" +
                     "Spirituality Used: 300 every second\n" +
-                    "Cooldown: 30 seconds"));
+                    "Cooldown: 30 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

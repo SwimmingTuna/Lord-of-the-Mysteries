@@ -63,7 +63,7 @@ public class ManipulateEmotion extends Item implements ReachChangeUUIDs {
             componentList.add(Component.literal("Upon use, all living entities able to be manipulated within 250 blocks fall into despair and harm themselves.\n" +
                     "Left Click for Manipulate Fondness\n" +
                     "Spirituality Used: 500\n" +
-                    "Cooldown: 1 minute"));
+                    "Cooldown: 1 minute").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

@@ -72,7 +72,7 @@ public class ExtremeColdness extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, lets out an area of below freezing temperatures that freezes everything in it's range\n" +
                     "Spirituality Used: 1250\n" +
-                    "Cooldown: 1 minute"));
+                    "Cooldown: 1 minute").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

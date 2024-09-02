@@ -83,7 +83,7 @@ public class Tsunami extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Creates a massive wave of water in front of you\n" +
                     "Spirituality Used: 500\n" +
-                    "Cooldown: 45 seconds"));
+                    "Cooldown: 45 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

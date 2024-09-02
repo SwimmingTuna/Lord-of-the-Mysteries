@@ -37,7 +37,7 @@ public class EnvisionWeather extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("While holding this item, say either Clear, Rain, or Thunder, to change the weather at your disposal\n" +
                     "Spirituality Used: 500\n" +
-                    "Cooldown: 0 seconds"));
+                    "Cooldown: 0 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

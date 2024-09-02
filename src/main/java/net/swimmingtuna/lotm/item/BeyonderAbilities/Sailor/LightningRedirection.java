@@ -58,7 +58,7 @@ public class LightningRedirection extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, redirects all lightning into the direction the player is looking \n" +
                     "Spirituality Used: 600\n" +
-                    "Cooldown: 5 seconds"));
+                    "Cooldown: 5 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

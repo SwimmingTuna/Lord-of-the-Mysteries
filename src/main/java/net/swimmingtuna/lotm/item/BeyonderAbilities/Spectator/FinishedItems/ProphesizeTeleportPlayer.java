@@ -66,7 +66,7 @@ public class ProphesizeTeleportPlayer extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, makes all living entities around the user teleport to the user\n" +
                     "Spirituality Used: 750\n" +
-                    "Cooldown: 20 seconds"));
+                    "Cooldown: 20 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

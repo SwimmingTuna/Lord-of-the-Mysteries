@@ -59,7 +59,7 @@ public class LightningBall extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons a lightning ball that launches in the direction the player looks after a bit of time\n" +
                     "Spirituality Used: 800\n" +
-                    "Cooldown: 20 seconds"));
+                    "Cooldown: 20 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

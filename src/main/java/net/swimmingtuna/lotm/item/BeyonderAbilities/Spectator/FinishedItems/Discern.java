@@ -64,7 +64,7 @@ public class Discern extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, resets the cooldown of all your abilities\n" +
                     "Spirituality Used: 1000\n" +
-                    "Cooldown: 45 seconds"));
+                    "Cooldown: 45 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

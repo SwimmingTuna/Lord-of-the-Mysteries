@@ -88,7 +88,7 @@ public class TsunamiSeal extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Creates a massive wave of water in front of you, trapping any entity with more than 100 health in a seal or they're a player\n" +
                     "Spirituality Used: 1100\n" +
-                    "Cooldown: 90 seconds"));
+                    "Cooldown: 90 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

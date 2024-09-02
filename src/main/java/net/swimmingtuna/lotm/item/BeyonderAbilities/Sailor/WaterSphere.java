@@ -64,7 +64,7 @@ public class WaterSphere extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summon a sphere of water around you for 10 seconds\n" +
                     "Spirituality Used: 300\n" +
-                    "Cooldown: 2 Minutes"));
+                    "Cooldown: 2 Minutes").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

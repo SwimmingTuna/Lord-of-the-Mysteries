@@ -81,7 +81,7 @@ public class Hurricane extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons a hurricane that shoots lightning in the sky around the player and generates tornadoes\n" +
                     "Spirituality Used: 1250\n" +
-                    "Cooldown: 1 minute"));
+                    "Cooldown: 1 minute").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

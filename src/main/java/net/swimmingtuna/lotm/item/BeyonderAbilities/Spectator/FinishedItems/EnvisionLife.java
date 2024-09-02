@@ -40,10 +40,10 @@ public class EnvisionLife extends Item {
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("While holding this item, type in a mob and that mob will be spawned, targeting the nearest player within 100 blocks\n" +
-                    "In the case of Modded Mobs, type in the Mod ID followed by the mob name, e.g. (lotm:black_panter\n" +
+                    "In the case of Modded Mobs, type in the Mod ID followed by the mob name, e.g. (lotm:black_panther\n" +
                     "Spirituality Used: 1500\n" +
                     "Left Click for Envision Location\n" +
-                    "Cooldown: 0 seconds"));
+                    "Cooldown: 0 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

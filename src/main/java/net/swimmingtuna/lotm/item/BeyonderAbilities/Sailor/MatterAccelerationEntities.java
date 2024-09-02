@@ -61,7 +61,7 @@ public class MatterAccelerationEntities extends Item implements ReachChangeUUIDs
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, increases the speed of all entities, if their speed passes a certain point, they deal damage to all entities around them and destroy all blocks around them\n" +
                     "Spirituality Used: 800\n" +
-                    "Cooldown: 45 seconds"));
+                    "Cooldown: 45 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

@@ -119,7 +119,7 @@ public class Nightmare extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, makes all players around the target enter a nightmare, plunging them into darkness. If this is used 3 times on a player within 30 seconds, they take immense damage. If it's used on a mob, they take less the damage without having to be hit multiple times.\n" +
                     "Spirituality Used: 100\n" +
-                    "Cooldown: 5.5 seconds"));
+                    "Cooldown: 5.5 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

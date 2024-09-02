@@ -95,7 +95,7 @@ public class StarOfLightning extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, gathers lightning in your body before letting it out in every direction\n" +
                     "Spirituality Used: 3000\n" +
-                    "Cooldown: 40 seconds"));
+                    "Cooldown: 40 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

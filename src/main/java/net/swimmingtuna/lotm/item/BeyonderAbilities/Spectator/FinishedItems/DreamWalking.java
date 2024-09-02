@@ -61,7 +61,7 @@ public class DreamWalking extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use on a living entity, teleports to their location\n" +
                     "Spirituality Used: 70\n" +
-                    "Cooldown: 2 seconds"));
+                    "Cooldown: 2 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

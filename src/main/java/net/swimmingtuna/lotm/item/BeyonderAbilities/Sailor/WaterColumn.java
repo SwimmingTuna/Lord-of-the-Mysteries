@@ -105,7 +105,7 @@ public class WaterColumn extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, cause the water to intersect with the sky\n" +
                     "Spirituality Used: 2000\n" +
-                    "Cooldown: 25 seconds"));
+                    "Cooldown: 25 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

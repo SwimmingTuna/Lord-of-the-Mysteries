@@ -60,7 +60,7 @@ public class EnableOrDisableLightning extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, disables or enables lightning spawning upon users hitting targets\n" +
                     "Spirituality Used: 0\n" +
-                    "Cooldown: 0.5 seconds"));
+                    "Cooldown: 0.5 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

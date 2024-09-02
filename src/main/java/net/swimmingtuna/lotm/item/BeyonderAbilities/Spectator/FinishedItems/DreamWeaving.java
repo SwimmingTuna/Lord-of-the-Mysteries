@@ -68,7 +68,7 @@ public class DreamWeaving extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use on a living entity, brings their nightmares into reality, giving them darkness temporarily and summoning a random array of mobs around the target\n" +
                     "Spirituality Used: 250\n" +
-                    "Cooldown: 8 seconds"));
+                    "Cooldown: 8 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

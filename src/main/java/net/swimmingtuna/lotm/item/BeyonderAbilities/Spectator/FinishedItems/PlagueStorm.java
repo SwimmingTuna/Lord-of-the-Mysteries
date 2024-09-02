@@ -64,7 +64,7 @@ public class PlagueStorm extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use on a living entity, all living entities around it gain Darkness, Wither, Blindness, and Confusion, as well as take damage\n" +
                     "Spirituality Used: 400\n" +
-                    "Cooldown: 8 seconds"));
+                    "Cooldown: 8 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

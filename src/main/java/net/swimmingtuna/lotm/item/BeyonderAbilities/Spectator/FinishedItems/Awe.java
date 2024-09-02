@@ -72,7 +72,7 @@ public class Awe extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, makes all living entities around the user freeze in place and take damage\n" +
                     "Spirituality Used: 75\n" +
-                    "Cooldown: 12 seconds"));
+                    "Cooldown: 12 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

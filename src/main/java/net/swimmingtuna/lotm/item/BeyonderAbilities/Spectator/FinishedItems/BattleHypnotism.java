@@ -106,7 +106,7 @@ public class BattleHypnotism extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, makes all living entities around the clicked location target the nearest player if one is present and each other if there isn't one\n" +
                     "Spirituality Used: 150\n" +
-                    "Cooldown: 15 seconds"));
+                    "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

@@ -60,7 +60,7 @@ public class AcidicRain extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons an acidic rain around the player that persists for 15 seconds\n" +
                     "Spirituality Used: 175\n" +
-                    "Cooldown: 25 seconds"));
+                    "Cooldown: 25 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

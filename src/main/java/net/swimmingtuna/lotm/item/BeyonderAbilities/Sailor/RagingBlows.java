@@ -70,7 +70,7 @@ public class RagingBlows extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, causes the user to shoot punches powerfully all around the user, damaging everything around them\n" +
                     "Spirituality Used: 20\n" +
-                    "Cooldown: 10 seconds"));
+                    "Cooldown: 10 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

@@ -71,7 +71,7 @@ public class MeteorShower extends Item {
             componentList.add(Component.literal("Upon use, summons a meteor shower\n" +
                     "Spirituality Used: 1500\n" +
                     "Left Click for a version that deals no block destruction\n" +
-                    "Cooldown: 45 secondss"));
+                    "Cooldown: 45 secondss").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

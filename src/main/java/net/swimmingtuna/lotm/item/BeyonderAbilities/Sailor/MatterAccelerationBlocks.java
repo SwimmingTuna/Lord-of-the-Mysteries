@@ -67,7 +67,7 @@ public class MatterAccelerationBlocks extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons 10 blocks from around the player, making the next left clicks the player does shoot them towards the direction they look at with incredible speed\n" +
                     "Spirituality Used: 2000\n" +
-                    "Cooldown: 15 seconds"));
+                    "Cooldown: 15 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

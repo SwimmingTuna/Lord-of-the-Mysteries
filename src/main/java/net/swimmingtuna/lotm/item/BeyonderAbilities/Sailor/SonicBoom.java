@@ -94,7 +94,7 @@ public class SonicBoom extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, compresses air and releases it in order to create a sonic boom, causing an explosion that propels you in the direction you're looking\n" +
                     "Spirituality Used: 600\n" +
-                    "Cooldown: 1.5 seconds"));
+                    "Cooldown: 1.5 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

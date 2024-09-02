@@ -67,7 +67,7 @@ public class EnvisionHealth extends Item {
             componentList.add(Component.literal("Upon use, heals to full health\n" +
                     "Left Click for Envision Health\n" +
                     "Spirituality Used: 4000\n" +
-                    "Cooldown: 2 minutes seconds"));
+                    "Cooldown: 2 minutes seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

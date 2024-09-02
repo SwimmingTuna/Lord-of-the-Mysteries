@@ -99,7 +99,7 @@ public class Placate extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, reduces or removes the targeted living entity's harmful potion effects\n" +
                     "Spirituality Used: 125\n" +
-                    "Cooldown: 15 seconds"));
+                    "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
             }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
         }

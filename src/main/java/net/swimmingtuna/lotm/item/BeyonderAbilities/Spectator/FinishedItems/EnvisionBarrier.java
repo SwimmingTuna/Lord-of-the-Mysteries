@@ -69,7 +69,7 @@ public class EnvisionBarrier extends Item {
                     "Hold Shift to Increase Barrier Radius\n" +
                     "Left Click for Envision Death\n" +
                     "Spirituality Used: 800\n" +
-                    "Cooldown: 5 seconds "));
+                    "Cooldown: 5 seconds ").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

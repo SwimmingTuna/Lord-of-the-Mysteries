@@ -67,7 +67,7 @@ public class Roar extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, lets out a devastating roar\n" +
                     "Spirituality Used: 500\n" +
-                    "Cooldown: 5 seconds"));
+                    "Cooldown: 5 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

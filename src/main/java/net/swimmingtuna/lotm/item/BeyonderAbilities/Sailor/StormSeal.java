@@ -72,7 +72,7 @@ public class StormSeal extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, lets out a compressed storm, which on hit, traps an entity in a storm for 3 minutes.\n" +
                     "Spirituality Used: 5000\n" +
-                    "Cooldown: 2 minutes"));
+                    "Cooldown: 2 minutes").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

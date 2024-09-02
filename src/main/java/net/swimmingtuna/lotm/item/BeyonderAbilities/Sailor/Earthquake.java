@@ -66,7 +66,7 @@ public class Earthquake extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons an earthquake shooting stone into the ground\n" +
                     "Spirituality Used: 600\n" +
-                    "Cooldown: 25 seconds"));
+                    "Cooldown: 25 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

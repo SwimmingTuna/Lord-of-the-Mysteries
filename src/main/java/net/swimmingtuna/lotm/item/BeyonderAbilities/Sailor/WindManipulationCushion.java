@@ -62,7 +62,7 @@ public class WindManipulationCushion extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, create a cushion of wind that absorbs your fall then sends you in the direction you're looking\n" +
                     "Spirituality Used: 150\n" +
-                    "Cooldown: 6 seconds"));
+                    "Cooldown: 6 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

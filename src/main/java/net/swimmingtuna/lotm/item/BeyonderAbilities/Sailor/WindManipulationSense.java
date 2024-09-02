@@ -76,7 +76,7 @@ public class WindManipulationSense extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, controls the wind around you to extend your senses, alerting you of players around youn and where they are\n" +
                     "Spirituality Used: 4 every second\n" +
-                    "Cooldown: 0.5 seconds"));
+                    "Cooldown: 0.5 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

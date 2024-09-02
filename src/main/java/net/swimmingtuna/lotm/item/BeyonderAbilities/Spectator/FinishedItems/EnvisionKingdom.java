@@ -63,7 +63,7 @@ public class EnvisionKingdom extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons your Divine Kingdom, the Corpse Cathedral\n" +
                     "Spirituality Used: 3500\n" +
-                    "Cooldown: 45 seconds "));
+                    "Cooldown: 45 seconds ").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

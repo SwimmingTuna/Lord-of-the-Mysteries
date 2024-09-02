@@ -69,7 +69,7 @@ public class AqueousLightDrown extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, shoots a water bubble that upon hit, summons a water bubble around the target's head that causes them to drown\n" +
                     "Spirituality Used: 75\n" +
-                    "Cooldown: 15 seconds"));
+                    "Cooldown: 15 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

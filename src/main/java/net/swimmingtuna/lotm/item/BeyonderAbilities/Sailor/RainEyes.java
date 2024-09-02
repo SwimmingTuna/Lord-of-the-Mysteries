@@ -59,7 +59,7 @@ public class RainEyes extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, if it's ever raining, tells you the location of all players around you every 10 seconds\n" +
                     "Spirituality Used: 0\n" +
-                    "Cooldown: 0.5 seconds"));
+                    "Cooldown: 0.5 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

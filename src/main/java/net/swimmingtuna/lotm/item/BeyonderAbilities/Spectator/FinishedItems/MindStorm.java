@@ -65,7 +65,7 @@ public class MindStorm extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use on a living entity, damages, freezes, blinds, and confuses them\n" +
                     "Spirituality Used: 250\n" +
-                    "Cooldown: 10 seconds"));
+                    "Cooldown: 10 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

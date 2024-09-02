@@ -93,7 +93,7 @@ public class PsychologicalInvisibility extends Item  {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, takes off your armor and turns you invisible while draining your spirituality, upon use again, turns you visible and gives you back your armor\n" +
                     "Spirituality Used: 40 every second\n" +
-                    "Cooldown: 10 seconds"));
+                    "Cooldown: 10 seconds").withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

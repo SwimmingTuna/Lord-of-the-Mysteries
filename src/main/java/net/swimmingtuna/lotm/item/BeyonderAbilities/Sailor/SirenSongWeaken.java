@@ -115,7 +115,7 @@ public class SirenSongWeaken extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, start singing a song that weakens all entities around you\n" +
                     "Spirituality Used: 300\n" +
-                    "Cooldown: 50 seconds"));
+                    "Cooldown: 50 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

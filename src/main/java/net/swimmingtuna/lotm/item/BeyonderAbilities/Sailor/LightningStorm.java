@@ -82,7 +82,7 @@ public class LightningStorm extends Item {
                     "Left Click to Increase Distance Spawned At\n" +
                     "Shift to Increase Storm Radius\n" +
                     "Spirituality Used: 1000\n" +
-                    "Cooldown: 30 seconds"));
+                    "Cooldown: 30 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

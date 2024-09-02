@@ -137,7 +137,7 @@ public class WindManipulationFlight extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, uses the wind to burst forward in the direction the player is looking three times or allow the user to fly, depending on the sequence\n" +
                     "Spirituality Used: 100 every second\n" +
-                    "Cooldown: 0.5 seconds"));
+                    "Cooldown: 0.5 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
