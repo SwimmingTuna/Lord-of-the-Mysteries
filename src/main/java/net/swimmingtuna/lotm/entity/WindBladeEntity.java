@@ -41,7 +41,7 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
 
 
     protected float getInertia() {
-        return this.isDangerous() ? 1.0F : super.getInertia();
+        return 1.0F;
     }
 
     public boolean isOnFire() {

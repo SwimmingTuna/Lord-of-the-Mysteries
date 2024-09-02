@@ -45,11 +45,11 @@ public class MatterAccelerationSelf extends Item {
             if (!holder.isSailorClass()) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
-            if (holder.getSpirituality() < matterAccelerationDistance * 15) {
-                pPlayer.displayClientMessage(Component.literal("You need " + matterAccelerationDistance * 15 + "spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            if (holder.getSpirituality() < matterAccelerationDistance * 10) {
+                pPlayer.displayClientMessage(Component.literal("You need " + matterAccelerationDistance * 10 + "spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.isSailorClass() && sailorSequence.useSpirituality(2500) && sailorSequence.getCurrentSequence() == 0) {
+                if (holder.isSailorClass() && sailorSequence.useSpirituality(matterAccelerationDistance * 10) && sailorSequence.getCurrentSequence() == 0) {
                     useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 300);
@@ -65,8 +65,8 @@ public class MatterAccelerationSelf extends Item {
         int sequence = holder.getCurrentSequence();
         Level level = pPlayer.level();
         int blinkDistance = pPlayer.getPersistentData().getInt("tyrantSelfAcceleration");
-        if (holder.getSpirituality() < blinkDistance * 2) {
-            pPlayer.displayClientMessage(Component.literal("You need " + (blinkDistance * 8) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+        if (holder.getSpirituality() < blinkDistance * 10) {
+            pPlayer.displayClientMessage(Component.literal("You need " + (blinkDistance * 10) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
         }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
             if (holder.isSailorClass() && !pPlayer.level().isClientSide() && sailorSequence.getCurrentSequence() == 0 && sailorSequence.useSpirituality(blinkDistance * 2)) {
@@ -79,7 +79,6 @@ public class MatterAccelerationSelf extends Item {
                         (int) (pPlayer.getZ() + blinkDistance * lookVector.z())
                 );
 
-                // Calculate the positions along the line between startPos and endPos
                 BlockPos blockPos = new BlockPos(endPos.getX(), endPos.getY(), endPos.getZ());
                 double distance = startPos.distSqr(blockPos);
                 Vec3 direction = new Vec3(
@@ -97,10 +96,9 @@ public class MatterAccelerationSelf extends Item {
 
                     BlockState blockState = level.getBlockState(pos);
                     if (!blockState.is(Blocks.BEDROCK)) {
-                        level.destroyBlock(pos, false);
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
                     }
 
-                    // Check for entities around the destroyed block
                     AABB boundingBox = new AABB(pos).inflate(1); // Adjust size as needed
                     List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, boundingBox);
                     for (LivingEntity entity : entities) {
