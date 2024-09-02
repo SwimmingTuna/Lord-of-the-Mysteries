@@ -113,7 +113,7 @@ public class BeyonderUtil {
                     abilityNames.add(getItemName(ItemInit.EnvisionLife.get()));
                     abilityNames.add(getItemName(ItemInit.EnvisionLocation.get()));
                     abilityNames.add(getItemName(ItemInit.EnvisionLocationBlink.get()));
-                    abilityNames.add(getItemName(ItemInit.DreamWeaving.get()));
+                    abilityNames.add(getItemName(ItemInit.EnvisionWeather.get()));
                 }
             }
 

@@ -179,7 +179,57 @@ public class SailorClass implements BeyonderClass {
     @Override
     public HashMultimap<Integer, Item> getItems() {
         HashMultimap<Integer, Item> items = HashMultimap.create();
-        items.put(0, ItemInit.Placate.get());
+        items.put(8, ItemInit.RagingBlows.get());
+
+        items.put(7, ItemInit.EnableOrDisableLightning.get());
+        items.put(7, ItemInit.AqueousLightDrown.get());
+        items.put(7, ItemInit.AqueousLightPull.get());
+        items.put(7, ItemInit.AqueousLightPush.get());
+
+        items.put(6, ItemInit.WindManipulationBlade.get());
+        items.put(6, ItemInit.WindManipulationCushion.get());
+        items.put(6, ItemInit.WindManipulationFlight.get());
+        items.put(6, ItemInit.WindManipulationSense.get());
+
+        items.put(5, ItemInit.SailorLightning.get());
+        items.put(5, ItemInit.SirenSongHarm.get());
+        items.put(5, ItemInit.SirenSongStrengthen.get());
+        items.put(5, ItemInit.SirenSongWeaken.get());
+        items.put(5, ItemInit.SirenSongStun.get());
+        items.put(5, ItemInit.AcidicRain.get());
+        items.put(5, ItemInit.WaterSphere.get());
+
+        items.put(4, ItemInit.Tsunami.get());
+        items.put(4, ItemInit.TsunamiSeal.get());
+        items.put(4, ItemInit.Hurricane.get());
+        items.put(4, ItemInit.Tornado.get());
+        items.put(4, ItemInit.Earthquake.get());
+        items.put(4, ItemInit.Roar.get());
+
+        items.put(3, ItemInit.AquaticLifeManipulation.get());
+        items.put(3, ItemInit.LightningStorm.get());
+        items.put(3, ItemInit.LightningBranch.get());
+        items.put(3, ItemInit.SonicBoom.get());
+        items.put(3, ItemInit.ThunderClap.get());
+
+        items.put(2, ItemInit.LightningBall.get());
+        items.put(2, ItemInit.VolcanicEruption.get());
+        items.put(2, ItemInit.RainEyes.get());
+        items.put(2, ItemInit.ExtremeColdness.get());
+
+        items.put(1, ItemInit.LightningBallAbsorb.get());
+        items.put(1, ItemInit.StarOfLightning.get());
+        items.put(1, ItemInit.SailorLightningTravel.get());
+        items.put(1, ItemInit.LightningRedirection.get());
+
+        items.put(0, ItemInit.StormSeal.get());
+        items.put(0, ItemInit.WaterColumn.get());
+        items.put(0, ItemInit.MatterAccelerationBlocks.get());
+        items.put(0, ItemInit.MatterAccelerationSelf.get());
+        items.put(0, ItemInit.MatterAccelerationEntities.get());
+        items.put(0, ItemInit.Tyranny.get());
+
+
         return items;
     }
 }

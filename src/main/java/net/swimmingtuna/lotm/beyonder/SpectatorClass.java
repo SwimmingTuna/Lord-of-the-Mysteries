@@ -106,15 +106,31 @@ public class SpectatorClass implements BeyonderClass {
         items.put(5, ItemInit.DreamWalking.get());
         items.put(5, ItemInit.Nightmare.get());
         items.put(4, ItemInit.ApplyManipulation.get());
+        items.put(4, ItemInit.ManipulateEmotion.get());
+        items.put(4, ItemInit.ManipulateFondness.get());
+        items.put(4, ItemInit.ManipulateMovement.get());
         items.put(4, ItemInit.DragonBreath.get());
-        items.put(3, ItemInit.MentalPlague.get());
+        items.put(4, ItemInit.MentalPlague.get());
+        items.put(3, ItemInit.MindStorm.get());
         items.put(3, ItemInit.PlagueStorm.get());
+        items.put(3, ItemInit.ConsciousnessStroll.get());
+        items.put(3, ItemInit.DreamWeaving.get());
         items.put(2, ItemInit.Discern.get());
         items.put(2, ItemInit.DreamIntoReality.get());
-        items.put(2, ItemInit.ConsciousnessStroll.get());
         items.put(1, ItemInit.ProphesizeDemise.get());
+        items.put(1, ItemInit.ProphesizeTeleportBlock.get());
+        items.put(1, ItemInit.ProphesizeTeleportPlayer.get());
         items.put(1, ItemInit.MeteorShower.get());
+        items.put(1, ItemInit.MeteorNoLevelShower.get());
         items.put(0, ItemInit.EnvisionBarrier.get());
+        items.put(0, ItemInit.EnvisionLife.get());
+        items.put(0, ItemInit.EnvisionDeath.get());
+        items.put(0, ItemInit.EnvisionHealth.get());
+        items.put(0, ItemInit.EnvisionLocation.get());
+        items.put(0, ItemInit.EnvisionLocationBlink.get());
+        items.put(0, ItemInit.EnvisionWeather.get());
+        items.put(0, ItemInit.EnvisionKingdom.get());
+
         return items;
     }
 
