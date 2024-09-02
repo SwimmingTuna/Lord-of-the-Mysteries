@@ -94,9 +94,17 @@ public class MatterAccelerationSelf extends Item {
                             (int) (startPos.getZ() + i * direction.z)
                     );
 
-                    BlockState blockState = level.getBlockState(pos);
-                    if (!blockState.is(Blocks.BEDROCK)) {
-                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                    // Destroy blocks in a 5-block radius around the current position
+                    for (int x = -5; x <= 5; x++) {
+                        for (int y = -5; y <= 5; y++) {
+                            for (int z = -5; z <= 5; z++) {
+                                BlockPos nearbyPos = pos.offset(x, y, z);
+                                BlockState blockState = level.getBlockState(nearbyPos);
+                                if (!blockState.is(Blocks.BEDROCK)) {
+                                    level.setBlock(nearbyPos, Blocks.AIR.defaultBlockState(), 3);
+                                }
+                            }
+                        }
                     }
 
                     AABB boundingBox = new AABB(pos).inflate(1); // Adjust size as needed
@@ -112,6 +120,7 @@ public class MatterAccelerationSelf extends Item {
             }
         });
     }
+
 
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
