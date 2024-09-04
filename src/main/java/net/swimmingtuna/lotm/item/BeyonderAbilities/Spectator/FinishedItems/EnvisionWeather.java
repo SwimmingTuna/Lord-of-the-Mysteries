@@ -126,7 +126,7 @@ public class EnvisionWeather extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionWeather) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionBarrier.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_BARRIER.get()));
             heldItem.shrink(1);
         }
     }
@@ -136,7 +136,7 @@ public class EnvisionWeather extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionWeather) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionBarrier.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_BARRIER.get()));
             heldItem.shrink(1);
         }
     }

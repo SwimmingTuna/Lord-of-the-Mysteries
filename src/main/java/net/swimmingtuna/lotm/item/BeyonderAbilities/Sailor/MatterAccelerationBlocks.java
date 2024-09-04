@@ -188,7 +188,7 @@ public class MatterAccelerationBlocks extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationBlocks) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MatterAccelerationSelf.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_SELF.get()));
             heldItem.shrink(1);
         }
     }
@@ -247,7 +247,7 @@ public class MatterAccelerationBlocks extends Item implements ReachChangeUUIDs {
             int activeSlot = pPlayer.getInventory().selected;
             ItemStack heldItem = pPlayer.getMainHandItem();
             if (!heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationBlocks) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MatterAccelerationSelf.get()));
+                pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_SELF.get()));
                 heldItem.shrink(1);
             }
         }

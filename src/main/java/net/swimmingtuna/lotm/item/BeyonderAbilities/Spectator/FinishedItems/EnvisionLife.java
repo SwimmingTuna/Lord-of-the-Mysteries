@@ -132,7 +132,7 @@ public class EnvisionLife extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLife) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionKingdom.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_KINGDOM.get()));
             heldItem.shrink(1);
         }
     }
@@ -142,7 +142,7 @@ public class EnvisionLife extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLife) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionKingdom.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_KINGDOM.get()));
             heldItem.shrink(1);
         }
     }

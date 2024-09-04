@@ -81,7 +81,7 @@ public class MatterAccelerationEntities extends Item implements ReachChangeUUIDs
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationEntities) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MatterAccelerationSelf.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_SELF.get()));
             heldItem.shrink(1);
         }
     }
@@ -92,7 +92,7 @@ public class MatterAccelerationEntities extends Item implements ReachChangeUUIDs
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationEntities) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MatterAccelerationSelf.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_SELF.get()));
             heldItem.shrink(1);
         }
     }

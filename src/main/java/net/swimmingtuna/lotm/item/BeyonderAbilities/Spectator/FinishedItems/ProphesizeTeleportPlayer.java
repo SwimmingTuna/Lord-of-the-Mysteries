@@ -76,7 +76,7 @@ public class ProphesizeTeleportPlayer extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeDemise.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.PROPHESIZE_DEMISE.get()));
             heldItem.shrink(1);
         }
     }
@@ -86,7 +86,7 @@ public class ProphesizeTeleportPlayer extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeDemise.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.PROPHESIZE_DEMISE.get()));
             heldItem.shrink(1);
         }
     }

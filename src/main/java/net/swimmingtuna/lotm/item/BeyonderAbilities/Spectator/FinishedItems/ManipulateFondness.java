@@ -83,7 +83,7 @@ public class ManipulateFondness extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateFondness) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateMovement.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MANIPULATE_MOVEMENT.get()));
             heldItem.shrink(1);
         }
     }
@@ -93,7 +93,7 @@ public class ManipulateFondness extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateFondness) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateMovement.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MANIPULATE_MOVEMENT.get()));
             heldItem.shrink(1);
         }
     }

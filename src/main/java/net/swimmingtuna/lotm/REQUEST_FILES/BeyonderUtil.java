@@ -64,118 +64,118 @@ public class BeyonderUtil {
             int sequence = holder.getCurrentSequence();
             if (holder.isSpectatorClass()) {
                 if (sequence <= 8) {
-                    abilityNames.add(getItemName(ItemInit.MindReading.get()));
+                    abilityNames.add(getItemName(ItemInit.MIND_READING.get()));
                 }
                 if (sequence <= 7) {
-                    abilityNames.add(getItemName(ItemInit.Awe.get()));
-                    abilityNames.add(getItemName(ItemInit.Frenzy.get()));
-                    abilityNames.add(getItemName(ItemInit.Placate.get()));
+                    abilityNames.add(getItemName(ItemInit.AWE.get()));
+                    abilityNames.add(getItemName(ItemInit.FRENZY.get()));
+                    abilityNames.add(getItemName(ItemInit.PLACATE.get()));
                 }
                 if (sequence <= 6) {
-                    abilityNames.add(getItemName(ItemInit.PsychologicalInvisibility.get()));
-                    abilityNames.add(getItemName(ItemInit.BattleHypnotism.get()));
+                    abilityNames.add(getItemName(ItemInit.PSYCHOLOGICAL_INVISIBILITY.get()));
+                    abilityNames.add(getItemName(ItemInit.BATTLE_HYPNOTISM.get()));
                 }
                 if (sequence <= 5) {
-                    abilityNames.add(getItemName(ItemInit.Guidance.get()));
-                    abilityNames.add(getItemName(ItemInit.Alteration.get()));
-                    abilityNames.add(getItemName(ItemInit.DreamWalking.get()));
-                    abilityNames.add(getItemName(ItemInit.Nightmare.get()));
+                    abilityNames.add(getItemName(ItemInit.GUIDANCE.get()));
+                    abilityNames.add(getItemName(ItemInit.ALTERATION.get()));
+                    abilityNames.add(getItemName(ItemInit.DREAM_WALKING.get()));
+                    abilityNames.add(getItemName(ItemInit.NIGHTMARE.get()));
                 }
                 if (sequence <= 4) {
                     abilityNames.add(getItemName(ItemInit.ApplyManipulation.get()));
-                    abilityNames.add(getItemName(ItemInit.ManipulateMovement.get()));
-                    abilityNames.add(getItemName(ItemInit.ManipulateFondness.get()));
-                    abilityNames.add(getItemName(ItemInit.ManipulateEmotion.get()));
-                    abilityNames.add(getItemName(ItemInit.MentalPlague.get()));
-                    abilityNames.add(getItemName(ItemInit.MindStorm.get()));
-                    abilityNames.add(getItemName(ItemInit.DragonBreath.get()));
+                    abilityNames.add(getItemName(ItemInit.MANIPULATE_MOVEMENT.get()));
+                    abilityNames.add(getItemName(ItemInit.MANIPULATE_FONDNESS.get()));
+                    abilityNames.add(getItemName(ItemInit.MANIPULATE_EMOTION.get()));
+                    abilityNames.add(getItemName(ItemInit.MENTAL_PLAGUE.get()));
+                    abilityNames.add(getItemName(ItemInit.MIND_STORM.get()));
+                    abilityNames.add(getItemName(ItemInit.DRAGON_BREATH.get()));
                 }
                 if (sequence <= 3) {
-                    abilityNames.add(getItemName(ItemInit.ConsciousnessStroll.get()));
-                    abilityNames.add(getItemName(ItemInit.PlagueStorm.get()));
-                    abilityNames.add(getItemName(ItemInit.DreamWeaving.get()));
+                    abilityNames.add(getItemName(ItemInit.CONSCIOUSNESS_STROLL.get()));
+                    abilityNames.add(getItemName(ItemInit.PLAGUE_STORM.get()));
+                    abilityNames.add(getItemName(ItemInit.DREAM_WEAVING.get()));
                 }
                 if (sequence <= 2) {
-                    abilityNames.add(getItemName(ItemInit.Discern.get()));
-                    abilityNames.add(getItemName(ItemInit.DreamIntoReality.get()));
+                    abilityNames.add(getItemName(ItemInit.DISCERN.get()));
+                    abilityNames.add(getItemName(ItemInit.DREAM_INTO_REALITY.get()));
                 }
                 if (sequence <= 1) {
-                    abilityNames.add(getItemName(ItemInit.ProphesizeDemise.get()));
-                    abilityNames.add(getItemName(ItemInit.ProphesizeTeleportPlayer.get()));
-                    abilityNames.add(getItemName(ItemInit.MeteorShower.get()));
-                    abilityNames.add(getItemName(ItemInit.MeteorNoLevelShower.get()));
+                    abilityNames.add(getItemName(ItemInit.PROPHESIZE_DEMISE.get()));
+                    abilityNames.add(getItemName(ItemInit.PROPHESIZE_TELEPORT_PLAYER.get()));
+                    abilityNames.add(getItemName(ItemInit.METEOR_SHOWER.get()));
+                    abilityNames.add(getItemName(ItemInit.METEOR_NO_LEVEL_SHOWER.get()));
                 }
                 if (sequence <= 0) {
-                    abilityNames.add(getItemName(ItemInit.EnvisionBarrier.get()));
-                    abilityNames.add(getItemName(ItemInit.EnvisionDeath.get()));
-                    abilityNames.add(getItemName(ItemInit.EnvisionHealth.get()));
-                    abilityNames.add(getItemName(ItemInit.EnvisionKingdom.get()));
-                    abilityNames.add(getItemName(ItemInit.EnvisionLife.get()));
-                    abilityNames.add(getItemName(ItemInit.EnvisionLocation.get()));
-                    abilityNames.add(getItemName(ItemInit.EnvisionLocationBlink.get()));
-                    abilityNames.add(getItemName(ItemInit.EnvisionWeather.get()));
+                    abilityNames.add(getItemName(ItemInit.ENVISION_BARRIER.get()));
+                    abilityNames.add(getItemName(ItemInit.ENVISION_DEATH.get()));
+                    abilityNames.add(getItemName(ItemInit.ENVISIONHEALTH.get()));
+                    abilityNames.add(getItemName(ItemInit.ENVISION_KINGDOM.get()));
+                    abilityNames.add(getItemName(ItemInit.ENVISION_LIFE.get()));
+                    abilityNames.add(getItemName(ItemInit.ENVISION_LOCATION.get()));
+                    abilityNames.add(getItemName(ItemInit.ENVISION_LOCATION_BLINK.get()));
+                    abilityNames.add(getItemName(ItemInit.ENVISION_WEATHER.get()));
                 }
             }
 
             if (holder.isSailorClass()) {
                 if (sequence <= 8) {
-                    abilityNames.add(getItemName(ItemInit.RagingBlows.get()));
+                    abilityNames.add(getItemName(ItemInit.RAGING_BLOWS.get()));
                 }
                 if (sequence <= 7) {
-                    abilityNames.add(getItemName(ItemInit.EnableOrDisableLightning.get()));
-                    abilityNames.add(getItemName(ItemInit.AqueousLightPush.get()));
-                    abilityNames.add(getItemName(ItemInit.AqueousLightPull.get()));
-                    abilityNames.add(getItemName(ItemInit.AqueousLightDrown.get()));
+                    abilityNames.add(getItemName(ItemInit.ENABLE_OR_DISABLE_LIGHTNING.get()));
+                    abilityNames.add(getItemName(ItemInit.AQUEOUS_LIGHT_PUSH.get()));
+                    abilityNames.add(getItemName(ItemInit.AQUEOUS_LIGHT_PULL.get()));
+                    abilityNames.add(getItemName(ItemInit.AQUEOUS_LIGHT_DROWN.get()));
                 }
                 if (sequence <= 6) {
-                    abilityNames.add(getItemName(ItemInit.WindManipulationBlade.get()));
-                    abilityNames.add(getItemName(ItemInit.WindManipulationCushion.get()));
-                    abilityNames.add(getItemName(ItemInit.WindManipulationFlight.get()));
-                    abilityNames.add(getItemName(ItemInit.WindManipulationSense.get()));
+                    abilityNames.add(getItemName(ItemInit.WIND_MANIPULATION_BLADE.get()));
+                    abilityNames.add(getItemName(ItemInit.WIND_MANIPULATION_CUSHION.get()));
+                    abilityNames.add(getItemName(ItemInit.WIND_MANIPULATION_FLIGHT.get()));
+                    abilityNames.add(getItemName(ItemInit.WIND_MANIPULATION_SENSE.get()));
                 }
                 if (sequence <= 5) {
-                    abilityNames.add(getItemName(ItemInit.SailorLightning.get()));
-                    abilityNames.add(getItemName(ItemInit.SirenSongHarm.get()));
-                    abilityNames.add(getItemName(ItemInit.SirenSongStrengthen.get()));
-                    abilityNames.add(getItemName(ItemInit.SirenSongWeaken.get()));
-                    abilityNames.add(getItemName(ItemInit.SirenSongStun.get()));
-                    abilityNames.add(getItemName(ItemInit.AcidicRain.get()));
-                    abilityNames.add(getItemName(ItemInit.WaterSphere.get()));
+                    abilityNames.add(getItemName(ItemInit.SAILOR_LIGHTNING.get()));
+                    abilityNames.add(getItemName(ItemInit.SIREN_SONG_HARM.get()));
+                    abilityNames.add(getItemName(ItemInit.SIREN_SONG_STRENGTHEN.get()));
+                    abilityNames.add(getItemName(ItemInit.SIREN_SONG_WEAKEN.get()));
+                    abilityNames.add(getItemName(ItemInit.SIREN_SONG_STUN.get()));
+                    abilityNames.add(getItemName(ItemInit.ACIDIC_RAIN.get()));
+                    abilityNames.add(getItemName(ItemInit.WATER_SPHERE.get()));
                 }
                 if (sequence <= 4) {
-                    abilityNames.add(getItemName(ItemInit.Tsunami.get()));
-                    abilityNames.add(getItemName(ItemInit.TsunamiSeal.get()));
-                    abilityNames.add(getItemName(ItemInit.Hurricane.get()));
-                    abilityNames.add(getItemName(ItemInit.Tornado.get()));
-                    abilityNames.add(getItemName(ItemInit.Earthquake.get()));
-                    abilityNames.add(getItemName(ItemInit.Roar.get()));
+                    abilityNames.add(getItemName(ItemInit.TSUNAMI.get()));
+                    abilityNames.add(getItemName(ItemInit.TSUNAMI_SEAL.get()));
+                    abilityNames.add(getItemName(ItemInit.HURRICANE.get()));
+                    abilityNames.add(getItemName(ItemInit.TORNADO.get()));
+                    abilityNames.add(getItemName(ItemInit.EARTHQUAKE.get()));
+                    abilityNames.add(getItemName(ItemInit.ROAR.get()));
                 }
                 if (sequence <= 3) {
-                    abilityNames.add(getItemName(ItemInit.AquaticLifeManipulation.get()));
-                    abilityNames.add(getItemName(ItemInit.LightningStorm.get()));
-                    abilityNames.add(getItemName(ItemInit.LightningBranch.get()));
-                    abilityNames.add(getItemName(ItemInit.SonicBoom.get()));
-                    abilityNames.add(getItemName(ItemInit.ThunderClap.get()));
+                    abilityNames.add(getItemName(ItemInit.AQUATIC_LIFE_MANIPULATION.get()));
+                    abilityNames.add(getItemName(ItemInit.LIGHTNING_STORM.get()));
+                    abilityNames.add(getItemName(ItemInit.LIGHTNING_BRANCH.get()));
+                    abilityNames.add(getItemName(ItemInit.SONIC_BOOM.get()));
+                    abilityNames.add(getItemName(ItemInit.THUNDER_CLAP.get()));
                 }
                 if (sequence <= 2) {
-                    abilityNames.add(getItemName(ItemInit.RainEyes.get()));
-                    abilityNames.add(getItemName(ItemInit.VolcanicEruption.get()));
-                    abilityNames.add(getItemName(ItemInit.ExtremeColdness.get()));
-                    abilityNames.add(getItemName(ItemInit.LightningBall.get()));
+                    abilityNames.add(getItemName(ItemInit.RAIN_EYES.get()));
+                    abilityNames.add(getItemName(ItemInit.VOLCANIC_ERUPTION.get()));
+                    abilityNames.add(getItemName(ItemInit.EXTREME_COLDNESS.get()));
+                    abilityNames.add(getItemName(ItemInit.LIGHTNING_BALL.get()));
                 }
                 if (sequence <= 1) {
-                    abilityNames.add(getItemName(ItemInit.LightningBallAbsorb.get()));
-                    abilityNames.add(getItemName(ItemInit.SailorLightningTravel.get()));
-                    abilityNames.add(getItemName(ItemInit.StarOfLightning.get()));
-                    abilityNames.add(getItemName(ItemInit.LightningRedirection.get()));
+                    abilityNames.add(getItemName(ItemInit.LIGHTNING_BALL_ABSORB.get()));
+                    abilityNames.add(getItemName(ItemInit.SAILOR_LIGHTNING_TRAVEL.get()));
+                    abilityNames.add(getItemName(ItemInit.STAR_OF_LIGHTNING.get()));
+                    abilityNames.add(getItemName(ItemInit.LIGHTNING_REDIRECTION.get()));
                 }
                 if (sequence <= 0) {
-                    abilityNames.add(getItemName(ItemInit.StormSeal.get()));
-                    abilityNames.add(getItemName(ItemInit.WaterColumn.get()));
-                    abilityNames.add(getItemName(ItemInit.MatterAccelerationSelf.get()));
-                    abilityNames.add(getItemName(ItemInit.MatterAccelerationBlocks.get()));
-                    abilityNames.add(getItemName(ItemInit.MatterAccelerationEntities.get()));
-                    abilityNames.add(getItemName(ItemInit.Tyranny.get()));
+                    abilityNames.add(getItemName(ItemInit.STORM_SEAL.get()));
+                    abilityNames.add(getItemName(ItemInit.WATER_COLUMN.get()));
+                    abilityNames.add(getItemName(ItemInit.MATTER_ACCELERATION_SELF.get()));
+                    abilityNames.add(getItemName(ItemInit.MATTER_ACCELERATION_BLOCKS.get()));
+                    abilityNames.add(getItemName(ItemInit.MATTER_ACCELERATION_ENTITIES.get()));
+                    abilityNames.add(getItemName(ItemInit.TYRANNY.get()));
                 }
             }
         }

@@ -77,7 +77,7 @@ public class EnvisionHealth extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionHealth) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionWeather.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_WEATHER.get()));
             heldItem.shrink(1);
         }
     }
@@ -87,7 +87,7 @@ public class EnvisionHealth extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionHealth) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.EnvisionWeather.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_WEATHER.get()));
             heldItem.shrink(1);
         }
     }

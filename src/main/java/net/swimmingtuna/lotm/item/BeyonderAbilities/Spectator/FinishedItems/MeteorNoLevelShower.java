@@ -11,7 +11,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -82,7 +81,7 @@ public class MeteorNoLevelShower extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof MeteorNoLevelShower) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MeteorShower.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.METEOR_SHOWER.get()));
             heldItem.shrink(1);
         }
     }
@@ -92,7 +91,7 @@ public class MeteorNoLevelShower extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof MeteorNoLevelShower) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MeteorShower.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.METEOR_SHOWER.get()));
             heldItem.shrink(1);
         }
     }

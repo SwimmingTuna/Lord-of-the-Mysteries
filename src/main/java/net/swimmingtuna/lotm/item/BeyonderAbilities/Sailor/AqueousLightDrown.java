@@ -147,7 +147,7 @@ public class AqueousLightDrown extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightDrown) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightPush.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AQUEOUS_LIGHT_PUSH.get()));
             heldItem.shrink(1);
         }
     }
@@ -157,7 +157,7 @@ public class AqueousLightDrown extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightDrown) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AqueousLightPush.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AQUEOUS_LIGHT_PUSH.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }

@@ -138,7 +138,7 @@ public class MatterAccelerationSelf extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationSelf) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MatterAccelerationBlocks.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_BLOCKS.get()));
             heldItem.shrink(1);
         }
     }
@@ -149,7 +149,7 @@ public class MatterAccelerationSelf extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationSelf) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MatterAccelerationBlocks.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_BLOCKS.get()));
             heldItem.shrink(1);
         }
     }

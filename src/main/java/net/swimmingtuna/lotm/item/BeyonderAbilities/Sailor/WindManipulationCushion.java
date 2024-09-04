@@ -73,7 +73,7 @@ public class WindManipulationCushion extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationCushion) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationBlade.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_BLADE.get()));
             heldItem.shrink(1);
         }
     }
@@ -103,7 +103,7 @@ public class WindManipulationCushion extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationCushion) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationBlade.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_BLADE.get()));
             heldItem.shrink(1);
         }
     }

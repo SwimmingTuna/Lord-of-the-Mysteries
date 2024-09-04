@@ -153,7 +153,7 @@ public class ProphesizeDemise extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeDemise) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeTeleportBlock.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.PROPHESIZE_TELEPORT_BLOCK.get()));
             heldItem.shrink(1);
         }
     }
@@ -163,7 +163,7 @@ public class ProphesizeDemise extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeDemise) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeTeleportBlock.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.PROPHESIZE_TELEPORT_BLOCK.get()));
             heldItem.shrink(1);
         }
     }

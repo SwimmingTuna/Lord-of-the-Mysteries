@@ -8,6 +8,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -26,6 +27,18 @@ public class AbilityRegisterCommand {
 
     static {
         initializeCombinationMap();
+    }
+
+    private static void initializeCombinationMap() {
+        String[] combinations = {
+                "LLLLL", "LLLLR", "LLLRL", "LLLRR", "LLRLL", "LLRLR", "LLRRL", "LLRRR",
+                "LRLLL", "LRLLR", "LRLRL", "LRLRR", "LRRLL", "LRRLR", "LRRRL", "LRRRR",
+                "RLLLL", "RLLLR", "RLLRL", "RLLRR", "RLRLL", "RLRLR", "RLRRL", "RLRRR",
+                "RRLLL", "RRLLR", "RRLRL", "RRLRR", "RRRLL", "RRRLR", "RRRRL", "RRRRR"
+        };
+        for (int i = 0; i < combinations.length; i++) {
+            COMBINATION_MAP.put(combinations[i], i + 1);
+        }
     }
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -81,8 +94,8 @@ public class AbilityRegisterCommand {
         }
         CompoundTag tag = player.getPersistentData();
         ListTag registeredAbilities;
-        if (tag.contains(REGISTERED_ABILITIES_KEY, 9)) {
-            registeredAbilities = tag.getList(REGISTERED_ABILITIES_KEY, 8);
+        if (tag.contains(REGISTERED_ABILITIES_KEY, Tag.TAG_LIST)) {
+            registeredAbilities = tag.getList(REGISTERED_ABILITIES_KEY, Tag.TAG_STRING);
         } else {
             registeredAbilities = new ListTag();
             tag.put(REGISTERED_ABILITIES_KEY, registeredAbilities);
@@ -129,16 +142,5 @@ public class AbilityRegisterCommand {
         }
 
         return 1;
-    }
-    private static void initializeCombinationMap() {
-        String[] combinations = {
-                "LLLLL", "LLLLR", "LLLRL", "LLLRR", "LLRLL", "LLRLR", "LLRRL", "LLRRR",
-                "LRLLL", "LRLLR", "LRLRL", "LRLRR", "LRRLL", "LRRLR", "LRRRL", "LRRRR",
-                "RLLLL", "RLLLR", "RLLRL", "RLLRR", "RLRLL", "RLRLR", "RLRRL", "RLRRR",
-                "RRLLL", "RRLLR", "RRLRL", "RRLRR", "RRRLL", "RRRLR", "RRRRL", "RRRRR"
-        };
-        for (int i = 0; i < combinations.length; i++) {
-            COMBINATION_MAP.put(combinations[i], i + 1);
-        }
     }
 }

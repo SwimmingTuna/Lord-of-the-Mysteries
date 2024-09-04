@@ -72,7 +72,7 @@ public class BardClass implements BeyonderClass {
     @Override
     public HashMultimap<Integer, Item> getItems() {
         HashMultimap<Integer, Item> items = HashMultimap.create();
-        items.put(0, ItemInit.Placate.get());
+        items.put(0, ItemInit.PLACATE.get());
         return items;
     }
 

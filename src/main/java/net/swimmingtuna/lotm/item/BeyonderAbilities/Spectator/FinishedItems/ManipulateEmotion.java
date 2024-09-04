@@ -83,7 +83,7 @@ public class ManipulateEmotion extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateEmotion) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateFondness.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MANIPULATE_FONDNESS.get()));
             heldItem.shrink(1);
         }
     }
@@ -93,7 +93,7 @@ public class ManipulateEmotion extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ManipulateEmotion) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ManipulateFondness.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MANIPULATE_FONDNESS.get()));
             heldItem.shrink(1);
         }
     }

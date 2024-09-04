@@ -15,9 +15,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -147,7 +144,7 @@ public class WindManipulationFlight extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationFlight) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationCushion.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_CUSHION.get()));
             heldItem.shrink(1);
         }
     }
@@ -157,7 +154,7 @@ public class WindManipulationFlight extends Item {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationFlight) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WindManipulationCushion.get()));
+            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_CUSHION.get()));
             heldItem.shrink(1);
         }
     }
