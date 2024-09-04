@@ -48,7 +48,7 @@ public class EnvisionWeather extends Item {
         Level level = event.getPlayer().serverLevel();
         Player pPlayer = event.getPlayer();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         Style style = BeyonderUtil.getStyle(pPlayer);
         if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather) {
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {

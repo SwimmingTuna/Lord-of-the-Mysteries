@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 
-public class BeyonderResetPotion extends Item{
+public class BeyonderResetPotion extends Item {
     public BeyonderResetPotion(Properties pProperties) {
         super(pProperties);
     }
@@ -23,7 +23,7 @@ public class BeyonderResetPotion extends Item{
         ItemStack itemStack = pPlayer.getItemInHand(hand);
         if (!level.isClientSide()) {
 
-            level.playSound(null,pPlayer.getOnPos(), SoundEvents.WITHER_DEATH, SoundSource.PLAYERS,0.5f,level.random.nextFloat() * 0.1F + 0.9F);
+            level.playSound(null, pPlayer.getOnPos(), SoundEvents.WITHER_DEATH, SoundSource.PLAYERS, 0.5f, level.random.nextFloat() * 0.1F + 0.9F);
             pPlayer.sendSystemMessage(Component.literal("You are no longer a Beyonder").withStyle(ChatFormatting.BLACK).withStyle(ChatFormatting.BOLD));
             pPlayer.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0);
             BeyonderHolderAttacher.getHolderUnwrap(pPlayer).removeClass();
@@ -31,5 +31,8 @@ public class BeyonderResetPotion extends Item{
                 itemStack.shrink(1);
                 pPlayer.hurt(pPlayer.damageSources().magic(), 1.0f);
 
-            }}
-        return super.use(level,pPlayer,hand);}}
+            }
+        }
+        return super.use(level, pPlayer, hand);
+    }
+}

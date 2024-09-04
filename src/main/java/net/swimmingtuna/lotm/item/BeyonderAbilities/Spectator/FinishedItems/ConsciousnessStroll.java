@@ -33,7 +33,7 @@ public class ConsciousnessStroll extends Item {
     public static void onChatMessage(ServerChatEvent event) {
         Level level = event.getPlayer().serverLevel();
         Player pPlayer = event.getPlayer();
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         if (pPlayer.getMainHandItem().getItem() instanceof ConsciousnessStroll) {
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);

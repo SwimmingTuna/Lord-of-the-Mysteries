@@ -242,7 +242,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
                             Vec3 hitPos = currentPos;
                             if (this.owner != null) {
                                 if (this.owner instanceof Player pPlayer) {
-                                    BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
                                     int sequence = holder.getCurrentSequence();
                                     int radius = 20 - (sequence * 2);
                                     this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, radius, Level.ExplosionInteraction.BLOCK);

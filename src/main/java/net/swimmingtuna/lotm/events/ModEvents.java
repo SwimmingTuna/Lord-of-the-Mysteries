@@ -80,7 +80,7 @@ public class ModEvents implements ReachChangeUUIDs {
         Player pPlayer = event.player;
         Style style = BeyonderUtil.getStyle(pPlayer);
         CompoundTag tag = pPlayer.getPersistentData();
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         if (holder != null) {
             Level level = pPlayer.level();
             int sequence = holder.getCurrentSequence();
@@ -1750,7 +1750,7 @@ public class ModEvents implements ReachChangeUUIDs {
         Player pPlayer = event.getEntity();
         CompoundTag tag = pPlayer.getPersistentData();
         boolean sailorLightning = tag.getBoolean("SailorLightning");
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         if (!pPlayer.level().isClientSide()) {
 
 

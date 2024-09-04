@@ -34,7 +34,7 @@ public class RainEyes extends Item implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide()) {
 
             // If no block or entity is targeted, proceed with the original functionality
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
@@ -64,15 +64,11 @@ public class RainEyes extends Item implements ReachChangeUUIDs {
     public static void useItem(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
             CompoundTag tag = pPlayer.getPersistentData();
-            boolean x = tag.getBoolean("torrentialDownpour");
-            if (x) {
-                x = false;
+            boolean torrentialDownpour = tag.getBoolean("torrentialDownpour");
+            if (torrentialDownpour) {
                 tag.putBoolean("torrentialDownpour", false);
                 pPlayer.displayClientMessage(Component.literal("Rain eyes disabled").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-
-            }
-            if (!x) {
-                x = true;
+            } else {
                 tag.putBoolean("torrentialDownpour", true);
                 pPlayer.displayClientMessage(Component.literal("Rain eyes enabled").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
 

@@ -59,7 +59,7 @@ public class ManipulateMovement extends Item implements ReachChangeUUIDs {
     @Override
     public InteractionResult useOn(UseOnContext pContext) {
         Player pPlayer = pContext.getPlayer();
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         int sequence = holder.getCurrentSequence();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         if (!pPlayer.level().isClientSide()) {

@@ -35,7 +35,7 @@ public class ProphesizeTeleportPlayer extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             if (!pPlayer.level().isClientSide()) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
                 if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
@@ -43,7 +43,7 @@ public class ProphesizeTeleportPlayer extends Item {
                     pPlayer.displayClientMessage(Component.literal("You need 750 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
             }
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 1 && spectatorSequence.useSpirituality(750)) {
                 AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
                 teleportEntities(pPlayer, level, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());

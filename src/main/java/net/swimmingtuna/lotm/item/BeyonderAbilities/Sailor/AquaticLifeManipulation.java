@@ -32,7 +32,7 @@ public class AquaticLifeManipulation extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!level.isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (holder != null) {
                 if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
@@ -50,26 +50,28 @@ public class AquaticLifeManipulation extends Item {
     }
 
     public static void useItem(Player pPlayer) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        if (holder == null) {
+            return;
+        }
         int sequence = holder.getCurrentSequence();
-        if (!pPlayer.level().isClientSide()) {
-            List<LivingEntity> aquaticEntities = pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(50), entity -> entity instanceof WaterAnimal);
-            if (!aquaticEntities.isEmpty()) {
-                LivingEntity nearestAquaticEntity = aquaticEntities.stream().min(Comparator.comparingDouble(pPlayer::distanceTo)).orElse(null);
-                if (nearestAquaticEntity != null) {
-                    List<Player> nearbyPlayers = nearestAquaticEntity.level().getEntitiesOfClass(Player.class, nearestAquaticEntity.getBoundingBox().inflate(200 - (sequence * 20)));
-                    Player nearestPlayer = nearbyPlayers.stream().filter(player -> player != pPlayer).min(Comparator.comparingDouble(nearestAquaticEntity::distanceTo)).orElse(null);
-                    if (nearestPlayer != null) {
-                        if (holder != null) {
-                            if (sequence >= 2) {
-                                pPlayer.sendSystemMessage(Component.literal("Nearest Player is " + nearestPlayer.getName().getString() + ". Pathway is " + holder.getCurrentClass()));
-                            } else if (sequence <= 1) {
-                                pPlayer.sendSystemMessage(Component.literal("Nearest Player is " + nearestPlayer.getName().getString() + ". Pathway is " + holder.getCurrentClass() + " sequence " + holder.getCurrentSequence()));
-                            }
-                        }
-                    }
-                }
-            }
+        if (pPlayer.level().isClientSide()) {
+            return;
+        }
+        List<LivingEntity> aquaticEntities = pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(50), entity -> entity instanceof WaterAnimal);
+        if (aquaticEntities.isEmpty()) {
+            return;
+        }
+        LivingEntity nearestAquaticEntity = aquaticEntities.stream().min(Comparator.comparingDouble(pPlayer::distanceTo)).orElse(null);
+        List<Player> nearbyPlayers = nearestAquaticEntity.level().getEntitiesOfClass(Player.class, nearestAquaticEntity.getBoundingBox().inflate(200 - (sequence * 20)));
+        Player nearestPlayer = nearbyPlayers.stream().filter(player -> player != pPlayer).min(Comparator.comparingDouble(nearestAquaticEntity::distanceTo)).orElse(null);
+        if (nearestPlayer == null) {
+            return;
+        }
+        if (sequence >= 2) {
+            pPlayer.sendSystemMessage(Component.literal("Nearest Player is " + nearestPlayer.getName().getString() + ". Pathway is " + holder.getCurrentClass()));
+        } else {
+            pPlayer.sendSystemMessage(Component.literal("Nearest Player is " + nearestPlayer.getName().getString() + ". Pathway is " + holder.getCurrentClass() + " sequence " + holder.getCurrentSequence()));
         }
     }
 

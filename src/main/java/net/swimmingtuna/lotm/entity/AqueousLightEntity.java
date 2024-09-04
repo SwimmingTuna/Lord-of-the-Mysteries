@@ -112,7 +112,7 @@ public class AqueousLightEntity extends AbstractHurtingProjectile {
             AqueousLightEntity aqueousLightEntity = new AqueousLightEntity(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
             aqueousLightEntity.setDeltaMovement(initialVelocity);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(aqueousLightEntity);
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             int sequence = holder.getCurrentSequence();
             scaleData.setScale(8.0f - sequence);
             Vec3 lightPosition = eyePosition.add(direction.scale(2.0));

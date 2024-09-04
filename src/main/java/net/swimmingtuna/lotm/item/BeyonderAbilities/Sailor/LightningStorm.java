@@ -38,7 +38,7 @@ public class LightningStorm extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
@@ -60,7 +60,7 @@ public class LightningStorm extends Item {
         if (!pPlayer.level().isClientSide()) {
             int sailorStormVec = pPlayer.getPersistentData().getInt("sailorStormVec");
             Vec3 lookVec = pPlayer.getLookAngle();
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             int sequence = holder.getCurrentSequence();
             double targetX = pPlayer.getX() + sailorStormVec * lookVec.x();
             double targetY = pPlayer.getY() + sailorStormVec * lookVec.y();

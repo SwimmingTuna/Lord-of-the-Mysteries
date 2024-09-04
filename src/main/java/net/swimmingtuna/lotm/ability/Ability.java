@@ -31,7 +31,7 @@ public abstract class Ability extends Item{
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (holder != null) {
                 Style style = BeyonderUtil.getStyle(pPlayer);
                 if (holder == null) {
@@ -65,7 +65,7 @@ public abstract class Ability extends Item{
     }
 
     public InteractionResultHolder<ItemStack> checkPathway(Player pPlayer, InteractionHand hand) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
 
         if (holder == null) {
             return InteractionResultHolder.fail(pPlayer.getItemInHand(hand));

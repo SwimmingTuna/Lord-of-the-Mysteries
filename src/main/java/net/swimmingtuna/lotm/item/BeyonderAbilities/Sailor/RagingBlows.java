@@ -31,11 +31,10 @@ public class RagingBlows extends Item {
         super(pProperties);
     }
 
-
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
@@ -63,6 +62,7 @@ public class RagingBlows extends Item {
             ragingBlows = 1;
         }
     }
+
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
@@ -82,8 +82,9 @@ public class RagingBlows extends Item {
         }
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
+
     private static void spawnRagingBlowsParticles(Player pPlayer) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         Vec3 playerPos = pPlayer.position();
         Vec3 playerLookVector = pPlayer.getViewVector(1.0F);
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {

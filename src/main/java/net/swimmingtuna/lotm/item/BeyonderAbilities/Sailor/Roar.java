@@ -36,7 +36,7 @@ public class Roar extends Item implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide()) {
 
             // If no block or entity is targeted, proceed with the original functionality
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
@@ -53,8 +53,12 @@ public class Roar extends Item implements ReachChangeUUIDs {
         }
         return super.use(level, pPlayer, hand);
     }
+
     public static void useItem(Player pPlayer) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        if (holder == null) {
+            return;
+        }
         int sequence = holder.getCurrentSequence();
         RoarEntity roarEntity = new RoarEntity(EntityInit.ROAR_ENTITY.get(), pPlayer.level());
         roarEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
@@ -63,6 +67,7 @@ public class Roar extends Item implements ReachChangeUUIDs {
         roarEntity.hurtMarked = true;
         pPlayer.level().addFreshEntity(roarEntity);
     }
+
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {

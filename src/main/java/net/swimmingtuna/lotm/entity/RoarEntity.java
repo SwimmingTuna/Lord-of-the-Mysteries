@@ -121,7 +121,7 @@ public class RoarEntity extends AbstractHurtingProjectile {
             }
             if (this.getOwner() instanceof Player pPlayer) {
                 if (this.tickCount == 1) {
-                    BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
                     int sequence = holder.getCurrentSequence();
                     if (sequence <= 4) {
                         scaleData.setTargetScale(7 - (sequence * 1.0f));

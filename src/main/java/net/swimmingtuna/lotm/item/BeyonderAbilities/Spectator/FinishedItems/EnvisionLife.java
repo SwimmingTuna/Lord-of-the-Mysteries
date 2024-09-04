@@ -56,7 +56,7 @@ public class EnvisionLife extends Item {
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         String message = event.getMessage().getString().toLowerCase();
         if (pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && !pPlayer.level().isClientSide()) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
@@ -66,7 +66,7 @@ public class EnvisionLife extends Item {
                 }
         }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && spectatorSequence.getCurrentSequence() == 0) {
                     spawnMob(pPlayer,message);
                 spectatorSequence.useSpirituality((int) (1500/dreamIntoReality.getValue()));
@@ -96,7 +96,7 @@ public class EnvisionLife extends Item {
                     if (nearestPlayer != null) {
                         mob.setLastHurtByPlayer(nearestPlayer);
                     }
-                    BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
                     if (holder.getSpirituality() >= ((Mob) entity).getMaxHealth() * 3) {
                         holder.useSpirituality((int) (((Mob) entity).getMaxHealth() * 3));
                         level.addFreshEntity(entity);

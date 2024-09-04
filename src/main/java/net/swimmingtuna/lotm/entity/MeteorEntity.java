@@ -184,7 +184,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             meteorEntity.noPhysics = true;
 
             // Set the scale of the meteor based on the player's sequence
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             int scalecheck = 10 - holder.getCurrentSequence() * 4;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
             scaleData.setScale(scalecheck);

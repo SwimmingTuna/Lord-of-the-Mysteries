@@ -40,7 +40,7 @@ public class CathedralBlockEntity extends BlockEntity implements TickableBlockEn
                 double distanceY = pPlayer.getY() - worldPosition.getY();
                 double distanceZ = pPlayer.getZ() - worldPosition.getZ();
                 AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
                 BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
                     if (holder.getCurrentSequence() == 0 && holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                         if (Math.abs(distanceX) <= 80 && Math.abs(distanceY) <= 100 && Math.abs(distanceZ) <= 110) {

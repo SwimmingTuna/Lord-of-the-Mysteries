@@ -29,7 +29,7 @@ public class LightningBranch extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
@@ -59,7 +59,7 @@ public class LightningBranch extends Item {
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
     private void summonLightningBranches(Player pPlayer) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         int sequence = holder.getCurrentSequence();
         if (!pPlayer.level().isClientSide()) {
             Vec3 lookVec = pPlayer.getLookAngle();

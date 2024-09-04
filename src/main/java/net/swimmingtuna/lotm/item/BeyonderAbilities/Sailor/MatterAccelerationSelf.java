@@ -42,7 +42,7 @@ public class MatterAccelerationSelf extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!pPlayer.level().isClientSide()) {
             int matterAccelerationDistance = pPlayer.getPersistentData().getInt("tyrantSelfAcceleration");
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
@@ -62,7 +62,7 @@ public class MatterAccelerationSelf extends Item {
 
 
     public static void useItem(Player pPlayer) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         int sequence = holder.getCurrentSequence();
         Level level = pPlayer.level();
         int blinkDistance = pPlayer.getPersistentData().getInt("tyrantSelfAcceleration");
