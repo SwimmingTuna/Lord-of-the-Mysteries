@@ -31,6 +31,9 @@ public class BardClass implements BeyonderClass {
     }
 
     @Override
+    public List<Integer> mentalStrength() {return List.of(520,374,238,188,165,119,91,75,50,40);}
+
+    @Override
     public List<Integer> spiritualityRegen() {
         return List.of(34, 22, 16, 12, 10, 8, 6, 5, 3, 2);
     }

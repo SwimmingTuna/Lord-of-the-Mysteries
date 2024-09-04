@@ -28,6 +28,8 @@ public class CriminalClass implements BeyonderClass {
     public List<Integer> spiritualityLevels() {
         return List.of(10000, 5000, 3000, 1800, 1200, 700, 450, 300, 175, 125);
     }
+    @Override
+    public List<Integer> mentalStrength() {return List.of(480,335,230,187,163,120,88,72,47,35);}
 
     @Override
     public List<Integer> spiritualityRegen() {

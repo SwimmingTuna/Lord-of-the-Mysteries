@@ -11,6 +11,7 @@ public interface BeyonderClass {
     List<String> sequenceNames();
     List<Integer> spiritualityLevels();
     List<Integer> spiritualityRegen();
+    List<Integer> mentalStrength();
     List<Double> maxHealth();
     void tick(Player player, int sequence);
     HashMultimap<Integer,Item> getItems();

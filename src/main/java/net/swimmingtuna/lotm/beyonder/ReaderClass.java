@@ -31,6 +31,9 @@ public class ReaderClass implements BeyonderClass {
     }
 
     @Override
+    public List<Integer> mentalStrength() {return List.of(600,400,290,230,190,145,110,95,70,45);}
+
+    @Override
     public List<Integer> spiritualityRegen() {
         return List.of(34, 22, 16, 12, 10, 8, 6, 5, 3, 2);
     }

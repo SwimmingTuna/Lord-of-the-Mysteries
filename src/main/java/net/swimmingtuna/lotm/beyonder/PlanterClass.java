@@ -15,7 +15,7 @@ public class PlanterClass implements BeyonderClass {
                 "Mother",
                 "Naturewalker",
                 "Desolate Matriarch",
-                "lPallbearer",
+                "Pallbearer",
                 "Classical Alchemist",
                 "Druid",
                 "Biologist",
@@ -29,6 +29,9 @@ public class PlanterClass implements BeyonderClass {
     public List<Integer> spiritualityLevels() {
         return List.of(10000, 5000, 3000, 1800, 1200, 700, 450, 300, 175, 125);
     }
+
+    @Override
+    public List<Integer> mentalStrength() {return List.of(520,374,238,188,165,119,91,75,50,40);}
 
     @Override
     public List<Integer> spiritualityRegen() {

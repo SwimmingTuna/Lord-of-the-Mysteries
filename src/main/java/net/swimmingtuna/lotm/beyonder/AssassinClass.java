@@ -31,6 +31,9 @@ public class AssassinClass implements BeyonderClass {
     }
 
     @Override
+    public List<Integer> mentalStrength() {return List.of(480,335,230,187,163,120,88,72,47,35);}
+
+    @Override
     public List<Integer> spiritualityRegen() {
         return List.of(34, 22, 16, 12, 10, 8, 6, 5, 3, 2);
     }
