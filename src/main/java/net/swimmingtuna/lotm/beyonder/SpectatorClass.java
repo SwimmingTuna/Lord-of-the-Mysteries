@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.beyonder;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -95,7 +96,7 @@ public class SpectatorClass implements BeyonderClass {
         }
     }
     @Override
-    public HashMultimap<Integer, Item> getItems() {
+    public Multimap<Integer, Item> getItems() {
         HashMultimap<Integer, Item> items = HashMultimap.create();
         items.put(8, ItemInit.MIND_READING.get());
         items.put(7, ItemInit.AWE.get());

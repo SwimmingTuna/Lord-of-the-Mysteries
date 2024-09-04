@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.beyonder;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -177,7 +178,7 @@ public class SailorClass implements BeyonderClass {
         }
     }
     @Override
-    public HashMultimap<Integer, Item> getItems() {
+    public Multimap<Integer, Item> getItems() {
         HashMultimap<Integer, Item> items = HashMultimap.create();
         items.put(8, ItemInit.RAGING_BLOWS.get());
 
