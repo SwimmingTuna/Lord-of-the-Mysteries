@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.beyonder.api;
 
 import com.google.common.collect.Multimap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -19,6 +20,8 @@ public interface BeyonderClass {
     void tick(Player player, int sequence);
 
     Multimap<Integer, Item> getItems();
+
+    ChatFormatting getColorFormatting();
 
     default SimpleContainer getAbilityItemsContainer(int sequenceLevel) {
         SimpleContainer container = new SimpleContainer(27);

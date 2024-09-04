@@ -16,45 +16,46 @@ import java.util.function.Predicate;
 
 public class RotationUtil {
     private static Vec2 getTargetAdjustedRotation(Vec3 start, Entity entity) {
-        if (entity instanceof Targeting targeting) {
-            LivingEntity target = targeting.getTarget();
-
-            if (target != null) {
-                double inaccuracy = (float) (14 - entity.level().getDifficulty().getId() * 4);
-                Vec3 end = target.position().add(0.0D, target.getBbHeight() / 2.0F, 0.0D);
-                double d0 = end.x - start.x;
-                double d1 = end.y - start.y;
-                double d2 = end.z - start.z;
-
-                Vec3 offset = new Vec3(d0, d1, d2).normalize()
-                        .add(
-                                HelperMethods.RANDOM.triangle(0.0D, 0.0172275D * inaccuracy),
-                                HelperMethods.RANDOM.triangle(0.0D, 0.0172275D * inaccuracy),
-                                HelperMethods.RANDOM.triangle(0.0D, 0.0172275D * inaccuracy)
-                        );
-
-                double d3 = Math.sqrt(offset.x * offset.x + offset.z * offset.z);
-
-                float yaw = Mth.wrapDegrees((float) (Mth.atan2(offset.z,offset.x) * (double) (180.0F / Mth.PI)) - 90.0F);
-                float pitch = Mth.wrapDegrees((float) (-(Mth.atan2(offset.y, d3) * (double) (180.0F / Mth.PI))));
-
-                entity.setYRot(yaw);
-                entity.yRotO = yaw;
-
-                entity.setXRot(pitch);
-                entity.xRotO = pitch;
-
-                if (entity instanceof LivingEntity living) {
-                    living.yHeadRot = yaw;
-                    living.yHeadRotO = yaw;
-
-                    living.yBodyRot = yaw;
-                    living.yBodyRotO = yaw;
-                }
-                return new Vec2(pitch, yaw);
-            }
+        if (!(entity instanceof Targeting targeting)) {
+            return new Vec2(entity.getXRot(), entity.getYRot());
         }
-        return new Vec2(entity.getXRot(), entity.getYRot());
+
+        LivingEntity target = targeting.getTarget();
+        if (target == null) {
+            return new Vec2(entity.getXRot(), entity.getYRot());
+        }
+        double inaccuracy = (float) (14 - entity.level().getDifficulty().getId() * 4);
+        Vec3 end = target.position().add(0.0D, target.getBbHeight() / 2.0F, 0.0D);
+        double d0 = end.x - start.x;
+        double d1 = end.y - start.y;
+        double d2 = end.z - start.z;
+
+        Vec3 offset = new Vec3(d0, d1, d2).normalize()
+                .add(
+                        entity.level().random.triangle(0.0D, (Mth.PI / 180) * inaccuracy),
+                        entity.level().random.triangle(0.0D, (Mth.PI / 180) * inaccuracy),
+                        entity.level().random.triangle(0.0D, (Mth.PI / 180) * inaccuracy)
+                );
+
+        double d3 = Math.sqrt(offset.x * offset.x + offset.z * offset.z);
+
+        float yaw = Mth.wrapDegrees((float) (Mth.atan2(offset.z,offset.x) * (double) (180.0F / Mth.PI)) - 90.0F);
+        float pitch = Mth.wrapDegrees((float) (-(Mth.atan2(offset.y, d3) * (double) (180.0F / Mth.PI))));
+
+        entity.setYRot(yaw);
+        entity.yRotO = yaw;
+
+        entity.setXRot(pitch);
+        entity.xRotO = pitch;
+
+        if (entity instanceof LivingEntity living) {
+            living.yHeadRot = yaw;
+            living.yHeadRotO = yaw;
+
+            living.yBodyRot = yaw;
+            living.yBodyRotO = yaw;
+        }
+        return new Vec2(pitch, yaw);
     }
 
     public static float getTargetAdjustedYRot(Vec3 start, Entity entity) {

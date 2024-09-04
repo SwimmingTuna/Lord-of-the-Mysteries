@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.beyonder;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -232,5 +233,10 @@ public class SailorClass implements BeyonderClass {
 
 
         return items;
+    }
+
+    @Override
+    public ChatFormatting getColorFormatting() {
+        return ChatFormatting.BLUE;
     }
 }

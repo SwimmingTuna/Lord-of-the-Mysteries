@@ -18,7 +18,6 @@ import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.networking.packet.LeftClickC2S;
 
-
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class BeyonderAbilityUser extends Item implements ReachChangeUUIDs {
 
@@ -68,6 +67,7 @@ public class BeyonderAbilityUser extends Item implements ReachChangeUUIDs {
         pPlayer.getPersistentData().putInt("fifthKeyClicked", 0);
         pPlayer.displayClientMessage(Component.literal(" "), true);
     }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         if (event.getEntity().getMainHandItem().getItem() instanceof BeyonderAbilityUser) {

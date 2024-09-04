@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.beyonder;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -133,6 +134,11 @@ public class SpectatorClass implements BeyonderClass {
         items.put(0, ItemInit.ENVISION_KINGDOM.get());
 
         return items;
+    }
+
+    @Override
+    public ChatFormatting getColorFormatting() {
+        return ChatFormatting.AQUA;
     }
 
 

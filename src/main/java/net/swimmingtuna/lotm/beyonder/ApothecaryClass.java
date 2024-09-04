@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.beyonder;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
@@ -75,6 +76,11 @@ public class ApothecaryClass implements BeyonderClass {
         HashMultimap<Integer, Item> items = HashMultimap.create();
         items.put(0, ItemInit.PLACATE.get());
         return items;
+    }
+
+    @Override
+    public ChatFormatting getColorFormatting() {
+        return ChatFormatting.DARK_GREEN;
     }
 }
   

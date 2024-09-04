@@ -15,7 +15,6 @@ public class HelperMethods {
         return FastColor.ARGB32.color(255, Math.round(rgb.x * 255.0F), Math.round(rgb.y * 255.0F), Math.round(rgb.z * 255.0F));
     }
 
-
     public static <E> E getWeightedRandom(Map<E, Double> weights, RandomSource random) {
         E result = null;
         double bestValue = Double.MAX_VALUE;
@@ -65,29 +64,6 @@ public class HelperMethods {
             return 1.0F - ((max - getLevenshteinDistance(x, y)) / max);
         }
         return 0.0F;
-    }
-
-    public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
-        return randomEnum(clazz, RANDOM);
-    }
-
-    public static <T extends Enum<?>> T randomEnum(Class<T> clazz, RandomSource random) {
-        return clazz.getEnumConstants()[random.nextInt(clazz.getEnumConstants().length)];
-    }
-
-    public static <T extends Enum<T>> T randomEnum(Class<T> clazz, Set<T> excluded) {
-        return randomEnum(clazz, excluded, RANDOM);
-    }
-
-    public static <T extends Enum<T>> T randomEnum(Class<T> clazz, Set<T> excluded, RandomSource random) {
-        if (!excluded.isEmpty()) {
-            EnumSet<T> available = EnumSet.complementOf(EnumSet.copyOf(excluded));
-
-            if (!available.isEmpty()) {
-                return (T) available.toArray()[random.nextInt(available.size())];
-            }
-        }
-        return clazz.getEnumConstants()[random.nextInt(clazz.getEnumConstants().length)];
     }
 
     public static int toRGB24(int r, int g, int b, int a) {
