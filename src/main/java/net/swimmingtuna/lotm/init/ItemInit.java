@@ -97,7 +97,7 @@ public class ItemInit {
             () -> new ManipulateMovement(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MANIPULATE_FONDNESS = ITEMS.register("manipulatefondness",
             () -> new ManipulateFondness(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> ApplyManipulation = ITEMS.register("applymanipulation",
+    public static final RegistryObject<Item> APPLY_MANIPULATION = ITEMS.register("applymanipulation",
             () -> new ApplyManipulation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MENTAL_PLAGUE = ITEMS.register("mentalplague",
             () -> new MentalPlague(new Item.Properties().stacksTo(1)));

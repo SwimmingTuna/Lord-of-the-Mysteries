@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,14 +43,14 @@ public class MatterAccelerationSelf extends Item {
         if (!pPlayer.level().isClientSide()) {
             int matterAccelerationDistance = pPlayer.getPersistentData().getInt("tyrantSelfAcceleration");
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSailorClass()) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < matterAccelerationDistance * 10) {
                 pPlayer.displayClientMessage(Component.literal("You need " + matterAccelerationDistance * 10 + "spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.isSailorClass() && sailorSequence.useSpirituality(matterAccelerationDistance * 10) && sailorSequence.getCurrentSequence() == 0) {
+                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.useSpirituality(matterAccelerationDistance * 10) && sailorSequence.getCurrentSequence() == 0) {
                     useItem(pPlayer);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 300);
@@ -69,7 +70,7 @@ public class MatterAccelerationSelf extends Item {
             pPlayer.displayClientMessage(Component.literal("You need " + (blinkDistance * 10) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
         }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-            if (holder.isSailorClass() && !pPlayer.level().isClientSide() && sailorSequence.getCurrentSequence() == 0 && sailorSequence.useSpirituality(blinkDistance * 2)) {
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && !pPlayer.level().isClientSide() && sailorSequence.getCurrentSequence() == 0 && sailorSequence.useSpirituality(blinkDistance * 2)) {
 
                 Vec3 lookVector = pPlayer.getLookAngle();
                 BlockPos startPos = pPlayer.blockPosition();

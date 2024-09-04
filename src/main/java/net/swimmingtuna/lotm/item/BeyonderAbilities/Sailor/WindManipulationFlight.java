@@ -21,6 +21,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,14 +38,14 @@ public class WindManipulationFlight extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSailorClass()) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 7 && sailorSequence.getCurrentSequence() > 4 && sailorSequence.useSpirituality(100)) {
+                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 7 && sailorSequence.getCurrentSequence() > 4 && sailorSequence.useSpirituality(100)) {
                     flightRegular(pPlayer);
                 }
-                if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 4) {
+                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 4) {
                     toggleFlying(pPlayer);
                 }
                 CompoundTag tag = pPlayer.getPersistentData();

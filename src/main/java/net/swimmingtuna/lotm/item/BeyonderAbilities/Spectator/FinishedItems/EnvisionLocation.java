@@ -18,6 +18,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +50,7 @@ public class EnvisionLocation extends Item {
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         if (pPlayer.getMainHandItem().getItem() instanceof EnvisionLocation && !pPlayer.level().isClientSide()) {
-        if (!holder.isSpectatorClass()) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
             pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
         }
         if (holder.getSpirituality() < (int) 500 / dreamIntoReality.getValue()) {
@@ -58,7 +59,7 @@ public class EnvisionLocation extends Item {
     }
         String message = event.getMessage().getString();
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLocation && spectatorSequence.getCurrentSequence() == 0) {
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLocation && spectatorSequence.getCurrentSequence() == 0) {
                 if (isThreeIntegers(message)) {
                     String[] coordinates = message.split(" ");
                     if (coordinates.length == 3) {

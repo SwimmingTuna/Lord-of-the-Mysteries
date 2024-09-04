@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -34,14 +35,14 @@ public class ConsciousnessStroll extends Item {
         Player pPlayer = event.getPlayer();
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         if (pPlayer.getMainHandItem().getItem() instanceof ConsciousnessStroll) {
-            if (!holder.isSpectatorClass()) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 300) {
                 pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
         }
-        if (holder.isSpectatorClass() && !pPlayer.level().isClientSide()) {
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide()) {
             String message = event.getMessage().getString();
             for (ServerPlayer onlinePlayer : pPlayer.getServer().getPlayerList().getPlayers()) {
                 if (message.equalsIgnoreCase(onlinePlayer.getName().getString())) {

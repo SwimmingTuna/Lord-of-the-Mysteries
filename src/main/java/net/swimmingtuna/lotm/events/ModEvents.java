@@ -47,6 +47,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.*;
 import net.swimmingtuna.lotm.events.custom_events.ModEventFactory;
 import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.SoundInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
@@ -194,7 +195,7 @@ public class ModEvents implements ReachChangeUUIDs {
                 //WIND MANIPULATION GLIDE
                 int regularFlight = tag.getInt("sailorFlight");
                 boolean enhancedFlight = tag.getBoolean("sailorFlight1");
-                if (holder.isSailorClass() && holder.getCurrentSequence() <= 7 && pPlayer.isShiftKeyDown() && pPlayer.getDeltaMovement().y() < 0 && !pPlayer.getAbilities().instabuild && !enhancedFlight && regularFlight == 0) {
+                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 7 && pPlayer.isShiftKeyDown() && pPlayer.getDeltaMovement().y() < 0 && !pPlayer.getAbilities().instabuild && !enhancedFlight && regularFlight == 0) {
                     Vec3 movement = pPlayer.getDeltaMovement();
                     double deltaX = Math.cos(Math.toRadians(pPlayer.getYRot() + 90)) * 0.06;
                     double deltaZ = Math.sin(Math.toRadians(pPlayer.getYRot() + 90)) * 0.06;
@@ -279,7 +280,7 @@ public class ModEvents implements ReachChangeUUIDs {
                                         for (LivingEntity entity1 : projectile.level().getEntitiesOfClass(LivingEntity.class, projectile.getBoundingBox().inflate(5))) {
                                             if (entity1 instanceof Player playerEntity) {
                                                 if (holder != null) {
-                                                    if (!holder.isSailorClass() && holder.getCurrentSequence() == 0) {
+                                                    if (!holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() == 0) {
                                                         playerEntity.hurt(playerEntity.damageSources().lightningBolt(), 10);
                                                     }
                                                 }
@@ -294,7 +295,7 @@ public class ModEvents implements ReachChangeUUIDs {
                                 //SAILOR PASSIVE CHECK FROM HERE
                                 LivingEntity target = projectileEvent.getTarget(75, 0);
                                 if (target != null) {
-                                    if (holder.isSailorClass() && holder.getCurrentSequence() <= 7) {
+                                    if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 7) {
                                         projectileEvent.addMovement(projectile, (target.getX() - projectile.getX()) * 0.1, (target.getY() - projectile.getY()) * 0.1, (target.getZ() - projectile.getZ()) * 0.1);
                                         projectile.hurtMarked = true;
                                     }
@@ -390,14 +391,14 @@ public class ModEvents implements ReachChangeUUIDs {
                 double maxSpirituality = holder.getMaxSpirituality();
                 Abilities playerAbilities = pPlayer.getAbilities();
                 BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                    if (holder.getCurrentSequence() == 0 && holder.isSpectatorClass()) {
+                    if (holder.getCurrentSequence() == 0 && holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                         if (mindscape >= 1) {
                             tag.putInt("mindscapeAbilities", mindscape - 1);
                             holder.setSpirituality((int) maxSpirituality);
                             if (!tag.getBoolean("CAN_FLY")) {
                                 dreamIntoReality.setBaseValue(3);
                                 playerAbilities.setFlyingSpeed(0.15F);
-                                playerAbilities.mayfly  = true;
+                                playerAbilities.mayfly = true;
                                 pPlayer.onUpdateAbilities();
                                 if (pPlayer instanceof ServerPlayer serverPlayer) {
                                     serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
@@ -725,7 +726,7 @@ public class ModEvents implements ReachChangeUUIDs {
                     tag.putInt("sailorLightningStorm", sailorLightningStorm - 1);
                 }
                 if (holder != null) {
-                    if (holder.isSailorClass() && holder.getCurrentSequence() <= 3 && pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
+                    if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 3 && pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
                         if (pPlayer.isShiftKeyDown()) {
                             tag.putInt("sailorStormVec", stormVec + 10);
                             pPlayer.displayClientMessage(Component.literal("Sailor Storm Spawn Distance is " + stormVec).withStyle(style), true);
@@ -741,11 +742,11 @@ public class ModEvents implements ReachChangeUUIDs {
                 //MATTER ACCELERATION SELF
                 int matterAccelerationDistance = pPlayer.getPersistentData().getInt("tyrantSelfAcceleration");
                 int blinkDistance = pPlayer.getPersistentData().getInt("BlinkDistance");
-                if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof MatterAccelerationSelf && holder.isSailorClass()) {
+                if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof MatterAccelerationSelf && holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                     pPlayer.getPersistentData().putInt("tyrantSelfAcceleration", matterAccelerationDistance + 50);
                     pPlayer.displayClientMessage(Component.literal("Matter Acceleration Distance is " + matterAccelerationDistance).withStyle(style), true);
                 }
-                if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLocationBlink && holder.isSpectatorClass()) {
+                if (pPlayer.isShiftKeyDown() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLocationBlink && holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                     pPlayer.getPersistentData().putInt("BlinkDistance", blinkDistance + 5);
                     pPlayer.displayClientMessage(Component.literal("Blink Distance is " + blinkDistance).withStyle(style), true);
                 }
@@ -831,7 +832,7 @@ public class ModEvents implements ReachChangeUUIDs {
                 int ssWeaken = tag.getInt("sirenSongWeaken");
                 int ssStun = tag.getInt("sirenSongStun");
                 int ssStrengthen = tag.getInt("sirenSongStrengthen");
-                if (holder.isSailorClass() && holder.getCurrentSequence() <= 5) {
+                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 5) {
                     if (ssHarm % 20 == 0 && ssHarm != 0) {
                         for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(50 - (sequence * 6)))) {
                             if (entity != pPlayer) {
@@ -1339,7 +1340,7 @@ public class ModEvents implements ReachChangeUUIDs {
                             if (entity1 instanceof Player player) {
                                 BeyonderHolder holder = BeyonderHolderAttacher.getHolder(player).orElse(null);
                                 if (holder != null) {
-                                    if (!holder.isSailorClass() && holder.getCurrentSequence() == 0) {
+                                    if (!holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() == 0) {
                                         player.hurt(player.damageSources().lightningBolt(), 10);
                                     }
                                 }
@@ -1755,7 +1756,7 @@ public class ModEvents implements ReachChangeUUIDs {
 
             //SAILOR PASSIVE
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (holder.isSailorClass() && tyrantSequence.getCurrentSequence() <= 7) {
+                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && tyrantSequence.getCurrentSequence() <= 7) {
                     LivingEntity target = (LivingEntity) event.getTarget();
                     if (sailorLightning) {
                         if (target != pPlayer) {

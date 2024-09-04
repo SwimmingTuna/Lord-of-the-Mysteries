@@ -22,6 +22,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +57,7 @@ public class EnvisionLife extends Item {
         String message = event.getMessage().getString().toLowerCase();
         if (pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && !pPlayer.level().isClientSide()) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                if (!holder.isSpectatorClass()) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
 
@@ -66,7 +67,7 @@ public class EnvisionLife extends Item {
         }
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (holder.isSpectatorClass() && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && spectatorSequence.getCurrentSequence() == 0) {
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && spectatorSequence.getCurrentSequence() == 0) {
                     spawnMob(pPlayer,message);
                 spectatorSequence.useSpirituality((int) (1500/dreamIntoReality.getValue()));
                 event.setCanceled(true);

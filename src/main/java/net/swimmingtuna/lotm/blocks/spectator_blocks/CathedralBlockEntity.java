@@ -13,6 +13,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.BlockEntityInit;
 import net.swimmingtuna.lotm.init.BlockInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
@@ -41,7 +42,7 @@ public class CathedralBlockEntity extends BlockEntity implements TickableBlockEn
                 AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
                 BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                    if (holder.getCurrentSequence() == 0 && holder.isSpectatorClass()) {
+                    if (holder.getCurrentSequence() == 0 && holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                         if (Math.abs(distanceX) <= 80 && Math.abs(distanceY) <= 100 && Math.abs(distanceZ) <= 110) {
                             compoundTag.putInt("mindscapeAbilities", 25);
                         }

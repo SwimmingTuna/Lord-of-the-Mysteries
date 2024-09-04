@@ -20,6 +20,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,7 @@ public class EnvisionWeather extends Item {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         Style style = BeyonderUtil.getStyle(pPlayer);
         if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather) {
-            if (!holder.isSpectatorClass()) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < (int) 500 / dreamIntoReality.getValue()) {
@@ -58,7 +59,7 @@ public class EnvisionWeather extends Item {
             }
             String message = event.getMessage().getString().toLowerCase();
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder.isSpectatorClass() && pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather && spectatorSequence.getCurrentSequence() == 0) {
+                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather && spectatorSequence.getCurrentSequence() == 0) {
                     if (message.equals("clear") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
                         setWeatherClear(level);
                         event.getPlayer().displayClientMessage(Component.literal("Set Weather to Clear").withStyle(style), true);
@@ -83,10 +84,10 @@ public class EnvisionWeather extends Item {
             for (Player otherPlayer : level.players()) {
                 if (message.contains(otherPlayer.getName().getString().toLowerCase())) {
                     BeyonderHolder otherHolder = BeyonderHolderAttacher.getHolder(otherPlayer).orElse(null);
-                    if (otherHolder != null && otherHolder.isSpectatorClass() && otherHolder.getCurrentSequence() <= 2 && !otherPlayer.level().isClientSide()) {
+                    if (otherHolder != null && otherHolder.currentClassMatches(BeyonderClassInit.SPECTATOR) && otherHolder.getCurrentSequence() <= 2 && !otherPlayer.level().isClientSide()) {
                         otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. Their coordinates are: " + (int) pPlayer.getX() + " ," + (int) pPlayer.getY() + " ," + (int) pPlayer.getZ()).withStyle(style));
                     }
-                    if (otherHolder != null && otherHolder.isSailorClass() && otherHolder.getCurrentSequence() <= 1 && !otherPlayer.level().isClientSide()) {
+                    if (otherHolder != null && otherHolder.currentClassMatches(BeyonderClassInit.SAILOR) && otherHolder.getCurrentSequence() <= 1 && !otherPlayer.level().isClientSide()) {
                         otherPlayer.getPersistentData().putInt("tyrantMentionedInChat", 200);
                         otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. Do you want to summon a lightning storm on them? Type Yes if so, you have 10 seconds").withStyle(style));
                         otherPlayer.getPersistentData().putInt("sailorStormVecX1", (int) pPlayer.getX());

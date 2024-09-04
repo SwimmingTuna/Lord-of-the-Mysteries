@@ -20,6 +20,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class BeyonderUtil {
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
             int sequence = holder.getCurrentSequence();
-            if (holder.isSpectatorClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                 if (sequence <= 8) {
                     abilityNames.add(getItemName(ItemInit.MIND_READING.get()));
                 }
@@ -82,7 +83,7 @@ public class BeyonderUtil {
                     abilityNames.add(getItemName(ItemInit.NIGHTMARE.get()));
                 }
                 if (sequence <= 4) {
-                    abilityNames.add(getItemName(ItemInit.ApplyManipulation.get()));
+                    abilityNames.add(getItemName(ItemInit.APPLY_MANIPULATION.get()));
                     abilityNames.add(getItemName(ItemInit.MANIPULATE_MOVEMENT.get()));
                     abilityNames.add(getItemName(ItemInit.MANIPULATE_FONDNESS.get()));
                     abilityNames.add(getItemName(ItemInit.MANIPULATE_EMOTION.get()));
@@ -117,7 +118,7 @@ public class BeyonderUtil {
                 }
             }
 
-            if (holder.isSailorClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                 if (sequence <= 8) {
                     abilityNames.add(getItemName(ItemInit.RAGING_BLOWS.get()));
                 }
@@ -255,71 +256,71 @@ public class BeyonderUtil {
 
         // Check if holder is not null and the player is of the Spectator class
         if (holder != null) {
-            if (holder.isSpectatorClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.AQUA);
             }
-            if (holder.isSailorClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.BLUE);
             }
-            if (holder.isApothecaryClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.APOTHECARY)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_GREEN);
             }
-            if (holder.isApprenticeClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.APPRENTICE)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.BLUE);
             }
-            if (holder.isArbiterClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.ARBITER)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD);
             }
-            if (holder.isAssassinClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.ASSASSIN)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.RED);
             }
-            if (holder.isBardClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.BARD)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.YELLOW);
             }
-            if (holder.isCorpseCollectorClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.CORPSECOLLECTOR)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_BLUE);
             }
-            if (holder.isCriminalClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.CRIMINAL)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.GRAY);
             }
-            if (holder.isHunterClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.HUNTER)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_RED);
             }
-            if (holder.isLawyerClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.LAWYER)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_BLUE);
             }
-            if (holder.isMarauderClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.MARAUDER)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_PURPLE);
             }
-            if (holder.isMonsterClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.MONSTER)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.WHITE);
             }
-            if (holder.isMysteryPryerClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.MYSTERYPRYER)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_PURPLE);
             }
-            if (holder.isPlanterClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.PLANTER)) {
                 // Create a Style object with multiple formatting options
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.GREEN);
             }
-            if (holder.isPrisonerClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.PRISONER)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_GRAY);
             }
-            if (holder.isReaderClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.READER)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.WHITE);
             }
-            if (holder.isSavantClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.SAVANT)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD);
             }
-            if (holder.isSeerClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.SEER)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_PURPLE);
             }
-            if (holder.isSleeplessClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.SLEEPLESS)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_BLUE);
             }
-            if (holder.isSecretsSupplicantClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.SECRETSSUPPLICANT)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.LIGHT_PURPLE);
             }
-            if (holder.isWarriorClass()) {
+            if (holder.currentClassMatches(BeyonderClassInit.WARRIOR)) {
                 return Style.EMPTY.withBold(true).withColor(ChatFormatting.DARK_RED);
             }
         }

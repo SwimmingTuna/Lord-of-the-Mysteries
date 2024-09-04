@@ -19,23 +19,39 @@ import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.core.PlayerCapability;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.network.EntityCapabilityStatusPacket;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.network.SimpleEntityCapabilityStatusPacket;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = LOTM.MOD_ID)
 public class BeyonderHolder extends PlayerCapability {
     public static final int SEQUENCE_MIN = 0;
     public static final int SEQUENCE_MAX = 9;
+    private static final String REGISTERED_ABILITIES_KEY = "RegisteredAbilities";
+    private final RandomSource random;
     private int currentSequence = -1;
-    private BeyonderClass currentClass = null;
+    @Nullable private BeyonderClass currentClass = null;
     private double spirituality = 100;
     private double maxSpirituality = 100;
     private double spiritualityRegen = 1;
-    private final RandomSource random;
-    private static final String REGISTERED_ABILITIES_KEY = "RegisteredAbilities";
 
 
     protected BeyonderHolder(Player entity) {
         super(entity);
         random = RandomSource.create();
+    }
+
+    @SubscribeEvent
+    public static void onTick(TickEvent.PlayerTickEvent event) {
+        if (!event.player.level().isClientSide && event.phase == TickEvent.Phase.END) {
+            BeyonderHolderAttacher.getHolder(event.player).ifPresent(holder -> {
+                holder.regenSpirituality(event.player);
+                if (holder.getCurrentClass() != null) {
+                    holder.getCurrentClass().tick(event.player, holder.getCurrentSequence());
+                }
+            });
+        }
+
     }
 
     public void removeClass() {
@@ -46,6 +62,7 @@ public class BeyonderHolder extends PlayerCapability {
         this.spiritualityRegen = 1;
         updateTracking();
     }
+
     public void setClassAndSequence(BeyonderClass newClass, int sequence) {
         this.currentClass = newClass;
         this.currentSequence = sequence;
@@ -79,7 +96,12 @@ public class BeyonderHolder extends PlayerCapability {
         return spirituality;
     }
 
-    public BeyonderClass getCurrentClass() {
+    public void setSpirituality(int spirituality) {
+        this.spirituality = Mth.clamp(spirituality, 0, maxSpirituality);
+        updateTracking();
+    }
+
+    public @Nullable BeyonderClass getCurrentClass() {
         return currentClass;
     }
 
@@ -87,10 +109,12 @@ public class BeyonderHolder extends PlayerCapability {
         this.currentClass = newClass;
         updateTracking();
     }
+
     public void removeCurrentClass() {
         this.currentClass = null;
         updateTracking();
     }
+
     public int getCurrentSequence() {
         return currentSequence;
     }
@@ -102,6 +126,7 @@ public class BeyonderHolder extends PlayerCapability {
         spirituality = maxSpirituality;
         updateTracking();
     }
+
     public void incrementSequence() {
         if (currentSequence > SEQUENCE_MIN) {
             currentSequence--;
@@ -111,6 +136,7 @@ public class BeyonderHolder extends PlayerCapability {
             updateTracking();
         }
     }
+
     public void decrementSequence() {
         if (currentSequence < SEQUENCE_MAX) {
             currentSequence++;
@@ -120,22 +146,21 @@ public class BeyonderHolder extends PlayerCapability {
             updateTracking();
         }
     }
-    public void setSpirituality(int spirituality) {
-        this.spirituality = Mth.clamp(spirituality,0, maxSpirituality);
-        updateTracking();
-    }
+
     public boolean useSpirituality(int amount) {
-        if(this.spirituality-amount < 0) {
+        if (this.spirituality - amount < 0) {
             return false;
         }
         this.spirituality = Mth.clamp(spirituality - amount, 0, maxSpirituality);
         updateTracking();
         return true;
     }
+
     public void increaseSpirituality(int amount) {
         this.spirituality = Mth.clamp(spirituality + amount, 0, maxSpirituality);
         updateTracking();
     }
+
     @Override
     public CompoundTag serializeNBT(boolean savingToDisk) {
         CompoundTag tag = new CompoundTag();
@@ -172,89 +197,19 @@ public class BeyonderHolder extends PlayerCapability {
     public void regenSpirituality(Entity pEntity) {
         if (pEntity instanceof Player) {
             if (spirituality < maxSpirituality) {
-                double increase = (Mth.nextDouble(random,0.1,1.0) * (spiritualityRegen * 1.5f)) / 5;
-                spirituality = Mth.clamp(spirituality + increase,0, maxSpirituality);
+                double increase = (Mth.nextDouble(random, 0.1, 1.0) * (spiritualityRegen * 1.5f)) / 5;
+                spirituality = Mth.clamp(spirituality + increase, 0, maxSpirituality);
                 updateTracking();
             }
         }
     }
 
-    @SubscribeEvent
-    public static void onTick(TickEvent.PlayerTickEvent event) {
-        if (!event.player.level().isClientSide && event.phase == TickEvent.Phase.END) {
-            BeyonderHolderAttacher.getHolder(event.player).ifPresent(holder -> {
-                holder.regenSpirituality(event.player);
-                if (holder.getCurrentClass() != null) {
-                    holder.getCurrentClass().tick(event.player, holder.getCurrentSequence());
-                }
-            });
-        }
+    public boolean currentClassMatches(Supplier<? extends BeyonderClass> beyonderClassSupplier) {
+        return currentClassMatches(beyonderClassSupplier.get());
+    }
 
+    public boolean currentClassMatches(BeyonderClass beyonderClass) {
+        return this.currentClass == beyonderClass;
     }
-    public boolean isSpectatorClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SPECTATOR.get());
-    }
-    public boolean isSailorClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SAILOR.get());
-    }
-    public boolean isApothecaryClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.APOTHECARY.get());
-    }
-    public boolean isApprenticeClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.APPRENTICE.get());
-    }
-    public boolean isArbiterClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.ARBITER.get());
-    }
-    public boolean isAssassinClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.ASSASSIN.get());
-    }
-    public boolean isBardClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.BARD.get());
-    }
-    public boolean isCorpseCollectorClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.CORPSECOLLECTOR.get());
-    }
-    public boolean isCriminalClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.CRIMINAL.get());
-    }
-    public boolean isHunterClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.HUNTER.get());
-    }
-    public boolean isLawyerClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.LAWYER.get());
-    }
-    public boolean isMarauderClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.MARAUDER.get());
-    }
-    public boolean isMonsterClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.MONSTER.get());
-    }
-    public boolean isMysteryPryerClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.MYSTERYPRYER.get());
-    }
-    public boolean isPlanterClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.PLANTER.get());
-    }
-    public boolean isPrisonerClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.PRISONER.get());
-    }
-    public boolean isReaderClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.READER.get());
-    }
-    public boolean isSavantClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SAVANT.get());
-    }
-    public boolean isSecretsSupplicantClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SECRETSSUPPLICANT.get());
-    }
-    public boolean isSleeplessClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SLEEPLESS.get());
-    }
-    public boolean isWarriorClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.WARRIOR.get());
-    }
-    public boolean isSeerClass() {
-        return this.currentClass != null && this.currentClass.equals(BeyonderClassInit.SEER.get());
-    }
+
 }

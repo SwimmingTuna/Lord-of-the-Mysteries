@@ -163,7 +163,7 @@ public class LOTM {
             event.accept(ItemInit.NIGHTMARE);
             event.accept(ItemInit.MANIPULATE_MOVEMENT);
             event.accept(ItemInit.MANIPULATE_EMOTION);
-            event.accept(ItemInit.ApplyManipulation);
+            event.accept(ItemInit.APPLY_MANIPULATION);
             event.accept(ItemInit.MENTAL_PLAGUE);
             event.accept(ItemInit.MIND_STORM);
             event.accept(ItemInit.MANIPULATE_FONDNESS);

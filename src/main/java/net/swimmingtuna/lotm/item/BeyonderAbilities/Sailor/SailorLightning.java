@@ -34,6 +34,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.LightningEntity;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,14 +86,14 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
 
             // If no block or entity is targeted, proceed with the original functionality
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSailorClass()) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < 200) {
                 pPlayer.displayClientMessage(Component.literal("You need 200 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.isSailorClass() && sailorSequence.getCurrentSequence() <= 5 && sailorSequence.useSpirituality(200)) {
+                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 5 && sailorSequence.useSpirituality(200)) {
                     shootLine(pPlayer, level);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 240);
@@ -173,13 +174,13 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide()) {
             if (itemStack.getItem() instanceof SailorLightning) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                if (!holder.isSailorClass()) {
+                if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
                 }
                 if (holder.getSpirituality() < 120) {
                     pPlayer.displayClientMessage(Component.literal("You need 120 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
                 }
-                if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.isSailorClass() && !pPlayer.level().isClientSide() && !targetEntity.level().isClientSide() && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
+                if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.currentClassMatches(BeyonderClassInit.SAILOR) && !pPlayer.level().isClientSide() && !targetEntity.level().isClientSide() && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
                     float speed = 15.0f;
                     if (targetEntity instanceof AbstractArrow || targetEntity instanceof AbstractHurtingProjectile || targetEntity instanceof Projectile || targetEntity instanceof Arrow) {
                         CompoundTag tag = targetEntity.getPersistentData();
@@ -210,7 +211,7 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
             }
             if (itemStack.getItem() instanceof LightningRedirection) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                if (holder != null && holder.isSailorClass() && holder.getCurrentSequence() <= 1) {
+                if (holder != null && holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 1) {
                     for (Entity entity : pPlayer.level().getEntitiesOfClass(Entity.class, pPlayer.getBoundingBox().inflate(200))) {
                         if (entity instanceof LightningEntity lightning) {
                             lightning.setTargetEntity(targetEntity);
@@ -228,13 +229,13 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide()) {
             if (itemStack.getItem() instanceof SailorLightning) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                if (!holder.isSailorClass()) {
+                if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
                 }
                 if (holder.getSpirituality() < 120) {
                     pPlayer.displayClientMessage(Component.literal("You need 120 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
                 }
-                if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.isSailorClass() && !pPlayer.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
+                if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.currentClassMatches(BeyonderClassInit.SAILOR) && !pPlayer.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
                     shootLineBlock(pPlayer, pPlayer.level(), event.getPos().getCenter());
                     if (!pPlayer.getAbilities().instabuild) {
                         pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 8 + holder.getCurrentSequence());
@@ -244,7 +245,7 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
             }
             if (itemStack.getItem() instanceof LightningRedirection) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                if (holder != null && holder.isSailorClass() && holder.getCurrentSequence() <= 1) {
+                if (holder != null && holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 1) {
                     for (Entity entity : pPlayer.level().getEntitiesOfClass(Entity.class, pPlayer.getBoundingBox().inflate(200))) {
                         if (entity instanceof LightningEntity lightning) {
                             lightning.setTargetPos(event.getPos().getCenter());

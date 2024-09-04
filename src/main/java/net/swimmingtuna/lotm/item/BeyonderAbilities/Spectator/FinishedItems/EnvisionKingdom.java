@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,7 @@ public class EnvisionKingdom extends Item {
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
             if (!pPlayer.level().isClientSide()) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                if (!holder.isSpectatorClass()) {
+                if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
                 if (holder.getSpirituality() < (int) 3500 / dreamIntoReality.getValue()) {
@@ -47,7 +48,7 @@ public class EnvisionKingdom extends Item {
 
                 BlockPos playerPos = pPlayer.getOnPos();
                 BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                    if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
+                    if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
                         generateCathedral(pPlayer);
                         if (!pPlayer.getAbilities().instabuild) {
                             pPlayer.getCooldowns().addCooldown(this, 900);

@@ -25,6 +25,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +69,7 @@ public class MindReading extends Item implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide()) {
             Style style = BeyonderUtil.getStyle(pPlayer);
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSpectatorClass()) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 20) {
@@ -76,7 +77,7 @@ public class MindReading extends Item implements ReachChangeUUIDs {
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
                 AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 8 && !pInteractionTarget.level().isClientSide && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(20)) {
+                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 8 && !pInteractionTarget.level().isClientSide && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(20)) {
                     if (pInteractionTarget instanceof Player) {
                         for (int i = 0; i < ((Player) pInteractionTarget).getInventory().getContainerSize(); i++) {
                             ItemStack itemStack = ((Player) pInteractionTarget).getInventory().getItem(i);

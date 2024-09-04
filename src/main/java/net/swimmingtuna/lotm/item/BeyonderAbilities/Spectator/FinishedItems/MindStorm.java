@@ -28,6 +28,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
@@ -77,7 +78,7 @@ public class MindStorm extends Item implements ReachChangeUUIDs {
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
             if (holder != null && itemStack.getItem() instanceof MindStorm) {
-                if (!holder.isSpectatorClass()) {
+                if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                     pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
                 }
                 if (holder.getSpirituality() < 250) {
@@ -89,7 +90,7 @@ public class MindStorm extends Item implements ReachChangeUUIDs {
             Entity targetEntity = event.getTarget();
             AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (x && holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MindStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(250)) {
+                if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MindStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(250)) {
                     int sequence = spectatorSequence.getCurrentSequence();
                     int duration = 300 - (sequence * 25);
                     int damage = 30 - (sequence * 2);
@@ -106,12 +107,12 @@ public class MindStorm extends Item implements ReachChangeUUIDs {
                         event.setCancellationResult(InteractionResult.SUCCESS);
                     }
                 }
-                if (x && holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.getCurrentSequence() > 4 && spectatorSequence.useSpirituality(120)) {
+                if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.getCurrentSequence() > 4 && spectatorSequence.useSpirituality(120)) {
                     Placate.halfHarmfulEffects((LivingEntity) targetEntity);
                     pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 120 / (int) dreamIntoReality.getValue());
                     event.setCanceled(true);
                 }
-                if (x && holder.isSpectatorClass() && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(250)) {
+                if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(250)) {
                     Placate.removeHarmfulEffects((LivingEntity) targetEntity);
                     event.setCanceled(true);
                     if (!pPlayer.getAbilities().mayfly) {

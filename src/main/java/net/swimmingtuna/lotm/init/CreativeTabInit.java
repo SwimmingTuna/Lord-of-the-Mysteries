@@ -28,7 +28,7 @@ public class CreativeTabInit {
                         pOutput.accept(ItemInit.ALTERATION.get());
                         pOutput.accept(ItemInit.DREAM_WALKING.get());
                         pOutput.accept(ItemInit.NIGHTMARE.get());
-                        pOutput.accept(ItemInit.ApplyManipulation.get());
+                        pOutput.accept(ItemInit.APPLY_MANIPULATION.get());
                         pOutput.accept(ItemInit.MANIPULATE_EMOTION.get());
                         pOutput.accept(ItemInit.MANIPULATE_FONDNESS.get());
                         pOutput.accept(ItemInit.MANIPULATE_MOVEMENT.get());

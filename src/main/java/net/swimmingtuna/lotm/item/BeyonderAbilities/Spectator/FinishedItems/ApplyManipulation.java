@@ -27,6 +27,7 @@ import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +74,7 @@ public class ApplyManipulation extends Item implements ReachChangeUUIDs {
         Player pPlayer = event.getEntity();
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSpectatorClass()) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                 pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 50) {
@@ -82,7 +83,7 @@ public class ApplyManipulation extends Item implements ReachChangeUUIDs {
             ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
             Entity targetEntity = event.getTarget();
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (!targetEntity.level().isClientSide && holder.isSpectatorClass() && itemStack.getItem() instanceof ApplyManipulation && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(50)) {
+                if (!targetEntity.level().isClientSide && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && itemStack.getItem() instanceof ApplyManipulation && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(50)) {
                     if (!((LivingEntity) targetEntity).hasEffect(ModEffects.MANIPULATION.get())) {
                         ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false, false));
                         pPlayer.sendSystemMessage(Component.literal("Manipulating " + targetEntity.getName().getString()).withStyle(BeyonderUtil.getStyle(pPlayer)));
