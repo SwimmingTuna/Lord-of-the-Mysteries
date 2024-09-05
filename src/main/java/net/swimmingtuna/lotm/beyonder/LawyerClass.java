@@ -31,6 +31,8 @@ public class LawyerClass implements BeyonderClass {
     public List<Integer> spiritualityLevels() {
         return List.of(10000, 5000, 3000, 1800, 1200, 700, 450, 300, 175, 125);
     }
+    @Override
+    public List<Integer> mentalStrength() {return List.of(540,365,275,212,171,133,95,75,60,38);}
 
     @Override
     public List<Integer> spiritualityRegen() {

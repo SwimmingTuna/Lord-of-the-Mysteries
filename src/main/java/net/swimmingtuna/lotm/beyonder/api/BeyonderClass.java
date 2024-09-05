@@ -21,12 +21,17 @@ public interface BeyonderClass {
 
     Multimap<Integer, Item> getItems();
 
+    List<Integer> mentalStrength();
+    
     ChatFormatting getColorFormatting();
 
     default SimpleContainer getAbilityItemsContainer(int sequenceLevel) {
         SimpleContainer container = new SimpleContainer(27);
         for (int i = 9; i >= sequenceLevel; i--) {
-            getItems().get(i).stream().map(Item::getDefaultInstance).forEach(container::addItem);
+            getItems().get(i)
+                    .stream()
+                    .map(Item::getDefaultInstance)
+                    .forEach(container::addItem);
         }
         return container;
     }

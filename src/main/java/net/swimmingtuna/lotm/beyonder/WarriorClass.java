@@ -33,6 +33,9 @@ public class WarriorClass implements BeyonderClass {
     }
 
     @Override
+    public List<Integer> mentalStrength() {return List.of(450,320,210,175,150,110,80,70,50,33);}
+
+    @Override
     public List<Integer> spiritualityRegen() {
         return List.of(34, 22, 16, 12, 10, 8, 6, 5, 3, 2);
     }

@@ -33,6 +33,9 @@ public class SleeplessClass implements BeyonderClass {
     }
 
     @Override
+    public List<Integer> mentalStrength() {return List.of(560,380,285,220,180,140,100,80,65,40);}
+
+    @Override
     public List<Integer> spiritualityRegen() {
         return List.of(34, 22, 16, 12, 10, 8, 6, 5, 3, 2);
     }

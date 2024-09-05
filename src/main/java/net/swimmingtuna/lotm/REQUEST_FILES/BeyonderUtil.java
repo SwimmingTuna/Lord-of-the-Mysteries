@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
@@ -230,5 +231,16 @@ public class BeyonderUtil {
         }
         return Style.EMPTY;
     }
-
+    public static void mentalDamage(Player source, Player hurtEntity, int damage) { //can make it so that with useOn, sets shiftKeyDown to true for pPlayer
+        BeyonderHolder sourceHolder = BeyonderHolderAttacher.getHolder(source).orElse(null);
+        BeyonderHolder hurtHolder = BeyonderHolderAttacher.getHolder(hurtEntity).orElse(null);
+        float x = Math.min(damage, damage * (hurtHolder.getMentalStrength() / sourceHolder.getMentalStrength()));
+        hurtEntity.hurt(hurtEntity.damageSources().magic(), x);
+    }
+    public static float mentalInt(Player source, Player hurtEntity, int mentalInt) {
+        BeyonderHolder sourceHolder = BeyonderHolderAttacher.getHolder(source).orElse(null);
+        BeyonderHolder hurtHolder = BeyonderHolderAttacher.getHolder(hurtEntity).orElse(null);
+        float x = Math.min(mentalInt, mentalInt * (hurtHolder.getMentalStrength() / sourceHolder.getMentalStrength()));
+        return x;
+    }
 }

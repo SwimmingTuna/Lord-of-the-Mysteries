@@ -31,10 +31,10 @@ public class BeyonderHolder extends PlayerCapability {
     private final RandomSource random;
     private int currentSequence = -1;
     @Nullable private BeyonderClass currentClass = null;
+    private int mentalStrength = 0;
     private double spirituality = 100;
     private double maxSpirituality = 100;
     private double spiritualityRegen = 1;
-
 
     protected BeyonderHolder(Player entity) {
         super(entity);
@@ -57,6 +57,7 @@ public class BeyonderHolder extends PlayerCapability {
     public void removeClass() {
         this.currentClass = null;
         this.currentSequence = -1;
+        this.mentalStrength = 0;
         this.spirituality = 100;
         this.maxSpirituality = 100;
         this.spiritualityRegen = 1;
@@ -68,6 +69,7 @@ public class BeyonderHolder extends PlayerCapability {
         this.currentSequence = sequence;
         maxSpirituality = currentClass.spiritualityLevels().get(currentSequence);
         spirituality = maxSpirituality;
+        mentalStrength = currentClass.mentalStrength().get(currentSequence);
         spiritualityRegen = currentClass.spiritualityRegen().get(currentSequence);
         player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(currentClass.maxHealth().get(sequence));
         player.setHealth(player.getMaxHealth());
@@ -81,6 +83,15 @@ public class BeyonderHolder extends PlayerCapability {
     public void setMaxSpirituality(int maxSpirituality) {
         this.maxSpirituality = maxSpirituality;
         updateTracking();
+    }
+
+    public void setMentalStrength(int mentalStrength) {
+        this.mentalStrength = mentalStrength;
+        updateTracking();
+    }
+
+    public int getMentalStrength() {
+        return mentalStrength;
     }
 
     public double getSpiritualityRegen() {
@@ -165,6 +176,7 @@ public class BeyonderHolder extends PlayerCapability {
     public CompoundTag serializeNBT(boolean savingToDisk) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("currentSequence", currentSequence);
+        tag.putInt("mentalStrength", mentalStrength);
         tag.putString("currentClass", currentClass == null ? "" : BeyonderClassInit.getRegistry().getKey(currentClass).toString());
         tag.putDouble("spirituality", spirituality);
         tag.putDouble("maxSpirituality", maxSpirituality);
@@ -175,6 +187,7 @@ public class BeyonderHolder extends PlayerCapability {
     @Override
     public void deserializeNBT(CompoundTag nbt, boolean readingFromDisk) {
         currentSequence = nbt.getInt("currentSequence");
+        mentalStrength = nbt.getInt("mentalStrength");
         String className = nbt.getString("currentClass");
         if (!className.isEmpty()) {
             currentClass = BeyonderClassInit.getRegistry().getValue(new ResourceLocation(className));
