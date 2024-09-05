@@ -60,8 +60,8 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
         ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
         attributeBuilder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND));
-        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BeyonderEntityReach, "Reach modifier", 150, AttributeModifier.Operation.ADDITION)); // adds a 12 block reach for interacting with entities
-        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BeyonderBlockReach, "Reach modifier", 150, AttributeModifier.Operation.ADDITION)); // adds a 12 block reach for interacting with blocks, pretty much useless for this item
+        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BEYONDER_ENTITY_REACH, "Reach modifier", 150, AttributeModifier.Operation.ADDITION)); // adds a 12 block reach for interacting with entities
+        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BEYONDER_BLOCK_REACH, "Reach modifier", 150, AttributeModifier.Operation.ADDITION)); // adds a 12 block reach for interacting with blocks, pretty much useless for this item
         return attributeBuilder.build();
     }
 
@@ -107,7 +107,7 @@ public class SailorLightning extends Item implements ReachChangeUUIDs {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Shoots out a lightning bolt, if used on a block or entity, the lightning bolt travels towards it in exchange for 100 extra spirituality and higher cooldown, otherwise, it moves randomly in the direction you look \n" +
+            componentList.add(Component.literal("Shoots out a lightning bolt, if used on a block or entity, the lightning bolt travels towards it in exchange for 100 extra spirituality and higher cooldown, otherwise, it moves randomly in the direction you look\n" +
                     "Spirituality Used: 200\n" +
                     "Cooldown: 2 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
         }

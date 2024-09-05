@@ -30,7 +30,6 @@ public class LeftClickC2S {
         ServerPlayer pPlayer = context.getSender();
         context.enqueueWork(() -> {
             ItemStack heldItem = pPlayer.getMainHandItem();
-            pPlayer.sendSystemMessage(Component.literal("working"));
             int firstKeyClicked = pPlayer.getPersistentData().getInt("firstKeyClicked");
             int secondKeyClicked = pPlayer.getPersistentData().getInt("secondKeyClicked");
             int thirdKeyClicked = pPlayer.getPersistentData().getInt("thirdKeyClicked");

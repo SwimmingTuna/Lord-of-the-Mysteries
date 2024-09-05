@@ -96,7 +96,6 @@ public class ModEvents implements ReachChangeUUIDs {
                     pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", matterAccelerationBlockTimer - 1);
                 }
 
-                assert nightmareAttribute != null;
                 if (nightmareAttribute.getValue() >= 1) {
                     nightmareTimer++;
                     if (nightmareTimer >= 600) {
