@@ -27,42 +27,43 @@ public class LeftClickC2S {
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context context = supplier.get();
-        ServerPlayer pPlayer = context.getSender();
+        ServerPlayer player = context.getSender();
         context.enqueueWork(() -> {
-            ItemStack heldItem = pPlayer.getMainHandItem();
-            int firstKeyClicked = pPlayer.getPersistentData().getInt("firstKeyClicked");
-            int secondKeyClicked = pPlayer.getPersistentData().getInt("secondKeyClicked");
-            int thirdKeyClicked = pPlayer.getPersistentData().getInt("thirdKeyClicked");
-            int fourthKeyClicked = pPlayer.getPersistentData().getInt("fourthKeyClicked");
-            int fifthKeyClicked = pPlayer.getPersistentData().getInt("fifthKeyClicked");
+            ItemStack heldItem = player.getMainHandItem();
+            byte[] keysClicked = player.getPersistentData().getByteArray("keysClicked");
+            int firstKeyClicked = keysClicked[0];
+            int secondKeyClicked = keysClicked[1];
+            int thirdKeyClicked = keysClicked[2];
+            int fourthKeyClicked = keysClicked[3];
+            int fifthKeyClicked = keysClicked[4];
 
             if (!heldItem.isEmpty() && heldItem.getItem() instanceof BeyonderAbilityUser) {
                 if (firstKeyClicked == 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    pPlayer.getPersistentData().putInt("firstKeyClicked", 1);
-                    pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                    keysClicked[0] = 1;
+                    player.getPersistentData().putInt("keyHasBeenClicked", 40);
                 }
                 if (firstKeyClicked != 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    pPlayer.getPersistentData().putInt("secondKeyClicked", 1);
-                    pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                    keysClicked[1] = 1;
+                    player.getPersistentData().putInt("keyHasBeenClicked", 40);
                 }
                 if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    pPlayer.getPersistentData().putInt("thirdKeyClicked", 1);
-                    pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                    keysClicked[2] = 1;
+                    player.getPersistentData().putInt("keyHasBeenClicked", 40);
                 }
                 if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    pPlayer.getPersistentData().putInt("fourthKeyClicked", 1);
-                    pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                    keysClicked[3] = 1;
+                    player.getPersistentData().putInt("keyHasBeenClicked", 40);
                 }
                 if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked != 0 && fifthKeyClicked == 0) {
-                    pPlayer.getPersistentData().putInt("fifthKeyClicked", 1);
-                    pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                    keysClicked[4] = 1;
+                    player.getPersistentData().putInt("keyHasBeenClicked", 40);
                 }
             }
-            if (pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
-                CompoundTag tag = pPlayer.getPersistentData();
+            if (player.getMainHandItem().getItem() instanceof LightningStorm) {
+                CompoundTag tag = player.getPersistentData();
                 double distance = tag.getDouble("sailorLightningStormDistance");
                 tag.putDouble("sailorLightningStormDistance", (int) (distance + 30));
-                pPlayer.sendSystemMessage(Component.literal("Storm Radius Is " + distance).withStyle(BeyonderUtil.getStyle(pPlayer)));
+                player.sendSystemMessage(Component.literal("Storm Radius Is " + distance).withStyle(BeyonderUtil.getStyle(player)));
                 if (distance > 300) {
                     tag.putDouble("sailorLightningStormDistance", 0);
                 }

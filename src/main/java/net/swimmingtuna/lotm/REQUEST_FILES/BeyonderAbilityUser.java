@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.REQUEST_FILES;
 
+import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -20,6 +21,8 @@ import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.networking.packet.LeftClickC2S;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -31,51 +34,48 @@ public class BeyonderAbilityUser extends Item implements ReachChangeUUIDs {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            ItemStack heldItem = pPlayer.getItemInHand(hand);
-            byte firstKeyClicked = pPlayer.getPersistentData().getByte("firstKeyClicked");
-            byte secondKeyClicked = pPlayer.getPersistentData().getByte("secondKeyClicked");
-            byte thirdKeyClicked = pPlayer.getPersistentData().getByte("thirdKeyClicked");
-            byte fourthKeyClicked = pPlayer.getPersistentData().getByte("fourthKeyClicked");
-            byte fifthKeyClicked = pPlayer.getPersistentData().getByte("fifthKeyClicked");
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            ItemStack heldItem = player.getItemInHand(hand);
+            byte[] keysClicked = player.getPersistentData().getByteArray("keysClicked");
+            byte firstKeyClicked = keysClicked[0];
+            byte secondKeyClicked = keysClicked[1];
+            byte thirdKeyClicked = keysClicked[2];
+            byte fourthKeyClicked = keysClicked[3];
+            byte fifthKeyClicked = keysClicked[4];
             if (firstKeyClicked == 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("firstKeyClicked", (byte) 2);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[0] = 2;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
                 return InteractionResultHolder.success(heldItem);
             }
             if (firstKeyClicked != 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("secondKeyClicked", (byte) 2);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[1] = 2;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
                 return InteractionResultHolder.success(heldItem);
             }
             if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("thirdKeyClicked", (byte) 2);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[2] = 2;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
                 return InteractionResultHolder.success(heldItem);
             }
             if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("fourthKeyClicked", (byte) 2);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[3] = 2;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
                 return InteractionResultHolder.success(heldItem);
             }
             if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked != 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("fifthKeyClicked", (byte) 2);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[4] = 2;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
                 return InteractionResultHolder.success(heldItem);
             }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
 
-    public static void resetClicks(Player pPlayer) {
-        pPlayer.getPersistentData().putByte("firstKeyClicked", (byte) 0);
-        pPlayer.getPersistentData().putByte("secondKeyClicked", (byte) 0);
-        pPlayer.getPersistentData().putByte("thirdKeyClicked", (byte) 0);
-        pPlayer.getPersistentData().putByte("fourthKeyClicked", (byte) 0);
-        pPlayer.getPersistentData().putByte("fifthKeyClicked", (byte) 0);
-        pPlayer.displayClientMessage(Component.literal(" "), true);
+    public static void resetClicks(Player player) {
+        player.getPersistentData().putByteArray("keysClicked", new byte[5]);
+        player.displayClientMessage(Component.empty(), true);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -87,34 +87,35 @@ public class BeyonderAbilityUser extends Item implements ReachChangeUUIDs {
 
     @SubscribeEvent
     public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int firstKeyClicked = pPlayer.getPersistentData().getByte("firstKeyClicked");
-        int secondKeyClicked = pPlayer.getPersistentData().getByte("secondKeyClicked");
-        int thirdKeyClicked = pPlayer.getPersistentData().getByte("thirdKeyClicked");
-        int fourthKeyClicked = pPlayer.getPersistentData().getByte("fourthKeyClicked");
-        int fifthKeyClicked = pPlayer.getPersistentData().getByte("fifthKeyClicked");
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        byte[] keysClicked = player.getPersistentData().getByteArray("keysClicked");
+        byte firstKeyClicked = keysClicked[0];
+        byte secondKeyClicked = keysClicked[1];
+        byte thirdKeyClicked = keysClicked[2];
+        byte fourthKeyClicked = keysClicked[3];
+        byte fifthKeyClicked = keysClicked[4];
 
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof BeyonderAbilityUser) {
             if (firstKeyClicked == 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("firstKeyClicked", (byte) 1);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[0] = 1;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
             }
             if (firstKeyClicked != 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("secondKeyClicked", (byte) 1);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[1] = 1;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
             }
             if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("thirdKeyClicked", (byte) 1);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[2] = 1;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
             }
             if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("fourthKeyClicked", (byte) 1);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[3] = 1;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
             }
             if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked != 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("fifthKeyClicked", (byte) 1);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[4] = 1;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
             }
         }
     }
@@ -124,22 +125,25 @@ public class BeyonderAbilityUser extends Item implements ReachChangeUUIDs {
         Player player = event.player;
         if (!player.level().isClientSide() && event.phase == TickEvent.Phase.END) {
             int keyClicked = player.getPersistentData().getInt("keyHasBeenClicked");
-            byte firstKeyClicked = player.getPersistentData().getByte("firstKeyClicked");
-            byte secondKeyClicked = player.getPersistentData().getByte("secondKeyClicked");
-            byte thirdKeyClicked = player.getPersistentData().getByte("thirdKeyClicked");
-            byte fourthKeyClicked = player.getPersistentData().getByte("fourthKeyClicked");
-            byte fifthKeyClicked = player.getPersistentData().getByte("fifthKeyClicked");
+            byte[] keysClicked = player.getPersistentData().getByteArray("keysClicked");
+            byte firstKeyClicked = keysClicked[0];
+            byte secondKeyClicked = keysClicked[1];
+            byte thirdKeyClicked = keysClicked[2];
+            byte fourthKeyClicked = keysClicked[3];
+            byte fifthKeyClicked = keysClicked[4];
             if (keyClicked >= 1) {
                 player.getPersistentData().putInt("keyHasBeenClicked", keyClicked - 1);
 
-                List<Byte> keysClicked = List.of(firstKeyClicked, secondKeyClicked, thirdKeyClicked, fourthKeyClicked, fifthKeyClicked);
-                Stream<Character> characterStream = keysClicked.stream().flatMap(xKeyClicked -> switch (xKeyClicked) {
-                    case 0 -> Stream.of('_');
-                    case 1 -> Stream.of('L');
-                    case 2 -> Stream.of('R');
-                    default -> null;
-                });
-                String actionBarString = StringUtils.join(characterStream.toList(), ' ');
+                StringBuilder stringBuilder = new StringBuilder(5);
+                for (byte b : keysClicked) {
+                    char charToAdd = switch (b) {
+                        case 1 -> 'L';
+                        case 2 -> 'R';
+                        default -> '_';
+                    };
+                    stringBuilder.append(charToAdd);
+                }
+                String actionBarString = StringUtils.join(stringBuilder.toString().toCharArray(), ' ');
 
                 Component actionBarComponent = Component.literal(actionBarString).withStyle(ChatFormatting.BOLD);
                 player.displayClientMessage(actionBarComponent, true);
@@ -152,45 +156,42 @@ public class BeyonderAbilityUser extends Item implements ReachChangeUUIDs {
 
             }
             if (keyClicked == 0) {
-                player.getPersistentData().putByte("firstKeyClicked", (byte) 0);
-                player.getPersistentData().putByte("secondKeyClicked", (byte) 0);
-                player.getPersistentData().putByte("thirdKeyClicked", (byte) 0);
-                player.getPersistentData().putByte("fourthKeyClicked", (byte) 0);
-                player.getPersistentData().putByte("fifthKeyClicked", (byte) 0);
+                player.getPersistentData().putByteArray("keysClicked", new byte[5]);
             }
         }
     }
 
     @SubscribeEvent
     public static void rightClick(PlayerInteractEvent.EntityInteract event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        byte firstKeyClicked = pPlayer.getPersistentData().getByte("firstKeyClicked");
-        byte secondKeyClicked = pPlayer.getPersistentData().getByte("secondKeyClicked");
-        byte thirdKeyClicked = pPlayer.getPersistentData().getByte("thirdKeyClicked");
-        byte fourthKeyClicked = pPlayer.getPersistentData().getByte("fourthKeyClicked");
-        byte fifthKeyClicked = pPlayer.getPersistentData().getByte("fifthKeyClicked");
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        byte[] keysClicked = player.getPersistentData().getByteArray("keysClicked");
+        byte firstKeyClicked = keysClicked[0];
+        byte secondKeyClicked = keysClicked[1];
+        byte thirdKeyClicked = keysClicked[2];
+        byte fourthKeyClicked = keysClicked[3];
+        byte fifthKeyClicked = keysClicked[4];
 
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof BeyonderAbilityUser) {
             if (firstKeyClicked == 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("firstKeyClicked", (byte) 2);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[0] = 2;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
             }
             if (firstKeyClicked != 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("secondKeyClicked", (byte) 2);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[1] = 2;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
             }
             if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("thirdKeyClicked", (byte) 2);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[2] = 2;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
             }
             if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("fourthKeyClicked", (byte) 2);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[3] = 2;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
             }
             if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked != 0 && fifthKeyClicked == 0) {
-                pPlayer.getPersistentData().putByte("fifthKeyClicked", (byte) 2);
-                pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                keysClicked[4] = 2;
+                player.getPersistentData().putInt("keyHasBeenClicked", 40);
             }
         }
     }
