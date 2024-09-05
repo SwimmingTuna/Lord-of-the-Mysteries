@@ -29,34 +29,17 @@ public class LeftClickC2S {
         NetworkEvent.Context context = supplier.get();
         ServerPlayer player = context.getSender();
         context.enqueueWork(() -> {
+            if (player == null) return;
             ItemStack heldItem = player.getMainHandItem();
             byte[] keysClicked = player.getPersistentData().getByteArray("keysClicked");
-            int firstKeyClicked = keysClicked[0];
-            int secondKeyClicked = keysClicked[1];
-            int thirdKeyClicked = keysClicked[2];
-            int fourthKeyClicked = keysClicked[3];
-            int fifthKeyClicked = keysClicked[4];
 
             if (!heldItem.isEmpty() && heldItem.getItem() instanceof BeyonderAbilityUser) {
-                if (firstKeyClicked == 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    keysClicked[0] = 1;
-                    player.getPersistentData().putInt("keyHasBeenClicked", 40);
-                }
-                if (firstKeyClicked != 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    keysClicked[1] = 1;
-                    player.getPersistentData().putInt("keyHasBeenClicked", 40);
-                }
-                if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    keysClicked[2] = 1;
-                    player.getPersistentData().putInt("keyHasBeenClicked", 40);
-                }
-                if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    keysClicked[3] = 1;
-                    player.getPersistentData().putInt("keyHasBeenClicked", 40);
-                }
-                if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked != 0 && fifthKeyClicked == 0) {
-                    keysClicked[4] = 1;
-                    player.getPersistentData().putInt("keyHasBeenClicked", 40);
+                for (int i = 0; i < keysClicked.length; i++) {
+                    if (keysClicked[i] == 0) {
+                        keysClicked[i] = 1;
+                        player.getPersistentData().putInt("keyHasBeenClicked", 40);
+                        break;
+                    }
                 }
             }
             if (player.getMainHandItem().getItem() instanceof LightningStorm) {
