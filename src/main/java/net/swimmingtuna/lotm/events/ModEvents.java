@@ -79,11 +79,63 @@ public class ModEvents implements ReachChangeUUIDs {
         Player pPlayer = event.player;
         Style style = BeyonderUtil.getStyle(pPlayer);
         CompoundTag tag = pPlayer.getPersistentData();
+        AttributeInstance corruption = pPlayer.getAttribute(ModAttributes.CORRUPTION.get());
+        AttributeInstance luck = pPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         if (holder != null) {
             Level level = pPlayer.level();
             int sequence = holder.getCurrentSequence();
             if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
+
+                if (pPlayer.getPersistentData().getBoolean("spiritVision")) {
+                    pPlayer.sendSystemMessage(Component.literal("working " + pPlayer.getPersistentData().getBoolean("spiritVision")));
+                }
+                //CORRUPTION AND LUCK MANAGERS
+                if (corruption.getValue() >= 1 && pPlayer.tickCount % 200 == 0) {
+                    corruption.setBaseValue(corruption.getValue() - 1);
+                }
+                if (holder.isMonsterClass()) {
+                    if (sequence == 7) {
+                        if (pPlayer.tickCount % 400 == 0) {
+                            luck.setBaseValue(luck.getValue() + 1);
+                        }
+                    }
+                    if (sequence == 6) {
+                        if (pPlayer.tickCount % 360 == 0) {
+                            luck.setBaseValue(luck.getValue() + 1);
+                        }
+                    }
+                    if (sequence == 5) {
+                        if (pPlayer.tickCount % 310 == 0) {
+                            luck.setBaseValue(luck.getValue() + 1);
+                        }
+                    }
+                    if (sequence == 4) {
+                        if (pPlayer.tickCount % 220 == 0) {
+                            luck.setBaseValue(luck.getValue() + 1);
+                        }
+                    }
+                    if (sequence == 3) {
+                        if (pPlayer.tickCount % 140 == 0) {
+                            luck.setBaseValue(luck.getValue() + 1);
+                        }
+                    }
+                    if (sequence == 2) {
+                        if (pPlayer.tickCount % 100 == 0) {
+                            luck.setBaseValue(luck.getValue() + 1);
+                        }
+                    }
+                    if (sequence == 1) {
+                        if (pPlayer.tickCount % 70 == 0) {
+                            luck.setBaseValue(luck.getValue() + 1);
+                        }
+                    }
+                    if (sequence == 0) {
+                        if (pPlayer.tickCount % 40 == 0) {
+                            luck.setBaseValue(luck.getValue() + 1);
+                        }
+                    }
+                }
 
 
                 //NIGHTMARE
@@ -1830,9 +1882,32 @@ public class ModEvents implements ReachChangeUUIDs {
         if (entity instanceof Player pPlayer) {
             int flightCancel = tag.getInt("sailorFlightDamageCancel");
             if (!pPlayer.level().isClientSide()) {
+
+
+                //SAILOR FLIGHT
                 if (flightCancel != 0 && event.getSource() == pPlayer.damageSources().fall()) {
                     event.setCanceled(true);
                     tag.putInt("sailorFlightDamageCancel", 0);
+                }
+
+
+                //MONSTER LUCK
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                if (holder != null) {
+                    AttributeInstance luck = pPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
+                    double luckValue = luck.getValue();
+                    float damage = event.getAmount();
+                    if (luckValue >= 1) {
+                        if (Math.random() * luckValue > 50) {
+                            event.setCanceled(true);
+                            luck.setBaseValue(luckValue - damage);
+                        }
+                    }
+                    if (luckValue < 0) {
+                        if (Math.random() * luckValue < 50) {
+                            event.setAmount(damage * 2);
+                        }
+                    }
                 }
             }
         }
