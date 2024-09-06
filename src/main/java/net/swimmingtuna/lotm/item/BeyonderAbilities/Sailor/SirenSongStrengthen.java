@@ -37,9 +37,9 @@ public class SirenSongStrengthen extends Item {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (holder != null) {
                 if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                    pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                    pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 } else if (holder.getSpirituality() < 300) {
-                    pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                    pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 } else if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 5 && holder.useSpirituality(300)) {
                     shootAcidicRain(pPlayer, level);
                     if (!pPlayer.getAbilities().instabuild) {
@@ -116,7 +116,7 @@ public class SirenSongStrengthen extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, start singing a song that strengthens you by giving you additional strength to your melee attacks and a higher level of regeneration\n" +
                     "Spirituality Used: 300\n" +
-                    "Cooldown: 50 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                    "Cooldown: 50 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

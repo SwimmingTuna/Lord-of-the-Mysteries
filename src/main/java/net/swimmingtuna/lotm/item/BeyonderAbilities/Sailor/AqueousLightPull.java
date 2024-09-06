@@ -32,26 +32,29 @@ public class AqueousLightPull extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-            if (holder.getSpirituality() < 50) {
-                pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && tyrantSequence.getCurrentSequence() <= 7 && tyrantSequence.useSpirituality(50)) {
-                    useItem(pPlayer);
-                }
-                if (!pPlayer.getAbilities().instabuild) {
-                    pPlayer.getCooldowns().addCooldown(this, 60);
-                }
-            });
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (player.level().isClientSide()) {
+            return super.use(level, player, hand);
         }
-        return super.use(level, pPlayer, hand);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder == null) return InteractionResultHolder.pass(player.getItemInHand(hand));
+        if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
+            player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+            return InteractionResultHolder.pass(player.getItemInHand(hand));
+        }
+        if (!holder.useSpirituality(50)) {
+            player.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+            return InteractionResultHolder.pass(player.getItemInHand(hand));
+        }
+
+        if (holder.getCurrentSequence() <= 7) {
+            useItem(player);
+        }
+        if (!player.getAbilities().instabuild) {
+            player.getCooldowns().addCooldown(this, 60);
+        }
+        
+        return super.use(level, player, hand);
     }
 
     public static void useItem(Player pPlayer) {
@@ -66,10 +69,11 @@ public class AqueousLightPull extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, shoots a water bubble that upon hit, pulls the target towards the user\n" +
                     "Spirituality Used: 50\n" +
-                    "Cooldown: 3 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                    "Cooldown: 3 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
+    
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player pPlayer = event.getEntity();
@@ -80,6 +84,7 @@ public class AqueousLightPull extends Item {
             heldItem.shrink(1);
         }
     }
+    
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
         Player pPlayer = event.getEntity();

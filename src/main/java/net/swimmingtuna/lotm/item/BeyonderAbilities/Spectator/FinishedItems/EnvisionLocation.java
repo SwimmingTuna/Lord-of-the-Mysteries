@@ -51,10 +51,10 @@ public class EnvisionLocation extends Item {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         if (pPlayer.getMainHandItem().getItem() instanceof EnvisionLocation && !pPlayer.level().isClientSide()) {
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-            pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
         }
         if (holder.getSpirituality() < (int) 500 / dreamIntoReality.getValue()) {
-            pPlayer.displayClientMessage(Component.literal("You need " + ((int) 500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            pPlayer.displayClientMessage(Component.literal("You need " + ((int) 500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
         }
     }
         String message = event.getMessage().getString();

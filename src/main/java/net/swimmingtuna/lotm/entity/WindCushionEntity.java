@@ -25,30 +25,28 @@ import virtuoel.pehkui.api.ScaleTypes;
 public class WindCushionEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(WindCushionEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_LIFE_COUNT = SynchedEntityData.defineId(WindCushionEntity.class, EntityDataSerializers.INT);
-
+    public final AnimationState animationState = new AnimationState();
+    private int animationStateTimeout = 0;
 
     public WindCushionEntity(EntityType<? extends WindCushionEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
-    public final AnimationState animationState = new AnimationState();
-    private int animationStateTimeout = 0;
-
     public WindCushionEntity(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
         super(EntityInit.WIND_CUSHION_ENTITY.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
     }
 
-
+    @Override
     protected float getInertia() {
         return this.isDangerous() ? 0.73F : super.getInertia();
     }
 
-
+    @Override
     public boolean isOnFire() {
         return false;
     }
 
-
+    @Override
     protected void onHitEntity(EntityHitResult pResult) {
         this.discard();
     }
@@ -58,12 +56,12 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
         this.discard();
     }
 
+    @Override
     public boolean isPickable() {
         return false;
     }
 
-
-
+    @Override
     protected void defineSynchedData() {
         this.entityData.define(DATA_DANGEROUS, false);
         this.entityData.define(DATA_LIFE_COUNT,0);
@@ -74,6 +72,7 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
     }
 
 
+    @Override
     protected boolean shouldBurn() {
         return false;
     }
@@ -81,20 +80,21 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
     public static void summonWindCushion(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
             Vec3 lookVector = pPlayer.getLookAngle();
-            WindCushionEntity windCushion = new WindCushionEntity(pPlayer.level(), pPlayer, 0,0,0);
-                pPlayer.getPersistentData().putInt("windCushionXRot", (int) pPlayer.getXRot());
-                pPlayer.getPersistentData().putInt("windCushionYRot", (int) pPlayer.getYRot());
-                pPlayer.getPersistentData().putInt("windCushion", 1);
-                windCushion.setDeltaMovement(pPlayer.getDeltaMovement().x * 2, pPlayer.getDeltaMovement().y * 1.1, pPlayer.getDeltaMovement().z * 2);
-                windCushion.setOwner(pPlayer);
-                windCushion.hurtMarked = true;
-                ScaleData scaleData = ScaleTypes.BASE.getScaleData(windCushion);
-                scaleData.setTargetScale(2);
-                scaleData.markForSync(true);
-                pPlayer.level().addFreshEntity(windCushion);
-                pPlayer.sendSystemMessage(Component.literal("rotation is" + windCushion.getXRot() + "and" + windCushion.getYRot()));
+            WindCushionEntity windCushion = new WindCushionEntity(pPlayer.level(), pPlayer, 0, 0, 0);
+            pPlayer.getPersistentData().putInt("windCushionXRot", (int) pPlayer.getXRot());
+            pPlayer.getPersistentData().putInt("windCushionYRot", (int) pPlayer.getYRot());
+            pPlayer.getPersistentData().putInt("windCushion", 1);
+            windCushion.setDeltaMovement(pPlayer.getDeltaMovement().x * 2, pPlayer.getDeltaMovement().y * 1.1, pPlayer.getDeltaMovement().z * 2);
+            windCushion.setOwner(pPlayer);
+            windCushion.hurtMarked = true;
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(windCushion);
+            scaleData.setTargetScale(2);
+            scaleData.markForSync(true);
+            pPlayer.level().addFreshEntity(windCushion);
+            pPlayer.sendSystemMessage(Component.literal("rotation is" + windCushion.getXRot() + "and" + windCushion.getYRot()));
         }
     }
+
     @Override
     public void tick() {
         super.tick();
@@ -123,6 +123,6 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
     }
 
     private void setupAnimationStates() {
-            this.animationState.start(this.tickCount);
+        this.animationState.start(this.tickCount);
     }
 }

@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,50 +24,51 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class Hurricane extends Item implements ReachChangeUUIDs {
+public class Hurricane extends Item {
 
     public Hurricane(Properties pProperties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
         super(pProperties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-
-            // If no block or entity is targeted, proceed with the original functionality
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-            if (holder.getSpirituality() < 1250) {
-                pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 4 && sailorSequence.useSpirituality(1250)) {
-                    pPlayer.getPersistentData().putInt("sailorHurricane", 600);
-                    if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 1200);
-                }
-            });
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (player.level().isClientSide()) {
+            return super.use(level, player, hand);
         }
-        return super.use(level, pPlayer, hand);
+
+        // If no block or entity is targeted, proceed with the original functionality
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder == null) return InteractionResultHolder.pass(player.getItemInHand(hand));
+        if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
+            player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+            return InteractionResultHolder.pass(player.getItemInHand(hand));
+        }
+        if (!holder.useSpirituality(1250)) {
+            player.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+            return InteractionResultHolder.pass(player.getItemInHand(hand));
+        }
+        if (holder.getCurrentSequence() <= 4) {
+            player.getPersistentData().putInt("sailorHurricane", 600);
+            if (!player.getAbilities().instabuild) {
+                player.getCooldowns().addCooldown(this, 1200);
+            }
+        }
+        return super.use(level, player, hand);
     }
+    
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player pPlayer = event.getEntity();
         ItemStack heldItem = pPlayer.getMainHandItem();
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof Hurricane) {
             CompoundTag tag = pPlayer.getPersistentData();
-            boolean x = tag.getBoolean("sailorHurricaneRain");
-            if (x) {
-                pPlayer.displayClientMessage(Component.literal("Hurricane will only cause rain").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            boolean sailorHurricaneRain = tag.getBoolean("sailorHurricaneRain");
+            if (sailorHurricaneRain) {
+                pPlayer.displayClientMessage(Component.literal("Hurricane will only cause rain").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 tag.putBoolean("sailorHurricaneRain", false);
-                x = false;
-            }
-            if (!x) {
-                pPlayer.displayClientMessage(Component.literal("Hurricane cause lightning, tornadoes, and rain").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            } else {
+                pPlayer.displayClientMessage(Component.literal("Hurricane cause lightning, tornadoes, and rain").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 tag.putBoolean("sailorHurricaneRain", true);
-                x = true;
             }
         }
     }
@@ -78,7 +78,7 @@ public class Hurricane extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons a hurricane that shoots lightning in the sky around the player and generates tornadoes\n" +
                     "Spirituality Used: 1250\n" +
-                    "Cooldown: 1 minute").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                    "Cooldown: 1 minute").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
@@ -89,16 +89,13 @@ public class Hurricane extends Item implements ReachChangeUUIDs {
         ItemStack heldItem = pPlayer.getMainHandItem();
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof Hurricane) {
             CompoundTag tag = pPlayer.getPersistentData();
-            boolean x = tag.getBoolean("sailorHurricaneRain");
-            if (x) {
-                pPlayer.displayClientMessage(Component.literal("Hurricane will only cause rain").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            boolean sailorHurricaneRain = tag.getBoolean("sailorHurricaneRain");
+            if (sailorHurricaneRain) {
+                pPlayer.displayClientMessage(Component.literal("Hurricane will only cause rain").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 tag.putBoolean("sailorHurricaneRain", false);
-                x = false;
-            }
-            if (!x) {
-                pPlayer.displayClientMessage(Component.literal("Hurricane cause lightning, tornadoes, and rain").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+            } else {
+                pPlayer.displayClientMessage(Component.literal("Hurricane cause lightning, tornadoes, and rain").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 tag.putBoolean("sailorHurricaneRain", true);
-                x = true;
             }
         }
     }

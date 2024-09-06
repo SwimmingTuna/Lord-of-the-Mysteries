@@ -14,8 +14,7 @@ import java.util.Objects;
 public class ProjectileEvent extends Event implements IModBusEvent {
 
 
-
-    public static class ProjectileControlEvent extends ProjectileEvent{
+    public static class ProjectileControlEvent extends ProjectileEvent {
         private Projectile projectile;
         private ProjectileImpactEvent.ImpactResult result = ProjectileImpactEvent.ImpactResult.DEFAULT;
 

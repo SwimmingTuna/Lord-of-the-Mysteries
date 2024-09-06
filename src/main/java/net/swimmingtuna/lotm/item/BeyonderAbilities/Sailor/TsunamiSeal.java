@@ -38,11 +38,11 @@ public class TsunamiSeal extends Item {
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (holder == null || !holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 return super.use(level, pPlayer, hand);
             }
             if (holder.getSpirituality() < 1100) {
-                pPlayer.displayClientMessage(Component.literal("You need 1100 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                pPlayer.displayClientMessage(Component.literal("You need 1100 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 return super.use(level, pPlayer, hand);
             }
 
@@ -88,7 +88,7 @@ public class TsunamiSeal extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Creates a massive wave of water in front of you, trapping any entity with more than 100 health in a seal or they're a player\n" +
                     "Spirituality Used: 1100\n" +
-                    "Cooldown: 90 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                    "Cooldown: 90 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

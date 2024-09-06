@@ -33,7 +33,9 @@ public class ApothecaryClass implements BeyonderClass {
     }
 
     @Override
-    public List<Integer> mentalStrength() {return List.of(520,374,238,188,165,119,91,75,50,40);}
+    public List<Integer> mentalStrength() {
+        return List.of(520, 374, 238, 188, 165, 119, 91, 75, 50, 40);
+    }
 
     @Override
     public List<Integer> spiritualityRegen() {

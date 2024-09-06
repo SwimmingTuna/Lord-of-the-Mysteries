@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -15,18 +14,17 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 
 public class HealthBarOverlay implements IGuiOverlay {
-    public static final HealthBarOverlay instance = new HealthBarOverlay();
+    public static final HealthBarOverlay INSTANCE = new HealthBarOverlay();
     public static final ResourceLocation TEXTURE = new ResourceLocation(LOTM.MOD_ID, "textures/spirituality/healthicons.png");
 
     static final int IMAGE_WIDTH = 83;
     static final int IMAGE_HEIGHT = 14;
-    static final int TEXT_COLOR = ChatFormatting.WHITE.getColor();
+    static final int TEXT_COLOR = 0xFFFFFF;
 
     public void render(ForgeGui gui, GuiGraphics guiGraphics, float partialTick, int screenWidth, int screenHeight) {
         var player = Minecraft.getInstance().player;
 
-        if (!shouldShowHealthBar(player))
-            return;
+        if (!shouldShowHealthBar(player)) return;
         double maxHealth = player.getMaxHealth();
         double health = player.getHealth();
 
@@ -34,8 +32,8 @@ public class HealthBarOverlay implements IGuiOverlay {
         int barY = screenHeight - 46;
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1f,1f,1f,1f);
-        RenderSystem.setShaderTexture(0,TEXTURE);
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.setShaderTexture(0, TEXTURE);
 
         guiGraphics.blit(TEXTURE, barX, barY, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, 256, 256);
 
@@ -54,8 +52,8 @@ public class HealthBarOverlay implements IGuiOverlay {
         guiGraphics.pose().popPose(); // Restore the previous pose
     }
 
-    public static boolean shouldShowHealthBar(Player pPlayer) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-        return holder != null && !pPlayer.isSpectator() && !pPlayer.isCreative();
+    public static boolean shouldShowHealthBar(Player player) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        return holder != null && !player.isSpectator() && !player.isCreative();
     }
 }

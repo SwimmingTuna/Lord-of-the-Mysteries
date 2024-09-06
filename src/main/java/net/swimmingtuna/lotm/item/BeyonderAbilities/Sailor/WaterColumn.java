@@ -40,11 +40,11 @@ public class WaterColumn extends Item {
             // Your existing checks
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 return super.use(level, pPlayer, hand);
             }
             if (holder.getSpirituality() < 2000) {
-                pPlayer.displayClientMessage(Component.literal("You need 2000 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                pPlayer.displayClientMessage(Component.literal("You need 2000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 return super.use(level, pPlayer, hand);
             }
             summonColumns(pPlayer);
@@ -106,7 +106,7 @@ public class WaterColumn extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, cause the water to intersect with the sky\n" +
                     "Spirituality Used: 2000\n" +
-                    "Cooldown: 25 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                    "Cooldown: 25 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

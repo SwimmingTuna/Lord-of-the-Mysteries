@@ -44,10 +44,10 @@ public class EnvisionLocationBlink extends Item {
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < blinkDistance * 8) {
-                pPlayer.displayClientMessage(Component.literal("You need "  + (blinkDistance * 8) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                pPlayer.displayClientMessage(Component.literal("You need "  + (blinkDistance * 8) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
         }        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);

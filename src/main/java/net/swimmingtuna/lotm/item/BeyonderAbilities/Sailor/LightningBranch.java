@@ -31,10 +31,10 @@ public class LightningBranch extends Item {
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < 450) {
-                pPlayer.displayClientMessage(Component.literal("You need 450 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                pPlayer.displayClientMessage(Component.literal("You need 450 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
 
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
@@ -54,7 +54,7 @@ public class LightningBranch extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons a lightning that branches out as it goes on\n" +
                     "Spirituality Used: 450\n" +
-                    "Cooldown: 8 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                    "Cooldown: 8 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

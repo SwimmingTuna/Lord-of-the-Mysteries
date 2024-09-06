@@ -26,11 +26,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class  BeamEntity extends LOTMProjectile {
-    public double endPosX, endPosY, endPosZ;
-    public double collidePosX, collidePosY, collidePosZ;
-    public double prevCollidePosX, prevCollidePosY, prevCollidePosZ;
-    public float renderYaw, renderPitch;
+public abstract class BeamEntity extends LOTMProjectile {
+    public double endPosX;
+    public double endPosY;
+    public double endPosZ;
+    public Vec3 endPos;
+    public double collidePosX;
+    public double collidePosY;
+    public double collidePosZ;
+    public Vec3 collidePos;
+    public double prevCollidePosX;
+    public double prevCollidePosY;
+    public double prevCollidePosZ;
+    public Vec3 prevCollidePos;
+    public float renderYaw;
+    public float renderPitch;
 
     public boolean on = true;
 
@@ -103,9 +113,7 @@ public abstract class  BeamEntity extends LOTMProjectile {
     public void tick() {
         super.tick();
 
-        this.prevCollidePosX = this.collidePosX;
-        this.prevCollidePosY = this.collidePosY;
-        this.prevCollidePosZ = this.collidePosZ;
+        this.prevCollidePos = this.collidePos;
         this.prevYaw = this.renderYaw;
         this.prevPitch = this.renderPitch;
         this.xo = this.getX();

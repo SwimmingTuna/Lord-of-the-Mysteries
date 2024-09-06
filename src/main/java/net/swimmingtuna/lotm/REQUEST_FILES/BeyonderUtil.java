@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
@@ -206,40 +205,43 @@ public class BeyonderUtil {
         for (int i = 0; i < registeredAbilities.size(); i++) {
             String entry = registeredAbilities.getString(i);
             String[] parts = entry.split(":", 2);
-            if (parts.length == 2) {
-                if (Integer.parseInt(parts[0]) == abilityNumber) {
-                    String registryName = parts[1];
-                    Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(registryName));
-                    if (item != null) {
-                        ItemStack itemStack = new ItemStack(item);
-                        itemStack.getItem().use(player.level(), player, InteractionHand.MAIN_HAND);
-                        return;
-                    } else {
-                        player.sendSystemMessage(Component.literal("Item not found in registry for ability " + abilityNumber + " with registry name: " + registryName).withStyle(getStyle(player)));
-                    }
-                }
-            } else {
+            if (parts.length != 2) {
                 player.sendSystemMessage(Component.literal("Entry did not split into two parts: " + entry).withStyle(getStyle(player)));
+                continue;
+            }
+            if (Integer.parseInt(parts[0]) == abilityNumber) {
+                String registryName = parts[1];
+                Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(registryName));
+                if (item != null) {
+                    ItemStack itemStack = new ItemStack(item);
+                    itemStack.getItem().use(player.level(), player, InteractionHand.MAIN_HAND);
+                    return;
+                } else {
+                    player.sendSystemMessage(Component.literal("Item not found in registry for ability " + abilityNumber + " with registry name: " + registryName).withStyle(getStyle(player)));
+                }
             }
         }
         player.sendSystemMessage(Component.literal("Ability " + abilityNumber + " not found or not registered.").withStyle(getStyle(player)));
     }
-    public static Style getStyle(Player pPlayer) {
-        BeyonderHolder holderLazyOptional = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-        if (holderLazyOptional != null && holderLazyOptional.getCurrentClass() != null) {
-            return Style.EMPTY.withBold(true).withColor(holderLazyOptional.getCurrentClass().getColorFormatting());
+
+    public static Style getStyle(Player player) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder != null && holder.getCurrentClass() != null) {
+            return Style.EMPTY.withBold(true).withColor(holder.getCurrentClass().getColorFormatting());
         }
         return Style.EMPTY;
     }
+
     public static void mentalDamage(Player source, Player hurtEntity, int damage) { //can make it so that with useOn, sets shiftKeyDown to true for pPlayer
-        BeyonderHolder sourceHolder = BeyonderHolderAttacher.getHolder(source).orElse(null);
-        BeyonderHolder hurtHolder = BeyonderHolderAttacher.getHolder(hurtEntity).orElse(null);
+        BeyonderHolder sourceHolder = BeyonderHolderAttacher.getHolderUnwrap(source);
+        BeyonderHolder hurtHolder = BeyonderHolderAttacher.getHolderUnwrap(hurtEntity);
         float x = Math.min(damage, damage * (hurtHolder.getMentalStrength() / sourceHolder.getMentalStrength()));
         hurtEntity.hurt(hurtEntity.damageSources().magic(), x);
     }
+
     public static float mentalInt(Player source, Player hurtEntity, int mentalInt) {
-        BeyonderHolder sourceHolder = BeyonderHolderAttacher.getHolder(source).orElse(null);
-        BeyonderHolder hurtHolder = BeyonderHolderAttacher.getHolder(hurtEntity).orElse(null);
+        BeyonderHolder sourceHolder = BeyonderHolderAttacher.getHolderUnwrap(source);
+        BeyonderHolder hurtHolder = BeyonderHolderAttacher.getHolderUnwrap(hurtEntity);
         float x = Math.min(mentalInt, mentalInt * (hurtHolder.getMentalStrength() / sourceHolder.getMentalStrength()));
         return x;
     }

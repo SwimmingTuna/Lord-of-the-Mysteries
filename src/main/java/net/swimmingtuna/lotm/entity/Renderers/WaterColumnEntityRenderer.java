@@ -10,7 +10,6 @@ import net.swimmingtuna.lotm.entity.WaterColumnEntity;
 
 public class WaterColumnEntityRenderer extends EntityRenderer<WaterColumnEntity> {
 
-
     public WaterColumnEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
@@ -23,6 +22,7 @@ public class WaterColumnEntityRenderer extends EntityRenderer<WaterColumnEntity>
 
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
+
     @Override
     public ResourceLocation getTextureLocation(WaterColumnEntity entity) {
         return null;

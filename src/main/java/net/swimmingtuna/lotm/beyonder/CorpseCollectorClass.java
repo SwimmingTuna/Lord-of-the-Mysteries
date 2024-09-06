@@ -33,7 +33,9 @@ public class CorpseCollectorClass implements BeyonderClass {
     }
 
     @Override
-    public List<Integer> mentalStrength() {return List.of(560,380,285,220,180,140,100,80,65,40);}
+    public List<Integer> mentalStrength() {
+        return List.of(560, 380, 285, 220, 180, 140, 100, 80, 65, 40);
+    }
 
     @Override
     public List<Integer> spiritualityRegen() {

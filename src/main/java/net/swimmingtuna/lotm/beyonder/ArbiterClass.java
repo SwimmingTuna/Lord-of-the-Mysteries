@@ -33,7 +33,9 @@ public class ArbiterClass implements BeyonderClass {
     }
 
     @Override
-    public List<Integer> mentalStrength() {return List.of(480,335,230,187,163,120,88,72,47,35);}
+    public List<Integer> mentalStrength() {
+        return List.of(480, 335, 230, 187, 163, 120, 88, 72, 47, 35);
+    }
 
     @Override
     public List<Integer> spiritualityRegen() {

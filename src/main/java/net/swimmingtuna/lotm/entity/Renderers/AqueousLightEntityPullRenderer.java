@@ -18,7 +18,6 @@ public class AqueousLightEntityPullRenderer extends EntityRenderer<AqueousLightE
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/entity/aqueouslight.png");
     private static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(TEXTURE_LOCATION);
 
-
     public AqueousLightEntityPullRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
@@ -32,23 +31,28 @@ public class AqueousLightEntityPullRenderer extends EntityRenderer<AqueousLightE
         Matrix3f normal = lastPose.normal();
         VertexConsumer builder = buffers.getBuffer(RENDER_TYPE);
 
-        vertex(builder, pose, normal, packedLight, 0.0f, 0, 0, 1);
-        vertex(builder, pose, normal, packedLight, 1.0f, 0, 1, 1);
-        vertex(builder, pose, normal, packedLight, 1.0f, 1, 1, 0);
-        vertex(builder, pose, normal, packedLight, 0.0f, 1, 0, 0);
+        vertex(builder, pose, normal, packedLight, 0, 0, 0, 1);
+        vertex(builder, pose, normal, packedLight, 1, 0, 1, 1);
+        vertex(builder, pose, normal, packedLight, 1, 1, 1, 0);
+        vertex(builder, pose, normal, packedLight, 0, 1, 0, 0);
 
         poseStack.popPose();
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
     }
-    private static void vertex(VertexConsumer builder, Matrix4f pose, Matrix3f normal, int packedLight, float x, int y, int u, int v) {
-        builder.vertex(pose, x - 0.5f, (float) y - 0.25f, 0.0f)
+
+    private static void vertex(VertexConsumer builder, Matrix4f pose, Matrix3f normal, int packedLight, float x, float y, float u, float v) {
+        builder.vertex(pose, x - 0.5f, y - 0.25f, 0.0f)
                 .color(255, 255, 255, 255)
-                .uv((float) u, (float) v)
+                .uv(u, v)
                 .overlayCoords(OverlayTexture.NO_OVERLAY)
                 .uv2(packedLight)
                 .normal(normal, 0.0f, 1.0f, 0.0f)
                 .endVertex();
     }
-    @Override public ResourceLocation getTextureLocation(AqueousLightEntityPull entity) { return TEXTURE_LOCATION; }
+
+    @Override
+    public ResourceLocation getTextureLocation(AqueousLightEntityPull entity) {
+        return TEXTURE_LOCATION;
+    }
 
 }

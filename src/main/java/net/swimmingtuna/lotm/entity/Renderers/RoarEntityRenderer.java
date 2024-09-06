@@ -9,7 +9,6 @@ import net.swimmingtuna.lotm.entity.RoarEntity;
 
 public class RoarEntityRenderer extends EntityRenderer<RoarEntity> {
 
-
     public RoarEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
@@ -22,6 +21,7 @@ public class RoarEntityRenderer extends EntityRenderer<RoarEntity> {
 
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
+
     @Override
     public ResourceLocation getTextureLocation(RoarEntity entity) {
         return null;

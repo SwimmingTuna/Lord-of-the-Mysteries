@@ -35,17 +35,17 @@ public abstract class Ability1 extends Item {
             }
 
             if (!checkClass(holder)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the " + requiredClass.toString() + " pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                pPlayer.displayClientMessage(Component.literal("You are not of the " + requiredClass.toString() + " pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 return InteractionResultHolder.fail(pPlayer.getItemInHand(hand));
             }
 
             if (!checkSequence(holder)) {
-                pPlayer.displayClientMessage(Component.literal("You need to be sequence " + requiredSequence + " or higher to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                pPlayer.displayClientMessage(Component.literal("You need to be sequence " + requiredSequence + " or higher to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 return InteractionResultHolder.fail(pPlayer.getItemInHand(hand));
             }
 
             if (!checkSpirituality(holder)) {
-                pPlayer.displayClientMessage(Component.literal("You need " + requiredSpirituality + " spirituality to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                pPlayer.displayClientMessage(Component.literal("You need " + requiredSpirituality + " spirituality to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 return InteractionResultHolder.fail(pPlayer.getItemInHand(hand));
             }
 

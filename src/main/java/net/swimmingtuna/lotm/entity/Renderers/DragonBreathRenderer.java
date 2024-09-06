@@ -9,10 +9,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.entity.DragonBreathEntity;
 import net.swimmingtuna.lotm.entity.Model.DragonBreathModel;
@@ -35,56 +36,51 @@ public class DragonBreathRenderer extends EntityRenderer<DragonBreathEntity> {
 
     public DragonBreathRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
-
         this.model = new DragonBreathModel(pContext.bakeLayer(DragonBreathModel.LAYER));
     }
 
     @Override
-    public void render(DragonBreathEntity pEntity, float pEntityYaw, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight) {
-        this.clearerView = Minecraft.getInstance().player == pEntity.getOwner() &&
+    public void render(DragonBreathEntity entity, float pEntityYaw, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight) {
+        this.clearerView = Minecraft.getInstance().player == entity.getOwner() &&
                 Minecraft.getInstance().options.getCameraType() == CameraType.FIRST_PERSON;
 
-        float yaw = (pEntity.prevYaw + (pEntity.renderYaw - pEntity.prevYaw) * pPartialTick) * Mth.RAD_TO_DEG;
-        float pitch = (pEntity.prevPitch + (pEntity.renderPitch - pEntity.prevPitch) * pPartialTick) * Mth.RAD_TO_DEG;
+        float yaw = (entity.prevYaw + (entity.renderYaw - entity.prevYaw) * pPartialTick) * Mth.RAD_TO_DEG;
+        float pitch = (entity.prevPitch + (entity.renderPitch - entity.prevPitch) * pPartialTick) * Mth.RAD_TO_DEG;
 
-            Vector3f color = ParticleColors.FIRE_YELLOW;
+        Vector3f color = ParticleColors.FIRE_YELLOW;
 
-            float age = pEntity.getTime() + pPartialTick;
+        float age = entity.getTime() + pPartialTick;
 
-            pPoseStack.pushPose();
+        pPoseStack.pushPose();
 
-            pPoseStack.mulPose(Axis.YP.rotationDegrees(180.0F - yaw));
-            pPoseStack.mulPose(Axis.ZN.rotationDegrees(pitch));
+        pPoseStack.mulPose(Axis.YP.rotationDegrees(180.0F - yaw));
+        pPoseStack.mulPose(Axis.ZN.rotationDegrees(pitch));
 
-            VertexConsumer charge = pBuffer.getBuffer(LOTMRenderTypes.glow(CHARGE));
-            this.model.setupAnim(pEntity, 0.0F, 0.0F, age, 0.0F, 0.0F);
-            this.model.renderToBuffer(pPoseStack, charge, pPackedLight, OverlayTexture.NO_OVERLAY, color.x, color.y, color.z, 1.0F);
+        VertexConsumer charge = pBuffer.getBuffer(LOTMRenderTypes.glow(CHARGE));
+        this.model.setupAnim(entity, 0.0F, 0.0F, age, 0.0F, 0.0F);
+        this.model.renderToBuffer(pPoseStack, charge, pPackedLight, OverlayTexture.NO_OVERLAY, color.x, color.y, color.z, 1.0F);
 
-            pPoseStack.popPose();
+        pPoseStack.popPose();
 
 
-        if (pEntity.getTime() >= DragonBreathEntity.CHARGE) {
-            double collidePosX = pEntity.prevCollidePosX + (pEntity.collidePosX - pEntity.prevCollidePosX) * pPartialTick;
-            double collidePosY = pEntity.prevCollidePosY + (pEntity.collidePosY - pEntity.prevCollidePosY) * pPartialTick;
-            double collidePosZ = pEntity.prevCollidePosZ + (pEntity.collidePosZ - pEntity.prevCollidePosZ) * pPartialTick;
-            double posX = pEntity.xo + (pEntity.getX() - pEntity.xo) * pPartialTick;
-            double posY = pEntity.yo + (pEntity.getY() - pEntity.yo) * pPartialTick;
-            double posZ = pEntity.zo + (pEntity.getZ() - pEntity.zo) * pPartialTick;
-
-            float length = (float) Math.sqrt(Math.pow(collidePosX - posX, 2) + Math.pow(collidePosY - posY, 2) + Math.pow(collidePosZ - posZ, 2));
-            int frame = Mth.floor((pEntity.animation - 1 + pPartialTick) * 2);
+        if (entity.getTime() >= DragonBreathEntity.CHARGE) {
+            Vec3 collidePos = entity.prevCollidePos.add(entity.collidePos.subtract(entity.prevCollidePos).scale(pPartialTick));
+            Vec3 prevPos = new Vec3(entity.xo, entity.yo, entity.zo);
+            Vec3 pos = prevPos.add(entity.position().subtract(prevPos).scale(pPartialTick));
+            float length = (float) collidePos.distanceTo(pos);
+            int frame = Mth.floor((entity.animation - 1 + pPartialTick) * 2);
 
             if (frame < 0) {
-                frame = pEntity.getFrames() * 2;
+                frame = entity.getFrames() * 2;
             }
 
             pPoseStack.pushPose();
-            pPoseStack.scale(pEntity.getScale(), pEntity.getScale(), pEntity.getScale());
-            pPoseStack.translate(0.0F, (pEntity.getBbHeight() / 2.0F) - 0.5F, 0.0F);
+            pPoseStack.scale(entity.getScale(), entity.getScale(), entity.getScale());
+            pPoseStack.translate(0.0F, (entity.getBbHeight() / 2.0F) - 0.5F, 0.0F);
 
             VertexConsumer beam = pBuffer.getBuffer(LOTMRenderTypes.glow(TEXTURE));
 
-            float brightness = 1.0F - ((float) pEntity.getTime() / (pEntity.getCharge() + pEntity.getDuration() + pEntity.getFrames()));
+            float brightness = 1.0F - ((float) entity.getTime() / (entity.getCharge() + entity.getDuration() + entity.getFrames()));
 
             this.renderBeam(length, yaw, pitch, frame, pPoseStack, beam,
                     brightness, pPackedLight);
@@ -157,7 +153,7 @@ public class DragonBreathRenderer extends EntityRenderer<DragonBreathEntity> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull DragonBreathEntity pEntity) {
-        return TextureAtlas.LOCATION_BLOCKS;
+        return InventoryMenu.BLOCK_ATLAS;
     }
 
     @Override

@@ -12,10 +12,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -28,7 +31,10 @@ import net.swimmingtuna.lotm.init.ItemInit;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MatterAccelerationSelf extends Item {
@@ -39,87 +45,100 @@ public class MatterAccelerationSelf extends Item {
 
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            int matterAccelerationDistance = pPlayer.getPersistentData().getInt("tyrantSelfAcceleration");
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            int matterAccelerationDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            if (holder == null) {
+                return InteractionResultHolder.fail(player.getItemInHand(hand));
+            }
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                return InteractionResultHolder.fail(player.getItemInHand(hand));
             }
             if (holder.getSpirituality() < matterAccelerationDistance * 10) {
-                pPlayer.displayClientMessage(Component.literal("You need " + matterAccelerationDistance * 10 + "spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You need " + matterAccelerationDistance * 10 + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                return InteractionResultHolder.fail(player.getItemInHand(hand));
             }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.useSpirituality(matterAccelerationDistance * 10) && sailorSequence.getCurrentSequence() == 0) {
-                    useItem(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 300);
+            if (holder.useSpirituality(matterAccelerationDistance * 10) && holder.getCurrentSequence() == 0) {
+                useItem(player);
+                if (!player.getAbilities().instabuild) {
+                    player.getCooldowns().addCooldown(this, 300);
                 }
-            });
+            }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
 
-    public static void useItem(Player pPlayer) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public static void useItem(Player player) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder == null) return;
         int sequence = holder.getCurrentSequence();
-        Level level = pPlayer.level();
-        int blinkDistance = pPlayer.getPersistentData().getInt("tyrantSelfAcceleration");
+        Level level = player.level();
+        int blinkDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
         if (holder.getSpirituality() < blinkDistance * 10) {
-            pPlayer.displayClientMessage(Component.literal("You need " + (blinkDistance * 10) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+            player.displayClientMessage(Component.literal("You need " + blinkDistance * 10 + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            return;
         }
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && !pPlayer.level().isClientSide() && sailorSequence.getCurrentSequence() == 0 && sailorSequence.useSpirituality(blinkDistance * 2)) {
+        if (!holder.useSpirituality(blinkDistance * 2)) {
+            return;
+        }
+        Vec3 lookVector = player.getLookAngle();
+        BlockPos startPos = player.blockPosition();
+        BlockPos endPos = new BlockPos(
+                (int) (player.getX() + blinkDistance * lookVector.x()),
+                (int) (player.getY() + 1 + blinkDistance * lookVector.y()),
+                (int) (player.getZ() + blinkDistance * lookVector.z())
+        );
 
-                Vec3 lookVector = pPlayer.getLookAngle();
-                BlockPos startPos = pPlayer.blockPosition();
-                BlockPos endPos = new BlockPos(
-                        (int) (pPlayer.getX() + blinkDistance * lookVector.x()),
-                        (int) (pPlayer.getY() + 1 + blinkDistance * lookVector.y()),
-                        (int) (pPlayer.getZ() + blinkDistance * lookVector.z())
-                );
+        BlockPos blockPos = new BlockPos(endPos.getX(), endPos.getY(), endPos.getZ());
+        double distance = startPos.getCenter().distanceTo(blockPos.getCenter());
+        Vec3 direction = new Vec3(
+                endPos.getX() - startPos.getX(),
+                endPos.getY() - startPos.getY(),
+                endPos.getZ() - startPos.getZ()
+        ).normalize();
 
-                BlockPos blockPos = new BlockPos(endPos.getX(), endPos.getY(), endPos.getZ());
-                double distance = startPos.distSqr(blockPos);
-                Vec3 direction = new Vec3(
-                        endPos.getX() - startPos.getX(),
-                        endPos.getY() - startPos.getY(),
-                        endPos.getZ() - startPos.getZ()
-                ).normalize();
+        Set<BlockPos> visitedPositions = new HashSet<>();
 
-                for (double i = 0; i <= distance; i += 0.5) { // Adjust step size for smoother or coarser destruction
-                    BlockPos pos = new BlockPos(
-                            (int) (startPos.getX() + i * direction.x),
-                            (int) (startPos.getY() + i * direction.y),
-                            (int) (startPos.getZ() + i * direction.z)
-                    );
+        for (double i = 0; i <= distance; i += 0.5) { // Adjust step size for smoother or coarser destruction
+            BlockPos pos = new BlockPos(
+                    (int) (startPos.getX() + i * direction.x),
+                    (int) (startPos.getY() + i * direction.y),
+                    (int) (startPos.getZ() + i * direction.z)
+            );
 
-                    // Destroy blocks in a 5-block radius around the current position
-                    for (int x = -5; x <= 5; x++) {
-                        for (int y = -5; y <= 5; y++) {
-                            for (int z = -5; z <= 5; z++) {
-                                BlockPos nearbyPos = pos.offset(x, y, z);
-                                BlockState blockState = level.getBlockState(nearbyPos);
-                                if (!blockState.is(Blocks.BEDROCK)) {
-                                    level.setBlock(nearbyPos, Blocks.AIR.defaultBlockState(), 3);
-                                }
-                            }
-                        }
-                    }
+            // Destroy blocks in a 5-block radius around the current position
+            List<BlockPos> blockPositions = new ArrayList<>();
+            for (BlockPos offsetedPos : BlockPos.betweenClosed(pos.offset(-5, -5, -5), pos.offset(5, 5, 5))) {
+                if (visitedPositions.contains(offsetedPos)) continue;
+                visitedPositions.add(offsetedPos);
+                BlockState blockState = level.getBlockState(offsetedPos);
+                blockPositions.add(offsetedPos);
 
-                    AABB boundingBox = new AABB(pos).inflate(1); // Adjust size as needed
-                    List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, boundingBox);
-                    for (LivingEntity entity : entities) {
-                        if (entity != pPlayer) {
-                            entity.hurt(level.damageSources().magic(), 10.0f); // Adjust damage amount as needed
-                        }
-                    }
+                if (!blockState.isAir() && blockState.getBlock().defaultDestroyTime() != -1.0F) {
+                    level.setBlock(offsetedPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
                 }
-                // Teleport the player
-                pPlayer.teleportTo(endPos.getX(), endPos.getY(), endPos.getZ());
             }
-        });
+
+            for (BlockPos blockPosToUpdate : blockPositions) {
+                Block block = level.getBlockState(blockPosToUpdate).getBlock();
+                level.blockUpdated(blockPosToUpdate, block);
+            }
+
+            AABB boundingBox = new AABB(pos).inflate(1); // Adjust size as needed
+            List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, boundingBox);
+            for (LivingEntity entity : entities) {
+                if (entity != player) {
+                    entity.hurt(level.damageSources().magic(), 10.0f); // Adjust damage amount as needed
+                }
+            }
+        }
+        // Teleport the player
+        BlockHitResult blockHitResult = level.clip(new ClipContext(player.getEyePosition(), new Vec3(endPos.getX() + 0.5, endPos.getY(), endPos.getZ() + 0.5), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+        BlockPos teleportLocation = blockHitResult.getBlockPos().relative(blockHitResult.getDirection());
+        player.teleportTo(teleportLocation.getX() + 0.5, teleportLocation.getY(), teleportLocation.getZ() + 0.5);
     }
 
 
@@ -128,7 +147,7 @@ public class MatterAccelerationSelf extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, moves you at an inhuman speed, instantly getting you to your destination and leaving behind destruction in your path\n" +
                     "Spirituality Used: 2500\n" +
-                    "Cooldown: 15 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                    "Cooldown: 15 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

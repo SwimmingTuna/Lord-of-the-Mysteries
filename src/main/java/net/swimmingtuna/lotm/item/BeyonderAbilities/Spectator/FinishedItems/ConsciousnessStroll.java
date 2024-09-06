@@ -36,10 +36,10 @@ public class ConsciousnessStroll extends Item {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         if (pPlayer.getMainHandItem().getItem() instanceof ConsciousnessStroll) {
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 300) {
-                pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
         }
         if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide()) {

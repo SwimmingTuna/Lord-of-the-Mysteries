@@ -31,22 +31,10 @@ public class DragonBreathModel extends EntityModel<DragonBreathEntity> {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition part = mesh.getRoot();
 
-        part.addOrReplaceChild("body1", CubeListBuilder.create()
-                        .texOffs(0, 0)
-                        .addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8, CubeDeformation.NONE),
-                PartPose.offset(0.0F, 2.0F, 0.0F));
-        part.addOrReplaceChild("body2", CubeListBuilder.create()
-                        .texOffs(0, 0)
-                        .addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8, CubeDeformation.NONE),
-                PartPose.offset(0.0F, 2.0F, 0.0F));
-        part.addOrReplaceChild("body3", CubeListBuilder.create()
-                        .texOffs(0, 0)
-                        .addBox(-4.0F, -4.0F, -4.0F, 8,8, 8, CubeDeformation.NONE),
-                PartPose.offset(0.0F, 2.0F, 0.0F));
-        part.addOrReplaceChild("body4", CubeListBuilder.create()
-                        .texOffs(0, 0)
-                        .addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8, CubeDeformation.NONE),
-                PartPose.offset(0.0F, 2.0F, 0.0F));
+        part.addOrReplaceChild("body1", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8, CubeDeformation.NONE), PartPose.offset(0.0F, 2.0F, 0.0F));
+        part.addOrReplaceChild("body2", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8, CubeDeformation.NONE), PartPose.offset(0.0F, 2.0F, 0.0F));
+        part.addOrReplaceChild("body3", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8, CubeDeformation.NONE), PartPose.offset(0.0F, 2.0F, 0.0F));
+        part.addOrReplaceChild("body4", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8, CubeDeformation.NONE), PartPose.offset(0.0F, 2.0F, 0.0F));
 
         return LayerDefinition.create(mesh, 16, 16);
     }

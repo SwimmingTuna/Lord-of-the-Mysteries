@@ -3,14 +3,13 @@ package net.swimmingtuna.lotm.init;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.commands.AbilitiesCommand;
 import net.swimmingtuna.lotm.REQUEST_FILES.AbilityRegisterCommand;
+import net.swimmingtuna.lotm.commands.AbilitiesCommand;
 import net.swimmingtuna.lotm.commands.BeyonderClassArgument;
 import net.swimmingtuna.lotm.commands.BeyonderCommand;
 

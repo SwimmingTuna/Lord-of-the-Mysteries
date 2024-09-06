@@ -33,7 +33,9 @@ public class SeerClass implements BeyonderClass {
     }
 
     @Override
-    public List<Integer> mentalStrength() {return List.of(580,375,280,215,170,135,90,75,58,38);}
+    public List<Integer> mentalStrength() {
+        return List.of(580, 375, 280, 215, 170, 135, 90, 75, 58, 38);
+    }
 
     @Override
     public List<Integer> spiritualityRegen() {

@@ -33,7 +33,9 @@ public class PrisonerClass implements BeyonderClass {
     }
 
     @Override
-    public List<Integer> mentalStrength() {return List.of(400,300,220,170,150,110,80,70,50,30);}
+    public List<Integer> mentalStrength() {
+        return List.of(400, 300, 220, 170, 150, 110, 80, 70, 50, 30);
+    }
 
     @Override
     public List<Integer> spiritualityRegen() {

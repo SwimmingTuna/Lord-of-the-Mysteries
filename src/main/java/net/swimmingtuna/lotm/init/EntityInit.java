@@ -74,5 +74,7 @@ public class EntityInit {
             ENTITIES.register("line_entity", () -> EntityType.Builder.<LightningEntity>of(LightningEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build("line_entity"));
 
-    public static void register(IEventBus bus) {ENTITIES.register(bus);}
+    public static void register(IEventBus bus) {
+        ENTITIES.register(bus);
+    }
 }

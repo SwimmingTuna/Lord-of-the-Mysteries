@@ -6,10 +6,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.swimmingtuna.lotm.entity.MCLightningBoltEntity;
@@ -26,20 +25,20 @@ public class MCLightningBoltEntityRenderer extends EntityRenderer<MCLightningBol
         float[] afloat1 = new float[8];
         float f = 0.0F;
         float f1 = 0.0F;
-        RandomSource randomsource = RandomSource.create(pEntity.seed);
+        RandomSource randomSource = RandomSource.create(pEntity.seed);
 
         for(int i = 7; i >= 0; --i) {
             afloat[i] = f;
             afloat1[i] = f1;
-            f += (float)(randomsource.nextInt(11) - 5);
-            f1 += (float)(randomsource.nextInt(11) - 5);
+            f += (float)(randomSource.nextInt(11) - 5);
+            f1 += (float)(randomSource.nextInt(11) - 5);
         }
 
         VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.lightning());
         Matrix4f matrix4f = pMatrixStack.last().pose();
 
         for(int j = 0; j < 4; ++j) {
-            RandomSource randomsource1 = RandomSource.create(pEntity.seed);
+            RandomSource randomSource1 = RandomSource.create(pEntity.seed);
 
             for(int k = 0; k < 3; ++k) {
                 int l = 7;
@@ -59,11 +58,11 @@ public class MCLightningBoltEntityRenderer extends EntityRenderer<MCLightningBol
                     float f4 = f2;
                     float f5 = f3;
                     if (k == 0) {
-                        f2 += (float)(randomsource1.nextInt(11) - 5);
-                        f3 += (float)(randomsource1.nextInt(11) - 5);
+                        f2 += (float)(randomSource1.nextInt(11) - 5);
+                        f3 += (float)(randomSource1.nextInt(11) - 5);
                     } else {
-                        f2 += (float)(randomsource1.nextInt(31) - 15);
-                        f3 += (float)(randomsource1.nextInt(31) - 15);
+                        f2 += (float)(randomSource1.nextInt(31) - 15);
+                        f3 += (float)(randomSource1.nextInt(31) - 15);
                     }
 
                     float f6 = 0.5F;
@@ -101,6 +100,6 @@ public class MCLightningBoltEntityRenderer extends EntityRenderer<MCLightningBol
      * Returns the location of an entity's texture.
      */
     public ResourceLocation getTextureLocation(MCLightningBoltEntity pEntity) {
-        return TextureAtlas.LOCATION_BLOCKS;
+        return InventoryMenu.BLOCK_ATLAS;
     }
 }

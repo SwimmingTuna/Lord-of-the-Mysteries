@@ -34,14 +34,16 @@ public class WindBladeRenderer extends EntityRenderer<WindBladeEntity> {
         poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw));
         poseStack.mulPose(Axis.ZP.rotationDegrees(interpolatedPitch));
 
-        VertexConsumer ivertexbuilder = buffers.getBuffer(this.model.renderType(this.getTextureLocation(entity)));
-        this.model.renderToBuffer(poseStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        VertexConsumer vertexConsumer = buffers.getBuffer(this.model.renderType(this.getTextureLocation(entity)));
+        this.model.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 
         poseStack.popPose();
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
     }
 
     @Override
-    public  ResourceLocation getTextureLocation( WindBladeEntity entity) { return WIND_BLADE_LOCATION; }
+    public ResourceLocation getTextureLocation(WindBladeEntity entity) {
+        return WIND_BLADE_LOCATION;
+    }
 
 }

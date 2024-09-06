@@ -33,7 +33,7 @@ public class Discern extends Item {
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < (int) (1000 / dreamIntoReality.getValue())) {
                 pPlayer.displayClientMessage(Component.literal("You need " + ((int) (1000 / dreamIntoReality.getValue()) + " spirituality in order to use this")).withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD), true);

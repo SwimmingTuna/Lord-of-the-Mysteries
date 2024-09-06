@@ -5,11 +5,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.swimmingtuna.lotm.entity.RoarEntity;
 import net.swimmingtuna.lotm.entity.StormSealEntity;
 
 public class StormSealEntityRenderer extends EntityRenderer<StormSealEntity> {
-
 
     public StormSealEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -22,6 +20,7 @@ public class StormSealEntityRenderer extends EntityRenderer<StormSealEntity> {
 
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
+
     @Override
     public ResourceLocation getTextureLocation(StormSealEntity entity) {
         return null;

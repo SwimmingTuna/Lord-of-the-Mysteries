@@ -16,8 +16,11 @@ public class AttributeAdder {
     public static void modifyAttributes(EntityAttributeModificationEvent event) {
 
     }
+
     @SafeVarargs
-    private static void addToPlayer(EntityAttributeModificationEvent event, Supplier<Attribute>...attributes) {
-        Arrays.stream(attributes).map(Supplier::get).forEach(attribute -> event.add(EntityType.PLAYER, attribute));
+    private static void addToPlayer(EntityAttributeModificationEvent event, Supplier<Attribute>... attributes) {
+        Arrays.stream(attributes)
+                .map(Supplier::get)
+                .forEach(attribute -> event.add(EntityType.PLAYER, attribute));
     }
 }

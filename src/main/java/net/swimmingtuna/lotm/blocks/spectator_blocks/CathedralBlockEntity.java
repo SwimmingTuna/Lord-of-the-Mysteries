@@ -8,9 +8,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryObject;
-import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
@@ -20,9 +18,7 @@ import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.TickableBlockEntity;
 
 import java.util.List;
-import java.util.Map;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CathedralBlockEntity extends BlockEntity implements TickableBlockEntity {
     private int ticks;
 
@@ -44,13 +40,11 @@ public class CathedralBlockEntity extends BlockEntity implements TickableBlockEn
                 double distanceZ = pPlayer.getZ() - worldPosition.getZ();
                 AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-                BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                    if (holder.getCurrentSequence() == 0 && holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                        if (Math.abs(distanceX) <= 80 && Math.abs(distanceY) <= 100 && Math.abs(distanceZ) <= 110) {
-                            compoundTag.putInt("mindscapeAbilities", 25);
-                        }
+                if (holder != null && holder.getCurrentSequence() == 0 && holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+                    if (Math.abs(distanceX) <= 80 && Math.abs(distanceY) <= 100 && Math.abs(distanceZ) <= 110) {
+                        compoundTag.putInt("mindscapeAbilities", 25);
                     }
-                });
+                };
             }
         }
         if (ticks >= 550 && ticks <= 740 && ticks % 10 == 0) {

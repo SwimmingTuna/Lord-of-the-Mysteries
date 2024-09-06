@@ -35,10 +35,10 @@ public class WindManipulationSense extends Item {
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < 100) {
-                pPlayer.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                pPlayer.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
 
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
@@ -58,12 +58,12 @@ public class WindManipulationSense extends Item {
            boolean x = tag.getBoolean("windManipulationSense");
            if (x) {
                tag.putBoolean("windManipulationSense", false);
-               pPlayer.displayClientMessage(Component.literal("Wind Sense Turned Off").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+               pPlayer.displayClientMessage(Component.literal("Wind Sense Turned Off").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
 
            }
            if (!x) {
                tag.putBoolean("windManipulationSense", true);
-               pPlayer.displayClientMessage(Component.literal("Wind Sense Turned On").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+               pPlayer.displayClientMessage(Component.literal("Wind Sense Turned On").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
 
            }
         }
@@ -74,7 +74,7 @@ public class WindManipulationSense extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, controls the wind around you to extend your senses, alerting you of players around youn and where they are\n" +
                     "Spirituality Used: 4 every second\n" +
-                    "Cooldown: 0.5 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                    "Cooldown: 0.5 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

@@ -33,7 +33,9 @@ public class SecretsSupplicantClass implements BeyonderClass {
     }
 
     @Override
-    public List<Integer> mentalStrength() {return List.of(500,360,235,188,161,115,88,72,46,37);}
+    public List<Integer> mentalStrength() {
+        return List.of(500, 360, 235, 188, 161, 115, 88, 72, 46, 37);
+    }
 
     @Override
     public List<Integer> spiritualityRegen() {

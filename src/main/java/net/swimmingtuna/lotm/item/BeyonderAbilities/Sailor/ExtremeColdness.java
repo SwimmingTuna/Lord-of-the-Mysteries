@@ -33,10 +33,10 @@ public class ExtremeColdness extends Item {
         if (!pPlayer.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < 1250) {
-                pPlayer.displayClientMessage(Component.literal("You need 1250 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
+                pPlayer.displayClientMessage(Component.literal("You need 1250 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
 
         BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
@@ -60,7 +60,7 @@ public class ExtremeColdness extends Item {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, lets out an area of below freezing temperatures that freezes everything in it's range\n" +
                     "Spirituality Used: 1250\n" +
-                    "Cooldown: 1 minute").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                    "Cooldown: 1 minute").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

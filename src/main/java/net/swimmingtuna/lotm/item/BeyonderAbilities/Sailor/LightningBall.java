@@ -10,12 +10,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.common.Mod;
-import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.LightningBallEntity;
-import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import org.jetbrains.annotations.NotNull;
@@ -25,34 +22,36 @@ import virtuoel.pehkui.api.ScaleTypes;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class LightningBall extends Item implements ReachChangeUUIDs {
+public class LightningBall extends Item {
 
     public LightningBall(Properties pProperties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
         super(pProperties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-
-            // If no block or entity is targeted, proceed with the original functionality
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-            if (holder.getSpirituality() < 800) {
-                pPlayer.displayClientMessage(Component.literal("You need 800 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
-            }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 2 && sailorSequence.useSpirituality(800)) {
-                    useItem(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 400);
-                }
-            });
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (player.level().isClientSide()) {
+            return super.use(level, player, hand);
         }
-        return super.use(level, pPlayer, hand);
+
+        // If no block or entity is targeted, proceed with the original functionality
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder == null) return InteractionResultHolder.pass(player.getItemInHand(hand));
+        if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
+            player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+            return InteractionResultHolder.pass(player.getItemInHand(hand));
+        }
+        if (!holder.useSpirituality(800)) {
+            player.displayClientMessage(Component.literal("You need 800 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+            return InteractionResultHolder.pass(player.getItemInHand(hand));
+        }
+        if (holder.getCurrentSequence() <= 2) {
+            useItem(player);
+            if (!player.getAbilities().instabuild) {
+                player.getCooldowns().addCooldown(this, 400);
+            }
+        }
+        return super.use(level, player, hand);
     }
 
     @Override
@@ -60,7 +59,7 @@ public class LightningBall extends Item implements ReachChangeUUIDs {
         if (!Screen.hasShiftDown()) {
             componentList.add(Component.literal("Upon use, summons a lightning ball that launches in the direction the player looks after a bit of time\n" +
                     "Spirituality Used: 800\n" +
-                    "Cooldown: 20 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
+                    "Cooldown: 20 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }

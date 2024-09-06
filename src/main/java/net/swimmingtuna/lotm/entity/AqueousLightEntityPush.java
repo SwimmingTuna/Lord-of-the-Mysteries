@@ -39,6 +39,7 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
     /**
      * Return the motion factor for this projectile. The factor is multiplied by the original motion.
      */
+    @Override
     protected float getInertia() {
         return this.isDangerous() ? 0.73F : super.getInertia();
     }
@@ -46,6 +47,7 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
     /**
      * Returns {@code true} if the entity is on fire. Used by render to add the fire effect on rendering.
      */
+    @Override
     public boolean isOnFire() {
         return false;
     }
@@ -55,36 +57,41 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
         return ParticleInit.NULL_PARTICLE.get();
     }
 
+    @Override
     protected void onHitEntity(EntityHitResult pResult) {
-        if (!this.level().isClientSide()) {
-            if (pResult.getEntity() instanceof LivingEntity entity) {
-                LivingEntity owner = (LivingEntity) this.getOwner();
-                double x = entity.getX() - owner.getX();
-                double y = entity.getY() - owner.getY();
-                double z = entity.getZ() - owner.getZ();
-                double magnitude = Math.sqrt(x * x + y * y + z * z);
-                entity.setDeltaMovement(x / magnitude * 4, y / magnitude * 4, z / magnitude * 4);
-                CompoundTag ownerTag = owner.getPersistentData();
-                boolean sailorLightning = ownerTag.getBoolean("SailorLightning");
-                if (owner instanceof Player pPlayer) {
-                    BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                        if (!entity.level().isClientSide() && !owner.level().isClientSide()) {
-                            int damage = 15 - (tyrantSequence.getCurrentSequence() * 2);
-                        entity.hurt(damageSources().fall(), damage);
-                        if (tyrantSequence.getCurrentSequence() <= 7) {
-                            double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5)); // Decrease chance by 12.5% for each level below 9
-                            if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                lightningBolt.moveTo(entity.getX(), entity.getY(), entity.getZ());
-                                entity.level().addFreshEntity(lightningBolt);
-                            }
-                            }
-                        }
-                    });
-                }
-                this.discard();
-            }
+        if (this.level().isClientSide() || !(pResult.getEntity() instanceof LivingEntity entity)) {
+            return;
         }
+        LivingEntity owner = (LivingEntity) this.getOwner();
+        double x = entity.getX() - owner.getX();
+        double y = entity.getY() - owner.getY();
+        double z = entity.getZ() - owner.getZ();
+        double magnitude = Math.sqrt(x * x + y * y + z * z);
+        entity.setDeltaMovement(x / magnitude * 4, y / magnitude * 4, z / magnitude * 4);
+        CompoundTag ownerTag = owner.getPersistentData();
+        boolean sailorLightning = ownerTag.getBoolean("SailorLightning");
+        if (!(owner instanceof Player pPlayer)) {
+            this.discard();
+            return;
+        }
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        if (entity.level().isClientSide() || owner.level().isClientSide()) {
+            this.discard();
+            return;
+        }
+        int damage = 15 - (holder.getCurrentSequence() * 2);
+        entity.hurt(damageSources().fall(), damage);
+        if (holder.getCurrentSequence() > 7) {
+            this.discard();
+            return;
+        }
+        double chanceOfDamage = (100.0 - (holder.getCurrentSequence() * 12.5)); // Decrease chance by 12.5% for each level below 9
+        if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
+            LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
+            lightningBolt.moveTo(entity.getX(), entity.getY(), entity.getZ());
+            entity.level().addFreshEntity(lightningBolt);
+        }
+        this.discard();
     }
 
     @Override
@@ -96,11 +103,12 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
         }
     }
 
+    @Override
     public boolean isPickable() {
         return false;
     }
 
-
+    @Override
     protected void defineSynchedData() {
         this.entityData.define(DATA_DANGEROUS, false);
     }
@@ -109,7 +117,7 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
         return this.entityData.get(DATA_DANGEROUS);
     }
 
-
+    @Override
     protected boolean shouldBurn() {
         return false;
     }

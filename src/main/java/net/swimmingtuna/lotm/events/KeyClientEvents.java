@@ -15,13 +15,15 @@ public class KeyClientEvents {
         public static void onKeyRegister(RegisterKeyMappingsEvent event) {
             event.register(KeyBinding.ABILITIES_KEY);
         }
+
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
-           if (KeyBinding.ABILITIES_KEY.consumeClick()) {
+            if (KeyBinding.ABILITIES_KEY.consumeClick()) {
 
-           }
+            }
         }
     }
+
     @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientModBusEvents {
         @SubscribeEvent

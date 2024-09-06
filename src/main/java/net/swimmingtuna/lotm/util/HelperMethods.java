@@ -4,9 +4,7 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
 import org.joml.Vector3f;
 
-import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 
 public class HelperMethods {
     public static final RandomSource RANDOM = RandomSource.createThreadSafe();

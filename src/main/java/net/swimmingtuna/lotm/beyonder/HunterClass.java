@@ -33,7 +33,9 @@ public class HunterClass implements BeyonderClass {
     }
 
     @Override
-    public List<Integer> mentalStrength() {return List.of(450,320,210,175,150,110,80,70,50,33);}
+    public List<Integer> mentalStrength() {
+        return List.of(450, 320, 210, 175, 150, 110, 80, 70, 50, 33);
+    }
 
     @Override
     public List<Integer> spiritualityRegen() {

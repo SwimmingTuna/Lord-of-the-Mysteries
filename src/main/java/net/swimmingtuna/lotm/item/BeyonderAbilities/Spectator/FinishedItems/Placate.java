@@ -30,33 +30,35 @@ public class Placate extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 75) {
-                pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-            }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder != null && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.getCurrentSequence() > 4 && spectatorSequence.useSpirituality(75)) {
-                    AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                    halfHarmfulEffects(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 120 / (int) dreamIntoReality.getValue());
-                    }
-                }
-                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(200)) {
-                    AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                    removeHarmfulEffects(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 240 / (int) dreamIntoReality.getValue());
-                    }
-                }
-            });
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (player.level().isClientSide()) {
+            return super.use(level, player, hand);
         }
-        return super.use(level, pPlayer, hand);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder == null) return InteractionResultHolder.fail(player.getItemInHand(hand));
+        if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            return InteractionResultHolder.fail(player.getItemInHand(hand));
+        }
+        if (holder.getSpirituality() < 75) {
+            player.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            return InteractionResultHolder.fail(player.getItemInHand(hand));
+        }
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 7 && holder.getCurrentSequence() > 4 && holder.useSpirituality(75)) {
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            halfHarmfulEffects(player);
+            if (!player.getAbilities().instabuild) {
+                player.getCooldowns().addCooldown(this, 120 / (int) dreamIntoReality.getValue());
+            }
+        }
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 4 && holder.useSpirituality(200)) {
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            removeHarmfulEffects(player);
+            if (!player.getAbilities().instabuild) {
+                player.getCooldowns().addCooldown(this, 240 / (int) dreamIntoReality.getValue());
+            }
+        }
+        return super.use(level, player, hand);
     }
 
     public static void removeHarmfulEffects(LivingEntity entity) {
@@ -70,7 +72,6 @@ public class Placate extends Item {
         for (MobEffect effect : effectsToRemove) {
             entity.removeEffect(effect);
         }
-        System.out.println("removed");
     }
 
     public static void halfHarmfulEffects(LivingEntity entity) {
@@ -82,7 +83,6 @@ public class Placate extends Item {
                 effectsToModify.add(effect);
             }
         }
-        System.out.println("halved");
         // Modify duration of each collected effect
         for (MobEffectInstance effect : effectsToModify) {
             MobEffect type = effect.getEffect();
@@ -98,10 +98,11 @@ public class Placate extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, reduces or removes the targeted living entity's harmful potion effects\n" +
+            componentList.add(Component.literal(
+                    "Upon use, reduces or removes the targeted living entity's harmful potion effects\n" +
                     "Spirituality Used: 125\n" +
                     "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
-            }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
         }
+        super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
+}
