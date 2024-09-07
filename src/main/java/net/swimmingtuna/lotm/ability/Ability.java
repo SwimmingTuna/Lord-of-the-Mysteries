@@ -9,9 +9,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 
 public abstract class Ability extends Item{
     private final String requiredClass;

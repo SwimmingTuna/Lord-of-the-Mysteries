@@ -8,8 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.swimmingtuna.lotm.entity.MCLightningBoltEntity;
-import net.swimmingtuna.lotm.entity.StoneEntity;
+import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 import net.swimmingtuna.lotm.entity.StormSealEntity;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.SoundInit;
@@ -21,16 +20,17 @@ public class TestItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        useAbilities2(pPlayer);
+        useAbilities(pPlayer);
         return super.use(level, pPlayer, hand);
     }
     public static void useAbilities(Player pPlayer) {
         if (!pPlayer.level().isClientSide()) {
-            StormSealEntity stormSealEntity = new StormSealEntity(EntityInit.STORM_SEAL_ENTITY.get(), pPlayer.level());
-            Vec3 lookVec = pPlayer.getLookAngle().normalize().scale(3.0f);
-            stormSealEntity.teleportTo(pPlayer.getX(),pPlayer.getY(),pPlayer.getZ());
-            stormSealEntity.setDeltaMovement(lookVec.x,lookVec.y,lookVec.z);
-            pPlayer.level().addFreshEntity(stormSealEntity);
+            PlayerMobEntity playerMobEntity = new PlayerMobEntity(EntityInit.PLAYER_MOB_ENTITY.get(), pPlayer.level());
+            playerMobEntity.setUsername("Darkere");
+            playerMobEntity.setPathway("spectator");
+            playerMobEntity.setSequence(0);
+            playerMobEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
+            pPlayer.level().addFreshEntity(playerMobEntity);
         }
     }
     public static void useAbilities2(Player pPlayer) {

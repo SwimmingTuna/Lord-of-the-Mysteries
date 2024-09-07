@@ -1,25 +1,35 @@
 package net.swimmingtuna.lotm.events;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -33,18 +43,19 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.client.Configs;
 import net.swimmingtuna.lotm.entity.*;
+import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 import net.swimmingtuna.lotm.events.custom_events.ModEventFactory;
 import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
 import net.swimmingtuna.lotm.init.EntityInit;
@@ -54,7 +65,6 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.Drea
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionBarrier;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
-import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
@@ -1963,6 +1973,76 @@ public class ModEvents implements ReachChangeUUIDs {
                 particleAttributeInstance8.setBaseValue(0.0f);
                 particleAttributeInstance9.setBaseValue(0.0f);
 
+            }
+            if (entity instanceof Player && entity.getCommandSenderWorld().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+                DamageSource source = event.getSource();
+                Entity trueSource = source.getEntity();
+                if (trueSource instanceof Player player) {
+                    ItemStack stack = player.getUseItem();
+                    int looting = stack.getEnchantmentLevel(Enchantments.MOB_LOOTING);
+                    ItemStack drop = getDrop(entity, source, looting);
+                    if (!drop.isEmpty()) {
+                        player.drop(drop, true);
+                    }
+                }
+            }
+        }
+    }
+
+    private static ItemStack getDrop(LivingEntity entity, DamageSource source, int looting) {
+        if (entity.level().isClientSide() || entity.getHealth() > 0)
+            return ItemStack.EMPTY;
+        if (entity.isBaby())
+            return ItemStack.EMPTY;
+        double baseChance = entity instanceof PlayerMobEntity ? Configs.COMMON.mobHeadDropChance.get(): Configs.COMMON.playerHeadDropChance.get();
+        if (baseChance <= 0)
+            return ItemStack.EMPTY;
+
+        if (poweredCreeper(source) || randomDrop(entity.level().getRandom(), baseChance, looting)) {
+            ItemStack stack = new ItemStack(Items.PLAYER_HEAD);
+            GameProfile profile = entity instanceof PlayerMobEntity ?
+                    ((PlayerMobEntity) entity).getProfile():
+                    ((Player) entity).getGameProfile();
+            if (entity instanceof PlayerMobEntity playerMob) {
+                String skinName = playerMob.getUsername().getSkinName();
+                Object displayName = playerMob.getUsername().getDisplayName();
+                Component customName = playerMob.getCustomName();
+                if (customName != null)
+                    displayName = customName;
+
+                if (!skinName.equals(displayName)) {
+                    stack.setHoverName(Component.translatable("block.minecraft.player_head.named", displayName));
+                }
+            }
+            if (profile != null)
+                stack.getOrCreateTag().put("SkullOwner", NbtUtils.writeGameProfile(new CompoundTag(), profile));
+            return stack;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    private static boolean poweredCreeper(DamageSource source) {
+        if (source.is(DamageTypeTags.IS_EXPLOSION)) {
+            Entity entity = source.getEntity();
+            if (entity instanceof Creeper creeper)
+                return creeper.isPowered();
+        }
+        return false;
+    }
+
+    private static boolean randomDrop(RandomSource rand, double baseChance, int looting) {
+        return rand.nextDouble() <= Math.max(0, baseChance * Math.max(looting + 1, 1));
+    }
+    @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
+    public class SpawnHandler {
+
+        @SubscribeEvent
+        public static void onCheckSpawn(MobSpawnEvent.FinalizeSpawn event) {
+            if (event.getEntity() instanceof PlayerMobEntity) {
+                ResourceKey<Level> worldKey = event.getLevel().getLevel().dimension();
+                if (Configs.COMMON.isDimensionBlocked(worldKey)) {
+                    event.setSpawnCancelled(true);
+                }
             }
         }
     }

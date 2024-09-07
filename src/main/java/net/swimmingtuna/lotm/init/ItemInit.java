@@ -8,7 +8,6 @@ import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionKingdom;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderResetPotion;

@@ -8,10 +8,11 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.commands.AbilitiesCommand;
 import net.swimmingtuna.lotm.REQUEST_FILES.AbilityRegisterCommand;
+import net.swimmingtuna.lotm.commands.AbilitiesCommand;
 import net.swimmingtuna.lotm.commands.BeyonderClassArgument;
 import net.swimmingtuna.lotm.commands.BeyonderCommand;
+import net.swimmingtuna.lotm.commands.PlayerMobsCommand;
 
 
 public class CommandInit {
@@ -24,5 +25,6 @@ public class CommandInit {
         BeyonderCommand.register(event.getBuildContext(),event.getDispatcher());
         AbilitiesCommand.register(event.getDispatcher());
         AbilityRegisterCommand.register(event.getDispatcher());
+        PlayerMobsCommand.register(event.getDispatcher());
     }
 }

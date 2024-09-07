@@ -7,8 +7,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderAbilityUser;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.LightningStorm;
 import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.LightningStorm;
 
 import java.util.function.Supplier;
 
