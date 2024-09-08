@@ -45,7 +45,6 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -55,7 +54,6 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.Configs;
 import net.swimmingtuna.lotm.entity.*;
-import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 import net.swimmingtuna.lotm.events.custom_events.ModEventFactory;
 import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
 import net.swimmingtuna.lotm.init.EntityInit;
@@ -97,13 +95,45 @@ public class ModEvents implements ReachChangeUUIDs {
             int sequence = holder.getCurrentSequence();
             if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
 
-                if (pPlayer.getPersistentData().getBoolean("spiritVision")) {
-                    pPlayer.sendSystemMessage(Component.literal("working " + pPlayer.getPersistentData().getBoolean("spiritVision")));
-                }
+
                 //CORRUPTION AND LUCK MANAGERS
                 if (corruption.getValue() >= 1 && pPlayer.tickCount % 200 == 0) {
                     corruption.setBaseValue(corruption.getValue() - 1);
                 }
+                Random random = new Random();
+                double lotmLuckValue = luck.getValue();
+                if (pPlayer.tickCount % 400 == 0 && random.nextInt(300) >= lotmLuckValue * -1) {
+                    MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), level);
+                    meteorEntity.teleportTo(pPlayer.getX(), pPlayer.getY() + 150, pPlayer.getZ());
+                    ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
+                    scaleData.setScale(6.0f);
+                    double dx = pPlayer.getX() - meteorEntity.getX();
+                    double dy = pPlayer.getY() - meteorEntity.getY();
+                    double dz = pPlayer.getZ() - meteorEntity.getZ();
+                    double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    dx /= distance;
+                    dy /= distance;
+                    dz /= distance;
+                    double speed = 2.0;
+                    meteorEntity.setDeltaMovement(dx * speed, dy * speed, dz * speed);
+                    pPlayer.level().addFreshEntity(meteorEntity);
+                    luck.setBaseValue((Math.min(0, lotmLuckValue + 40)));
+                }
+                if (pPlayer.tickCount % 250 == 0 && random.nextInt(100) >= lotmLuckValue * -1) {
+                    LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), level);
+                    lightningEntity.setSpeed(6.0f);
+                    lightningEntity.setNoUp(true);
+                    lightningEntity.setTargetPos(pPlayer.getOnPos().getCenter());
+                    lightningEntity.teleportTo(pPlayer.getX() + (Math.random() * 60) - 30, pPlayer.getY() + 100, pPlayer.getZ() + (Math.random() * 60) - 30);
+                    pPlayer.level().addFreshEntity(lightningEntity);
+                    luck.setBaseValue((Math.min(0, lotmLuckValue + 15)));
+                }
+                if (pPlayer.tickCount % 150 == 0 && random.nextInt(100) >= lotmLuckValue * -2) {
+                    pPlayer.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 10, 0, false, false));
+                    pPlayer.sendSystemMessage(Component.literal("How unlucky, you tripped!").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
+                }
+
+
                 if (holder.isMonsterClass()) {
                     if (sequence == 7) {
                         if (pPlayer.tickCount % 400 == 0) {
@@ -459,7 +489,7 @@ public class ModEvents implements ReachChangeUUIDs {
                             if (!tag.getBoolean("CAN_FLY")) {
                                 dreamIntoReality.setBaseValue(3);
                                 playerAbilities.setFlyingSpeed(0.15F);
-                                playerAbilities.mayfly  = true;
+                                playerAbilities.mayfly = true;
                                 pPlayer.onUpdateAbilities();
                                 if (pPlayer instanceof ServerPlayer serverPlayer) {
                                     serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
@@ -602,7 +632,6 @@ public class ModEvents implements ReachChangeUUIDs {
                         }
                     }
                     AABB checkArea = pPlayer.getBoundingBox().inflate(radius);
-                    Random random = new Random();
                     for (BlockPos blockPos : BlockPos.betweenClosed(
                             new BlockPos((int) checkArea.minX, (int) checkArea.minY, (int) checkArea.minZ),
                             new BlockPos((int) checkArea.maxX, (int) checkArea.maxY, (int) checkArea.maxZ))) {
@@ -1354,9 +1383,20 @@ public class ModEvents implements ReachChangeUUIDs {
     @SubscribeEvent
     public static void stunEffect(LivingEntityUseItemEvent event) {
         LivingEntity entity = event.getEntity();
-        if (!entity.level().isClientSide() && entity.hasEffect(ModEffects.STUN.get())) {
-            ItemStack itemStack = entity.getMainHandItem();
-            event.setCanceled(true);
+        if (!entity.level().isClientSide()) {
+            if (entity.hasEffect(ModEffects.STUN.get())) {
+                event.setCanceled(true);
+            }
+            if (entity instanceof Player pPlayer) {
+                AttributeInstance luck = pPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
+                Random random = new Random();
+                if (random.nextInt(100) >= luck.getValue() * -1) {
+                    event.setCanceled(true);
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                    luck.setBaseValue(luck.getBaseValue() + holder.getCurrentSequence());
+                    pPlayer.sendSystemMessage(Component.literal("How unlucky! You made a mistake using " + pPlayer.getMainHandItem().getDisplayName() + " and it didn't work").withStyle(BeyonderUtil.getStyle(pPlayer)));
+                }
+            }
         }
     }
 
@@ -1791,7 +1831,7 @@ public class ModEvents implements ReachChangeUUIDs {
                 if (stormSeal % 20 == 0) {
                     if (entity instanceof Player pPlayer) {
                         int sealSeconds = (int) stormSeal / 20;
-                        pPlayer.displayClientMessage(Component.literal("You are stuck in the storm seal for " + sealSeconds + " seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE),true);
+                        pPlayer.displayClientMessage(Component.literal("You are stuck in the storm seal for " + sealSeconds + " seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE), true);
                     }
                 }
             }
@@ -1800,7 +1840,7 @@ public class ModEvents implements ReachChangeUUIDs {
                 int y = tag.getInt("stormSealY");
                 int z = tag.getInt("stormSealZ");
                 tag.putInt("inStormSeal", tag.getInt("inStormSeal") - 1);
-                entity.teleportTo(x,y,z);
+                entity.teleportTo(x, y, z);
             }
         }
     }
@@ -1883,6 +1923,7 @@ public class ModEvents implements ReachChangeUUIDs {
             }
         }
     }
+
     @SubscribeEvent
     public static void hurtEvent(LivingHurtEvent event) {
         Entity entity = event.getEntity();
@@ -1910,7 +1951,7 @@ public class ModEvents implements ReachChangeUUIDs {
                     if (luckValue >= 1) {
                         if (Math.random() * luckValue > 50) {
                             event.setCanceled(true);
-                            luck.setBaseValue(luckValue - damage);
+                            luck.setBaseValue((Math.min(0, luckValue - damage)));
                         }
                     }
                     if (luckValue < 0) {
@@ -1994,14 +2035,14 @@ public class ModEvents implements ReachChangeUUIDs {
             return ItemStack.EMPTY;
         if (entity.isBaby())
             return ItemStack.EMPTY;
-        double baseChance = entity instanceof PlayerMobEntity ? Configs.COMMON.mobHeadDropChance.get(): Configs.COMMON.playerHeadDropChance.get();
+        double baseChance = entity instanceof PlayerMobEntity ? Configs.COMMON.mobHeadDropChance.get() : Configs.COMMON.playerHeadDropChance.get();
         if (baseChance <= 0)
             return ItemStack.EMPTY;
 
         if (poweredCreeper(source) || randomDrop(entity.level().getRandom(), baseChance, looting)) {
             ItemStack stack = new ItemStack(Items.PLAYER_HEAD);
             GameProfile profile = entity instanceof PlayerMobEntity ?
-                    ((PlayerMobEntity) entity).getProfile():
+                    ((PlayerMobEntity) entity).getProfile() :
                     ((Player) entity).getGameProfile();
             if (entity instanceof PlayerMobEntity playerMob) {
                 String skinName = playerMob.getUsername().getSkinName();
@@ -2033,6 +2074,7 @@ public class ModEvents implements ReachChangeUUIDs {
     private static boolean randomDrop(RandomSource rand, double baseChance, int looting) {
         return rand.nextDouble() <= Math.max(0, baseChance * Math.max(looting + 1, 1));
     }
+
     @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
     public class SpawnHandler {
 
