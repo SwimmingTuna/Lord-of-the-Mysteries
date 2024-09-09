@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.entity;
 
 
-
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.resources.SkinManager;
@@ -47,9 +46,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
-import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.client.Configs;
 import net.swimmingtuna.lotm.entity.EntityGoals.PlayerMobGoals;
 import net.swimmingtuna.lotm.init.EntityInit;
@@ -58,6 +54,7 @@ import net.swimmingtuna.lotm.util.PlayerMobs.ItemManager;
 import net.swimmingtuna.lotm.util.PlayerMobs.NameManager;
 import net.swimmingtuna.lotm.util.PlayerMobs.PlayerName;
 import net.swimmingtuna.lotm.util.PlayerMobs.ProfileUpdater;
+
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Objects;

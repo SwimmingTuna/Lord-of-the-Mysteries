@@ -1,23 +1,6 @@
 package net.swimmingtuna.lotm.client;
 
-import com.google.common.collect.ImmutableList;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.swimmingtuna.lotm.util.PlayerMobs.ItemManager;
-import net.swimmingtuna.lotm.util.PlayerMobs.NameManager;
-import net.swimmingtuna.lotm.util.PlayerMobs.ThreadUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClientConfigs {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();

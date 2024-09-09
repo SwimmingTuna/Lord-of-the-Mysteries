@@ -8,8 +8,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
-import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.LightningStorm;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 
 import java.util.function.Supplier;
 

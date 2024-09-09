@@ -8,11 +8,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.commands.AbilityRegisterCommand;
-import net.swimmingtuna.lotm.commands.AbilitiesCommand;
-import net.swimmingtuna.lotm.commands.BeyonderClassArgument;
-import net.swimmingtuna.lotm.commands.BeyonderCommand;
-import net.swimmingtuna.lotm.commands.PlayerMobsCommand;
+import net.swimmingtuna.lotm.commands.*;
 
 public class CommandInit {
     public static final DeferredRegister<ArgumentTypeInfo<?, ?>> ARGUMENT_TYPES = DeferredRegister.create(ForgeRegistries.COMMAND_ARGUMENT_TYPES, LOTM.MOD_ID);
