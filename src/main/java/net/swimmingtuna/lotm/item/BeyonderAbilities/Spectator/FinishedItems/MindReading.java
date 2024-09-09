@@ -21,8 +21,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.LazyOptional;
-import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
@@ -35,17 +36,17 @@ import java.util.List;
 
 public class MindReading extends Item {
 
-
-    private final LazyOptional<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = LazyOptional.of(() -> createAttributeMap()); //LazyOptional in this instance basically makes it so that the reach change is only in effect when something happens
+    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public MindReading(Properties pProperties) {
         super(pProperties);
     }
 
+
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
         if (pSlot == EquipmentSlot.MAINHAND) {
-            return lazyAttributeMap.orElseGet(() -> createAttributeMap());
+            return this.lazyAttributeMap.get();
         }
         return super.getDefaultAttributeModifiers(pSlot);
     }

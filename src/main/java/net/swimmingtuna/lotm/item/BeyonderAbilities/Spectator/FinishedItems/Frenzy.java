@@ -21,6 +21,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.LazyOptional;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
@@ -35,7 +36,7 @@ import java.util.List;
 
 public class Frenzy extends Item {
 
-    private final LazyOptional<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = LazyOptional.of(() -> createAttributeMap()); //LazyOptional in this instance basically makes it so that the reach change is only in effect when something happens
+    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public Frenzy(Properties pProperties) {
         super(pProperties);
@@ -44,7 +45,7 @@ public class Frenzy extends Item {
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
         if (pSlot == EquipmentSlot.MAINHAND) {
-            return lazyAttributeMap.orElseGet(() -> createAttributeMap());
+            return this.lazyAttributeMap.get();
         }
         return super.getDefaultAttributeModifiers(pSlot);
     }
@@ -59,45 +60,46 @@ public class Frenzy extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext pContext) {
-        Player pPlayer = pContext.getPlayer();
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 125) {
-                pPlayer.displayClientMessage(Component.literal("You need 125 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
+    public InteractionResult useOn(UseOnContext context) {
+        Player pPlayer = context.getPlayer();
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        if (holder == null) return InteractionResult.FAIL;
+        if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+            pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            return InteractionResult.FAIL;
         }
+        if (holder.getSpirituality() < 125) {
+            pPlayer.displayClientMessage(Component.literal("You need 125 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            return InteractionResult.FAIL;
+        }
+        if (pPlayer.level().isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
         Level level = pPlayer.level();
         AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        BlockPos positionClicked = pContext.getClickedPos();
-        if (!pContext.getLevel().isClientSide) {
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 7 &&  BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(125)) {
-                    applyPotionEffectToEntities(pPlayer, level, positionClicked, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 300);
-                    }
-                }
-            });
+        BlockPos positionClicked = context.getClickedPos();
+        if (holder.getCurrentSequence() <= 7 && holder.useSpirituality(125)) {
+            applyPotionEffectToEntities(pPlayer, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
+            if (!pPlayer.getAbilities().instabuild) {
+                pPlayer.getCooldowns().addCooldown(this, 300);
+            }
         }
         return InteractionResult.SUCCESS;
     }
 
-    private void applyPotionEffectToEntities(Player pPlayer, Level level, BlockPos targetPos, int sequence, int dir) {
-        double radius = (15.0 - sequence) * dir;
-        float damage = (float) (18.0 - (sequence/2));
-        int duration = 250 - (sequence * 12) * dir;
+    private void applyPotionEffectToEntities(Player pPlayer, Level level, BlockPos targetPos, int sequence, int dreamIntoRealityValue) {
+        double radius = (15.0 - sequence) * dreamIntoRealityValue;
+        float damage = (float) (18.0 - (sequence / 2));
+        int duration = 250 - (sequence * 12) * dreamIntoRealityValue;
 
         AABB boundingBox = new AABB(targetPos).inflate(radius);
-        level.getEntitiesOfClass(LivingEntity.class, boundingBox, entity -> entity.isAlive()).forEach(livingEntity -> {
+        level.getEntitiesOfClass(LivingEntity.class, boundingBox, LivingEntity::isAlive).forEach(livingEntity -> {
             if (livingEntity != pPlayer) {
-                (livingEntity).addEffect((new MobEffectInstance(ModEffects.FRENZY.get(), duration, 1, false, false)));
-            livingEntity.hurt(livingEntity.damageSources().magic(), damage);
-        }});
+                livingEntity.addEffect(new MobEffectInstance(ModEffects.FRENZY.get(), duration, 1, false, false));
+                livingEntity.hurt(livingEntity.damageSources().magic(), damage);
+            }
+        });
     }
 
     @Override

@@ -15,16 +15,17 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class WaterSphere extends Item {
+public class WaterSphere extends SimpleAbilityItem {
 
-    public WaterSphere(Properties pProperties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(pProperties);
+    public WaterSphere(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
+        super(properties, BeyonderClassInit.SAILOR, 5, 300, 240);
     }
 
     @Override
@@ -41,7 +42,6 @@ public class WaterSphere extends Item {
             }
             BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
                 if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 5 && sailorSequence.useSpirituality(300)) {
-                    pPlayer.getPersistentData().putInt("sailorSphere", 200);
                     if (!pPlayer.getAbilities().instabuild)
                         pPlayer.getCooldowns().addCooldown(this, 240);
                 }
@@ -49,13 +49,15 @@ public class WaterSphere extends Item {
         }
         return super.use(level, pPlayer, hand);
     }
+
+    @Override
+    public void useAbility(Level level, Player player, InteractionHand hand) {
+        player.getPersistentData().putInt("sailorSphere", 200);
+    }
+
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summon a sphere of water around you for 10 seconds\n" +
-                    "Spirituality Used: 300\n" +
-                    "Cooldown: 2 Minutes").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        }
+        componentList.add(Component.literal("Upon use, summon a sphere of water around you for 10 seconds"));
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
 

@@ -44,7 +44,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.*;
@@ -53,21 +52,20 @@ import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.SoundInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.DreamIntoReality;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionBarrier;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
-import static net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil.getProjectiles;
+import static net.swimmingtuna.lotm.util.BeyonderUtil.getProjectiles;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
 public class ModEvents {
@@ -92,54 +90,175 @@ public class ModEvents {
 
         AttributeInstance armorInvisAttribute = player.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
 
-        nightmare(player, playerPersistentData);
+        Map<String, Long> times = new HashMap<>();
 
-        calamityIncarnationTornado(playerPersistentData, player);
+        {
+            long startTime = System.nanoTime();
+            nightmare(player, playerPersistentData);
+            long endTime = System.nanoTime();
+            times.put("nightmare", endTime - startTime);
+        }
 
-        psychologicalInvisibility(armorInvisAttribute, player, playerPersistentData, holder);
+        {
+            long startTime = System.nanoTime();
+            calamityIncarnationTornado(playerPersistentData, player);
+            long endTime = System.nanoTime();
+            times.put("calamityIncarnationTornado", endTime - startTime);
+        }
 
-        windManipulationSense(playerPersistentData, holder, player);
+        {
+            long startTime = System.nanoTime();
+            psychologicalInvisibility(armorInvisAttribute, player, playerPersistentData, holder);
+            long endTime = System.nanoTime();
+            times.put("psychologicalInvisibility", endTime - startTime);
+        }
 
-        sailorLightningTravel(player);
+        {
+            long startTime = System.nanoTime();
+            windManipulationSense(playerPersistentData, holder, player);
+            long endTime = System.nanoTime();
+            times.put("windManipulationSense", endTime - startTime);
+        }
 
-        windManipulationCushion(playerPersistentData, player);
+        {
+            long startTime = System.nanoTime();
+            sailorLightningTravel(player);
+            long endTime = System.nanoTime();
+            times.put("sailorLightningTravel", endTime - startTime);
+        }
 
-        windManipulationGuide(playerPersistentData, holder, player);
+        {
+            long startTime = System.nanoTime();
+            windManipulationCushion(playerPersistentData, player);
+            long endTime = System.nanoTime();
+            times.put("windManipulationCushion", endTime - startTime);
+        }
 
-        dreamIntoReality(player, holder);
+        {
+            long startTime = System.nanoTime();
+            windManipulationGuide(playerPersistentData, holder, player);
+            long endTime = System.nanoTime();
+            times.put("windManipulationGuide", endTime - startTime);
+        }
 
-        consciousnessStroll(playerPersistentData, player);
+        {
+            long startTime = System.nanoTime();
+            dreamIntoReality(player, holder);
+            long endTime = System.nanoTime();
+            times.put("dreamIntoReality", endTime - startTime);
+        }
 
-        projectileEvent(player, holder);
+        {
+            long startTime = System.nanoTime();
+            consciousnessStroll(playerPersistentData, player);
+            long endTime = System.nanoTime();
+            times.put("consciousnessStroll", endTime - startTime);
+        }
 
-        envisionBarrier(holder, player, style);
+        {
+            long startTime = System.nanoTime();
+            projectileEvent(player, holder);
+            long endTime = System.nanoTime();
+            times.put("projectileEvent", endTime - startTime);
+        }
 
-        envisionLife(player);
+        {
+            long startTime = System.nanoTime();
+            envisionBarrier(holder, player, style);
+            long endTime = System.nanoTime();
+            times.put("envisionBarrier", endTime - startTime);
+        }
 
-        manipulateMovement(player, serverLevel);
+        {
+            long startTime = System.nanoTime();
+            envisionLife(player);
+            long endTime = System.nanoTime();
+            times.put("envisionLife", endTime - startTime);
+        }
 
-        envisionKingdom(playerPersistentData, player, holder, serverLevel);
+        {
+            long startTime = System.nanoTime();
+            manipulateMovement(player, serverLevel);
+            long endTime = System.nanoTime();
+            times.put("manipulateMovement", endTime - startTime);
+        }
 
-        acidicRain(player, sequence);
+        {
+            long startTime = System.nanoTime();
+            envisionKingdom(playerPersistentData, player, holder, serverLevel);
+            long endTime = System.nanoTime();
+            times.put("envisionKingdom", endTime - startTime);
+        }
 
-        calamityIncarnationTsunami(playerPersistentData, player, serverLevel);
+        {
+            long startTime = System.nanoTime();
+            acidicRain(player, sequence);
+            long endTime = System.nanoTime();
+            times.put("acidicRain", endTime - startTime);
+        }
 
-        earthquake(player, sequence);
+        {
+            long startTime = System.nanoTime();
+            calamityIncarnationTsunami(playerPersistentData, player, serverLevel);
+            long endTime = System.nanoTime();
+            times.put("calamityIncarnationTsunami", endTime - startTime);
+        }
 
-        extremeColdness(playerPersistentData, holder, player);
+        {
+            long startTime = System.nanoTime();
+            earthquake(player, sequence);
+            long endTime = System.nanoTime();
+            times.put("earthquake", endTime - startTime);
+        }
 
-        hurricane(playerPersistentData, player);
+        {
+            long startTime = System.nanoTime();
+            extremeColdness(playerPersistentData, holder, player);
+            long endTime = System.nanoTime();
+            times.put("extremeColdness", endTime - startTime);
+        }
 
-        lightningStorm(player, playerPersistentData, style, holder);
+        {
+            long startTime = System.nanoTime();
+            hurricane(playerPersistentData, player);
+            long endTime = System.nanoTime();
+            times.put("hurricane", endTime - startTime);
+        }
 
-        matterAccelerationSelf(player, holder, style);
+        {
+            long startTime = System.nanoTime();
+            lightningStorm(player, playerPersistentData, style, holder);
+            long endTime = System.nanoTime();
+            times.put("lightningStorm", endTime - startTime);
+        }
 
-        ragingBlows(playerPersistentData, holder, player);
+        {
+            long startTime = System.nanoTime();
+            matterAccelerationSelf(player, holder, style);
+            long endTime = System.nanoTime();
+            times.put("matterAccelerationSelf", endTime - startTime);
+        }
 
-        rainEyes(player);
+        {
+            long startTime = System.nanoTime();
+            ragingBlows(playerPersistentData, holder, player);
+            long endTime = System.nanoTime();
+            times.put("ragingBlows", endTime - startTime);
+        }
 
-        sirenSongs(playerPersistentData, holder, player, sequence);
+        {
+            long startTime = System.nanoTime();
+            rainEyes(player);
+            long endTime = System.nanoTime();
+            times.put("rainEyes", endTime - startTime);
+        }
 
+        {
+            long startTime = System.nanoTime();
+            sirenSongs(playerPersistentData, holder, player, sequence);
+            long endTime = System.nanoTime();
+            times.put("sirenSongs", endTime - startTime);
+        }
         int ssParticleAttributeHelper = playerPersistentData.getInt("ssParticleAttributeHelper");
         if (ssParticleAttributeHelper >= 1) {
             playerPersistentData.putInt("ssParticleAttributeHelper", ssParticleAttributeHelper - 1);
@@ -158,13 +277,32 @@ public class ModEvents {
         }
 
 
-        starOfLightning(player, playerPersistentData);
+        {
+            long startTime = System.nanoTime();
+            starOfLightning(player, playerPersistentData);
+            long endTime = System.nanoTime();
+            times.put("starOfLightning", endTime - startTime);
+        }
+        {
+            long startTime = System.nanoTime();
+            tsunami(playerPersistentData, player);
+            long endTime = System.nanoTime();
+            times.put("tsunami", endTime - startTime);
+        }
+        {
+            long startTime = System.nanoTime();
+            waterSphereCheck(player, serverLevel);
+            long endTime = System.nanoTime();
+            times.put("waterSphereCheck", endTime - startTime);
+        }
+        {
+            long startTime = System.nanoTime();
+            windManipulationFlight(player, playerPersistentData);
+            long endTime = System.nanoTime();
+            times.put("windManipulationFlight", endTime - startTime);
+        }
 
-        tsunami(playerPersistentData, player);
-
-        waterSphereCheck(player, serverLevel);
-
-        windManipulationFlight(player, playerPersistentData);
+        System.out.println(times.entrySet().stream().max(Map.Entry.comparingByValue()));
     }
 
     private static void nightmare(Player pPlayer, CompoundTag playerPersistentData) {
@@ -208,7 +346,7 @@ public class ModEvents {
         }
     }
 
-    private static void windManipulationSense(CompoundTag playerPersistentData, BeyonderHolder holder, Player pPlayer) {
+    private static void windManipulationSense(CompoundTag playerPersistentData, BeyonderHolder holder, Player player) {
         //WIND MANIPULATION SENSE
         boolean windManipulationSense = playerPersistentData.getBoolean("windManipulationSense");
         if (!windManipulationSense) {
@@ -216,12 +354,12 @@ public class ModEvents {
         }
         holder.useSpirituality(2);
         double radius = 100 - (holder.getCurrentSequence() * 10);
-        for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-            if (entity == pPlayer || !(entity instanceof Player player)) {
+        for (Player otherPlayer : player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(radius))) {
+            if (otherPlayer == player) {
                 continue;
             }
-            Vec3 directionToPlayer = entity.position().subtract(pPlayer.position()).normalize();
-            Vec3 lookAngle = pPlayer.getLookAngle();
+            Vec3 directionToPlayer = otherPlayer.position().subtract(player.position()).normalize();
+            Vec3 lookAngle = player.getLookAngle();
             double horizontalAngle = Math.atan2(directionToPlayer.x, directionToPlayer.z) - Math.atan2(lookAngle.x, lookAngle.z);
 
             String horizontalDirection;
@@ -244,8 +382,8 @@ public class ModEvents {
                 verticalDirection = "at the same level as";
             }
 
-            String message = player.getName().getString() + " is " + horizontalDirection + " and " + verticalDirection + " you.";
-            pPlayer.sendSystemMessage(Component.literal(message).withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
+            String message = otherPlayer.getName().getString() + " is " + horizontalDirection + " and " + verticalDirection + " you.";
+            player.sendSystemMessage(Component.literal(message).withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
     }
 
@@ -279,24 +417,24 @@ public class ModEvents {
         }
     }
 
-    private static void windManipulationGuide(CompoundTag playerPersistentData, BeyonderHolder holder, Player pPlayer) {
+    private static void windManipulationGuide(CompoundTag playerPersistentData, BeyonderHolder holder, Player player) {
         //WIND MANIPULATION GLIDE
         int regularFlight = playerPersistentData.getInt("sailorFlight");
         boolean enhancedFlight = playerPersistentData.getBoolean("sailorFlight1");
         if (
                 holder.currentClassMatches(BeyonderClassInit.SAILOR) &&
                 holder.getCurrentSequence() <= 7 &&
-                pPlayer.isShiftKeyDown() &&
-                pPlayer.getDeltaMovement().y() < 0 &&
-                !pPlayer.getAbilities().instabuild && !
+                player.isShiftKeyDown() &&
+                player.getDeltaMovement().y() < 0 &&
+                !player.getAbilities().instabuild && !
                 enhancedFlight && regularFlight == 0
         ) {
-            Vec3 movement = pPlayer.getDeltaMovement();
-            double deltaX = Math.cos(Math.toRadians(pPlayer.getYRot() + 90)) * 0.06;
-            double deltaZ = Math.sin(Math.toRadians(pPlayer.getYRot() + 90)) * 0.06;
-            pPlayer.setDeltaMovement(movement.x + deltaX, -0.05, movement.z + deltaZ);
-            pPlayer.resetFallDistance();
-            pPlayer.hurtMarked = true;
+            Vec3 movement = player.getDeltaMovement();
+            double deltaX = Math.cos(Math.toRadians(player.getYRot() + 90)) * 0.06;
+            double deltaZ = Math.sin(Math.toRadians(player.getYRot() + 90)) * 0.06;
+            player.setDeltaMovement(movement.x + deltaX, -0.05, movement.z + deltaZ);
+            player.resetFallDistance();
+            player.hurtMarked = true;
         }
     }
 
@@ -349,14 +487,8 @@ public class ModEvents {
     private static void projectileEvent(Player player, BeyonderHolder holder) {
         //PROJECTILE EVENT
         Projectile projectile = getProjectiles(player);
-        if (projectile == null) {
-            return;
-        }
+        if (projectile == null) return;
         ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile);
-        projectile = projectileEvent.getProjectile();
-        if (projectile == null) {
-            return;
-        }
         ModEventFactory.onSailorShootProjectile(projectile);
 
         //MATTER ACCELERATION ENTITIES
@@ -483,52 +615,48 @@ public class ModEvents {
 
     private static void envisionKingdom(CompoundTag playerPersistentData, Player pPlayer, BeyonderHolder holder, ServerLevel serverLevel) {
         //ENVISION KINGDOM
-        int mindscape = playerPersistentData.getInt("inMindscape");
-        if (mindscape >= 1) {
-            playerPersistentData.putInt("inMindscape", mindscape + 1);
-        }
-        if (mindscape >= 1200) {
+
+        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+        int mindScape = playerPersistentData.getInt("inMindscape");
+        if (mindScape < 1) return;
+        Abilities playerAbilities = pPlayer.getAbilities();
+        playerPersistentData.putInt("inMindscape", mindScape + 1);
+        if (mindScape >= 1200) {
             playerPersistentData.putInt("inMindscape", 0);
         }
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        double maxSpirituality = holder.getMaxSpirituality();
-        Abilities playerAbilities = pPlayer.getAbilities();
-        if (holder.getCurrentSequence() == 0 && holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-            if (mindscape >= 1) {
-                playerPersistentData.putInt("mindscapeAbilities", mindscape - 1);
-                holder.setSpirituality((int) maxSpirituality);
-                if (!playerPersistentData.getBoolean("CAN_FLY")) {
-                    dreamIntoReality.setBaseValue(3);
-                    playerAbilities.setFlyingSpeed(0.15F);
-                    playerAbilities.mayfly = true;
-                    pPlayer.onUpdateAbilities();
-                    if (pPlayer instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
-                    }
-                }
-            }
-            if (mindscape == 0) {
-                if (!playerPersistentData.getBoolean("CAN_FLY")) {
-                    dreamIntoReality.setBaseValue(1);
-                    playerAbilities.setFlyingSpeed(0.05F);
-                    if (!playerAbilities.instabuild) {
-                        playerAbilities.mayfly = false;
-                    }
-                    pPlayer.onUpdateAbilities();
-                    if (pPlayer instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
-                    }
+        int mindscapeAbilities = playerPersistentData.getInt("mindscapeAbilities");
+        if (mindscapeAbilities >= 1) {
+            holder.setSpirituality(holder.getMaxSpirituality());
+            if (!playerPersistentData.getBoolean("CAN_FLY")) {
+                dreamIntoReality.setBaseValue(3);
+                playerAbilities.setFlyingSpeed(0.15F);
+                playerAbilities.mayfly = true;
+                pPlayer.onUpdateAbilities();
+                playerPersistentData.putInt("mindscapeAbilities", mindscapeAbilities - 1);
+                if (pPlayer instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
                 }
             }
         }
+        if (mindscapeAbilities == 1 && !playerPersistentData.getBoolean("CAN_FLY")) {
+            dreamIntoReality.setBaseValue(1);
+            playerAbilities.setFlyingSpeed(0.05F);
+            playerAbilities.mayfly = false;
+            pPlayer.onUpdateAbilities();
+            if (pPlayer instanceof ServerPlayer serverPlayer) {
+                serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+            }
+        }
 
+        int partIndex = mindScape - 2;
+        if (partIndex < 0) return;
 
-        int mindScape = playerPersistentData.getInt("inMindscape");
+        int mindScape1 = playerPersistentData.getInt("inMindscape");
         int x = playerPersistentData.getInt("mindscapePlayerLocationX");
         int y = playerPersistentData.getInt("mindscapePlayerLocationY");
         int z = playerPersistentData.getInt("mindscapePlayerLocationZ");
-        StructureTemplate[] parts = new StructureTemplate[48];
-        if (mindScape == 6) {
+        if (mindScape1 < 1) return;
+        if (mindScape1 == 6) {
             pPlayer.teleportTo(pPlayer.getX() + 77, pPlayer.getY() + 8, pPlayer.getZ() + 206);
             for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
                 if (entity != pPlayer) {
@@ -536,19 +664,11 @@ public class ModEvents {
                 }
             }
         }
-        for (int i = 0; i < 48; i++) {
-            parts[i] = serverLevel.getStructureManager().getOrCreate(new ResourceLocation(LOTM.MOD_ID, "corpse_cathedral_" + (i + 1)));
-        }
-        BlockPos[] tagPos = new BlockPos[48];
-        for (int i = 0; i < 48; i++) {
-            tagPos[i] = new BlockPos(x, y + (i * 2), z);
-        }
+        StructureTemplate part = serverLevel.getStructureManager().getOrCreate(new ResourceLocation(LOTM.MOD_ID, "corpse_cathedral" + (partIndex + 1)));
+        BlockPos tagPos = new BlockPos(x, y + (partIndex * 2), z);
         StructurePlaceSettings settings = BeyonderUtil.getStructurePlaceSettings(new BlockPos(x, y, z));
-        for (int i = 0; i < 48; i++) {
-            if (mindScape == (i + 2)) {
-                parts[i].placeInWorld(serverLevel, tagPos[i], tagPos[i], settings, serverLevel.random, 3);
-            }
-        }
+        part.placeInWorld(serverLevel, tagPos, tagPos, settings, null, Block.UPDATE_ALL);
+        playerPersistentData.putInt("inMindscape", mindScape + 1);
     }
 
     private static void acidicRain(Player pPlayer, int sequence) {
@@ -667,10 +787,10 @@ public class ModEvents {
                     StoneEntity stoneEntity = new StoneEntity(pPlayer.level(), pPlayer);
                     ScaleData scaleData = ScaleTypes.BASE.getScaleData(stoneEntity);
                     stoneEntity.teleportTo(blockPos.getX(), blockPos.getY() + 3, blockPos.getZ());
-                    stoneEntity.setDeltaMovement(0, (3 + (Math.random() * (6 - 3))), 0);
+                    stoneEntity.setDeltaMovement(0, 3 + Math.random() * 3, 0);
                     stoneEntity.setStoneYRot((int) (Math.random() * 18));
                     stoneEntity.setStoneXRot((int) (Math.random() * 18));
-                    scaleData.setScale((float) (1 + (Math.random()) * 2.0f));
+                    scaleData.setScale((float) (1 + Math.random() * 2.0f));
                     pPlayer.level().addFreshEntity(stoneEntity);
                 }
             }
@@ -844,11 +964,13 @@ public class ModEvents {
         int matterAccelerationDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
         int blinkDistance = player.getPersistentData().getInt("BlinkDistance");
         if (player.isShiftKeyDown() && player.getMainHandItem().getItem() instanceof MatterAccelerationSelf && holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-            player.getPersistentData().putInt("tyrantSelfAcceleration", matterAccelerationDistance + 50);
+            matterAccelerationDistance += 50;
+            player.getPersistentData().putInt("tyrantSelfAcceleration", matterAccelerationDistance);
             player.displayClientMessage(Component.literal("Matter Acceleration Distance is " + matterAccelerationDistance).withStyle(style), true);
         }
         if (player.isShiftKeyDown() && player.getMainHandItem().getItem() instanceof EnvisionLocationBlink && holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-            player.getPersistentData().putInt("BlinkDistance", blinkDistance + 5);
+            blinkDistance += 5;
+            player.getPersistentData().putInt("BlinkDistance", blinkDistance);
             player.displayClientMessage(Component.literal("Blink Distance is " + blinkDistance).withStyle(style), true);
         }
         if (matterAccelerationDistance >= 1000) {
@@ -1210,9 +1332,12 @@ public class ModEvents {
         }
     }
 
-    private static void windManipulationFlight(Player pPlayer, CompoundTag playerPersistentData) {
+    private static void windManipulationFlight(Player player, CompoundTag playerPersistentData) {
         //WIND MANIPULATION FLIGHT
-        Vec3 lookVector = pPlayer.getLookAngle();
+        Vec3 lookVector = player.getLookAngle();
+        if (!playerPersistentData.getBoolean("sailorFlight1")) {
+            return;
+        }
         int flight = playerPersistentData.getInt("sailorFlight");
         int flightCancel = playerPersistentData.getInt("sailorFlightDamageCancel");
         if (flightCancel >= 1) {
@@ -1224,17 +1349,9 @@ public class ModEvents {
         if (flight >= 1) {
             playerPersistentData.putInt("sailorFlight", flight + 1);
         }
-        if (flight == 20) {
-            pPlayer.setDeltaMovement(lookVector.x * 2, lookVector.y * 2, lookVector.z * 2);
-            pPlayer.hurtMarked = true;
-        }
-        if (flight == 40) {
-            pPlayer.setDeltaMovement(lookVector.x * 2, lookVector.y * 2, lookVector.z * 2);
-            pPlayer.hurtMarked = true;
-        }
-        if (flight == 60) {
-            pPlayer.setDeltaMovement(lookVector.x * 2, lookVector.y * 2, lookVector.z * 2);
-            pPlayer.hurtMarked = true;
+        if (flight <= 60 && flight % 20 == 0) {
+            player.setDeltaMovement(lookVector.x * 2, lookVector.y * 2, lookVector.z * 2);
+            player.hurtMarked = true;
         }
         if (flight > 60) {
             playerPersistentData.putInt("sailorFlight", 0);
@@ -1687,12 +1804,16 @@ public class ModEvents {
 
 
     @SubscribeEvent
-    public static void sailorLightningEvent(AttackEntityEvent event) {
+    public static void onAttackEntity(AttackEntityEvent event) {
         Player player = event.getEntity();
         CompoundTag tag = player.getPersistentData();
         boolean sailorLightning = tag.getBoolean("SailorLightning");
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (player.level().isClientSide()) return;
+
+        if (player.getMainHandItem().getItem() instanceof BeyonderAbilityUser) {
+            event.setCanceled(true);
+        }
 
         if (holder == null) return;
 

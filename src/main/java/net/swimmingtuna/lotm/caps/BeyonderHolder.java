@@ -107,7 +107,7 @@ public class BeyonderHolder extends PlayerCapability {
         return this.spirituality;
     }
 
-    public void setSpirituality(int spirituality) {
+    public void setSpirituality(double spirituality) {
         this.spirituality = Mth.clamp(spirituality, 0, this.maxSpirituality);
         updateTracking();
     }

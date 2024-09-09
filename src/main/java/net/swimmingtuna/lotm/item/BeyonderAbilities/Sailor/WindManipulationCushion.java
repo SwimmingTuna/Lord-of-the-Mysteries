@@ -20,6 +20,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,44 +28,23 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class WindManipulationCushion extends Item {
+public class WindManipulationCushion extends SimpleAbilityItem {
     public WindManipulationCushion(Properties pProperties) {
-        super(pProperties);
+        super(pProperties, BeyonderClassInit.SAILOR, 7, 150, 120);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            }
-            if (holder.getSpirituality() < 150) {
-                pPlayer.displayClientMessage(Component.literal("You need 150 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            }
-
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && tyrantSequence.getCurrentSequence() <= 7 && tyrantSequence.useSpirituality(150)) {
-                    cushion(pPlayer);
-                }
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 120);
-            });
-        }
-        return super.use(level, pPlayer, hand);
+    public void useAbility(Level level, Player player, InteractionHand hand) {
+        cushion(player);
     }
 
-    public static void cushion(Player pPlayer) {
-        pPlayer.getPersistentData().putInt("windManipulationCushion", 100);
+    public static void cushion(Player player) {
+        player.getPersistentData().putInt("windManipulationCushion", 100);
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, create a cushion of wind that absorbs your fall then sends you in the direction you're looking\n" +
-                    "Spirituality Used: 150\n" +
-                    "Cooldown: 6 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        }
+        componentList.add(Component.literal("Upon use, create a cushion of wind that absorbs your fall then sends you in the direction you're looking"));
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
     

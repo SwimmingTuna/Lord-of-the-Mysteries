@@ -19,8 +19,6 @@ public class ProjectileEvent extends Event implements IModBusEvent {
         private ProjectileImpactEvent.ImpactResult result = ProjectileImpactEvent.ImpactResult.DEFAULT;
 
         public ProjectileControlEvent(Projectile projectile) {
-            super();
-
             this.projectile = projectile;
         }
         public Projectile getProjectile() {

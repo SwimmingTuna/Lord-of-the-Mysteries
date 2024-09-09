@@ -4,10 +4,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
-import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderAbilityUser;
-import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.LightningStorm;
 
 import java.util.function.Supplier;
@@ -37,7 +38,7 @@ public class LeftClickC2S {
                 for (int i = 0; i < keysClicked.length; i++) {
                     if (keysClicked[i] == 0) {
                         keysClicked[i] = 1;
-                        player.getPersistentData().putInt("keyHasBeenClicked", 40);
+                        BeyonderAbilityUser.clicked(player, InteractionHand.MAIN_HAND);
                         break;
                     }
                 }

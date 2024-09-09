@@ -44,7 +44,7 @@ public class CathedralBlockEntity extends BlockEntity implements TickableBlockEn
                     if (Math.abs(distanceX) <= 80 && Math.abs(distanceY) <= 100 && Math.abs(distanceZ) <= 110) {
                         compoundTag.putInt("mindscapeAbilities", 25);
                     }
-                };
+                }
             }
         }
         if (ticks >= 550 && ticks <= 740 && ticks % 10 == 0) {

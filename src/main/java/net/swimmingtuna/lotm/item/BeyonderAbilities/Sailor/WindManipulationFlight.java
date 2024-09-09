@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
@@ -23,39 +22,33 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class WindManipulationFlight extends Item {
+public class WindManipulationFlight extends SimpleAbilityItem {
     public WindManipulationFlight(Item.Properties pProperties) {
-        super(pProperties);
+        super(pProperties, BeyonderClassInit.SAILOR, 7, 0, 0);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 7 && sailorSequence.getCurrentSequence() > 4 && sailorSequence.useSpirituality(100)) {
-                    flightRegular(pPlayer);
-                }
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 4) {
-                    toggleFlying(pPlayer);
-                }
-                CompoundTag tag = pPlayer.getPersistentData();
-                boolean x = tag.getBoolean("sailorFlight1");
-                if (!pPlayer.getAbilities().instabuild && !x) {
-                    pPlayer.getCooldowns().addCooldown(this, 10);
-                }
-            });
+    public void useAbility(Level level, Player player, InteractionHand hand) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder == null) return;
+        if (holder.getCurrentSequence() <= 7 && holder.getCurrentSequence() > 4) {
+            flightRegular(player);
         }
-        return super.use(level, pPlayer, hand);
+        if (holder.getCurrentSequence() <= 4) {
+            toggleFlying(player);
+        }
+        CompoundTag tag = player.getPersistentData();
+        boolean sailorFlight1 = tag.getBoolean("sailorFlight1");
+        if (!player.isCreative() && !sailorFlight1) {
+            player.getCooldowns().addCooldown(this, 10);
+        }
     }
 
     private void flightRegular(Player pPlayer) {
@@ -64,81 +57,73 @@ public class WindManipulationFlight extends Item {
         tag.putInt("sailorFlightDamageCancel", 1);
     }
 
-    private void startFlying(Player pPlayer) {
-        pPlayer.getPersistentData().putBoolean("sailorFlight1", true);
-        Abilities playerAbilities = pPlayer.getAbilities();
-        CompoundTag compoundTag = pPlayer.getPersistentData();
-        compoundTag.putInt("sailorWindSpiritualityCounter", 1);
+    private void startFlying(Player player) {
+        player.getPersistentData().putBoolean("sailorFlight1", true);
+        Abilities playerAbilities = player.getAbilities();
         if (!playerAbilities.instabuild) {
             playerAbilities.mayfly = true;
             playerAbilities.flying = true;
             playerAbilities.setFlyingSpeed(0.1F);
         }
-        pPlayer.onUpdateAbilities();
-        if (pPlayer instanceof ServerPlayer serverPlayer) {
+        player.onUpdateAbilities();
+        if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
         }
     }
+
     private void toggleFlying(Player pPlayer) {
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            boolean canFly = pPlayer.getPersistentData().getBoolean("sailorFlight1");
-            if (canFly) {
-                stopFlying(pPlayer);
-            } else {
-                startFlying(pPlayer);
-            }
-        });
+        boolean canFly = pPlayer.getPersistentData().getBoolean("sailorFlight1");
+        if (canFly) {
+            stopFlying(pPlayer);
+        } else {
+            startFlying(pPlayer);
+        }
     }
+
     private void stopFlying(Player pPlayer) {
         pPlayer.getPersistentData().putBoolean("sailorFlight1", false);
         Abilities playerAbilities = pPlayer.getAbilities();
-        CompoundTag compoundTag = pPlayer.getPersistentData();
-        compoundTag.putInt("sailorWindSpiritualityCounter", 0);
-        if (!playerAbilities.instabuild) {
+        if (!pPlayer.isCreative() && !pPlayer.isSpectator()) {
             playerAbilities.mayfly = false;
-            playerAbilities.flying = false;}
+            playerAbilities.flying = false;
+        }
         playerAbilities.setFlyingSpeed(0.05F);
         pPlayer.onUpdateAbilities();
         if (pPlayer instanceof ServerPlayer serverPlayer) {
             serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
         }
     }
+
+    @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player) {
-            Player pPlayer = (Player) entity;
-            int spiritualityUseCounter = pPlayer.getPersistentData().getInt("sailorWindSpiritualityCounter");
-            CompoundTag tag = pPlayer.getPersistentData();
-            if (!pPlayer.level().isClientSide) {
-                boolean canFly = pPlayer.getPersistentData().getBoolean("sailorFlight1");
-                if (canFly) {
-                    BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                        if (!pPlayer.getAbilities().instabuild) {
-                            if (sailorSequence.getSpirituality() > 101) {
-                                tag.putInt("sailorWindSpiritualityCounter", spiritualityUseCounter + 1);
-                                if (spiritualityUseCounter >= 20) {
-                                    sailorSequence.useSpirituality(100);
-                                    tag.putInt("sailorWindSpiritualityCounter", 0);
-                                }
-                            } else {
-                                stopFlying(pPlayer);
-                            }
-                        }
-                    });
-                }
-            }
+        if (!(entity instanceof Player player)) {
+            return;
         }
-        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
+        if (player.level().isClientSide) {
+            return;
+        }
+        boolean canFly = player.getPersistentData().getBoolean("sailorFlight1");
+        if (!canFly) {
+            return;
+        }
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder == null) return;
+        if (!holder.useSpirituality(2)) {
+            stopFlying(player);
+        }
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, uses the wind to burst forward in the direction the player is looking three times or allow the user to fly, depending on the sequence\n" +
-                    "Spirituality Used: 100 every second\n" +
-                    "Cooldown: 0.5 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+        tooltipComponents.add(Component.literal("Upon use, uses the wind to burst forward in the direction the player is looking three times or allow the user to fly, depending on the sequence"));
+        tooltipComponents.add(Component.literal("Activation Cost: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("40 per second").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("when disabling, 0.5 seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, isAdvanced);
     }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player pPlayer = event.getEntity();
@@ -149,6 +134,7 @@ public class WindManipulationFlight extends Item {
             heldItem.shrink(1);
         }
     }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
         Player pPlayer = event.getEntity();

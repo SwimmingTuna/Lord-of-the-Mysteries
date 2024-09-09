@@ -1,10 +1,12 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -18,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,9 +35,10 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class DreamWalking extends Item {
-    private final LazyOptional<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = LazyOptional.of(() -> createAttributeMap());
+    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public DreamWalking(Properties pProperties) {
         super(pProperties);
@@ -43,7 +47,7 @@ public class DreamWalking extends Item {
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
         if (pSlot == EquipmentSlot.MAINHAND) {
-            return lazyAttributeMap.orElseGet(() -> createAttributeMap());
+            return this.lazyAttributeMap.get();
         }
         return super.getDefaultAttributeModifiers(pSlot);
     }
@@ -67,33 +71,33 @@ public class DreamWalking extends Item {
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
 
-    @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player pPlayer = event.getEntity();
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 70) {
-                pPlayer.displayClientMessage(Component.literal("You need 70 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
-            Entity targetEntity = event.getTarget();
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof DreamWalking && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 5 && spectatorSequence.useSpirituality(70)) {
-                    double x = targetEntity.getX();
-                    double y = targetEntity.getY();
-                    double z = targetEntity.getZ();
-                    pPlayer.teleportTo(x, y, z);
-                    if (!pPlayer.getAbilities().instabuild) {
-                        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                        pPlayer.getCooldowns().addCooldown(itemStack.getItem(), (int) (40 / dreamIntoReality.getValue()));
-                    }
-                    event.setCanceled(true);
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                }
-            });
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (player.level().isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder == null) return InteractionResult.FAIL;
+        if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            return InteractionResult.FAIL;
+        }
+        if (!holder.useSpirituality(70)) {
+            player.displayClientMessage(Component.literal("You need 70 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            return InteractionResult.FAIL;
+        }
+        if (holder.getCurrentSequence() <= 5) {
+            double x = interactionTarget.getX();
+            double y = interactionTarget.getY();
+            double z = interactionTarget.getZ();
+            player.teleportTo(x, y, z);
+            if (!player.getAbilities().instabuild) {
+                AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+                player.getCooldowns().addCooldown(stack.getItem(), (int) (40 / dreamIntoReality.getValue()));
+            }
+            return InteractionResult.SUCCESS;
+        }
+
+        return super.interactLivingEntity(stack, player, interactionTarget, hand);
     }
 }

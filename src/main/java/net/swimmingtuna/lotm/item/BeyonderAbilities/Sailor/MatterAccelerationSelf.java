@@ -28,6 +28,8 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Ability;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -37,7 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class MatterAccelerationSelf extends Item {
+public class MatterAccelerationSelf extends Item implements Ability {
 
     public MatterAccelerationSelf(Properties pProperties) {
         super(pProperties);
@@ -56,20 +58,26 @@ public class MatterAccelerationSelf extends Item {
                 player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 return InteractionResultHolder.fail(player.getItemInHand(hand));
             }
-            if (holder.getSpirituality() < matterAccelerationDistance * 10) {
+            if (!holder.useSpirituality(matterAccelerationDistance * 10)) {
                 player.displayClientMessage(Component.literal("You need " + matterAccelerationDistance * 10 + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 return InteractionResultHolder.fail(player.getItemInHand(hand));
             }
-            if (holder.useSpirituality(matterAccelerationDistance * 10) && holder.getCurrentSequence() == 0) {
-                useItem(player);
-                if (!player.getAbilities().instabuild) {
-                    player.getCooldowns().addCooldown(this, 300);
-                }
+            if (holder.getCurrentSequence() > 0) {
+                player.displayClientMessage(Component.literal("You need to be sequence 0 or lower to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                return InteractionResultHolder.fail(player.getItemInHand(hand));
+            }
+            useItem(player);
+            if (!player.isCreative()) {
+                player.getCooldowns().addCooldown(this, 300);
             }
         }
         return super.use(level, player, hand);
     }
 
+    @Override
+    public void useAbility(Level level, Player player, InteractionHand hand) {
+        useItem(player);
+    }
 
     public static void useItem(Player player) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
@@ -77,13 +85,6 @@ public class MatterAccelerationSelf extends Item {
         int sequence = holder.getCurrentSequence();
         Level level = player.level();
         int blinkDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
-        if (holder.getSpirituality() < blinkDistance * 10) {
-            player.displayClientMessage(Component.literal("You need " + blinkDistance * 10 + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return;
-        }
-        if (!holder.useSpirituality(blinkDistance * 2)) {
-            return;
-        }
         Vec3 lookVector = player.getLookAngle();
         BlockPos startPos = player.blockPosition();
         BlockPos endPos = new BlockPos(
@@ -143,13 +144,13 @@ public class MatterAccelerationSelf extends Item {
 
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, moves you at an inhuman speed, instantly getting you to your destination and leaving behind destruction in your path\n" +
-                    "Spirituality Used: 2500\n" +
-                    "Cooldown: 15 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use, moves you at an inhuman speed, instantly getting you to your destination and leaving behind destruction in your path"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("2500").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("15 seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(BeyonderClassInit.SAILOR.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(0, BeyonderClassInit.SAILOR.get()));
+        super.appendHoverText(pStack, level, tooltipComponents, tooltipFlag);
     }
 
     @SubscribeEvent

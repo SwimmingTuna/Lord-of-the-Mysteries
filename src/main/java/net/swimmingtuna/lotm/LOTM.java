@@ -43,18 +43,9 @@ public class LOTM {
     public static Supplier<Double> maxBrightness;
     public static Supplier<Double> fadeRate = () -> maxBrightness.get() / fadeTicks.get();
 
-    public static ResourceLocation modLoc(String name) {
-        return new ResourceLocation(MOD_ID, name);
-    }
-
-
     public static final String MOD_ID = "lotm";
 
     private static final Logger LOGGER = LogUtils.getLogger();
-
-    public static ResourceLocation rl(String name) {
-        return new ResourceLocation(LOTM.MOD_ID, name);
-    }
 
     public LOTM() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
