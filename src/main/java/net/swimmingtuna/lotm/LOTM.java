@@ -10,6 +10,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.ClientConfigs;
+import net.swimmingtuna.lotm.client.Configs;
 import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityPullRenderer;
 import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityPushRenderer;
 import net.swimmingtuna.lotm.entity.Renderers.AqueousLightEntityRenderer;
@@ -27,7 +29,9 @@ import net.swimmingtuna.lotm.events.ClientEvents;
 import net.swimmingtuna.lotm.init.*;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.PlayerMobs.NameManager;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
+import net.swimmingtuna.lotm.worldgen.biome.BiomeModifierRegistry;
 import org.slf4j.Logger;
 
 import java.util.function.Supplier;
@@ -49,8 +53,10 @@ public class LOTM {
 
     public LOTM() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        MinecraftForge.EVENT_BUS.addListener(this::serverAboutToStart);
         BeyonderClassInit.BEYONDER_CLASS.register(modEventBus);
         BeyonderHolderAttacher.register();
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Configs.commonSpec);
         BlockEntityInit.BLOCK_ENTITIES.register(modEventBus);
         CreativeTabInit.register(modEventBus);
         ItemInit.register(modEventBus);
@@ -58,21 +64,25 @@ public class LOTM {
         ModEffects.register(modEventBus);
         ModAttributes.register(modEventBus);
         EntityInit.register(modEventBus);
+        modEventBus.addListener(EntityInit::registerEntityAttributes);
         CommandInit.ARGUMENT_TYPES.register(modEventBus);
         ParticleInit.register(modEventBus);
         SoundInit.register(modEventBus);
 
         modEventBus.addListener(ClientEvents::onRegisterOverlays);
-
+        BiomeModifierRegistry.BIOME_MODIFIER_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfigs.SPEC, String.format("%s-client.toml", LOTM.MOD_ID));
-        // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
         MinecraftForge.EVENT_BUS.addListener(CommandInit::onCommandRegistration);
+
     }
 
+    private void serverAboutToStart(ServerAboutToStartEvent event) {
+        NameManager.INSTANCE.init();
+    }
 
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {

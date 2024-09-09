@@ -40,6 +40,11 @@ public class ModAttributes {
             ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
     public static final RegistryObject<Attribute> PARTICLE_HELPER9 = ATTRIBUTES.register("particle_helper9",
             ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,1000).setSyncable(true));
+    public static final RegistryObject<Attribute> CORRUPTION = ATTRIBUTES.register("corruption",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,100).setSyncable(true));
+    public static final RegistryObject<Attribute> LOTM_LUCK = ATTRIBUTES.register("lotm_luck",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,10000).setSyncable(true));
+
 
 
     public static void register(IEventBus eventBus) {

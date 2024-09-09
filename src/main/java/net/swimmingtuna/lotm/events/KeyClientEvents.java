@@ -11,24 +11,19 @@ import net.swimmingtuna.lotm.util.KeyBinding;
 public class KeyClientEvents {
     @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, value = Dist.CLIENT)
     public static class ClientForgeEvents {
-        @SubscribeEvent
-        public static void onKeyRegister(RegisterKeyMappingsEvent event) {
-            event.register(KeyBinding.ABILITIES_KEY);
-        }
 
         @SubscribeEvent
         public static void onKeyInput(InputEvent.Key event) {
-            if (KeyBinding.ABILITIES_KEY.consumeClick()) {
+            if (KeyBinding.SPIRIT_VISION.consumeClick()) {
 
             }
         }
     }
-
     @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientModBusEvents {
         @SubscribeEvent
         public static void onKeyRegister(RegisterKeyMappingsEvent event) {
-            event.register(KeyBinding.ABILITIES_KEY);
+            event.register(KeyBinding.SPIRIT_VISION);
         }
     }
 }

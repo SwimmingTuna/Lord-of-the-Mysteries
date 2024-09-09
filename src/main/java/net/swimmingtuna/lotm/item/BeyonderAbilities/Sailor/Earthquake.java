@@ -62,7 +62,7 @@ public class Earthquake extends Item {
         }
         super.appendHoverText(pStack, level, componentList, tooltipFlag);
     }
-    
+
     public static boolean isOnSurface(Level level, BlockPos pos) {
         return level.canSeeSky(pos.above()) || !level.getBlockState(pos.above()).isSolid();
     }

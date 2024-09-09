@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class SirenSongHarm extends Item {
     public SirenSongHarm(Properties pProperties) {
         super(pProperties);
@@ -81,6 +80,7 @@ public class SirenSongHarm extends Item {
             }
         }
     }
+
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
         if (entity instanceof Player pPlayer) {
             if (pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).getValue() == 1) {
@@ -90,6 +90,7 @@ public class SirenSongHarm extends Item {
         }
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
+
     public static void spawnParticlesInSphere(Player player, int radius) {
         Level level = player.level();
         Random random = new Random();

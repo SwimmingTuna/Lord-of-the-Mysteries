@@ -12,7 +12,7 @@ import net.swimmingtuna.lotm.commands.AbilityRegisterCommand;
 import net.swimmingtuna.lotm.commands.AbilitiesCommand;
 import net.swimmingtuna.lotm.commands.BeyonderClassArgument;
 import net.swimmingtuna.lotm.commands.BeyonderCommand;
-
+import net.swimmingtuna.lotm.commands.PlayerMobsCommand;
 
 public class CommandInit {
     public static final DeferredRegister<ArgumentTypeInfo<?, ?>> ARGUMENT_TYPES = DeferredRegister.create(ForgeRegistries.COMMAND_ARGUMENT_TYPES, LOTM.MOD_ID);
@@ -25,5 +25,6 @@ public class CommandInit {
         BeyonderCommand.register(event.getBuildContext(), event.getDispatcher());
         AbilitiesCommand.register(event.getDispatcher());
         AbilityRegisterCommand.register(event.getDispatcher(), event.getBuildContext());
+        PlayerMobsCommand.register(event.getDispatcher());
     }
 }

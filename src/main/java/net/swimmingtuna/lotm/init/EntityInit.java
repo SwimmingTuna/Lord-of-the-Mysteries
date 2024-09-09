@@ -3,12 +3,14 @@ package net.swimmingtuna.lotm.init;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.entity.*;
+import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 
 public class EntityInit {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, LOTM.MOD_ID);
@@ -73,6 +75,16 @@ public class EntityInit {
     public static final RegistryObject<EntityType<LightningEntity>> LIGHTNING_ENTITY =
             ENTITIES.register("line_entity", () -> EntityType.Builder.<LightningEntity>of(LightningEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build("line_entity"));
+    public static final RegistryObject<EntityType<PlayerMobEntity>> PLAYER_MOB_ENTITY = ENTITIES.register("player_mob", () ->
+            EntityType.Builder.<PlayerMobEntity>of(PlayerMobEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.8F)
+                    .clientTrackingRange(8)
+                    .build(new ResourceLocation(LOTM.MOD_ID, "player_mob").toString())
+    );
+    public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+        event.put(PLAYER_MOB_ENTITY.get(), PlayerMobEntity.registerAttributes().build());
+    }
+
 
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);

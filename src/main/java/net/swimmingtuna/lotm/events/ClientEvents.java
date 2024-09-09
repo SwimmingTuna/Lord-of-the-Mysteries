@@ -16,6 +16,5 @@ public class ClientEvents {
     public static void onRegisterOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAbove(VanillaGuiOverlay.EXPERIENCE_BAR.id(), "spirituality_overlay", SpiritualityBarOverlay.INSTANCE);
         //event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(), "lotmhealthbar_overlay", HealthBarOverlay.instance);
-
     }
 }

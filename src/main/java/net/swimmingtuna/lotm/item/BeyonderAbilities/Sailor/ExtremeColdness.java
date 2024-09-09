@@ -11,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
@@ -22,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ExtremeColdness extends Item {
     public ExtremeColdness(Properties pProperties) {
         super(pProperties);
@@ -39,15 +39,15 @@ public class ExtremeColdness extends Item {
                 pPlayer.displayClientMessage(Component.literal("You need 1250 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
 
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && tyrantSequence.getCurrentSequence() <= 2 && tyrantSequence.useSpirituality(1250)) {
-                useItem(pPlayer);
-            }
-            if (!pPlayer.getAbilities().instabuild)
-                pPlayer.getCooldowns().addCooldown(this, 1200);
+            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
+                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && tyrantSequence.getCurrentSequence() <= 2 && tyrantSequence.useSpirituality(1250)) {
+                    useItem(pPlayer);
+                }
+                if (!pPlayer.getAbilities().instabuild)
+                    pPlayer.getCooldowns().addCooldown(this, 1200);
 
-        });
-            }
+            });
+        }
         return super.use(level, pPlayer, hand);
     }
 
@@ -66,11 +66,10 @@ public class ExtremeColdness extends Item {
     }
 
 
-    public static boolean canFreezeBlock(Player pPlayer, BlockPos targetPos) {
-        return pPlayer.level().getBlockState(targetPos).getBlock() != Blocks.BEDROCK &&
-                pPlayer.level().getBlockState(targetPos).getBlock() != Blocks.AIR &&
-                pPlayer.level().getBlockState(targetPos).getBlock() != Blocks.CAVE_AIR &&
-                pPlayer.level().getBlockState(targetPos).getBlock() != Blocks.VOID_AIR &&
-                pPlayer.level().getBlockState(targetPos).getBlock() != Blocks.ICE;
+    public static boolean canFreezeBlock(Player player, BlockPos targetPos) {
+        Block block = player.level().getBlockState(targetPos).getBlock();
+        return block != Blocks.BEDROCK && block != Blocks.AIR &&
+                block != Blocks.CAVE_AIR && block != Blocks.VOID_AIR &&
+                block != Blocks.ICE;
     }
 }

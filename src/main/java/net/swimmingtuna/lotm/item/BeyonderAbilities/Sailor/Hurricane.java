@@ -55,7 +55,7 @@ public class Hurricane extends Item {
         }
         return super.use(level, player, hand);
     }
-    
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player pPlayer = event.getEntity();

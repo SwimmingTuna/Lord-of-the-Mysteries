@@ -16,6 +16,7 @@ public class SoundInit {
     public static final RegistryObject<SoundEvent> SIREN_SONG_WEAKEN = registerSoundEvent("siren_song_weaken");
     public static final RegistryObject<SoundEvent> SIREN_SONG_STUN = registerSoundEvent("siren_song_stun");
     public static final RegistryObject<SoundEvent> SIREN_SONG_STRENGTHEN = registerSoundEvent("siren_song_strengthen");
+    public static final RegistryObject<SoundEvent> PLAYER_MOB_AMBIENT = registerSoundEvents("ambient");
 
     public static final RegistryObject<SoundEvent> SIREN_SONG_HARM_1 = registerSoundEvent("siren_song_harm_1");
     public static final RegistryObject<SoundEvent> SIREN_SONG_HARM_2 = registerSoundEvent("siren_song_harm_2");
