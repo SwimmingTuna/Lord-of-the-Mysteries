@@ -17,7 +17,7 @@ import net.swimmingtuna.lotm.entity.Model.EndstoneEntityModel;
 
 public class EndstoneEntityRenderer extends EntityRenderer<EndStoneEntity> {
     public static final ResourceLocation ENDSTONE_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/endstoneentity.png");
-    public Model model;
+    public final Model model;
 
     public EndstoneEntityRenderer(EntityRendererProvider.Context context) {
         super(context);

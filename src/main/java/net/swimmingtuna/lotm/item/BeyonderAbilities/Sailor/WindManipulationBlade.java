@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -56,11 +55,9 @@ public class WindManipulationBlade extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Upon use, shoot out a wind blade that cuts through blocks and players\n" +
-                    "Spirituality Used: 100\n" +
-                    "Cooldown: 2 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        }
+        tooltipComponents.add(Component.literal("Upon use, shoot out a wind blade that cuts through blocks and players\n" +
+                "Spirituality Used: 100\n" +
+                "Cooldown: 2 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
     @SubscribeEvent

@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -43,24 +42,15 @@ public class EnableOrDisableLightning extends Item {
     private void useItem(Player player) {
         CompoundTag tag = player.getPersistentData();
         boolean lightning = tag.getBoolean("SailorLightning");
-        if (lightning) {
-            lightning = false;
-            tag.putBoolean("SailorLightning", false);
-            player.displayClientMessage(Component.literal("Lightning effect turned off").withStyle(ChatFormatting.DARK_BLUE).withStyle(ChatFormatting.BOLD), true);
-        } else {
-            lightning = true;
-            tag.putBoolean("SailorLightning", true);
-            player.displayClientMessage(Component.literal("Lightning effect turned on").withStyle(ChatFormatting.DARK_BLUE).withStyle(ChatFormatting.BOLD), true);
-
-        }
+        tag.putBoolean("SailorLightning", !lightning);
+        player.displayClientMessage(Component.literal("Lightning effect turned " + (lightning ? "off" : "on")).withStyle(ChatFormatting.DARK_BLUE).withStyle(ChatFormatting.BOLD), true);
     }
+
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Upon use, disables or enables lightning spawning upon users hitting targets\n" +
-                    "Spirituality Used: 0\n" +
-                    "Cooldown: 0.5 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        }
+        tooltipComponents.add(Component.literal("Upon use, disables or enables lightning spawning upon users hitting targets\n" +
+                "Spirituality Used: 0\n" +
+                "Cooldown: 0.5 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

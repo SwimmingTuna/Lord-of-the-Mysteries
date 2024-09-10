@@ -30,7 +30,7 @@ public class PlayerMobDeadmau5EarsLayer extends RenderLayer<PlayerMobEntity, Pla
                 matrixStackIn.pushPose();
 
                 if (entity.isBaby()) {
-                    pitch *= -0.5;
+                    pitch *= -0.5f;
                 }
 
                 matrixStackIn.mulPose(Axis.YP.rotationDegrees(netHeadYaw));

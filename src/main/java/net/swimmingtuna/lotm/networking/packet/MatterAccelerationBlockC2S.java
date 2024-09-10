@@ -58,7 +58,7 @@ public class MatterAccelerationBlockC2S {
                    if (netherrackEntity != null) {
                        netherrackEntity.setDeltaMovement(lookDirection);
                        netherrackEntity.setSent(true);
-                       netherrackEntity.setShouldntDamage(false);
+                       netherrackEntity.setShouldDamage(true);
                        netherrackEntity.setTickCount(440);
                    }
                    if (netherrackEntity == null) {

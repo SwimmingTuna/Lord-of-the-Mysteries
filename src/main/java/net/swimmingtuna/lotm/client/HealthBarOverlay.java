@@ -54,6 +54,6 @@ public class HealthBarOverlay implements IGuiOverlay {
 
     public static boolean shouldShowHealthBar(Player player) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        return holder != null && !player.isSpectator() && !player.isCreative();
+        return !player.isSpectator() && !player.isCreative();
     }
 }

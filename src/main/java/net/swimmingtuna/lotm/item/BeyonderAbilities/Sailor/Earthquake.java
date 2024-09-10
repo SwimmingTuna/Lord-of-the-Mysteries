@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -30,7 +29,6 @@ public class Earthquake extends Item {
             return super.use(level, player, hand);
         }
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) return InteractionResultHolder.pass(player.getItemInHand(hand));
         if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
             player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             return InteractionResultHolder.pass(player.getItemInHand(hand));
@@ -55,11 +53,9 @@ public class Earthquake extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Upon use, summons an earthquake shooting stone into the ground\n" +
-                    "Spirituality Used: 600\n" +
-                    "Cooldown: 25 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        }
+        tooltipComponents.add(Component.literal("Upon use, summons an earthquake shooting stone into the ground\n" +
+                "Spirituality Used: 600\n" +
+                "Cooldown: 25 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

@@ -36,7 +36,6 @@ public class WindManipulationFlight extends SimpleAbilityItem {
     @Override
     public void useAbility(Level level, Player player, InteractionHand hand) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) return;
         if (holder.getCurrentSequence() <= 7 && holder.getCurrentSequence() > 4) {
             flightRegular(player);
         }
@@ -106,7 +105,6 @@ public class WindManipulationFlight extends SimpleAbilityItem {
             return;
         }
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) return;
         if (!holder.useSpirituality(2)) {
             stopFlying(player);
         }

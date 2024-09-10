@@ -77,7 +77,7 @@ public class LavaEntity extends AbstractArrow {
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
-        if (this.level() != null && !this.level().isClientSide) {
+        if (!this.level().isClientSide) {
             Random random = new Random();
             if (random.nextInt(10) == 1) {
             this.level().broadcastEntityEvent(this, (byte) 3);

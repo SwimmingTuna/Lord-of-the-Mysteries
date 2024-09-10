@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -62,11 +61,9 @@ public class MatterAccelerationBlocks extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Upon use, summons 10 blocks from around the player, making the next left clicks the player does shoot them towards the direction they look at with incredible speed\n" +
-                    "Spirituality Used: 2000\n" +
-                    "Cooldown: 15 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        }
+        tooltipComponents.add(Component.literal("Upon use, summons 10 blocks from around the player, making the next left clicks the player does shoot them towards the direction they look at with incredible speed\n" +
+                "Spirituality Used: 2000\n" +
+                "Cooldown: 15 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
     public static void useItem(Player player) {
@@ -115,7 +112,7 @@ public class MatterAccelerationBlocks extends Item {
                         stoneEntity.setRemoveAndHurt(true);
                         stoneEntity.setSent(false);
                         stoneEntity.setPos(surfacePos.getX() + 0.5, surfacePos.getY() + 1, surfacePos.getZ() + 0.5);
-                        stoneEntity.setShouldntDamage(true);
+                        stoneEntity.setShouldDamage(false);
                         stoneEntity.setNetherrackXRot(randomXRot);
                         stoneEntity.setNetherrackYRot(randomYRot);
 
@@ -219,7 +216,7 @@ public class MatterAccelerationBlocks extends Item {
                 if (netherrackEntity != null) {
                     netherrackEntity.setDeltaMovement(lookDirection);
                     netherrackEntity.setSent(true);
-                    netherrackEntity.setShouldntDamage(false);
+                    netherrackEntity.setShouldDamage(true);
                     netherrackEntity.setTickCount(440);
                 }
                 if (netherrackEntity == null) {

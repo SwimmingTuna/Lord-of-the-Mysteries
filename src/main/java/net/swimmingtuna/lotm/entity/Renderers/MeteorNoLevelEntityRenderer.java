@@ -15,7 +15,7 @@ import net.swimmingtuna.lotm.entity.Model.MeteorNoLevelModel;
 
 public class MeteorNoLevelEntityRenderer extends EntityRenderer<MeteorNoLevelEntity> {
     public static final ResourceLocation METEOR_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/meteor.png");
-    public Model model;
+    public final Model model;
 
     public MeteorNoLevelEntityRenderer(EntityRendererProvider.Context context) {
         super(context);

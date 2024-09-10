@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -32,11 +31,38 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EnvisionBarrier extends Item {
 
+    private final Map<BlockPos, BlockState> replacedBlocks = new HashMap<>();
+    private final List<BlockPos> replacedAirBlocks = new ArrayList<>();
+    private BlockPos domeCenter = null;
+
     public EnvisionBarrier(Properties properties) {
         super(properties);
+    }
+
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionBarrier) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_DEATH.get()));
+            heldItem.shrink(1);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionBarrier) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_DEATH.get()));
+            heldItem.shrink(1);
+        }
     }
 
     @Override
@@ -47,8 +73,8 @@ public class EnvisionBarrier extends Item {
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                 player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
-            if (holder.getSpirituality() < (int) (800/dreamIntoReality.getValue())) {
-                player.displayClientMessage(Component.literal("You need " + ((int) 800/ dreamIntoReality.getValue()) +  " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            if (holder.getSpirituality() < (int) (800 / dreamIntoReality.getValue())) {
+                player.displayClientMessage(Component.literal("You need " + (800 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
         }
         BlockPos playerPos = player.getOnPos();
@@ -63,13 +89,11 @@ public class EnvisionBarrier extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Upon use, makes a barrier around the user\n" +
-                    "Hold Shift to Increase Barrier Radius\n" +
-                    "Left Click for Envision Death\n" +
-                    "Spirituality Used: 800\n" +
-                    "Cooldown: 5 seconds ").withStyle(ChatFormatting.AQUA));
-        }
+        tooltipComponents.add(Component.literal("Upon use, makes a barrier around the user\n" +
+                "Hold Shift to Increase Barrier Radius\n" +
+                "Left Click for Envision Death\n" +
+                "Spirituality Used: 800\n" +
+                "Cooldown: 5 seconds ").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
@@ -81,7 +105,7 @@ public class EnvisionBarrier extends Item {
             if (domeCenter != null) {
                 // Remove the existing glass dome
                 for (Map.Entry<BlockPos, BlockState> entry : replacedBlocks.entrySet()) {
-                    BlockPos  worldPos = domeCenter.offset(entry.getKey());
+                    BlockPos worldPos = domeCenter.offset(entry.getKey());
                     level.setBlockAndUpdate(worldPos, entry.getValue());
                 }
                 for (BlockPos airPos : replacedAirBlocks) {
@@ -120,32 +144,6 @@ public class EnvisionBarrier extends Item {
                     }
                 }
             }
-        }
-    }
-
-    private Map<BlockPos, BlockState> replacedBlocks = new HashMap<>();
-    private List<BlockPos> replacedAirBlocks = new ArrayList<>();
-    private BlockPos domeCenter = null;
-
-
-    @SubscribeEvent
-    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player player = event.getEntity();
-        ItemStack heldItem = player.getMainHandItem();
-        int activeSlot = player.getInventory().selected;
-        if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionBarrier) {
-            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_DEATH.get()));
-            heldItem.shrink(1);
-        }
-    }
-    @SubscribeEvent
-    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player player = event.getEntity();
-        ItemStack heldItem = player.getMainHandItem();
-        int activeSlot = player.getInventory().selected;
-        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionBarrier) {
-            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_DEATH.get()));
-            heldItem.shrink(1);
         }
     }
 }

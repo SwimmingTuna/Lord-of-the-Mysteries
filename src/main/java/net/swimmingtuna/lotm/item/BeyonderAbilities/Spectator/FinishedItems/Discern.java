@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -60,11 +59,9 @@ public class Discern extends Item {
     }
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Upon use, resets the cooldown of all your abilities\n" +
-                    "Spirituality Used: 1000\n" +
-                    "Cooldown: 45 seconds").withStyle(ChatFormatting.AQUA));
-        }
+        tooltipComponents.add(Component.literal("Upon use, resets the cooldown of all your abilities\n" +
+                "Spirituality Used: 1000\n" +
+                "Cooldown: 45 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

@@ -92,7 +92,6 @@ public class ModEvents {
         Style style = BeyonderUtil.getStyle(player);
         CompoundTag playerPersistentData = player.getPersistentData();
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) return;
         if (!(player.level() instanceof ServerLevel serverLevel)) return;
         int sequence = holder.getCurrentSequence();
         if (player.level().isClientSide() || event.phase != TickEvent.Phase.START) {
@@ -1889,7 +1888,7 @@ public class ModEvents {
             }
             if (entity1 instanceof Player player) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                if (holder != null && !holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() == 0) {
+                if (!holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() == 0) {
                     player.hurt(player.damageSources().lightningBolt(), 10);
                 }
             } else {
@@ -1928,8 +1927,6 @@ public class ModEvents {
         if (player.getMainHandItem().getItem() instanceof BeyonderAbilityUser) {
             event.setCanceled(true);
         }
-
-        if (holder == null) return;
 
         //SAILOR PASSIVE
         if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 7 && event.getTarget() instanceof LivingEntity livingTarget && sailorLightning && livingTarget != player) {
@@ -2010,21 +2007,18 @@ public class ModEvents {
             }
 
             //MONSTER LUCK
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (holder != null) {
-                AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
-                double luckValue = luck.getValue();
-                float damage = event.getAmount();
-                if (luckValue >= 1) {
-                    if (Math.random() * luckValue > 50) {
-                        event.setCanceled(true);
-                        luck.setBaseValue((Math.min(0, luckValue - damage)));
-                    }
+            AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
+            double luckValue = luck.getValue();
+            float damage = event.getAmount();
+            if (luckValue >= 1) {
+                if (Math.random() * luckValue > 50) {
+                    event.setCanceled(true);
+                    luck.setBaseValue((Math.min(0, luckValue - damage)));
                 }
-                if (luckValue < 0) {
-                    if (Math.random() * luckValue < 50) {
-                        event.setAmount(damage * 2);
-                    }
+            }
+            if (luckValue < 0) {
+                if (Math.random() * luckValue < 50) {
+                    event.setAmount(damage * 2);
                 }
             }
         }

@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
@@ -29,17 +28,13 @@ import virtuoel.pehkui.api.ScaleTypes;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class DreamIntoReality extends Item {
     private static final String CAN_FLY = "CanFly";
-    private AtomicInteger spiritualityUseCounter;
-
 
     public DreamIntoReality(Properties properties) {
         super(properties);
-        this.spiritualityUseCounter = new AtomicInteger(0);
     }
 
     @Override
@@ -114,11 +109,9 @@ public class DreamIntoReality extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Upon use, turns your dreams into reality, making you a giant with strengthened abilities, quicker regeneration, and stronger melee hits\n" +
-                    "Spirituality Used: 300 every second\n" +
-                    "Cooldown: 30 seconds").withStyle(ChatFormatting.AQUA));
-        }
+        tooltipComponents.add(Component.literal("Upon use, turns your dreams into reality, making you a giant with strengthened abilities, quicker regeneration, and stronger melee hits\n" +
+                "Spirituality Used: 300 every second\n" +
+                "Cooldown: 30 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

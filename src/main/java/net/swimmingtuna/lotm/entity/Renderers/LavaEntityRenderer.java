@@ -17,7 +17,7 @@ import net.swimmingtuna.lotm.entity.Model.LavaEntityModel;
 
 public class LavaEntityRenderer extends EntityRenderer<LavaEntity> {
     public static final ResourceLocation LAVA_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/lava_entity.png");
-    public Model model;
+    public final Model model;
 
     public LavaEntityRenderer(EntityRendererProvider.Context context) {
         super(context);

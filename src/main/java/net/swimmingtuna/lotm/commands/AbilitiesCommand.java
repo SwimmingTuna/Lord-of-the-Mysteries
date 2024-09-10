@@ -19,7 +19,7 @@ public class AbilitiesCommand {
         dispatcher.register(Commands.literal("abilities")
                 .executes(context -> {
                     BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(context.getSource().getPlayerOrException());
-                    if (holder == null || holder.getCurrentClass() == null) {
+                    if (holder.getCurrentClass() == null) {
                         context.getSource().sendFailure(Component.literal("You are not in any class!"));
                         return 0;
                     }

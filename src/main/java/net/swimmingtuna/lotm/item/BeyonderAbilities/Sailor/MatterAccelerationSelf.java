@@ -49,9 +49,6 @@ public class MatterAccelerationSelf extends Item implements Ability {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!player.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (holder == null) {
-                return InteractionResultHolder.fail(player.getItemInHand(hand));
-            }
             useItem(player);
             if (!player.isCreative()) {
                 player.getCooldowns().addCooldown(this, 300);
@@ -68,7 +65,6 @@ public class MatterAccelerationSelf extends Item implements Ability {
 
     public static void useItem(Player player) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) return;
 
         int matterAccelerationDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
 

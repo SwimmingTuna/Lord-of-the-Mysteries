@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -36,7 +35,6 @@ public class LightningBall extends Item {
 
         // If no block or entity is targeted, proceed with the original functionality
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) return InteractionResultHolder.pass(player.getItemInHand(hand));
         if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
             player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             return InteractionResultHolder.pass(player.getItemInHand(hand));
@@ -56,11 +54,9 @@ public class LightningBall extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Upon use, summons a lightning ball that launches in the direction the player looks after a bit of time\n" +
-                    "Spirituality Used: 800\n" +
-                    "Cooldown: 20 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        }
+        tooltipComponents.add(Component.literal("Upon use, summons a lightning ball that launches in the direction the player looks after a bit of time\n" +
+                "Spirituality Used: 800\n" +
+                "Cooldown: 20 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

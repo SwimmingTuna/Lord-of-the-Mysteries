@@ -51,7 +51,6 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
         windBladeEntity.setPos(lightPosition);
         windBladeEntity.setOwner(player);
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) return;
         if (!windBladeEntity.level().isClientSide()) {
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(windBladeEntity);
             scaleData.setTargetScale((7 - (holder.getCurrentSequence())));
@@ -73,13 +72,11 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
         windBladeEntity.setXRot((float) direction.x);
         windBladeEntity.setYRot((float) direction.y);
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder != null) {
-            int x = 7 - holder.getCurrentSequence();
-            if (!windBladeEntity.level().isClientSide()) {
-                ScaleData scaleData = ScaleTypes.BASE.getScaleData(windBladeEntity);
-                scaleData.setScale(x);
-                scaleData.markForSync(true);
-            }
+        int x = 7 - holder.getCurrentSequence();
+        if (!windBladeEntity.level().isClientSide()) {
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(windBladeEntity);
+            scaleData.setScale(x);
+            scaleData.markForSync(true);
         }
         player.level().addFreshEntity(windBladeEntity);
     }
@@ -98,7 +95,6 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
     protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide() && result.getEntity() instanceof LivingEntity entity && this.getOwner() instanceof Player player) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (holder == null) return;
             if (!entity.level().isClientSide() && !player.level().isClientSide()) {
                 int currentLifeCount = this.entityData.get(DATA_LIFE_COUNT);
                 int decrease = (holder.getCurrentSequence() * 9) + 30;

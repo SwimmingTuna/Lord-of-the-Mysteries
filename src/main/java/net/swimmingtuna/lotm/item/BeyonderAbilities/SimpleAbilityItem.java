@@ -43,9 +43,6 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (holder == null) {
-                return InteractionResultHolder.fail(player.getItemInHand(hand));
-            }
 
             boolean hasAllRequirements = checkAll(player);
             if (!hasAllRequirements) return InteractionResultHolder.fail(player.getItemInHand(hand));

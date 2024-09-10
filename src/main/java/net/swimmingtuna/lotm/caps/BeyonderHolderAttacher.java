@@ -13,8 +13,6 @@ import net.swimmingtuna.lotm.util.CapabilitySyncer.core.CapabilityAttacher;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.network.SimpleEntityCapabilityStatusPacket;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-
 public class BeyonderHolderAttacher extends CapabilityAttacher {
     public static final Capability<BeyonderHolder> CAPABILITY = getCapability(new CapabilityToken<>() {});
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(LOTM.MOD_ID, "beyonder_class");

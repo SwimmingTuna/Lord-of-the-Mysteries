@@ -18,7 +18,7 @@ import net.swimmingtuna.lotm.entity.Model.LightningBallModel;
 
 public class LightningBallRenderer extends EntityRenderer<LightningBallEntity> {
     public static final ResourceLocation LIGHTNING_BALL_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/lightningball.png");
-    public Model model;
+    public final Model model;
 
     public LightningBallRenderer(EntityRendererProvider.Context context) {
         super(context);

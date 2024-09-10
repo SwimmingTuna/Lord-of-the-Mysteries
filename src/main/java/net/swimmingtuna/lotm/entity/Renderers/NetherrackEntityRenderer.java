@@ -17,7 +17,7 @@ import net.swimmingtuna.lotm.entity.NetherrackEntity;
 
 public class NetherrackEntityRenderer extends EntityRenderer<NetherrackEntity> {
     public static final ResourceLocation NETHERRACK_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/netherrackentity.png");
-    public Model model;
+    public final Model model;
 
     public NetherrackEntityRenderer(EntityRendererProvider.Context context) {
         super(context);

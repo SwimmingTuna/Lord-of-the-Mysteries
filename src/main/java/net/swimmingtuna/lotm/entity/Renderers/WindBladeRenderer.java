@@ -16,7 +16,7 @@ import net.swimmingtuna.lotm.entity.WindBladeEntity;
 
 public class WindBladeRenderer extends EntityRenderer<WindBladeEntity> {
     public static final ResourceLocation WIND_BLADE_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/wind_blade.png");
-    public Model model;
+    public final Model model;
 
     public WindBladeRenderer(EntityRendererProvider.Context context) {
         super(context);

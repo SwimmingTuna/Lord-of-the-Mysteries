@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -88,13 +87,11 @@ public class EnvisionLocationBlink extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Upon use, teleport in front of you\n" +
-                    "Shift to Increase Blink Distance\n" +
-                    "Left Click for Envision Weather\n" +
-                    "Spirituality Used: 8 for every block traveled\n" +
-                    "Cooldown: 1 second").withStyle(ChatFormatting.AQUA));
-        }
+        tooltipComponents.add(Component.literal("Upon use, teleport in front of you\n" +
+                "Shift to Increase Blink Distance\n" +
+                "Left Click for Envision Weather\n" +
+                "Spirituality Used: 8 for every block traveled\n" +
+                "Cooldown: 1 second").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
     @SubscribeEvent

@@ -12,7 +12,7 @@ import net.swimmingtuna.lotm.util.RotationUtil;
 
 public class DragonBreathEntity extends BeamEntity {
 
-    public static double RANGE = 64.0D;
+    public static final double RANGE = 64.0D;
     public static final int CHARGE = 20;
 
     public DragonBreathEntity(EntityType<? extends Projectile> entityType, Level level) {

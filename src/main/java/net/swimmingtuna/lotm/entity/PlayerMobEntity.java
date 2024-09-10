@@ -170,7 +170,7 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
                 if (stack.getItem() instanceof ProjectileWeaponItem && Configs.COMMON.allowTippedArrows.get()) {
                     var potions = new ArrayList<>(ForgeRegistries.POTIONS.getKeys());
                     potions.removeAll(Configs.COMMON.tippedArrowBlocklist);
-                    if (potions.size() > 0) {
+                    if (!potions.isEmpty()) {
                         var potion = ForgeRegistries.POTIONS.getValue(potions.get(random.nextInt(potions.size())));
                         setItemSlot(EquipmentSlot.OFFHAND, PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), potion));
                     }
@@ -307,7 +307,7 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
         }
     }
 
-    @SuppressWarnings({"DataFlowIssue", "deprecation"})
+    @SuppressWarnings("deprecation")
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
@@ -580,7 +580,6 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
         return capeAvailable;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @OnlyIn(Dist.CLIENT)
     public ResourceLocation getTexture(MinecraftProfileTexture.Type type) {
         if (type == MinecraftProfileTexture.Type.SKIN)

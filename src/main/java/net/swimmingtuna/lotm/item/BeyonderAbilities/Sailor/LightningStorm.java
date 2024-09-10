@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -76,13 +75,11 @@ public class LightningStorm extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Upon use, summons a lightning storm, leaving mass destruction\n" +
-                    "Left Click to Increase Distance Spawned At\n" +
-                    "Shift to Increase Storm Radius\n" +
-                    "Spirituality Used: 1000\n" +
-                    "Cooldown: 30 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        }
+        tooltipComponents.add(Component.literal("Upon use, summons a lightning storm, leaving mass destruction\n" +
+                "Left Click to Increase Distance Spawned At\n" +
+                "Shift to Increase Storm Radius\n" +
+                "Spirituality Used: 1000\n" +
+                "Cooldown: 30 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

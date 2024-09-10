@@ -47,7 +47,7 @@ public class ItemManager {
             }
             ResourceLocation location = ResourceLocation.tryParse(parts[0]);
             if (location == null || !ForgeRegistries.ITEMS.containsKey(location)) {
-                LOGGER.error(String.format("Failed to parse item id: %s", parts[0]));
+                LOGGER.error("Failed to parse item id: {}", parts[0]);
                 return null;
             }
             return WeightedEntry.wrap(location, weight);
@@ -63,7 +63,7 @@ public class ItemManager {
     }
 
     private ItemStack getRandomItem(List<WeightedEntry.Wrapper<ResourceLocation>> items, RandomSource randomSource) {
-        if (items.size() == 0)
+        if (items.isEmpty())
             return ItemStack.EMPTY;
 
         return WeightedRandom

@@ -31,6 +31,7 @@ public class LOTMGlassPane extends IronBarsBlock {
         return Shapes.empty();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public float getShadeBrightness(BlockState state, BlockGetter blockGetter, BlockPos pos) {
         return 1.0F;

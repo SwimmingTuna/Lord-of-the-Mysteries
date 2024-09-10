@@ -17,7 +17,7 @@ import net.swimmingtuna.lotm.entity.StoneEntity;
 
 public class StoneEntityRenderer extends EntityRenderer<StoneEntity> {
     public static final ResourceLocation STONE_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/stoneentity.png");
-    public Model model;
+    public final Model model;
 
     public StoneEntityRenderer(EntityRendererProvider.Context context) {
         super(context);

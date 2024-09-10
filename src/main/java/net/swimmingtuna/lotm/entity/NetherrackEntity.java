@@ -35,7 +35,7 @@ public class NetherrackEntity extends AbstractArrow {
     private static final EntityDataAccessor<Float> DATA_NETHERRACK_STAYATZ = SynchedEntityData.defineId(NetherrackEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> REMOVE_AND_HURT = SynchedEntityData.defineId(NetherrackEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SENT = SynchedEntityData.defineId(NetherrackEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> SHOULDNT_DAMAGE = SynchedEntityData.defineId(NetherrackEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SHOULD_DAMAGE = SynchedEntityData.defineId(NetherrackEntity.class, EntityDataSerializers.BOOLEAN);
 
 
     public NetherrackEntity(EntityType<? extends NetherrackEntity> entityType, Level level) {
@@ -52,7 +52,7 @@ public class NetherrackEntity extends AbstractArrow {
         this.entityData.define(DATA_DANGEROUS, false);
         this.entityData.define(REMOVE_AND_HURT, false);
         this.entityData.define(SENT, false);
-        this.entityData.define(SHOULDNT_DAMAGE, false);
+        this.entityData.define(SHOULD_DAMAGE, true);
         this.entityData.define(DATA_NETHERRACK_XROT, 0);
         this.entityData.define(DATA_NETHERRACK_STAYATX, 0.0f);
         this.entityData.define(DATA_NETHERRACK_STAYATY, 0.0f);
@@ -85,7 +85,7 @@ public class NetherrackEntity extends AbstractArrow {
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
-        if (this.level() != null && !this.level().isClientSide && !getShouldntDamage()) {
+        if (!this.level().isClientSide && getShouldDamage()) {
             Vec3 hitPos = result.getLocation();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
@@ -101,7 +101,7 @@ public class NetherrackEntity extends AbstractArrow {
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
-        if (this.level() != null && !this.level().isClientSide && !getRemoveAndHurt() && !getShouldntDamage()) {
+        if (!this.level().isClientSide && !getRemoveAndHurt() && getShouldDamage()) {
             Random random = new Random();
             if (random.nextInt(10) == 1) {
             this.level().broadcastEntityEvent(this, (byte) 3);
@@ -114,7 +114,6 @@ public class NetherrackEntity extends AbstractArrow {
     public boolean isPickable() {
         return false;
     }
-
 
     public boolean isDangerous() {
         return this.entityData.get(DATA_DANGEROUS);
@@ -138,33 +137,33 @@ public class NetherrackEntity extends AbstractArrow {
                 if (!getSent() && this.getOwner() != null) {
                     this.setDeltaMovement(this.getOwner().getX() - this.getX() + getNetherrackStayAtX(),this.getOwner().getY() - this.getY() + getNetherrackStayAtY(),this.getOwner().getZ() - this.getZ() + getNetherrackStayAtZ());
                 }
-                    BlockPos entityPos = this.blockPosition();
-                    for (int x = -2; x <= 2; x++) {
-                        for (int y = -2; y <= 2; y++) {
-                            for (int z = -2; z <= 2; z++) {
-                                BlockPos pos = entityPos.offset(x, y, z);
-                                BlockState state = this.level().getBlockState(pos);
-                                Block block = state.getBlock();
-                                float blockStrength = block.defaultDestroyTime();
-                                float obsidianStrength = Blocks.OBSIDIAN.defaultDestroyTime();
-                                if (blockStrength <= obsidianStrength) {
-                                    this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-                                }
-                                if (blockStrength >= obsidianStrength) {
-                                    this.level().explode(this, this.getX(), this.getY(), this.getZ(), 8, Level.ExplosionInteraction.TNT);
-                                }
+                BlockPos entityPos = this.blockPosition();
+                for (int x = -2; x <= 2; x++) {
+                    for (int y = -2; y <= 2; y++) {
+                        for (int z = -2; z <= 2; z++) {
+                            BlockPos pos = entityPos.offset(x, y, z);
+                            BlockState state = this.level().getBlockState(pos);
+                            Block block = state.getBlock();
+                            float blockStrength = block.defaultDestroyTime();
+                            float obsidianStrength = Blocks.OBSIDIAN.defaultDestroyTime();
+                            if (blockStrength <= obsidianStrength) {
+                                this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                            }
+                            if (blockStrength >= obsidianStrength) {
+                                this.level().explode(this, this.getX(), this.getY(), this.getZ(), 8, Level.ExplosionInteraction.TNT);
                             }
                         }
                     }
-                    for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(5))) {
-                        if (entity != this.getOwner()) {
-                            entity.hurt(entity.damageSources().lightningBolt(), 10);
-                        }
-                    }
-                    if (this.tickCount >= 480) {
-                        this.discard();
+                }
+                for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(5))) {
+                    if (entity != this.getOwner()) {
+                        entity.hurt(entity.damageSources().lightningBolt(), 10);
                     }
                 }
+                if (this.tickCount >= 480) {
+                    this.discard();
+                }
+            }
         }
     }
 
@@ -200,31 +199,39 @@ public class NetherrackEntity extends AbstractArrow {
     public boolean getSent() {
         return this.entityData.get(SENT);
     }
-    public void setShouldntDamage(boolean shouldntDamage) {
-        this.entityData.set(SHOULDNT_DAMAGE, shouldntDamage);
+
+    public void setShouldDamage(boolean shouldDamage) {
+        this.entityData.set(SHOULD_DAMAGE, shouldDamage);
     }
 
-    public boolean getShouldntDamage() {
-        return this.entityData.get(SHOULDNT_DAMAGE);
+    public boolean getShouldDamage() {
+        return this.entityData.get(SHOULD_DAMAGE);
     }
+
     public float getNetherrackStayAtX() {
         return this.entityData.get(DATA_NETHERRACK_STAYATX);
     }
-    public float getNetherrackStayAtY() {
-        return this.entityData.get(DATA_NETHERRACK_STAYATY);
-    }
-    public float getNetherrackStayAtZ() {
-        return this.entityData.get(DATA_NETHERRACK_STAYATZ);
-    }
+
     public void setNetherrackStayAtX(float stayAtX) {
         this.entityData.set(DATA_NETHERRACK_STAYATX, stayAtX);
     }
+
+    public float getNetherrackStayAtY() {
+        return this.entityData.get(DATA_NETHERRACK_STAYATY);
+    }
+
     public void setNetherrackStayAtY(float stayAtY) {
         this.entityData.set(DATA_NETHERRACK_STAYATY, stayAtY);
     }
+
+    public float getNetherrackStayAtZ() {
+        return this.entityData.get(DATA_NETHERRACK_STAYATZ);
+    }
+
     public void setNetherrackStayAtZ(float stayAtZ) {
         this.entityData.set(DATA_NETHERRACK_STAYATZ, stayAtZ);
     }
+
     public void setTickCount(int tickCount) {
         this.tickCount = tickCount;
     }

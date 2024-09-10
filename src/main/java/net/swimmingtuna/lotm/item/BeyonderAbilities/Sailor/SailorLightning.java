@@ -3,7 +3,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -50,7 +49,7 @@ public class SailorLightning extends Item {
         super(properties);
     }
 
-
+    @SuppressWarnings("deprecation")
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
         if (slot == EquipmentSlot.MAINHAND) {
@@ -91,7 +90,6 @@ public class SailorLightning extends Item {
 
         // If no block or entity is targeted, proceed with the original functionality
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) return InteractionResultHolder.pass(player.getItemInHand(hand));
         if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
             player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             return InteractionResultHolder.fail(player.getItemInHand(hand));
@@ -111,11 +109,9 @@ public class SailorLightning extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Shoots out a lightning bolt, if used on a block or entity, the lightning bolt travels towards it in exchange for 100 extra spirituality and higher cooldown, otherwise, it moves randomly in the direction you look\n" +
-                    "Spirituality Used: 200\n" +
-                    "Cooldown: 2 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        }
+        tooltipComponents.add(Component.literal("Shoots out a lightning bolt, if used on a block or entity, the lightning bolt travels towards it in exchange for 100 extra spirituality and higher cooldown, otherwise, it moves randomly in the direction you look\n" +
+                "Spirituality Used: 200\n" +
+                "Cooldown: 2 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
@@ -218,7 +214,7 @@ public class SailorLightning extends Item {
             }
             if (itemStack.getItem() instanceof LightningRedirection) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                if (holder != null && holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 1) {
+                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 1) {
                     for (Entity entity : player.level().getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
                         if (entity instanceof LightningEntity lightning) {
                             lightning.setTargetEntity(targetEntity);
@@ -252,7 +248,7 @@ public class SailorLightning extends Item {
             }
             if (itemStack.getItem() instanceof LightningRedirection) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                if (holder != null && holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 1) {
+                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 1) {
                     for (Entity entity : player.level().getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
                         if (entity instanceof LightningEntity lightning) {
                             lightning.setTargetPos(event.getPos().getCenter());

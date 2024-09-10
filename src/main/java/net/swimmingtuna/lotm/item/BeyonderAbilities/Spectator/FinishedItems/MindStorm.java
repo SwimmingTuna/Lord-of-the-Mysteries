@@ -3,7 +3,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -45,6 +44,7 @@ public class MindStorm extends Item {
         super(properties);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
         if (slot == EquipmentSlot.MAINHAND) {
@@ -64,11 +64,9 @@ public class MindStorm extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal("Upon use on a living entity, damages, freezes, blinds, and confuses them\n" +
-                    "Spirituality Used: 250\n" +
-                    "Cooldown: 10 seconds").withStyle(ChatFormatting.AQUA));
-        }
+        tooltipComponents.add(Component.literal("Upon use on a living entity, damages, freezes, blinds, and confuses them\n" +
+                "Spirituality Used: 250\n" +
+                "Cooldown: 10 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
@@ -78,7 +76,7 @@ public class MindStorm extends Item {
         ItemStack itemStack = player.getItemInHand(event.getHand());
         if (!player.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (holder != null && itemStack.getItem() instanceof MindStorm) {
+            if (itemStack.getItem() instanceof MindStorm) {
                 if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                     player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 }

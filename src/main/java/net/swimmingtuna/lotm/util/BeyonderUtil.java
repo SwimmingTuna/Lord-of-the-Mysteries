@@ -63,9 +63,6 @@ public class BeyonderUtil {
             return abilityNames;
         }
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) {
-            return abilityNames;
-        }
         int sequence = holder.getCurrentSequence();
         if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
             if (sequence <= 8) {
@@ -221,7 +218,7 @@ public class BeyonderUtil {
 
     public static Style getStyle(Player player) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder != null && holder.getCurrentClass() != null) {
+        if (holder.getCurrentClass() != null) {
             return Style.EMPTY.withBold(true).withColor(holder.getCurrentClass().getColorFormatting());
         }
         return Style.EMPTY;

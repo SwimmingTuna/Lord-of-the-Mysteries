@@ -30,7 +30,6 @@ public class SpiritualityBarOverlay implements IGuiOverlay {
     public static boolean shouldShowSpiritualityBar(Player player) {
         Display display = ClientConfigs.SPIRITUALITY_BAR_DISPLAY.get();
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) return false;
 
         return !player.isSpectator() && display != Display.NEVER && (display == Display.ALWAYS || holder.getSpirituality() - 1 < holder.getMaxSpirituality());
     }
@@ -65,7 +64,6 @@ public class SpiritualityBarOverlay implements IGuiOverlay {
 
         if (!shouldShowSpiritualityBar(player)) return;
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) return;
         double maxSpirituality = holder.getMaxSpirituality();
         double spirituality = holder.getSpirituality();
         int barX, barY;

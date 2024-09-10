@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -35,7 +34,6 @@ public class Placate extends Item {
             return super.use(level, player, hand);
         }
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder == null) return InteractionResultHolder.fail(player.getItemInHand(hand));
         if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
             player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             return InteractionResultHolder.fail(player.getItemInHand(hand));
@@ -97,12 +95,10 @@ public class Placate extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.literal(
-                    "Upon use, reduces or removes the targeted living entity's harmful potion effects\n" +
-                    "Spirituality Used: 125\n" +
-                    "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
-        }
+        tooltipComponents.add(Component.literal(
+                "Upon use, reduces or removes the targeted living entity's harmful potion effects\n" +
+                        "Spirituality Used: 125\n" +
+                        "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

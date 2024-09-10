@@ -93,7 +93,7 @@ public class NameManager {
         this.allNames.clear();
         this.allNames.addAll(allNames);
 
-        if (namePool.size() > 0) {
+        if (!namePool.isEmpty()) {
             allNames.removeAll(usedNames);
             allNames.removeAll(namePool);
         } else {

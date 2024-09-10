@@ -17,7 +17,7 @@ import net.swimmingtuna.lotm.entity.WindCushionEntity;
 
 public class WindCushionRenderer extends EntityRenderer<WindCushionEntity> {
     public static final ResourceLocation WIND_CUSHION_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/wind_cushion.png");
-    public Model model;
+    public final Model model;
 
     public WindCushionRenderer(EntityRendererProvider.Context context) {
         super(context);

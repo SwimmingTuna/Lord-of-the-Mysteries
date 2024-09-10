@@ -35,6 +35,7 @@ public class LOTMStainedGlassPane extends StainedGlassPaneBlock implements Beaco
         return Shapes.empty();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public float getShadeBrightness(BlockState state, BlockGetter blockGetter, BlockPos pos) {
         return 1.0F;
