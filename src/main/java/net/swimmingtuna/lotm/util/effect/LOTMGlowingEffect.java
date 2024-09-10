@@ -11,15 +11,15 @@ public class LOTMGlowingEffect extends MobEffect {
 
 
     @Override
-    public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
-        if (!pLivingEntity.level().isClientSide()) {
+    public void applyEffectTick(LivingEntity livingEntity, int amplifier) {
+        if (!livingEntity.level().isClientSide()) {
 
         }
-        super.applyEffectTick(pLivingEntity, pAmplifier);
+        super.applyEffectTick(livingEntity, amplifier);
     }
 
     @Override
-    public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
+    public boolean isDurationEffectTick(int duration, int amplifier) {
         return true;
     }
 

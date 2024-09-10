@@ -27,25 +27,23 @@ public class WaterSphere extends SimpleAbilityItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
 
             // If no block or entity is targeted, proceed with the original functionality
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < 300) {
-                pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 5 && sailorSequence.useSpirituality(300)) {
-                    if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 240);
-                }
-            });
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 5 && holder.useSpirituality(300)) {
+                if (!player.getAbilities().instabuild)
+                    player.getCooldowns().addCooldown(this, 240);
+            }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
     @Override
@@ -54,9 +52,9 @@ public class WaterSphere extends SimpleAbilityItem {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        componentList.add(Component.literal("Upon use, summon a sphere of water around you for 10 seconds"));
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use, summon a sphere of water around you for 10 seconds"));
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
 }

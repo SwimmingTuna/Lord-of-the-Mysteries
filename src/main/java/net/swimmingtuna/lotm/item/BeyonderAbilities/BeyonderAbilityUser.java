@@ -24,8 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class BeyonderAbilityUser extends Item {
 
-    public BeyonderAbilityUser(Properties pProperties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(pProperties);
+    public BeyonderAbilityUser(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
+        super(properties);
     }
 
     @Override

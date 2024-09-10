@@ -37,16 +37,16 @@ public class BattleHypnotism extends Item {
 
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
-    public BattleHypnotism(Properties pProperties) {
-        super(pProperties);
+    public BattleHypnotism(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
-        if (pSlot == EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
             return this.lazyAttributeMap.get();
         }
-        return super.getDefaultAttributeModifiers(pSlot);
+        return super.getDefaultAttributeModifiers(slot);
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
@@ -60,55 +60,54 @@ public class BattleHypnotism extends Item {
 
 
     @Override
-    public InteractionResult useOn(UseOnContext pContext) {
-        Player pPlayer = pContext.getPlayer();
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResult useOn(UseOnContext context) {
+        Player player = context.getPlayer();
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 150) {
-                pPlayer.displayClientMessage(Component.literal("You need 150 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need 150 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
 
-            Level level = pPlayer.level();
-            BlockPos positionClicked = pContext.getClickedPos();
-            if (!pContext.getLevel().isClientSide && !pPlayer.level().isClientSide) {
-                BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                    if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 6 && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(150)) {
-                        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                        makesEntitiesAttackEachOther(pPlayer, level, positionClicked, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
-                        if (!pPlayer.getAbilities().instabuild) {
-                            pPlayer.getCooldowns().addCooldown(this, 300);
-                        }
+            Level level = player.level();
+            BlockPos positionClicked = context.getClickedPos();
+            if (!context.getLevel().isClientSide && !player.level().isClientSide) {
+                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 6 && BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(150)) {
+                    AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+                    makesEntitiesAttackEachOther(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
+                    if (!player.getAbilities().instabuild) {
+                        player.getCooldowns().addCooldown(this, 300);
                     }
-                });
+                }
             }
         }
         return InteractionResult.SUCCESS;
     }
-    private void makesEntitiesAttackEachOther(Player pPlayer, Level level, BlockPos targetPos, int sequence, int dir) {
+    private void makesEntitiesAttackEachOther(Player player, Level level, BlockPos targetPos, int sequence, int dir) {
         double radius = 20.0 - sequence * dir;
         float damage = 15 - sequence;
         int duration = 400 - (sequence * 10);
         AABB boundingBox = new AABB(targetPos).inflate(radius);
-        level.getEntitiesOfClass(LivingEntity.class, boundingBox, entity -> entity.isAlive()).forEach(livingEntity -> {
+        level.getEntitiesOfClass(LivingEntity.class, boundingBox, LivingEntity::isAlive).forEach(livingEntity -> {
             livingEntity.hurt(livingEntity.damageSources().magic(), damage);
-            if (livingEntity != pPlayer) {
-            if (livingEntity instanceof Player) {
-                livingEntity.addEffect(new MobEffectInstance(ModEffects.BATTLEHYPNOTISM.get(),duration, (int) radius, false, false));
+            if (livingEntity != player) {
+                if (livingEntity instanceof Player) {
+                    livingEntity.addEffect(new MobEffectInstance(ModEffects.BATTLEHYPNOTISM.get(), duration, (int) radius, false, false));
+                } else {
+                    livingEntity.addEffect(new MobEffectInstance(ModEffects.BATTLEHYPNOTISM.get(), duration, 0, false, false));
+                }
             }
-            else {
-                (livingEntity).addEffect((new MobEffectInstance(ModEffects.BATTLEHYPNOTISM.get(), duration, 0, false, false)));
-            }}});
+        });
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes all living entities around the clicked location target the nearest player if one is present and each other if there isn't one\n" +
+            tooltipComponents.add(Component.literal("Upon use, makes all living entities around the clicked location target the nearest player if one is present and each other if there isn't one\n" +
                     "Spirituality Used: 150\n" +
                     "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

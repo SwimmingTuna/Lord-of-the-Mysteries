@@ -30,45 +30,43 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class LightningStorm extends Item {
-    public LightningStorm(Properties pProperties) {
-        super(pProperties);
+    public LightningStorm(Properties properties) {
+        super(properties);
     }
 
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < 1000) {
-                pPlayer.displayClientMessage(Component.literal("You need 1000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You need 1000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && tyrantSequence.getCurrentSequence() <= 3 && tyrantSequence.useSpirituality(1000)) {
-                    useItem(pPlayer);
-                }
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 600);
-            });
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 3 && holder.useSpirituality(1000)) {
+                useItem(player);
+            }
+            if (!player.getAbilities().instabuild)
+                player.getCooldowns().addCooldown(this, 600);
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
-    public static void useItem(Player pPlayer) { //add logic to add persitatent data of targetX,
-        if (!pPlayer.level().isClientSide()) {
-            int sailorStormVec = pPlayer.getPersistentData().getInt("sailorStormVec");
-            Vec3 lookVec = pPlayer.getLookAngle();
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public static void useItem(Player player) { //add logic to add persitatent data of targetX,
+        if (!player.level().isClientSide()) {
+            int sailorStormVec = player.getPersistentData().getInt("sailorStormVec");
+            Vec3 lookVec = player.getLookAngle();
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int sequence = holder.getCurrentSequence();
-            double targetX = pPlayer.getX() + sailorStormVec * lookVec.x();
-            double targetY = pPlayer.getY() + sailorStormVec * lookVec.y();
-            double targetZ = pPlayer.getZ() + sailorStormVec * lookVec.z();
-            pPlayer.getPersistentData().putDouble("sailorStormVecX", targetX);
-            pPlayer.getPersistentData().putDouble("sailorStormVecY", targetY);
-            pPlayer.getPersistentData().putDouble("sailorStormVecZ", targetZ);
-            CompoundTag persistentData = pPlayer.getPersistentData();
+            double targetX = player.getX() + sailorStormVec * lookVec.x();
+            double targetY = player.getY() + sailorStormVec * lookVec.y();
+            double targetZ = player.getZ() + sailorStormVec * lookVec.z();
+            player.getPersistentData().putDouble("sailorStormVecX", targetX);
+            player.getPersistentData().putDouble("sailorStormVecY", targetY);
+            player.getPersistentData().putDouble("sailorStormVecZ", targetZ);
+            CompoundTag persistentData = player.getPersistentData();
             persistentData.putInt("sailorLightningStorm", 500 - (sequence * 80));
             if (sequence <= 0) {
                 persistentData.putInt("sailorLightningStormTyrant", 500);
@@ -77,36 +75,36 @@ public class LightningStorm extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summons a lightning storm, leaving mass destruction\n" +
+            tooltipComponents.add(Component.literal("Upon use, summons a lightning storm, leaving mass destruction\n" +
                     "Left Click to Increase Distance Spawned At\n" +
                     "Shift to Increase Storm Radius\n" +
                     "Spirituality Used: 1000\n" +
                     "Cooldown: 30 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     @SubscribeEvent
     public static void leftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        Style style = BeyonderUtil.getStyle(pPlayer);
-        if (pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
+        Player player = event.getEntity();
+        Style style = BeyonderUtil.getStyle(player);
+        if (player.getMainHandItem().getItem() instanceof LightningStorm) {
             LOTMNetworkHandler.sendToServer(new LeftClickC2S());
         }
     }
 
     @SubscribeEvent
     public static void leftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        Style style = BeyonderUtil.getStyle(pPlayer);
-        if (!pPlayer.level().isClientSide()) {
-            if (pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
-                CompoundTag tag = pPlayer.getPersistentData();
+        Player player = event.getEntity();
+        Style style = BeyonderUtil.getStyle(player);
+        if (!player.level().isClientSide()) {
+            if (player.getMainHandItem().getItem() instanceof LightningStorm) {
+                CompoundTag tag = player.getPersistentData();
                 double distance = tag.getDouble("sailorLightningStormDistance");
                 tag.putDouble("sailorLightningStormDistance", (int) (distance + 30));
-                pPlayer.sendSystemMessage(Component.literal("Storm Radius Is" + distance).withStyle(style));
+                player.sendSystemMessage(Component.literal("Storm Radius Is" + distance).withStyle(style));
                 if (distance > 300) {
                     tag.putDouble("sailorLightningStormDistance", 0);
                 }

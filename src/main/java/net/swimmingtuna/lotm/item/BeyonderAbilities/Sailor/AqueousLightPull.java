@@ -27,8 +27,8 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class AqueousLightPull extends Item {
-    public AqueousLightPull(Properties pProperties) {
-        super(pProperties);
+    public AqueousLightPull(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -57,41 +57,41 @@ public class AqueousLightPull extends Item {
         return super.use(level, player, hand);
     }
 
-    public static void useItem(Player pPlayer) {
-        Vec3 eyePosition = pPlayer.getEyePosition(1.0f);
-        Vec3 direction = pPlayer.getViewVector(1.0f);
+    public static void useItem(Player player) {
+        Vec3 eyePosition = player.getEyePosition(1.0f);
+        Vec3 direction = player.getViewVector(1.0f);
         Vec3 initialVelocity = direction.scale(2.0);
-        AqueousLightEntityPull.summonEntityWithSpeed(direction, initialVelocity, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer);
+        AqueousLightEntityPull.summonEntityWithSpeed(direction, initialVelocity, eyePosition, player.getX(), player.getY(), player.getZ(), player);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, shoots a water bubble that upon hit, pulls the target towards the user\n" +
+            tooltipComponents.add(Component.literal("Upon use, shoots a water bubble that upon hit, pulls the target towards the user\n" +
                     "Spirituality Used: 50\n" +
                     "Cooldown: 3 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
     
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightPull) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AQUEOUS_LIGHT_DROWN.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AQUEOUS_LIGHT_DROWN.get()));
             heldItem.shrink(1);
         }
     }
     
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightPull) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AQUEOUS_LIGHT_DROWN.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof AqueousLightPull) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AQUEOUS_LIGHT_DROWN.get()));
             heldItem.shrink(1);
             event.setCanceled(true);
         }

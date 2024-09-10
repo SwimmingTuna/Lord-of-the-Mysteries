@@ -38,12 +38,12 @@ public class EndStoneEntity extends AbstractArrow {
     private static final EntityDataAccessor<Boolean> SHOULDNT_DAMAGE = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.BOOLEAN);
 
 
-    public EndStoneEntity(EntityType<? extends EndStoneEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public EndStoneEntity(EntityType<? extends EndStoneEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public EndStoneEntity(Level pLevel, LivingEntity pShooter) {
-        super(EntityInit.ENDSTONE_ENTITY.get(), pShooter, pLevel);
+    public EndStoneEntity(Level level, LivingEntity shooter) {
+        super(EntityInit.ENDSTONE_ENTITY.get(), shooter, level);
     }
 
     @Override
@@ -84,13 +84,13 @@ public class EndStoneEntity extends AbstractArrow {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult pResult) {
-        if (this.level() != null && !this.level().isClientSide() && !getShouldntDamage()) {
-            Vec3 hitPos = pResult.getLocation();
+    protected void onHitEntity(EntityHitResult result) {
+        if (!this.level().isClientSide() && !getShouldntDamage()) {
+            Vec3 hitPos = result.getLocation();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 5.0F, 5.0F);
-            if (pResult.getEntity() instanceof LivingEntity entity) {
+            if (result.getEntity() instanceof LivingEntity entity) {
                 Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 10.0F, true, Explosion.BlockInteraction.DESTROY);
                 DamageSource damageSource = this.level().damageSources().explosion(explosion);
                 entity.hurt(damageSource, 10.0F * scaleData.getScale());
@@ -100,8 +100,8 @@ public class EndStoneEntity extends AbstractArrow {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
-        if (this.level() != null && !this.level().isClientSide && !getRemoveAndHurt() && !getShouldntDamage()) {
+    protected void onHitBlock(BlockHitResult result) {
+        if (!this.level().isClientSide && !getRemoveAndHurt() && !getShouldntDamage()) {
             Random random = new Random();
             if (random.nextInt(10) == 1) {
                 this.level().broadcastEntityEvent(this, (byte) 3);
@@ -115,7 +115,6 @@ public class EndStoneEntity extends AbstractArrow {
     public boolean isPickable() {
         return false;
     }
-
 
     public boolean isDangerous() {
         return this.entityData.get(DATA_DANGEROUS);

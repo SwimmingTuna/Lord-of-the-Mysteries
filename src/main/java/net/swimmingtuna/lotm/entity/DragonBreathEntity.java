@@ -15,8 +15,8 @@ public class DragonBreathEntity extends BeamEntity {
     public static double RANGE = 64.0D;
     public static final int CHARGE = 20;
 
-    public DragonBreathEntity(EntityType<? extends Projectile> pType, Level pLevel) {
-        super(pType, pLevel);
+    public DragonBreathEntity(EntityType<? extends Projectile> entityType, Level level) {
+        super(entityType, level);
     }
 
     public DragonBreathEntity(LivingEntity owner, float power) {
@@ -70,10 +70,10 @@ public class DragonBreathEntity extends BeamEntity {
                 .add(RotationUtil.getTargetAdjustedLookAngle(owner));
     }
 
-    public static void shootDragonBreath(Player pPlayer, int power, double x, double y, double z) {
-        DragonBreathEntity dragonBreath = new DragonBreathEntity(pPlayer, power);
+    public static void shootDragonBreath(Player player, int power, double x, double y, double z) {
+        DragonBreathEntity dragonBreath = new DragonBreathEntity(player, power);
         dragonBreath.teleportTo(x,y+1,z);
-        pPlayer.level().addFreshEntity(dragonBreath);
+        player.level().addFreshEntity(dragonBreath);
     }
 
 }

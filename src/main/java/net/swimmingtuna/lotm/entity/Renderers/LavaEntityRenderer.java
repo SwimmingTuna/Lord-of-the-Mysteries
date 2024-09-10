@@ -19,9 +19,9 @@ public class LavaEntityRenderer extends EntityRenderer<LavaEntity> {
     public static final ResourceLocation LAVA_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/lava_entity.png");
     public Model model;
 
-    public LavaEntityRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new LavaEntityModel<>(pContext.bakeLayer(LavaEntityModel.LAVA_ENTITY_LOCATION));
+    public LavaEntityRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new LavaEntityModel<>(context.bakeLayer(LavaEntityModel.LAVA_ENTITY_LOCATION));
     }
 
     @Override

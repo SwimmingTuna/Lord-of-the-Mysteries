@@ -27,13 +27,13 @@ import java.util.List;
 
 public class BeyonderUtil {
 
-    public static Projectile getProjectiles(Player pPlayer) {
-        if (pPlayer.level().isClientSide()) {
+    public static Projectile getProjectiles(Player player) {
+        if (player.level().isClientSide()) {
             return null;
         }
-        List<Projectile> projectiles = pPlayer.level().getEntitiesOfClass(Projectile.class, pPlayer.getBoundingBox().inflate(30));
+        List<Projectile> projectiles = player.level().getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(30));
         for (Projectile projectile : projectiles) {
-            if (projectile.getOwner() == pPlayer && projectile.tickCount > 8 && projectile.tickCount < 50) {
+            if (projectile.getOwner() == player && projectile.tickCount > 8 && projectile.tickCount < 50) {
                 return projectile;
             }
         }
@@ -57,12 +57,12 @@ public class BeyonderUtil {
         return settings;
     }
 
-    public static List<Item> getAbilities(Player pPlayer) {
+    public static List<Item> getAbilities(Player player) {
         List<Item> abilityNames = new ArrayList<>();
-        if (pPlayer.level().isClientSide()) {
+        if (player.level().isClientSide()) {
             return abilityNames;
         }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (holder == null) {
             return abilityNames;
         }
@@ -227,7 +227,7 @@ public class BeyonderUtil {
         return Style.EMPTY;
     }
 
-    public static void mentalDamage(Player source, Player hurtEntity, int damage) { //can make it so that with useOn, sets shiftKeyDown to true for pPlayer
+    public static void mentalDamage(Player source, Player hurtEntity, int damage) { //can make it so that with useOn, sets shiftKeyDown to true for player
         BeyonderHolder sourceHolder = BeyonderHolderAttacher.getHolderUnwrap(source);
         BeyonderHolder hurtHolder = BeyonderHolderAttacher.getHolderUnwrap(hurtEntity);
         float x = Math.min(damage, damage * (hurtHolder.getMentalStrength() / sourceHolder.getMentalStrength()));

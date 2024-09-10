@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 public class CathedralBlock extends HorizontalDirectionalBlock implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    public CathedralBlock(Properties pProperties) {
-        super(pProperties);
+    public CathedralBlock(Properties properties) {
+        super(properties);
     }
 
     @Nullable

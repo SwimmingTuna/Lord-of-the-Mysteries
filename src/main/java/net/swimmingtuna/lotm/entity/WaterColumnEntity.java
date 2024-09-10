@@ -23,12 +23,12 @@ public class WaterColumnEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Integer> DATA_LIFE_COUNT = SynchedEntityData.defineId(WaterColumnEntity.class, EntityDataSerializers.INT);
 
 
-    public WaterColumnEntity(EntityType<? extends WaterColumnEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public WaterColumnEntity(EntityType<? extends WaterColumnEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public WaterColumnEntity(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.WIND_BLADE_ENTITY.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+    public WaterColumnEntity(Level level, LivingEntity shooter, double offsetX, double offsetY, double offsetZ) {
+        super(EntityInit.WIND_BLADE_ENTITY.get(), shooter, offsetX, offsetY, offsetZ, level);
     }
 
     @Override

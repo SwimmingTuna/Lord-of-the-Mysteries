@@ -29,70 +29,68 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EnvisionLocation extends Item {
 
-    public EnvisionLocation(Properties pProperties) {
-        super(pProperties);
+    public EnvisionLocation(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("While holding this item, type in three coordinates, e.g. (100, 100, 100) or a player's name, and you'll teleport to that location\n" +
+            tooltipComponents.add(Component.literal("While holding this item, type in three coordinates, e.g. (100, 100, 100) or a player's name, and you'll teleport to that location\n" +
                     "Spirituality Used: 500\n" +
                     "Left Click for Envision Location (Blink)\n" +
                     "Cooldown: 0 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
     @SubscribeEvent
     public static void onChatMessage(ServerChatEvent event) {
         Level level = event.getPlayer().serverLevel();
-        Player pPlayer = event.getPlayer();
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-        if (pPlayer.getMainHandItem().getItem() instanceof EnvisionLocation && !pPlayer.level().isClientSide()) {
+        Player player = event.getPlayer();
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (player.getMainHandItem().getItem() instanceof EnvisionLocation && !player.level().isClientSide()) {
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-            pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
         }
-        if (holder.getSpirituality() < (int) 500 / dreamIntoReality.getValue()) {
-            pPlayer.displayClientMessage(Component.literal("You need " + ((int) 500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+        if (holder.getSpirituality() < (int) (500 / dreamIntoReality.getValue())) {
+            player.displayClientMessage(Component.literal("You need " + (int) (500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
         }
     }
         String message = event.getMessage().getString();
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLocation && spectatorSequence.getCurrentSequence() == 0) {
-                if (isThreeIntegers(message)) {
-                    String[] coordinates = message.split(" ");
-                    if (coordinates.length == 3) {
-                        int x = Integer.parseInt(coordinates[0]);
-                        int y = Integer.parseInt(coordinates[1]);
-                        int z = Integer.parseInt(coordinates[2]);
-                        pPlayer.teleportTo(x, y, z);
-                        event.getPlayer().displayClientMessage(Component.literal("Teleported to " + x + ", " + y + ", " + z).withStyle(BeyonderUtil.getStyle(pPlayer)), true);
-                        spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
-                        event.setCanceled(true);
-                    }
-                } else {
-                    Player targetPlayer = null;
-                    for (Player serverPlayer : level.players()) {
-                        if (serverPlayer.getUUID().toString().equals(message)) {
-                            targetPlayer = serverPlayer;
-                            break;
-                        }
-                    }
-                    if (targetPlayer != null) {
-                        int x = (int) targetPlayer.getX();
-                        int y = (int) targetPlayer.getY();
-                        int z = (int) targetPlayer.getZ();
-                        pPlayer.teleportTo(x,y,z);
-                        spectatorSequence.useSpirituality(500);
-                    } else {
-                        event.getPlayer().displayClientMessage(Component.literal("Player:" + message + " not found").withStyle(BeyonderUtil.getStyle(pPlayer)), true);
-                    }
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide() && player.getMainHandItem().getItem() instanceof EnvisionLocation && holder.getCurrentSequence() == 0) {
+            if (isThreeIntegers(message)) {
+                String[] coordinates = message.split(" ");
+                if (coordinates.length == 3) {
+                    int x = Integer.parseInt(coordinates[0]);
+                    int y = Integer.parseInt(coordinates[1]);
+                    int z = Integer.parseInt(coordinates[2]);
+                    player.teleportTo(x, y, z);
+                    event.getPlayer().displayClientMessage(Component.literal("Teleported to " + x + ", " + y + ", " + z).withStyle(BeyonderUtil.getStyle(player)), true);
+                    holder.useSpirituality((int) (500 / dreamIntoReality.getValue()));
                     event.setCanceled(true);
                 }
-
+            } else {
+                Player targetPlayer = null;
+                for (Player serverPlayer : level.players()) {
+                    if (serverPlayer.getUUID().toString().equals(message)) {
+                        targetPlayer = serverPlayer;
+                        break;
+                    }
+                }
+                if (targetPlayer != null) {
+                    int x = (int) targetPlayer.getX();
+                    int y = (int) targetPlayer.getY();
+                    int z = (int) targetPlayer.getZ();
+                    player.teleportTo(x, y, z);
+                    holder.useSpirituality(500);
+                } else {
+                    event.getPlayer().displayClientMessage(Component.literal("Player:" + message + " not found").withStyle(BeyonderUtil.getStyle(player)), true);
+                }
+                event.setCanceled(true);
             }
-        });
+
+        }
     }
     private static boolean isThreeIntegers(String message) {
         return message.matches("\\d+ \\d+ \\d+");
@@ -100,21 +98,21 @@ public class EnvisionLocation extends Item {
 
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocation) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_LOCATION_BLINK.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_LOCATION_BLINK.get()));
             heldItem.shrink(1);
         }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocation) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_LOCATION_BLINK.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLocation) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_LOCATION_BLINK.get()));
             heldItem.shrink(1);
         }
     }

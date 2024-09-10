@@ -35,49 +35,47 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EnvisionBarrier extends Item {
 
-    public EnvisionBarrier(Properties pProperties) {
-        super(pProperties);
+    public EnvisionBarrier(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < (int) (800/dreamIntoReality.getValue())) {
-                pPlayer.displayClientMessage(Component.literal("You need " + ((int) 800/ dreamIntoReality.getValue()) +  " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need " + ((int) 800/ dreamIntoReality.getValue()) +  " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
         }
-        BlockPos playerPos = pPlayer.getOnPos();
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide() && spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (800 / dreamIntoReality.getValue()))) {
-                generateBarrier(pPlayer, level, playerPos);
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 100);
-            }
-        });
-        return super.use(level, pPlayer, hand);
+        BlockPos playerPos = player.getOnPos();
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide() && holder.getCurrentSequence() <= 0 && holder.useSpirituality((int) (800 / dreamIntoReality.getValue()))) {
+            generateBarrier(player, level, playerPos);
+            if (!player.getAbilities().instabuild)
+                player.getCooldowns().addCooldown(this, 100);
+        }
+        return super.use(level, player, hand);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes a barrier around the user\n" +
+            tooltipComponents.add(Component.literal("Upon use, makes a barrier around the user\n" +
                     "Hold Shift to Increase Barrier Radius\n" +
                     "Left Click for Envision Death\n" +
                     "Spirituality Used: 800\n" +
                     "Cooldown: 5 seconds ").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    private void generateBarrier(Player pPlayer, Level level, BlockPos playerPos) {
-        if (!pPlayer.level().isClientSide()) {
-            int radius = pPlayer.getPersistentData().getInt("BarrierRadius");
+    private void generateBarrier(Player player, Level level, BlockPos playerPos) {
+        if (!player.level().isClientSide()) {
+            int radius = player.getPersistentData().getInt("BarrierRadius");
             int thickness = 1; // Adjust the thickness of the glass dome
 
             if (domeCenter != null) {
@@ -132,21 +130,21 @@ public class EnvisionBarrier extends Item {
 
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionBarrier) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_DEATH.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_DEATH.get()));
             heldItem.shrink(1);
         }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionBarrier) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_DEATH.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionBarrier) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_DEATH.get()));
             heldItem.shrink(1);
         }
     }

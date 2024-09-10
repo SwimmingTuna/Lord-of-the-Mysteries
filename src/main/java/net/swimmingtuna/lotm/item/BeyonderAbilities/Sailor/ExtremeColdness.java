@@ -22,45 +22,42 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class ExtremeColdness extends Item {
-    public ExtremeColdness(Properties pProperties) {
-        super(pProperties);
+    public ExtremeColdness(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < 1250) {
-                pPlayer.displayClientMessage(Component.literal("You need 1250 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You need 1250 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
 
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && tyrantSequence.getCurrentSequence() <= 2 && tyrantSequence.useSpirituality(1250)) {
-                    useItem(pPlayer);
-                }
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 1200);
-
-            });
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 2 && holder.useSpirituality(1250)) {
+                useItem(player);
+            }
+            if (!player.getAbilities().instabuild)
+                player.getCooldowns().addCooldown(this, 1200);
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
-    public static void useItem(Player pPlayer) {
-        pPlayer.getPersistentData().putInt("sailorExtremeColdness", 1);
+    public static void useItem(Player player) {
+        player.getPersistentData().putInt("sailorExtremeColdness", 1);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, lets out an area of below freezing temperatures that freezes everything in it's range\n" +
+            tooltipComponents.add(Component.literal("Upon use, lets out an area of below freezing temperatures that freezes everything in it's range\n" +
                     "Spirituality Used: 1250\n" +
                     "Cooldown: 1 minute").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
 

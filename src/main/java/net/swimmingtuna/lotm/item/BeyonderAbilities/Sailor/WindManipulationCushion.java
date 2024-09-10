@@ -23,8 +23,8 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WindManipulationCushion extends SimpleAbilityItem {
-    public WindManipulationCushion(Properties pProperties) {
-        super(pProperties, BeyonderClassInit.SAILOR, 7, 150, 120);
+    public WindManipulationCushion(Properties properties) {
+        super(properties, BeyonderClassInit.SAILOR, 7, 150, 120);
     }
 
     @Override
@@ -37,28 +37,28 @@ public class WindManipulationCushion extends SimpleAbilityItem {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        componentList.add(Component.literal("Upon use, create a cushion of wind that absorbs your fall then sends you in the direction you're looking"));
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use, create a cushion of wind that absorbs your fall then sends you in the direction you're looking"));
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
     
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationCushion) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_BLADE.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_BLADE.get()));
             heldItem.shrink(1);
         }
     }
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player pPlayer) {
-            double cushionParticles = pPlayer.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER3.get());
+        if (entity instanceof Player player) {
+            double cushionParticles = player.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER3.get());
             if (cushionParticles == 1) {
-                double x = pPlayer.getX() - pPlayer.getLookAngle().x * 2;
-                double y = pPlayer.getY() + 1.5; // Slightly above the player's feet
-                double z = pPlayer.getZ() - pPlayer.getLookAngle().z * 2;
+                double x = player.getX() - player.getLookAngle().x * 2;
+                double y = player.getY() + 1.5; // Slightly above the player's feet
+                double z = player.getZ() - player.getLookAngle().z * 2;
 
                 // Add 10 wind particles behind the player
                 for (int i = 0; i < 10; i++) {
@@ -74,11 +74,11 @@ public class WindManipulationCushion extends SimpleAbilityItem {
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationCushion) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_BLADE.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationCushion) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_BLADE.get()));
             heldItem.shrink(1);
         }
     }

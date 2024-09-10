@@ -19,9 +19,9 @@ public class WindCushionRenderer extends EntityRenderer<WindCushionEntity> {
     public static final ResourceLocation WIND_CUSHION_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/wind_cushion.png");
     public Model model;
 
-    public WindCushionRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new WindCushionModel<>(pContext.bakeLayer(WindCushionModel.WIND_CUSHION_LOCATION));
+    public WindCushionRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new WindCushionModel<>(context.bakeLayer(WindCushionModel.WIND_CUSHION_LOCATION));
     }
 
     @Override

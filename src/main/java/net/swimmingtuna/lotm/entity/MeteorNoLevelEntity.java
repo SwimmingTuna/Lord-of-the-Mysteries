@@ -29,12 +29,12 @@ import virtuoel.pehkui.api.ScaleTypes;
 public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(MeteorNoLevelEntity.class, EntityDataSerializers.BOOLEAN);
 
-    public MeteorNoLevelEntity(EntityType<? extends MeteorNoLevelEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public MeteorNoLevelEntity(EntityType<? extends MeteorNoLevelEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public MeteorNoLevelEntity(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.METEOR_NO_LEVEL_ENTITY.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+    public MeteorNoLevelEntity(Level level, LivingEntity shooter, double offsetX, double offsetY, double offsetZ) {
+        super(EntityInit.METEOR_NO_LEVEL_ENTITY.get(), shooter, offsetX, offsetY, offsetZ, level);
     }
 
 
@@ -48,11 +48,11 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
     }
 
 
-    protected void onHitEntity(EntityHitResult pResult) {
+    protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide) {
-            Vec3 hitPos = pResult.getLocation();
+            Vec3 hitPos = result.getLocation();
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE.AMBIENT, 5.0F, 5.0F);
-            if (pResult.getEntity() instanceof LivingEntity entity) {
+            if (result.getEntity() instanceof LivingEntity entity) {
                 Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
                 DamageSource damageSource = damageSources().explosion(explosion);
                 entity.hurt(damageSource, 30.0F);
@@ -67,9 +67,9 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
+    protected void onHitBlock(BlockHitResult result) {
         if (!this.level().isClientSide) {
-            Vec3 hitPos = pResult.getLocation();
+            Vec3 hitPos = result.getLocation();
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE.AMBIENT, 30.0F, 1.0F);
             for (LivingEntity entity : this.getOwner().level().getEntitiesOfClass(LivingEntity.class, this.getOwner().getBoundingBox().inflate(50))) {
                 Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
@@ -99,14 +99,14 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
         return false;
     }
 
-    public static void summonMultipleMeteors(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
+    public static void summonMultipleMeteors(Player player) {
+        if (!player.level().isClientSide()) {
             double scatterRadius = 100.0;
             double randomX, randomY, randomZ;
 
             // Calculate the target position based on the player's look angle
-            Vec3 lookVec = pPlayer.getLookAngle().normalize().scale(100);
-            Vec3 targetPos = pPlayer.getEyePosition().add(lookVec);
+            Vec3 lookVec = player.getLookAngle().normalize().scale(100);
+            Vec3 targetPos = player.getEyePosition().add(lookVec);
 
             // Randomize the position within the scatter radius
             randomX = Math.random() * scatterRadius * 2 - scatterRadius;
@@ -115,19 +115,19 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
 
             // Set the meteor spawn position
             BlockPos meteorSpawnPos = new BlockPos(
-                    (int) (pPlayer.getX() + randomX),
-                    (int) (pPlayer.getY() + 100),
-                    (int) (pPlayer.getZ() + randomZ)
+                    (int) (player.getX() + randomX),
+                    (int) (player.getY() + 100),
+                    (int) (player.getZ() + randomZ)
             );
 
             // Create and configure the meteor entity
-            MeteorNoLevelEntity meteorEntity = new MeteorNoLevelEntity(EntityInit.METEOR_NO_LEVEL_ENTITY.get(), pPlayer.level());
+            MeteorNoLevelEntity meteorEntity = new MeteorNoLevelEntity(EntityInit.METEOR_NO_LEVEL_ENTITY.get(), player.level());
             meteorEntity.teleportTo(meteorSpawnPos.getX(), meteorSpawnPos.getY(), meteorSpawnPos.getZ());
-            meteorEntity.setOwner(pPlayer);
+            meteorEntity.setOwner(player);
             meteorEntity.noPhysics = true;
 
             // Set the scale of the meteor based on the player's sequence
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int scalecheck = 10 - holder.getCurrentSequence() * 4;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
             scaleData.setScale(scalecheck);
@@ -147,7 +147,7 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
             meteorEntity.setDeltaMovement(directionToTarget.scale(speed));
 
             // Spawn the meteor entity in the world
-            pPlayer.level().addFreshEntity(meteorEntity);
+            player.level().addFreshEntity(meteorEntity);
         }
     }
 }

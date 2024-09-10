@@ -19,9 +19,9 @@ public class StoneEntityRenderer extends EntityRenderer<StoneEntity> {
     public static final ResourceLocation STONE_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/stoneentity.png");
     public Model model;
 
-    public StoneEntityRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new StoneEntityModel<>(pContext.bakeLayer(StoneEntityModel.STONE_MODEL_LOCATION));
+    public StoneEntityRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new StoneEntityModel<>(context.bakeLayer(StoneEntityModel.STONE_MODEL_LOCATION));
     }
 
     @Override

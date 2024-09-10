@@ -34,58 +34,58 @@ public class DragonBreathRenderer extends EntityRenderer<DragonBreathEntity> {
 
     private final DragonBreathModel model;
 
-    public DragonBreathRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new DragonBreathModel(pContext.bakeLayer(DragonBreathModel.LAYER));
+    public DragonBreathRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new DragonBreathModel(context.bakeLayer(DragonBreathModel.LAYER));
     }
 
     @Override
-    public void render(DragonBreathEntity entity, float pEntityYaw, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight) {
+    public void render(DragonBreathEntity entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight) {
         this.clearerView = Minecraft.getInstance().player == entity.getOwner() &&
                 Minecraft.getInstance().options.getCameraType() == CameraType.FIRST_PERSON;
 
-        float yaw = (entity.prevYaw + (entity.renderYaw - entity.prevYaw) * pPartialTick) * Mth.RAD_TO_DEG;
-        float pitch = (entity.prevPitch + (entity.renderPitch - entity.prevPitch) * pPartialTick) * Mth.RAD_TO_DEG;
+        float yaw = (entity.prevYaw + (entity.renderYaw - entity.prevYaw) * partialTick) * Mth.RAD_TO_DEG;
+        float pitch = (entity.prevPitch + (entity.renderPitch - entity.prevPitch) * partialTick) * Mth.RAD_TO_DEG;
 
         Vector3f color = ParticleColors.FIRE_YELLOW;
 
-        float age = entity.getTime() + pPartialTick;
+        float age = entity.getTime() + partialTick;
 
-        pPoseStack.pushPose();
+        poseStack.pushPose();
 
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(180.0F - yaw));
-        pPoseStack.mulPose(Axis.ZN.rotationDegrees(pitch));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - yaw));
+        poseStack.mulPose(Axis.ZN.rotationDegrees(pitch));
 
-        VertexConsumer charge = pBuffer.getBuffer(LOTMRenderTypes.glow(CHARGE));
+        VertexConsumer charge = buffer.getBuffer(LOTMRenderTypes.glow(CHARGE));
         this.model.setupAnim(entity, 0.0F, 0.0F, age, 0.0F, 0.0F);
-        this.model.renderToBuffer(pPoseStack, charge, pPackedLight, OverlayTexture.NO_OVERLAY, color.x, color.y, color.z, 1.0F);
+        this.model.renderToBuffer(poseStack, charge, packedLight, OverlayTexture.NO_OVERLAY, color.x, color.y, color.z, 1.0F);
 
-        pPoseStack.popPose();
+        poseStack.popPose();
 
 
         if (entity.getTime() >= DragonBreathEntity.CHARGE) {
-            Vec3 collidePos = entity.prevCollidePos.add(entity.collidePos.subtract(entity.prevCollidePos).scale(pPartialTick));
+            Vec3 collidePos = entity.prevCollidePos.add(entity.collidePos.subtract(entity.prevCollidePos).scale(partialTick));
             Vec3 prevPos = new Vec3(entity.xo, entity.yo, entity.zo);
-            Vec3 pos = prevPos.add(entity.position().subtract(prevPos).scale(pPartialTick));
+            Vec3 pos = prevPos.add(entity.position().subtract(prevPos).scale(partialTick));
             float length = (float) collidePos.distanceTo(pos);
-            int frame = Mth.floor((entity.animation - 1 + pPartialTick) * 2);
+            int frame = Mth.floor((entity.animation - 1 + partialTick) * 2);
 
             if (frame < 0) {
                 frame = entity.getFrames() * 2;
             }
 
-            pPoseStack.pushPose();
-            pPoseStack.scale(entity.getScale(), entity.getScale(), entity.getScale());
-            pPoseStack.translate(0.0F, (entity.getBbHeight() / 2.0F) - 0.5F, 0.0F);
+            poseStack.pushPose();
+            poseStack.scale(entity.getScale(), entity.getScale(), entity.getScale());
+            poseStack.translate(0.0F, (entity.getBbHeight() / 2.0F) - 0.5F, 0.0F);
 
-            VertexConsumer beam = pBuffer.getBuffer(LOTMRenderTypes.glow(TEXTURE));
+            VertexConsumer beam = buffer.getBuffer(LOTMRenderTypes.glow(TEXTURE));
 
             float brightness = 1.0F - ((float) entity.getTime() / (entity.getCharge() + entity.getDuration() + entity.getFrames()));
 
-            this.renderBeam(length, yaw, pitch, frame, pPoseStack, beam,
-                    brightness, pPackedLight);
+            this.renderBeam(length, yaw, pitch, frame, poseStack, beam,
+                    brightness, packedLight);
 
-            pPoseStack.popPose();
+            poseStack.popPose();
         }
     }
 
@@ -152,12 +152,12 @@ public class DragonBreathRenderer extends EntityRenderer<DragonBreathEntity> {
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull DragonBreathEntity pEntity) {
+    public @NotNull ResourceLocation getTextureLocation(@NotNull DragonBreathEntity entity) {
         return InventoryMenu.BLOCK_ATLAS;
     }
 
     @Override
-    protected int getBlockLightLevel(@NotNull DragonBreathEntity pEntity, @NotNull BlockPos pPos) {
+    protected int getBlockLightLevel(@NotNull DragonBreathEntity entity, @NotNull BlockPos pos) {
         return 15;
     }
 }

@@ -241,8 +241,8 @@ public class LightningEntity extends AbstractHurtingProjectile {
                         if (!this.level().getBlockState(blockPos).isAir() && !this.level().getBlockState(blockPos).getBlock().equals(Blocks.WATER)) {
                             Vec3 hitPos = currentPos;
                             if (this.owner != null) {
-                                if (this.owner instanceof Player pPlayer) {
-                                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                                if (this.owner instanceof Player player) {
+                                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                                     int sequence = holder.getCurrentSequence();
                                     int radius = 20 - (sequence * 2);
                                     this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, radius, Level.ExplosionInteraction.BLOCK);
@@ -374,14 +374,14 @@ public class LightningEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult pResult) {
+    protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide()) {
-            if (pResult.getEntity() instanceof LivingEntity entity) {
+            if (result.getEntity() instanceof LivingEntity entity) {
                 entity.hurt(damageSources().fall(), 5);
                 this.discard();
             }
         }
-        super.onHitEntity(pResult);
+        super.onHitEntity(result);
     }
 
     public int getMaxLength() {

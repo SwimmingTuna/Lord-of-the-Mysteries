@@ -26,39 +26,37 @@ import java.util.Random;
 
 public class VolcanicEruption extends Item {
 
-    public VolcanicEruption(Properties pProperties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(pProperties);
+    public VolcanicEruption(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
 
             // If no block or entity is targeted, proceed with the original functionality
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < 600) {
-                pPlayer.displayClientMessage(Component.literal("You need 600 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You need 600 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 2 && sailorSequence.useSpirituality(600)) {
-                    summonFallingLavaBlocks(level, pPlayer);
-                    if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 400);
-                }
-            });
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 2 && holder.useSpirituality(600)) {
+                summonFallingLavaBlocks(level, player);
+                if (!player.getAbilities().instabuild)
+                    player.getCooldowns().addCooldown(this, 400);
+            }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
-    private void summonFallingLavaBlocks(Level level, Player pPlayer) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    private void summonFallingLavaBlocks(Level level, Player player) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
         int spawnCount = 120 - (sequence * 10);
         Random random = new Random();
-        BlockPos playerPos = pPlayer.blockPosition();
+        BlockPos playerPos = player.blockPosition();
         for (int i = 0; i < spawnCount; i++) {
             int offsetX = random.nextInt(21) - 10; // Random number between -10 and 10
             int offsetZ = random.nextInt(21) - 10; // Random number between -10 and 10
@@ -83,13 +81,13 @@ public class VolcanicEruption extends Item {
     return level.canSeeSky(pos.above()) || !level.getBlockState(pos.above()).isSolid();
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summon a volcanic spurt from the ground\n" +
+            tooltipComponents.add(Component.literal("Upon use, summon a volcanic spurt from the ground\n" +
                     "Spirituality Used: 600\n" +
                     "Cooldown: 20 Minutes").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
 }

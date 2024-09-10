@@ -23,51 +23,49 @@ import java.util.List;
 
 public class Discern extends Item {
 
-    public Discern(Properties pProperties) {
-        super(pProperties);
+    public Discern(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < (int) (1000 / dreamIntoReality.getValue())) {
-                pPlayer.displayClientMessage(Component.literal("You need " + ((int) (1000 / dreamIntoReality.getValue()) + " spirituality in order to use this")).withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD), true);
+                player.displayClientMessage(Component.literal("You need " + ((int) (1000 / dreamIntoReality.getValue()) + " spirituality in order to use this")).withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD), true);
             }
 
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 2 && spectatorSequence.useSpirituality((int) (1000 / dreamIntoReality.getValue()))) {
-                    removeCooldown(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 900);
-                }
-            });
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 2 && holder.useSpirituality((int) (1000 / dreamIntoReality.getValue()))) {
+                removeCooldown(player);
+                if (!player.getAbilities().instabuild)
+                    player.getCooldowns().addCooldown(this, 900);
+            }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
-    private void removeCooldown(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            for (int i = 0; i < pPlayer.getInventory().getContainerSize(); i++) {
-                ItemStack itemStack = pPlayer.getInventory().getItem(i);
+    private void removeCooldown(Player player) {
+        if (!player.level().isClientSide()) {
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                ItemStack itemStack = player.getInventory().getItem(i);
                 if (!itemStack.isEmpty()) {
-                    pPlayer.getCooldowns().removeCooldown(itemStack.getItem());
+                    player.getCooldowns().removeCooldown(itemStack.getItem());
                 }
             }
         }
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, resets the cooldown of all your abilities\n" +
+            tooltipComponents.add(Component.literal("Upon use, resets the cooldown of all your abilities\n" +
                     "Spirituality Used: 1000\n" +
                     "Cooldown: 45 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
 }

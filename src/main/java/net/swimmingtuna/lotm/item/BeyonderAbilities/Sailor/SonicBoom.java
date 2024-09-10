@@ -33,8 +33,8 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class SonicBoom extends Item {
 
-    public SonicBoom(Properties pProperties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(pProperties);
+    public SonicBoom(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
+        super(properties);
     }
 
     @Override
@@ -81,11 +81,11 @@ public class SonicBoom extends Item {
                 entity.hurt(entity.damageSources().generic(), damage);
             } else {
 
-                int pSequence = holder.getCurrentSequence();
-                int pDuration = duration - (50 - (pSequence * 5));
-                int pDamage = (int) (damage - (8 - (pSequence * 0.5)));
-                entity.addEffect(new MobEffectInstance(ModEffects.AWE.get(), pDuration, 1, false, false));
-                entity.hurt(entity.damageSources().generic(), pDamage);
+                int sequence2 = holder.getCurrentSequence();
+                int duration2 = duration - (50 - (sequence2 * 5));
+                int damage2 = (int) (damage - (8 - (sequence2 * 0.5)));
+                entity.addEffect(new MobEffectInstance(ModEffects.AWE.get(), duration2, 1, false, false));
+                entity.hurt(entity.damageSources().generic(), damage2);
             }
         }
         RandomSource random = RandomSource.create();
@@ -97,12 +97,12 @@ public class SonicBoom extends Item {
         }
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, compresses air and releases it in order to create a sonic boom, causing an explosion that propels you in the direction you're looking\n" +
+            tooltipComponents.add(Component.literal("Upon use, compresses air and releases it in order to create a sonic boom, causing an explosion that propels you in the direction you're looking\n" +
                     "Spirituality Used: 600\n" +
                     "Cooldown: 1.5 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

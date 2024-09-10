@@ -35,16 +35,16 @@ import java.util.List;
 public class ManipulateMovement extends Item {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
-    public ManipulateMovement(Properties pProperties) {
-        super(pProperties);
+    public ManipulateMovement(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
-        if (pSlot == EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
             return this.lazyAttributeMap.get();
         }
-        return super.getDefaultAttributeModifiers(pSlot);
+        return super.getDefaultAttributeModifiers(slot);
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
@@ -56,49 +56,49 @@ public class ManipulateMovement extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext pContext) {
-        Player pPlayer = pContext.getPlayer();
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResult useOn(UseOnContext context) {
+        Player player = context.getPlayer();
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        if (!pPlayer.level().isClientSide()) {
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        if (!player.level().isClientSide()) {
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < (int) 200 / dreamIntoReality.getValue()) {
-                pPlayer.displayClientMessage(Component.literal("You need spirituality" + ((int) 200 / dreamIntoReality.getValue()) + " in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need spirituality" + ((int) 200 / dreamIntoReality.getValue()) + " in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
         }
         if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && sequence <= 4 && holder.useSpirituality(200)) {
-            boolean x = pPlayer.getPersistentData().getBoolean("manipulateMovementBoolean");
+            boolean x = player.getPersistentData().getBoolean("manipulateMovementBoolean");
             if (!x) {
-                pPlayer.getPersistentData().putBoolean("manipulateMovementBoolean", true);
-                BlockPos pos = pContext.getClickedPos();
-                pPlayer.getPersistentData().putInt("manipulateMovementX", pos.getX());
-                pPlayer.getPersistentData().putInt("manipulateMovementY", pos.getY());
-                pPlayer.getPersistentData().putInt("manipulateMovementZ", pos.getZ());
-                pPlayer.displayClientMessage(Component.literal("Manipulate Movement Position is " + pos.getX() + " " + pos.getY() + " " + pos.getZ()).withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.getPersistentData().putBoolean("manipulateMovementBoolean", true);
+                BlockPos pos = context.getClickedPos();
+                player.getPersistentData().putInt("manipulateMovementX", pos.getX());
+                player.getPersistentData().putInt("manipulateMovementY", pos.getY());
+                player.getPersistentData().putInt("manipulateMovementZ", pos.getZ());
+                player.displayClientMessage(Component.literal("Manipulate Movement Position is " + pos.getX() + " " + pos.getY() + " " + pos.getZ()).withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
 
             }
             if (x) {
-                pPlayer.getPersistentData().remove("manipulateMovementX");
-                pPlayer.getPersistentData().remove("manipulateMovementY");
-                pPlayer.getPersistentData().remove("manipulateMovementZ");
-                pPlayer.getPersistentData().putBoolean("manipulateMovementBoolean", false);
-                pPlayer.displayClientMessage(Component.literal("Manipulate Movement Position Reset").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.getPersistentData().remove("manipulateMovementX");
+                player.getPersistentData().remove("manipulateMovementY");
+                player.getPersistentData().remove("manipulateMovementZ");
+                player.getPersistentData().putBoolean("manipulateMovementBoolean", false);
+                player.displayClientMessage(Component.literal("Manipulate Movement Position Reset").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
         }
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, all living entities 150 blocks around you move to the location you clicked on\n" +
+            tooltipComponents.add(Component.literal("Upon use, all living entities 150 blocks around you move to the location you clicked on\n" +
                     "Left Click for Apply Manipulation\n" +
                     "Spirituality Used: 200\n" +
                     "Cooldown: 30 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

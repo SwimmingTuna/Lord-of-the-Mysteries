@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Placate extends Item {
-    public Placate(Properties pProperties) {
-        super(pProperties);
+    public Placate(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -96,13 +96,13 @@ public class Placate extends Item {
 
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal(
+            tooltipComponents.add(Component.literal(
                     "Upon use, reduces or removes the targeted living entity's harmful potion effects\n" +
                     "Spirituality Used: 125\n" +
                     "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

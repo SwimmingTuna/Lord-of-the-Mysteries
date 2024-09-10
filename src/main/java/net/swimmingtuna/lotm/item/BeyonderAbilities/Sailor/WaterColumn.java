@@ -30,35 +30,35 @@ public class WaterColumn extends Item {
 
     private static final Queue<BlockPos> waterBlocks = new LinkedList<>();
 
-    public WaterColumn(Properties pProperties) {
-        super(pProperties);
+    public WaterColumn(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
             // Your existing checks
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-                return super.use(level, pPlayer, hand);
+                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                return super.use(level, player, hand);
             }
             if (holder.getSpirituality() < 2000) {
-                pPlayer.displayClientMessage(Component.literal("You need 2000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-                return super.use(level, pPlayer, hand);
+                player.displayClientMessage(Component.literal("You need 2000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                return super.use(level, player, hand);
             }
-            summonColumns(pPlayer);
-            if (!pPlayer.getAbilities().instabuild) {
-                pPlayer.getCooldowns().addCooldown(this, 500);
+            summonColumns(player);
+            if (!player.getAbilities().instabuild) {
+                player.getCooldowns().addCooldown(this, 500);
             }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
-    private static void summonColumns(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            Level level = pPlayer.level();
-            BlockPos playerPos = pPlayer.blockPosition();
+    private static void summonColumns(Player player) {
+        if (!player.level().isClientSide()) {
+            Level level = player.level();
+            BlockPos playerPos = player.blockPosition();
             int radius = 200;
             Random random = new Random();
             List<BlockPos> validWaterPositions = new ArrayList<>();
@@ -102,12 +102,12 @@ public class WaterColumn extends Item {
 
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, cause the water to intersect with the sky\n" +
+            tooltipComponents.add(Component.literal("Upon use, cause the water to intersect with the sky\n" +
                     "Spirituality Used: 2000\n" +
                     "Cooldown: 25 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

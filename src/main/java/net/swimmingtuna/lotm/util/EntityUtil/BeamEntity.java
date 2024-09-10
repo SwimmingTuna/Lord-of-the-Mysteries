@@ -54,16 +54,16 @@ public abstract class BeamEntity extends LOTMProjectile {
 
     public int animation;
 
-    protected BeamEntity(EntityType<? extends Projectile> pType, Level pLevel) {
-        super(pType, pLevel);
+    protected BeamEntity(EntityType<? extends Projectile> entityType, Level level) {
+        super(entityType, level);
 
         this.noCulling = true;
 
         this.update();
     }
 
-    protected BeamEntity(EntityType<? extends Projectile> pType, LivingEntity owner, float power) {
-        this(pType, owner.level());
+    protected BeamEntity(EntityType<? extends Projectile> entityType, LivingEntity owner, float power) {
+        this(entityType, owner.level());
 
         this.setOwner(owner);
         this.setPower(power);

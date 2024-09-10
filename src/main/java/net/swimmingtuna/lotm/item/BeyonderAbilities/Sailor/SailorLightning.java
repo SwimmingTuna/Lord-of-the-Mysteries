@@ -46,17 +46,17 @@ public class SailorLightning extends Item {
 
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
-    public SailorLightning(Properties pProperties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(pProperties);
+    public SailorLightning(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
+        super(properties);
     }
 
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
-        if (pSlot == EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
             return this.lazyAttributeMap.get();
         }
-        return super.getDefaultAttributeModifiers(pSlot);
+        return super.getDefaultAttributeModifiers(slot);
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
@@ -110,63 +110,63 @@ public class SailorLightning extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Shoots out a lightning bolt, if used on a block or entity, the lightning bolt travels towards it in exchange for 100 extra spirituality and higher cooldown, otherwise, it moves randomly in the direction you look\n" +
+            tooltipComponents.add(Component.literal("Shoots out a lightning bolt, if used on a block or entity, the lightning bolt travels towards it in exchange for 100 extra spirituality and higher cooldown, otherwise, it moves randomly in the direction you look\n" +
                     "Spirituality Used: 200\n" +
                     "Cooldown: 2 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
 
-    private static void shootLine(Player pPlayer, Level level) {
+    private static void shootLine(Player player, Level level) {
         if (!level.isClientSide()) {
-            Vec3 lookVec = pPlayer.getLookAngle();
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+            Vec3 lookVec = player.getLookAngle();
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             holder.useSpirituality(100);
             float speed = 15.0f;
             LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), level);
             lightningEntity.setSpeed(speed);
             lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
             lightningEntity.setMaxLength(30);
-            lightningEntity.setOwner(pPlayer);
-            lightningEntity.setOwner(pPlayer);
-            lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
+            lightningEntity.setOwner(player);
+            lightningEntity.setOwner(player);
+            lightningEntity.teleportTo(player.getX(), player.getY(), player.getZ());
             level.addFreshEntity(lightningEntity);
         }
     }
-    private static void shootLineBlock(Player pPlayer, Level level, Vec3 targetPos) {
+    private static void shootLineBlock(Player player, Level level, Vec3 targetPos) {
         if (!level.isClientSide()) {
-            Vec3 lookVec = pPlayer.getLookAngle();
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+            Vec3 lookVec = player.getLookAngle();
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             holder.useSpirituality(100);
             float speed = 15.0f;
-            if (!pPlayer.getAbilities().instabuild) {
-                ItemStack itemStack = pPlayer.getUseItem();
-                pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 10 + (holder.getCurrentSequence() * 2));
+            if (!player.getAbilities().instabuild) {
+                ItemStack itemStack = player.getUseItem();
+                player.getCooldowns().addCooldown(itemStack.getItem(), 10 + (holder.getCurrentSequence() * 2));
             }
             LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), level);
             lightningEntity.setSpeed(speed);
             lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
             lightningEntity.setMaxLength(30);
-            lightningEntity.setOwner(pPlayer);
-            lightningEntity.setOwner(pPlayer);
-            lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
+            lightningEntity.setOwner(player);
+            lightningEntity.setOwner(player);
+            lightningEntity.teleportTo(player.getX(), player.getY(), player.getZ());
             lightningEntity.setTargetPos(targetPos);
             level.addFreshEntity(lightningEntity);
         }
     }
-    public static void shootLineBlockHigh(Player pPlayer, Level level) {
+    public static void shootLineBlockHigh(Player player, Level level) {
         if (!level.isClientSide()) {
             float speed = 10.0f;
             LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), level);
             lightningEntity.setSpeed(speed);
             lightningEntity.setDeltaMovement(0, -2, 0);
             lightningEntity.setMaxLength(60);
-            lightningEntity.setOwner(pPlayer);
-            lightningEntity.setOwner(pPlayer);
-            lightningEntity.teleportTo(pPlayer.getX() + ((Math.random() * 150) - 75), pPlayer.getY() + 60, pPlayer.getZ() + ((Math.random() * 150) - 75));
+            lightningEntity.setOwner(player);
+            lightningEntity.setOwner(player);
+            lightningEntity.teleportTo(player.getX() + ((Math.random() * 150) - 75), player.getY() + 60, player.getZ() + ((Math.random() * 150) - 75));
             level.addFreshEntity(lightningEntity);
         }
     }
@@ -174,52 +174,52 @@ public class SailorLightning extends Item {
 
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player pPlayer = event.getEntity();
+        Player player = event.getEntity();
         Entity targetEntity = event.getTarget();
-        ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
-        if (!pPlayer.level().isClientSide()) {
+        ItemStack itemStack = player.getItemInHand(event.getHand());
+        if (!player.level().isClientSide()) {
             if (itemStack.getItem() instanceof SailorLightning) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                 if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                    pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                    player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 }
                 if (holder.getSpirituality() < 120) {
-                    pPlayer.displayClientMessage(Component.literal("You need 120 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                    player.displayClientMessage(Component.literal("You need 120 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 }
-                if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.currentClassMatches(BeyonderClassInit.SAILOR) && !pPlayer.level().isClientSide() &&
+                if (!player.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.currentClassMatches(BeyonderClassInit.SAILOR) && !player.level().isClientSide() &&
                         !targetEntity.level().isClientSide() && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
                     float speed = 15.0f;
                     if (targetEntity instanceof AbstractArrow || targetEntity instanceof AbstractHurtingProjectile || targetEntity instanceof Projectile || targetEntity instanceof Arrow) {
                         CompoundTag tag = targetEntity.getPersistentData();
-                        if (!pPlayer.getAbilities().instabuild) {
-                            pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 5);
+                        if (!player.getAbilities().instabuild) {
+                            player.getCooldowns().addCooldown(itemStack.getItem(), 5);
                         }
                         int x = tag.getInt("sailorLightningProjectileCounter");
                         tag.putInt("sailorLightningProjectileCounter", x + 1);
-                        shootLineBlock(pPlayer, pPlayer.level(), targetEntity.position());
+                        shootLineBlock(player, player.level(), targetEntity.position());
                     } else if (targetEntity instanceof LivingEntity) {
-                        LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
+                        LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), player.level());
                         lightningEntity.setSpeed(speed);
-                        if (!pPlayer.getAbilities().instabuild) {
-                            pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 10 + (holder.getCurrentSequence() * 2));
+                        if (!player.getAbilities().instabuild) {
+                            player.getCooldowns().addCooldown(itemStack.getItem(), 10 + (holder.getCurrentSequence() * 2));
                         }
                         holder.useSpirituality(100);
-                        Vec3 lookVec = pPlayer.getLookAngle();
+                        Vec3 lookVec = player.getLookAngle();
                         lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
                         lightningEntity.setMaxLength(30);
-                        lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
+                        lightningEntity.teleportTo(player.getX(), player.getY(), player.getZ());
                         lightningEntity.setTargetPos(targetEntity.position());
-                        lightningEntity.setOwner(pPlayer);
-                        lightningEntity.setOwner(pPlayer);
-                        pPlayer.level().addFreshEntity(lightningEntity);
+                        lightningEntity.setOwner(player);
+                        lightningEntity.setOwner(player);
+                        player.level().addFreshEntity(lightningEntity);
                     }
                     event.setCanceled(true);
                 }
             }
             if (itemStack.getItem() instanceof LightningRedirection) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                 if (holder != null && holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 1) {
-                    for (Entity entity : pPlayer.level().getEntitiesOfClass(Entity.class, pPlayer.getBoundingBox().inflate(200))) {
+                    for (Entity entity : player.level().getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
                         if (entity instanceof LightningEntity lightning) {
                             lightning.setTargetEntity(targetEntity);
                         }
@@ -231,29 +231,29 @@ public class SailorLightning extends Item {
     }
     @SubscribeEvent
     public static void onBlockInteract(PlayerInteractEvent.RightClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
-        if (!pPlayer.level().isClientSide()) {
+        Player player = event.getEntity();
+        ItemStack itemStack = player.getItemInHand(event.getHand());
+        if (!player.level().isClientSide()) {
             if (itemStack.getItem() instanceof SailorLightning) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                 if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                    pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                    player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 }
                 if (holder.getSpirituality() < 120) {
-                    pPlayer.displayClientMessage(Component.literal("You need 120 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                    player.displayClientMessage(Component.literal("You need 120 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 }
-                if (!pPlayer.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.currentClassMatches(BeyonderClassInit.SAILOR) && !pPlayer.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
-                    shootLineBlock(pPlayer, pPlayer.level(), event.getPos().getCenter());
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 8 + holder.getCurrentSequence());
+                if (!player.getCooldowns().isOnCooldown(itemStack.getItem()) && holder.currentClassMatches(BeyonderClassInit.SAILOR) && !player.level().isClientSide() && itemStack.getItem() instanceof SailorLightning && holder.getCurrentSequence() <= 5 && holder.useSpirituality(120)) {
+                    shootLineBlock(player, player.level(), event.getPos().getCenter());
+                    if (!player.getAbilities().instabuild) {
+                        player.getCooldowns().addCooldown(itemStack.getItem(), 8 + holder.getCurrentSequence());
                     }
                     event.setCanceled(true);
                 }
             }
             if (itemStack.getItem() instanceof LightningRedirection) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                 if (holder != null && holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 1) {
-                    for (Entity entity : pPlayer.level().getEntitiesOfClass(Entity.class, pPlayer.getBoundingBox().inflate(200))) {
+                    for (Entity entity : player.level().getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
                         if (entity instanceof LightningEntity lightning) {
                             lightning.setTargetPos(event.getPos().getCenter());
                         }

@@ -22,41 +22,39 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class DragonBreath extends Item {
-    public DragonBreath(Properties pProperties) {
-        super(pProperties);
+    public DragonBreath(Properties properties) {
+        super(properties);
     }
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 500) {
-                pPlayer.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(500)) {
-                    shootFireball(pPlayer, (int) ((30 - spectatorSequence.getCurrentSequence() * 4) * dreamIntoReality.getValue()));
-                }
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 100);
-            });
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 4 && holder.useSpirituality(500)) {
+                shootFireball(player, (int) ((30 - holder.getCurrentSequence() * 4) * dreamIntoReality.getValue()));
+            }
+            if (!player.getAbilities().instabuild)
+                player.getCooldowns().addCooldown(this, 100);
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
-    public static void shootFireball(Player pPlayer, int sequence) {
-        DragonBreathEntity.shootDragonBreath(pPlayer, sequence, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ() );
+    public static void shootFireball(Player player, int sequence) {
+        DragonBreathEntity.shootDragonBreath(player, sequence, player.getX(), player.getY(), player.getZ() );
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, shoots a dragons breath\n" +
+            tooltipComponents.add(Component.literal("Upon use, shoots a dragons breath\n" +
                     "Spirituality Used: 100\n" +
                     "Cooldown: 0.5 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

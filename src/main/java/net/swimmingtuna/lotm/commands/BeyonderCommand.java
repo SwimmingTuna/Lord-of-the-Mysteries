@@ -22,7 +22,7 @@ public class BeyonderCommand {
 
     public static void register(CommandBuildContext buildContext, CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("beyonder")
-                .requires(cs -> cs.hasPermission(2))
+                .requires(source -> source.hasPermission(2))
                 .then(Commands.argument("pathway", BeyonderClassArgument.beyonderClass())
                         .then(Commands.argument("sequence", IntegerArgumentType.integer(0, 9))
                                 .executes(context -> {
@@ -31,23 +31,25 @@ public class BeyonderCommand {
                                     if (result == null) {
                                         throw ERROR_UNKNOWN_BEYONDER_CLASS.create(context.getInput());
                                     }
-                                    BeyonderHolderAttacher.getHolder(context.getSource().getPlayerOrException()).ifPresent(holder -> {
-                                        holder.setClassAndSequence(result, level);
-                                    });
-                                    context.getSource().getPlayerOrException().sendSystemMessage(Component.translatable("item.lotm.beholder_potion.alert", result.sequenceNames().get(level)).withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD));
+                                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(context.getSource().getPlayerOrException());
+                                    holder.setClassAndSequence(result, level);
+                                    String sequenceName = result.sequenceNames().get(level);
+                                    context.getSource().getPlayerOrException().sendSystemMessage(Component.translatable("item.lotm.beholder_potion.alert", sequenceName)
+                                            .withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD));
                                     return 1;
                                 })
                         )
                 )
                 .then(Commands.literal("remove")
                         .executes(context -> {
-                            Player pPlayer = context.getSource().getPlayerOrException();
-                            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(BeyonderHolder::removeClass);
-                            Abilities playerAbilities = pPlayer.getAbilities();
+                            Player player = context.getSource().getPlayerOrException();
+                            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+                            holder.removeClass();
+                            Abilities playerAbilities = player.getAbilities();
                             playerAbilities.setFlyingSpeed(0.05F);
                             playerAbilities.setWalkingSpeed(0.1F);
-                            pPlayer.onUpdateAbilities();
-                            if (pPlayer instanceof ServerPlayer serverPlayer) {
+                            player.onUpdateAbilities();
+                            if (player instanceof ServerPlayer serverPlayer) {
                                 serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
                             }
                             return 1;

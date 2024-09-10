@@ -42,16 +42,16 @@ import java.util.List;
 public class ProphesizeDemise extends Item {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
-    public ProphesizeDemise(Properties pProperties) {
-        super(pProperties);
+    public ProphesizeDemise(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
-        if (pSlot == EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
             return this.lazyAttributeMap.get();
         }
-        return super.getDefaultAttributeModifiers(pSlot);
+        return super.getDefaultAttributeModifiers(slot);
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
@@ -64,41 +64,40 @@ public class ProphesizeDemise extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use on a living entity, prophesizes their demise, making it so they have to stay still for 10 seconds out of 30 seconds, otherwise they die\n" +
+            tooltipComponents.add(Component.literal("Upon use on a living entity, prophesizes their demise, making it so they have to stay still for 10 seconds out of 30 seconds, otherwise they die\n" +
                     "Left Click for Prophesize Teleport Block" +
                     "Spirituality Used: 70\n" +
                     "Cooldown: 2 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player pPlayer = event.getEntity();
-        if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof ProphesizeDemise) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        Player player = event.getEntity();
+        if (!player.level().isClientSide() && player.getMainHandItem().getItem() instanceof ProphesizeDemise) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 1000) {
-                pPlayer.displayClientMessage(Component.literal("You need 1000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need 1000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
-        }        ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
+        }
+        ItemStack itemStack = player.getItemInHand(event.getHand());
         Entity targetEntity = event.getTarget();
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof ProphesizeDemise && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 1 && spectatorSequence.useSpirituality(1000)) {
-                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.SPECTATORDEMISE.get(), 600, 1, false, false));
-                if (!pPlayer.getAbilities().instabuild) {
-                    AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), (int) (3000 / dreamIntoReality.getValue()));
-                }
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.SUCCESS);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof ProphesizeDemise && targetEntity instanceof LivingEntity && holder.getCurrentSequence() <= 1 && holder.useSpirituality(1000)) {
+            ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.SPECTATORDEMISE.get(), 600, 1, false, false));
+            if (!player.getAbilities().instabuild) {
+                AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+                player.getCooldowns().addCooldown(itemStack.getItem(), (int) (3000 / dreamIntoReality.getValue()));
             }
-        });
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+        }
     }
 
     @SubscribeEvent
@@ -150,21 +149,21 @@ public class ProphesizeDemise extends Item {
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeDemise) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.PROPHESIZE_TELEPORT_BLOCK.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.PROPHESIZE_TELEPORT_BLOCK.get()));
             heldItem.shrink(1);
         }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeDemise) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.PROPHESIZE_TELEPORT_BLOCK.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeDemise) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.PROPHESIZE_TELEPORT_BLOCK.get()));
             heldItem.shrink(1);
         }
     }

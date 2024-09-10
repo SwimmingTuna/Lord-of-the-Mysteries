@@ -97,8 +97,8 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
         this(EntityInit.PLAYER_MOB_ENTITY.get(), worldIn);
     }
 
-    public PlayerMobEntity(EntityType<? extends Monster> type, Level worldIn) {
-        super(type, worldIn);
+    public PlayerMobEntity(EntityType<? extends Monster> entityType, Level worldIn) {
+        super(entityType, worldIn);
         setCombatTask();
     }
 
@@ -159,24 +159,24 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(RandomSource pRandom, DifficultyInstance pDifficulty) {
-        super.populateDefaultEquipmentSlots(pRandom, pDifficulty);
+    protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
+        super.populateDefaultEquipmentSlots(random, difficulty);
         boolean force = Configs.COMMON.forceSpawnItem.get();
-        if (force || pRandom.nextFloat() < (level().getDifficulty() == Difficulty.HARD ? 0.5F : 0.1F)) {
-            var stack = ItemManager.INSTANCE.getRandomMainHand(pRandom);
+        if (force || random.nextFloat() < (level().getDifficulty() == Difficulty.HARD ? 0.5F : 0.1F)) {
+            ItemStack stack = ItemManager.INSTANCE.getRandomMainHand(random);
             setItemSlot(EquipmentSlot.MAINHAND, stack);
 
-            if (level().getDifficulty().getId() >= Configs.COMMON.offhandDifficultyLimit.get().getId() && pRandom.nextDouble() > Configs.COMMON.offhandSpawnChance.get()) {
+            if (level().getDifficulty().getId() >= Configs.COMMON.offhandDifficultyLimit.get().getId() && random.nextDouble() > Configs.COMMON.offhandSpawnChance.get()) {
                 if (stack.getItem() instanceof ProjectileWeaponItem && Configs.COMMON.allowTippedArrows.get()) {
                     var potions = new ArrayList<>(ForgeRegistries.POTIONS.getKeys());
                     potions.removeAll(Configs.COMMON.tippedArrowBlocklist);
                     if (potions.size() > 0) {
-                        var potion = ForgeRegistries.POTIONS.getValue(potions.get(pRandom.nextInt(potions.size())));
+                        var potion = ForgeRegistries.POTIONS.getValue(potions.get(random.nextInt(potions.size())));
                         setItemSlot(EquipmentSlot.OFFHAND, PotionUtils.setPotion(new ItemStack(Items.TIPPED_ARROW), potion));
                     }
                 } else {
-                    setItemSlot(EquipmentSlot.OFFHAND, ItemManager.INSTANCE.getRandomOffHand(pRandom));
-                    getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("Shield Bonus", pRandom.nextDouble() * 3.0 + 1.0, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                    setItemSlot(EquipmentSlot.OFFHAND, ItemManager.INSTANCE.getRandomOffHand(random));
+                    getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("Shield Bonus", random.nextDouble() * 3.0 + 1.0, AttributeModifier.Operation.MULTIPLY_TOTAL));
                 }
             }
         }
@@ -310,17 +310,17 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
     @SuppressWarnings({"DataFlowIssue", "deprecation"})
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pReason, @Nullable SpawnGroupData pSpawnData, @Nullable CompoundTag pDataTag) {
-        pSpawnData = super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
-        RandomSource randomSource = pLevel.getRandom();
-        populateDefaultEquipmentSlots(randomSource, pDifficulty);
-        populateDefaultEquipmentEnchantments(randomSource, pDifficulty);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+        spawnData = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+        RandomSource randomSource = level.getRandom();
+        populateDefaultEquipmentSlots(randomSource, difficulty);
+        populateDefaultEquipmentEnchantments(randomSource, difficulty);
 
         if (!hasUsername())
             setUsername(NameManager.INSTANCE.getRandomName());
 
         setCombatTask();
-        float specialMultiplier = pDifficulty.getSpecialMultiplier();
+        float specialMultiplier = difficulty.getSpecialMultiplier();
         setCanPickUpLoot(randomSource.nextFloat() < Configs.COMMON.pickupItemsChance.get() * specialMultiplier);
         setCanBreakDoors(randomSource.nextFloat() < specialMultiplier * 0.1F);
 
@@ -340,7 +340,7 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
         if (randomSource.nextDouble() < Configs.COMMON.babySpawnChance.get())
             setBaby(true);
 
-        return pSpawnData;
+        return spawnData;
     }
 
     public void setCombatTask() {
@@ -393,8 +393,8 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
     }
 
     @Override
-    public void setChargingCrossbow(boolean pIsCharging) {
-        entityData.set(IS_CHARGING_CROSSBOW, pIsCharging);
+    public void setChargingCrossbow(boolean isCharging) {
+        entityData.set(IS_CHARGING_CROSSBOW, isCharging);
     }
 
     @Override
@@ -403,18 +403,18 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
     }
 
     @Override
-    public void performRangedAttack(LivingEntity pTarget, float pDistanceFactor) {
+    public void performRangedAttack(LivingEntity target, float velocity) {
         ItemStack weaponStack = getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, this::canFireProjectileWeapon));
         if (weaponStack.getItem() instanceof CrossbowItem) {
             performCrossbowAttack(this, 1.6F);
         } else {
             ItemStack itemstack = getProjectile(weaponStack);
-            AbstractArrow mobArrow = ProjectileUtil.getMobArrow(this, itemstack, pDistanceFactor);
-            if (getMainHandItem().getItem() instanceof BowItem)
-                mobArrow = ((BowItem) getMainHandItem().getItem()).customArrow(mobArrow);
-            double x = pTarget.getX() - getX();
-            double y = pTarget.getY(1D / 3D) - mobArrow.getY();
-            double z = pTarget.getZ() - getZ();
+            AbstractArrow mobArrow = ProjectileUtil.getMobArrow(this, itemstack, velocity);
+            if (getMainHandItem().getItem() instanceof BowItem bowItem)
+                mobArrow = bowItem.customArrow(mobArrow);
+            double x = target.getX() - getX();
+            double y = target.getY(1D / 3D) - mobArrow.getY();
+            double z = target.getZ() - getZ();
             double d3 = Math.sqrt(x * x + z * z);
             mobArrow.shoot(x, y + d3 * 0.2F, z, 1.6F, 14 - level().getDifficulty().getId() * 4);
             playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (getRandom().nextFloat() * 0.4F + 0.8F));

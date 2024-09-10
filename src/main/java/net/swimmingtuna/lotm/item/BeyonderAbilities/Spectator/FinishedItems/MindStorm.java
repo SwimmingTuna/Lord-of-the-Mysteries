@@ -41,16 +41,16 @@ public class MindStorm extends Item {
 
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
-    public MindStorm(Properties pProperties) {
-        super(pProperties);
+    public MindStorm(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
-        if (pSlot == EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
             return this.lazyAttributeMap.get();
         }
-        return super.getDefaultAttributeModifiers(pSlot);
+        return super.getDefaultAttributeModifiers(slot);
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
@@ -63,65 +63,63 @@ public class MindStorm extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use on a living entity, damages, freezes, blinds, and confuses them\n" +
+            tooltipComponents.add(Component.literal("Upon use on a living entity, damages, freezes, blinds, and confuses them\n" +
                     "Spirituality Used: 250\n" +
                     "Cooldown: 10 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player pPlayer = event.getEntity();
-        ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        Player player = event.getEntity();
+        ItemStack itemStack = player.getItemInHand(event.getHand());
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (holder != null && itemStack.getItem() instanceof MindStorm) {
                 if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                    pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                    player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 }
                 if (holder.getSpirituality() < 250) {
-                    pPlayer.displayClientMessage(Component.literal("You need 250 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                    player.displayClientMessage(Component.literal("You need 250 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 }
             }
 
-            boolean x = !pPlayer.getCooldowns().isOnCooldown(itemStack.getItem());
+            boolean x = !player.getCooldowns().isOnCooldown(itemStack.getItem());
             Entity targetEntity = event.getTarget();
-            AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MindStorm && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 3 && spectatorSequence.useSpirituality(250)) {
-                    int sequence = spectatorSequence.getCurrentSequence();
-                    int duration = 300 - (sequence * 25);
-                    int damage = 30 - (sequence * 2);
-                    if (dreamIntoReality.getValue() == 2) {
-                        damage = 50 - (sequence * 2);
-                    }
-                    ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false));
-                    ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
-                    ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
-                    targetEntity.hurt(targetEntity.damageSources().magic(), damage);
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 200);
-                        event.setCanceled(true);
-                        event.setCancellationResult(InteractionResult.SUCCESS);
-                    }
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MindStorm && targetEntity instanceof LivingEntity && holder.getCurrentSequence() <= 3 && holder.useSpirituality(250)) {
+                int sequence = holder.getCurrentSequence();
+                int duration = 300 - (sequence * 25);
+                int damage = 30 - (sequence * 2);
+                if (dreamIntoReality.getValue() == 2) {
+                    damage = 50 - (sequence * 2);
                 }
-                if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.getCurrentSequence() > 4 && spectatorSequence.useSpirituality(120)) {
-                    Placate.halfHarmfulEffects((LivingEntity) targetEntity);
-                    pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 120 / (int) dreamIntoReality.getValue());
+                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false));
+                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
+                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
+                targetEntity.hurt(targetEntity.damageSources().magic(), damage);
+                if (!player.getAbilities().instabuild) {
+                    player.getCooldowns().addCooldown(itemStack.getItem(), 200);
                     event.setCanceled(true);
+                    event.setCancellationResult(InteractionResult.SUCCESS);
                 }
-                if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(250)) {
-                    Placate.removeHarmfulEffects((LivingEntity) targetEntity);
-                    event.setCanceled(true);
-                    if (!pPlayer.getAbilities().mayfly) {
-                        pPlayer.getCooldowns().addCooldown(itemStack.getItem(), 120);
-                    }
+            }
+            if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && holder.getCurrentSequence() <= 7 && holder.getCurrentSequence() > 4 && holder.useSpirituality(120)) {
+                Placate.halfHarmfulEffects((LivingEntity) targetEntity);
+                player.getCooldowns().addCooldown(itemStack.getItem(), 120 / (int) dreamIntoReality.getValue());
+                event.setCanceled(true);
+            }
+            if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && holder.getCurrentSequence() <= 4 && holder.useSpirituality(250)) {
+                Placate.removeHarmfulEffects((LivingEntity) targetEntity);
+                event.setCanceled(true);
+                if (!player.getAbilities().mayfly) {
+                    player.getCooldowns().addCooldown(itemStack.getItem(), 120);
                 }
+            }
 
-            });
         }
     }
 }

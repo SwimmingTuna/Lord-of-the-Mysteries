@@ -20,9 +20,9 @@ public class LightningBallRenderer extends EntityRenderer<LightningBallEntity> {
     public static final ResourceLocation LIGHTNING_BALL_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/lightningball.png");
     public Model model;
 
-    public LightningBallRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new LightningBallModel<>(pContext.bakeLayer(LightningBallModel.LIGHTNING_BALL_LOCATION));
+    public LightningBallRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new LightningBallModel<>(context.bakeLayer(LightningBallModel.LIGHTNING_BALL_LOCATION));
     }
 
     @Override

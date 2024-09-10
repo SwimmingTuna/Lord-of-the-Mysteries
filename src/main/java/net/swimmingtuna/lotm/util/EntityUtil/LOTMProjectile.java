@@ -24,18 +24,18 @@ public class LOTMProjectile extends Projectile {
     private static final EntityDataAccessor<Float> DATA_POWER = SynchedEntityData.defineId(LOTMProjectile.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> DATA_DOMAIN = SynchedEntityData.defineId(LOTMProjectile.class, EntityDataSerializers.BOOLEAN);
 
-    public LOTMProjectile(EntityType<? extends Projectile> pType, Level pLevel) {
-        super(pType, pLevel);
+    public LOTMProjectile(EntityType<? extends Projectile> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public LOTMProjectile(EntityType<? extends Projectile> pType, Level pLevel, Entity pShooter) {
-        super(pType, pLevel);
+    public LOTMProjectile(EntityType<? extends Projectile> entityType, Level level, Entity shooter) {
+        super(entityType, level);
 
-        this.setOwner(pShooter);
+        this.setOwner(shooter);
     }
 
-    public LOTMProjectile(EntityType<? extends Projectile> pType, Level pLevel, Entity pShooter, float power) {
-        this(pType, pLevel, pShooter);
+    public LOTMProjectile(EntityType<? extends Projectile> entityType, Level level, Entity shooter, float power) {
+        this(entityType, level, shooter);
 
         this.setPower(power);
     }
@@ -72,21 +72,21 @@ public class LOTMProjectile extends Projectile {
     }
 
     @Override
-    protected void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
-        super.addAdditionalSaveData(pCompound);
+    protected void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
 
-        pCompound.putInt("time", this.getTime());
-        pCompound.putFloat("power", this.getPower());
-        pCompound.putBoolean("domain", this.isDomain());
+        compound.putInt("time", this.getTime());
+        compound.putFloat("power", this.getPower());
+        compound.putBoolean("domain", this.isDomain());
     }
 
     @Override
-    protected void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
-        super.readAdditionalSaveData(pCompound);
+    protected void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
 
-        this.setTime(pCompound.getInt("time"));
-        this.setPower(pCompound.getFloat("power"));
-        this.setDomain(pCompound.getBoolean("domain"));
+        this.setTime(compound.getInt("time"));
+        this.setPower(compound.getFloat("power"));
+        this.setDomain(compound.getBoolean("domain"));
     }
 
     @Override
@@ -133,14 +133,14 @@ public class LOTMProjectile extends Projectile {
     }
 
     @Override
-    public boolean shouldRenderAtSqrDistance(double pDistance) {
+    public boolean shouldRenderAtSqrDistance(double distance) {
         double d0 = this.getBoundingBox().getSize() * 10.0D;
 
         if (Double.isNaN(d0)) {
             d0 = 1.0D;
         }
         d0 *= 64.0D * getViewScale();
-        return pDistance < d0 * d0;
+        return distance < d0 * d0;
     }
 
     @Override
@@ -152,10 +152,10 @@ public class LOTMProjectile extends Projectile {
     }
 
     @Override
-    public void recreateFromPacket(@NotNull ClientboundAddEntityPacket pPacket) {
-        super.recreateFromPacket(pPacket);
+    public void recreateFromPacket(@NotNull ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
 
-        this.moveTo(pPacket.getX(), pPacket.getY(), pPacket.getZ(), pPacket.getYRot(), pPacket.getXRot());
-        this.setDeltaMovement(pPacket.getXa(), pPacket.getYa(), pPacket.getZa());
+        this.moveTo(packet.getX(), packet.getY(), packet.getZ(), packet.getYRot(), packet.getXRot());
+        this.setDeltaMovement(packet.getXa(), packet.getYa(), packet.getZa());
     }
 }

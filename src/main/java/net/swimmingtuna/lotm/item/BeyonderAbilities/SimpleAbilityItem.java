@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -16,7 +15,6 @@ import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -49,7 +47,7 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
                 return InteractionResultHolder.fail(player.getItemInHand(hand));
             }
 
-            boolean hasAllRequirements = checkRequired(player, holder);
+            boolean hasAllRequirements = checkAll(player);
             if (!hasAllRequirements) return InteractionResultHolder.fail(player.getItemInHand(hand));
 
             if (holder.useSpirituality(this.requiredSpirituality)) {
@@ -63,25 +61,8 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
         return InteractionResultHolder.pass(player.getItemInHand(hand));
     }
 
-    private boolean checkRequired(Player player, BeyonderHolder holder) {
-        Style style = BeyonderUtil.getStyle(player);
-
-        if (!checkRequiredClass(holder)) {
-            String name = this.requiredClass.get().sequenceNames().get(9);
-            player.displayClientMessage(Component.literal("You are not of the " + name + " Pathway").withStyle(style), true);
-            return false;
-        }
-
-        if (!checkSequence(holder)) {
-            player.displayClientMessage(Component.literal("You need to be sequence " + this.requiredSequence + " or lower to use this").withStyle(style), true);
-            return false;
-        }
-
-        if (!checkSpirituality(holder)) {
-            player.displayClientMessage(Component.literal("You need " + this.requiredSpirituality + " spirituality to use this").withStyle(style), true);
-            return false;
-        }
-        return true;
+    protected boolean checkAll(Player player) {
+        return checkAll(player, this.requiredClass.get(), this.requiredSequence, this.requiredSpirituality);
     }
 
     @Override
@@ -90,12 +71,8 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
         Level level = context.getLevel();
         if (!level.isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (holder == null) {
-                return InteractionResult.FAIL;
-            }
 
-            boolean hasAllRequirements = checkRequired(player, holder);
-            if (!hasAllRequirements) return InteractionResult.FAIL;
+            if (!checkAll(player)) return InteractionResult.FAIL;
 
             if (holder.useSpirituality(this.requiredSpirituality)) {
                 return useAbilityOnBlock(context);
@@ -108,11 +85,8 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
         if (!player.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (holder == null) {
-                return InteractionResult.FAIL;
-            }
 
-            boolean hasAllRequirements = checkRequired(player, holder);
+            boolean hasAllRequirements = checkAll(player);
             if (!hasAllRequirements) return InteractionResult.FAIL;
 
             if (holder.useSpirituality(this.requiredSpirituality)) {
@@ -176,15 +150,55 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
         return stringBuilder.toString();
     }
 
-    private boolean checkSequence(BeyonderHolder holder) {
+    private boolean sequenceAdvancedEnough(BeyonderHolder holder) {
         return holder.getCurrentSequence() <= this.requiredSequence;
     }
 
-    private boolean checkRequiredClass(BeyonderHolder holder) {
+    private boolean requiredClassMatches(BeyonderHolder holder) {
         return holder.currentClassMatches(this.requiredClass);
     }
 
-    private boolean checkSpirituality(BeyonderHolder holder) {
+    private boolean spiritualitySufficient(BeyonderHolder holder) {
         return holder.getSpirituality() >= this.requiredSpirituality;
+    }
+
+    public static boolean checkRequiredClass(BeyonderHolder holder, Player player, BeyonderClass requiredClass) {
+        if (!holder.currentClassMatches(requiredClass)) {
+            String name = requiredClass.sequenceNames().get(9);
+
+            player.displayClientMessage(
+                    Component.literal("You are not of the ").withStyle(ChatFormatting.AQUA).append(
+                            Component.literal(name).withStyle(ChatFormatting.YELLOW)).append(
+                                    Component.literal(" Pathway").withStyle(ChatFormatting.AQUA)), true);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean checkRequiredSequence(BeyonderHolder holder, Player player, int requiredSequence) {
+        if (holder.getCurrentSequence() > requiredSequence) {
+            player.displayClientMessage(
+                    Component.literal("You need to be sequence ").withStyle(ChatFormatting.AQUA).append(
+                            Component.literal(String.valueOf(requiredSequence)).withStyle(ChatFormatting.YELLOW)).append(
+                                    Component.literal(" or lower to use this").withStyle(ChatFormatting.AQUA)), true);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean checkSpirituality(BeyonderHolder holder, Player player, int requiredSpirituality) {
+        if (holder.getSpirituality() < requiredSpirituality) {
+            player.displayClientMessage(
+                    Component.literal("You need ").withStyle(ChatFormatting.AQUA).append(
+                            Component.literal(String.valueOf(requiredSpirituality)).withStyle(ChatFormatting.YELLOW)).append(
+                            Component.literal(" spirituality to use this").withStyle(ChatFormatting.AQUA)), true);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean checkAll(Player player, BeyonderClass requiredClass, int requiredSequence, int requiredSpirituality) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        return checkRequiredClass(holder, player, requiredClass) && checkRequiredSequence(holder, player, requiredSequence) && checkSpirituality(holder, player, requiredSpirituality);
     }
 }

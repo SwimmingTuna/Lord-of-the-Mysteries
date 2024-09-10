@@ -32,47 +32,47 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Integer> DATA_LIFE_COUNT = SynchedEntityData.defineId(WindBladeEntity.class, EntityDataSerializers.INT);
     private static final List<Block> EXCLUDED_BLOCKS = List.of(Blocks.BEDROCK, Blocks.OBSIDIAN);
 
-    public WindBladeEntity(EntityType<? extends WindBladeEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public WindBladeEntity(EntityType<? extends WindBladeEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public WindBladeEntity(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.WIND_BLADE_ENTITY.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+    public WindBladeEntity(Level level, LivingEntity shooter, double offsetX, double offsetY, double offsetZ) {
+        super(EntityInit.WIND_BLADE_ENTITY.get(), shooter, offsetX, offsetY, offsetZ, level);
     }
 
-    public static void summonEntityWithSpeed(Vec3 direction, Vec3 initialVelocity, Vec3 eyePosition, double x, double y, double z, Player pPlayer, float yRotation, float xRotation) {
-        if (pPlayer.level().isClientSide()) {
+    public static void summonEntityWithSpeed(Vec3 direction, Vec3 initialVelocity, Vec3 eyePosition, double x, double y, double z, Player player, float yRotation, float xRotation) {
+        if (player.level().isClientSide()) {
             return;
         }
-        WindBladeEntity windBladeEntity = new WindBladeEntity(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
+        WindBladeEntity windBladeEntity = new WindBladeEntity(player.level(), player, initialVelocity.x, initialVelocity.y, initialVelocity.z);
         windBladeEntity.getDeltaMovement().add(initialVelocity);
         windBladeEntity.hurtMarked = true;
         Vec3 lightPosition = eyePosition.add(direction.scale(3.0));
         windBladeEntity.setPos(lightPosition);
-        windBladeEntity.setOwner(pPlayer);
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        windBladeEntity.setOwner(player);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (holder == null) return;
         if (!windBladeEntity.level().isClientSide()) {
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(windBladeEntity);
             scaleData.setTargetScale((7 - (holder.getCurrentSequence())));
             scaleData.markForSync(true);
         }
-        pPlayer.level().addFreshEntity(windBladeEntity);
+        player.level().addFreshEntity(windBladeEntity);
     }
 
-    public static void testShoot(Player pPlayer) {
-        if (pPlayer.level().isClientSide()) {
+    public static void testShoot(Player player) {
+        if (player.level().isClientSide()) {
             return;
         }
-        Vec3 direction = pPlayer.getViewVector(1.0f);
+        Vec3 direction = player.getViewVector(1.0f);
         Vec3 velocity = direction.scale(3.0);
-        Vec3 lookVec = pPlayer.getLookAngle();
-        WindBladeEntity windBladeEntity = new WindBladeEntity(pPlayer.level(), pPlayer, velocity.x(), velocity.y(), velocity.z());
+        Vec3 lookVec = player.getLookAngle();
+        WindBladeEntity windBladeEntity = new WindBladeEntity(player.level(), player, velocity.x(), velocity.y(), velocity.z());
         windBladeEntity.shoot(lookVec.x, lookVec.y, lookVec.z, 2.0f, 0.1f);
         windBladeEntity.hurtMarked = true;
         windBladeEntity.setXRot((float) direction.x);
         windBladeEntity.setYRot((float) direction.y);
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (holder != null) {
             int x = 7 - holder.getCurrentSequence();
             if (!windBladeEntity.level().isClientSide()) {
@@ -81,7 +81,7 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
                 scaleData.markForSync(true);
             }
         }
-        pPlayer.level().addFreshEntity(windBladeEntity);
+        player.level().addFreshEntity(windBladeEntity);
     }
 
     @Override
@@ -95,11 +95,11 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult pResult) {
-        if (!this.level().isClientSide() && pResult.getEntity() instanceof LivingEntity entity && this.getOwner() instanceof Player pPlayer) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    protected void onHitEntity(EntityHitResult result) {
+        if (!this.level().isClientSide() && result.getEntity() instanceof LivingEntity entity && this.getOwner() instanceof Player player) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (holder == null) return;
-            if (!entity.level().isClientSide() && !pPlayer.level().isClientSide()) {
+            if (!entity.level().isClientSide() && !player.level().isClientSide()) {
                 int currentLifeCount = this.entityData.get(DATA_LIFE_COUNT);
                 int decrease = (holder.getCurrentSequence() * 9) + 30;
                 currentLifeCount = currentLifeCount - decrease;
@@ -118,23 +118,21 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
-        if (!this.level().isClientSide) {
-            if (this.getOwner() instanceof Player pPlayer) {
-                if (pResult != EXCLUDED_BLOCKS) {
-                    BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                        if (!pPlayer.level().isClientSide()) {
-                            int currentLifeCount = this.entityData.get(DATA_LIFE_COUNT);
-                            int decrease = (tyrantSequence.getCurrentSequence() * 4) + 10;
-                            currentLifeCount = currentLifeCount - decrease;
-                            this.entityData.set(DATA_LIFE_COUNT, currentLifeCount - decrease);
-                            if (currentLifeCount <= 0) {
-                                this.discard();
-                            }
-                        }
-                    });
-                }
-            } else {
+    protected void onHitBlock(BlockHitResult result) {
+        if (this.level().isClientSide) {
+            return;
+        }
+        if (!(this.getOwner() instanceof Player player)) {
+            this.discard();
+            return;
+        }
+        if (result != EXCLUDED_BLOCKS) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int currentLifeCount = this.entityData.get(DATA_LIFE_COUNT);
+            int decrease = (holder.getCurrentSequence() * 4) + 10;
+            currentLifeCount = currentLifeCount - decrease;
+            this.entityData.set(DATA_LIFE_COUNT, currentLifeCount - decrease);
+            if (currentLifeCount <= 0) {
                 this.discard();
             }
         }

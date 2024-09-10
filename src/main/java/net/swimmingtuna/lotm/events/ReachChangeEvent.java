@@ -13,12 +13,12 @@ import java.util.UUID;
 
 public class ReachChangeEvent {
 
-    public static void checkEntityTooFar(PlayerInteractEvent event, Entity pEntity, Player pPlayer, InteractionHand pUsedHand) {
-        if (!MindReading.pUsedHand(pPlayer)) {
+    public static void checkEntityTooFar(PlayerInteractEvent event, Entity entity, Player player, InteractionHand usedHand) {
+        if (!MindReading.usedHand(player)) {
             return;
         }
         UUID uuidForOppositeHand = ReachChangeUUIDs.BEYONDER_ENTITY_REACH; //UUID which is able to be used in other files.
-        AttributeInstance attackRange = pPlayer.getAttribute(ForgeMod.ENTITY_REACH.get()); //grabs reach attribute
+        AttributeInstance attackRange = player.getAttribute(ForgeMod.ENTITY_REACH.get()); //grabs reach attribute
         if (attackRange == null) {
             return;
         }
@@ -29,8 +29,8 @@ public class ReachChangeEvent {
         }
         //if beyonderModifier is active
         attackRange.removeModifier(beyonderModifier.getId()); //tbh idk
-        double range = pPlayer.getAttributeValue(ForgeMod.ENTITY_REACH.get());
-        double trueReach = range == 0 ? 0 : range + (pPlayer.isCreative() ? 3 : 0);
+        double range = player.getAttributeValue(ForgeMod.ENTITY_REACH.get());
+        double trueReach = range == 0 ? 0 : range + (player.isCreative() ? 3 : 0);
         attackRange.addTransientModifier(beyonderModifier);
     }
 }

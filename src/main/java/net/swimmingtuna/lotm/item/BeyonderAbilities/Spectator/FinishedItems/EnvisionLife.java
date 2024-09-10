@@ -33,84 +33,82 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EnvisionLife extends Item {
 
-    public EnvisionLife(Properties pProperties) {
-        super(pProperties);
+    public EnvisionLife(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("While holding this item, type in a mob and that mob will be spawned, targeting the nearest player within 100 blocks\n" +
+            tooltipComponents.add(Component.literal("While holding this item, type in a mob and that mob will be spawned, targeting the nearest player within 100 blocks\n" +
                     "In the case of Modded Mobs, type in the Mod ID followed by the mob name, e.g. (lotm:black_panther\n" +
                     "Spirituality Used: 1500\n" +
                     "Left Click for Envision Location\n" +
                     "Cooldown: 0 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     @SubscribeEvent
     public static void onChatMessage(ServerChatEvent event) {
         Level level = event.getPlayer().serverLevel();
-        Player pPlayer = event.getPlayer();
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+        Player player = event.getPlayer();
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
         String message = event.getMessage().getString().toLowerCase();
-        if (pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && !pPlayer.level().isClientSide()) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        if (player.getMainHandItem().getItem() instanceof EnvisionLife && !player.level().isClientSide()) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                    pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                    player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 }
 
                 if (holder.getSpirituality() < 1500) {
-                    pPlayer.displayClientMessage(Component.literal("You need " + ((int) 1500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                    player.displayClientMessage(Component.literal("You need " + ((int) 1500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 }
         }
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionLife && spectatorSequence.getCurrentSequence() == 0) {
-                    spawnMob(pPlayer,message);
-                spectatorSequence.useSpirituality((int) (1500/dreamIntoReality.getValue()));
-                event.setCanceled(true);
-            }
-        });
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide() && player.getMainHandItem().getItem() instanceof EnvisionLife && holder.getCurrentSequence() == 0) {
+            spawnMob(player, message);
+            holder.useSpirituality((int) (1500 / dreamIntoReality.getValue()));
+            event.setCanceled(true);
+        }
     }
 
-    private static void spawnMob(Player pPlayer, String mobName) {
+    private static void spawnMob(Player player, String mobName) {
         // Get the world level and position of the player
-        Level level = pPlayer.level();
-        double x = pPlayer.getX();
-        double y = pPlayer.getY();
-        double z = pPlayer.getZ();
+        Level level = player.level();
+        double x = player.getX();
+        double y = player.getY();
+        double z = player.getZ();
 
         // Find the EntityType based on the mobName (assuming it's a valid EntityType)
         EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(mobName));
 
-        int waitMakeLifeCounter = pPlayer.getPersistentData().getInt("waitMakeLifeTimer");
+        int waitMakeLifeCounter = player.getPersistentData().getInt("waitMakeLifeTimer");
         if (waitMakeLifeCounter == 0) {
             if (entityType != null) {
                 Entity entity = entityType.create(level);
                 if (entity != null) {
                     Mob mob = (Mob) entity;
                     entity.setPos(x, y, z);
-                    Player nearestPlayer = findNearestPlayer(level, x, y, z, 100, pPlayer);
+                    Player nearestPlayer = findNearestPlayer(level, x, y, z, 100, player);
                     if (nearestPlayer != null) {
                         mob.setLastHurtByPlayer(nearestPlayer);
                     }
-                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                     if (holder.getSpirituality() >= ((Mob) entity).getMaxHealth() * 3) {
                         holder.useSpirituality((int) (((Mob) entity).getMaxHealth() * 3));
                         level.addFreshEntity(entity);
                     } else {
-                        pPlayer.sendSystemMessage(Component.literal("You need " + (((Mob) entity).getMaxHealth() * 3 - holder.getSpirituality()) + " more spirituality in order to envision" + entity.getName().getString()));
+                        player.sendSystemMessage(Component.literal("You need " + (((Mob) entity).getMaxHealth() * 3 - holder.getSpirituality()) + " more spirituality in order to envision" + entity.getName().getString()));
                     }
                 }
             }
         }
         if (waitMakeLifeCounter != 0) {
-            pPlayer.sendSystemMessage(Component.literal("Ability on Cooldown for " + (int) ((400 - waitMakeLifeCounter)/20) + " seconds"));
+            player.sendSystemMessage(Component.literal("Ability on Cooldown for " + (int) ((400 - waitMakeLifeCounter)/20) + " seconds"));
         }
         else {
-            pPlayer.sendSystemMessage(Component.literal("Mob not valid"));
+            player.sendSystemMessage(Component.literal("Mob not valid"));
         }
     }
     private static Player findNearestPlayer(Level world, double x, double y, double z, double range, Player excludedPlayer) {
@@ -129,21 +127,21 @@ public class EnvisionLife extends Item {
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLife) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_KINGDOM.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_KINGDOM.get()));
             heldItem.shrink(1);
         }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLife) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_KINGDOM.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionLife) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_KINGDOM.get()));
             heldItem.shrink(1);
         }
     }

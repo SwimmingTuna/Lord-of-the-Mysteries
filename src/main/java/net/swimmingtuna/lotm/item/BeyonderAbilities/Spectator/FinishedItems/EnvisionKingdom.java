@@ -30,51 +30,49 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EnvisionKingdom extends Item {
 
-    public EnvisionKingdom(Properties pProperties) {
-        super(pProperties);
+    public EnvisionKingdom(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-            if (!pPlayer.level().isClientSide()) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            if (!player.level().isClientSide()) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                 if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                    pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                    player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 }
                 if (holder.getSpirituality() < (int) 3500 / dreamIntoReality.getValue()) {
-                    pPlayer.displayClientMessage(Component.literal("You need " + ((int) 3500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                    player.displayClientMessage(Component.literal("You need " + ((int) 3500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 }
 
-                BlockPos playerPos = pPlayer.getOnPos();
-                BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                    if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 0 && spectatorSequence.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
-                        generateCathedral(pPlayer);
-                        if (!pPlayer.getAbilities().instabuild) {
-                            pPlayer.getCooldowns().addCooldown(this, 900);
-                        }
+                BlockPos playerPos = player.getOnPos();
+                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 0 && holder.useSpirituality((int) (3500 / dreamIntoReality.getValue()))) {
+                    generateCathedral(player);
+                    if (!player.getAbilities().instabuild) {
+                        player.getCooldowns().addCooldown(this, 900);
                     }
-                });
+                }
             }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summons your Divine Kingdom, the Corpse Cathedral\n" +
+            tooltipComponents.add(Component.literal("Upon use, summons your Divine Kingdom, the Corpse Cathedral\n" +
                     "Spirituality Used: 3500\n" +
                     "Cooldown: 45 seconds ").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    private void generateCathedral(Player pPlayer) {
-        if (!pPlayer.level().isClientSide) {
-            int x = (int) pPlayer.getX();
-            int y = (int) pPlayer.getY();
-            int z = (int) pPlayer.getZ();
-            CompoundTag compoundTag = pPlayer.getPersistentData();
+    private void generateCathedral(Player player) {
+        if (!player.level().isClientSide) {
+            int x = (int) player.getX();
+            int y = (int) player.getY();
+            int z = (int) player.getZ();
+            CompoundTag compoundTag = player.getPersistentData();
             compoundTag.putInt("mindscapeAbilities", 50);
             compoundTag.putInt("inMindscape", 1);
             compoundTag.putInt("mindscapePlayerLocationX", x); //check if this works
@@ -85,21 +83,21 @@ public class EnvisionKingdom extends Item {
 
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionKingdom) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_LOCATION.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_LOCATION.get()));
             heldItem.shrink(1);
         }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionKingdom) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_LOCATION.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionKingdom) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_LOCATION.get()));
             heldItem.shrink(1);
         }
     }

@@ -19,9 +19,9 @@ public class EndstoneEntityRenderer extends EntityRenderer<EndStoneEntity> {
     public static final ResourceLocation ENDSTONE_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/endstoneentity.png");
     public Model model;
 
-    public EndstoneEntityRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new EndstoneEntityModel<>(pContext.bakeLayer(EndstoneEntityModel.ENDSTONE_MODEL_LOCATION));
+    public EndstoneEntityRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new EndstoneEntityModel<>(context.bakeLayer(EndstoneEntityModel.ENDSTONE_MODEL_LOCATION));
     }
 
     @Override

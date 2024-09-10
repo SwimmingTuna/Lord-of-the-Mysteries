@@ -44,12 +44,11 @@ public class BeyonderHolder extends PlayerCapability {
     @SubscribeEvent
     public static void onTick(TickEvent.PlayerTickEvent event) {
         if (!event.player.level().isClientSide && event.phase == TickEvent.Phase.END) {
-            BeyonderHolderAttacher.getHolder(event.player).ifPresent(holder -> {
-                holder.regenSpirituality(event.player);
-                if (holder.getCurrentClass() != null) {
-                    holder.getCurrentClass().tick(event.player, holder.getCurrentSequence());
-                }
-            });
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(event.player);
+            holder.regenSpirituality(event.player);
+            if (holder.getCurrentClass() != null) {
+                holder.getCurrentClass().tick(event.player, holder.getCurrentSequence());
+            }
         }
 
     }

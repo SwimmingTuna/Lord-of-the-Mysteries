@@ -31,8 +31,8 @@ public class AbilitiesCommand {
 
                         @Nullable
                         @Override
-                        public AbstractContainerMenu createMenu(int pContainerId, Inventory playerInventory, Player player) {
-                            return new ChestMenu(MenuType.GENERIC_9x5, pContainerId, context.getSource().getPlayer().getInventory(), holder.getCurrentClass().getAbilityItemsContainer(holder.getCurrentSequence()), 3);
+                        public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+                            return new ChestMenu(MenuType.GENERIC_9x5, containerId, context.getSource().getPlayer().getInventory(), holder.getCurrentClass().getAbilityItemsContainer(holder.getCurrentSequence()), 3);
                         }
                     });
                     return 1;

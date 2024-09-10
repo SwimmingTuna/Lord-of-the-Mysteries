@@ -38,12 +38,12 @@ public class NetherrackEntity extends AbstractArrow {
     private static final EntityDataAccessor<Boolean> SHOULDNT_DAMAGE = SynchedEntityData.defineId(NetherrackEntity.class, EntityDataSerializers.BOOLEAN);
 
 
-    public NetherrackEntity(EntityType<? extends NetherrackEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public NetherrackEntity(EntityType<? extends NetherrackEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public NetherrackEntity(Level pLevel, LivingEntity pShooter) {
-        super(EntityInit.NETHERRACK_ENTITY.get(), pShooter, pLevel);
+    public NetherrackEntity(Level level, LivingEntity shooter) {
+        super(EntityInit.NETHERRACK_ENTITY.get(), shooter, level);
     }
 
     @Override
@@ -84,13 +84,13 @@ public class NetherrackEntity extends AbstractArrow {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult pResult) {
+    protected void onHitEntity(EntityHitResult result) {
         if (this.level() != null && !this.level().isClientSide && !getShouldntDamage()) {
-            Vec3 hitPos = pResult.getLocation();
+            Vec3 hitPos = result.getLocation();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 5.0F, 5.0F);
-            if (pResult.getEntity() instanceof LivingEntity entity) {
+            if (result.getEntity() instanceof LivingEntity entity) {
                 Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 10.0F, true, Explosion.BlockInteraction.DESTROY);
                 DamageSource damageSource = this.level().damageSources().explosion(explosion);
                 entity.hurt(damageSource, 10.0F * scaleData.getScale());
@@ -100,7 +100,7 @@ public class NetherrackEntity extends AbstractArrow {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
+    protected void onHitBlock(BlockHitResult result) {
         if (this.level() != null && !this.level().isClientSide && !getRemoveAndHurt() && !getShouldntDamage()) {
             Random random = new Random();
             if (random.nextInt(10) == 1) {

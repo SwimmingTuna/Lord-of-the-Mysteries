@@ -29,8 +29,8 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WindManipulationFlight extends SimpleAbilityItem {
-    public WindManipulationFlight(Item.Properties pProperties) {
-        super(pProperties, BeyonderClassInit.SAILOR, 7, 0, 0);
+    public WindManipulationFlight(Item.Properties properties) {
+        super(properties, BeyonderClassInit.SAILOR, 7, 0, 0);
     }
 
     @Override
@@ -50,8 +50,8 @@ public class WindManipulationFlight extends SimpleAbilityItem {
         }
     }
 
-    private void flightRegular(Player pPlayer) {
-        CompoundTag tag = pPlayer.getPersistentData();
+    private void flightRegular(Player player) {
+        CompoundTag tag = player.getPersistentData();
         tag.putInt("sailorFlight", 1);
         tag.putInt("sailorFlightDamageCancel", 1);
     }
@@ -70,25 +70,25 @@ public class WindManipulationFlight extends SimpleAbilityItem {
         }
     }
 
-    private void toggleFlying(Player pPlayer) {
-        boolean canFly = pPlayer.getPersistentData().getBoolean("sailorFlight1");
+    private void toggleFlying(Player player) {
+        boolean canFly = player.getPersistentData().getBoolean("sailorFlight1");
         if (canFly) {
-            stopFlying(pPlayer);
+            stopFlying(player);
         } else {
-            startFlying(pPlayer);
+            startFlying(player);
         }
     }
 
-    private void stopFlying(Player pPlayer) {
-        pPlayer.getPersistentData().putBoolean("sailorFlight1", false);
-        Abilities playerAbilities = pPlayer.getAbilities();
-        if (!pPlayer.isCreative() && !pPlayer.isSpectator()) {
+    private void stopFlying(Player player) {
+        player.getPersistentData().putBoolean("sailorFlight1", false);
+        Abilities playerAbilities = player.getAbilities();
+        if (!player.isCreative() && !player.isSpectator()) {
             playerAbilities.mayfly = false;
             playerAbilities.flying = false;
         }
         playerAbilities.setFlyingSpeed(0.05F);
-        pPlayer.onUpdateAbilities();
-        if (pPlayer instanceof ServerPlayer serverPlayer) {
+        player.onUpdateAbilities();
+        if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
         }
     }
@@ -125,22 +125,22 @@ public class WindManipulationFlight extends SimpleAbilityItem {
 
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationFlight) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_CUSHION.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_CUSHION.get()));
             heldItem.shrink(1);
         }
     }
 
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationFlight) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_CUSHION.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationFlight) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_CUSHION.get()));
             heldItem.shrink(1);
         }
     }

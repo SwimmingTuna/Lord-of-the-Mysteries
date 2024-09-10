@@ -37,16 +37,16 @@ public class Frenzy extends Item {
 
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
-    public Frenzy(Properties pProperties) {
-        super(pProperties);
+    public Frenzy(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
-        if (pSlot == EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
             return this.lazyAttributeMap.get();
         }
-        return super.getDefaultAttributeModifiers(pSlot);
+        return super.getDefaultAttributeModifiers(slot);
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
@@ -60,41 +60,40 @@ public class Frenzy extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        Player pPlayer = context.getPlayer();
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-        if (holder == null) return InteractionResult.FAIL;
+        Player player = context.getPlayer();
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-            pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             return InteractionResult.FAIL;
         }
         if (holder.getSpirituality() < 125) {
-            pPlayer.displayClientMessage(Component.literal("You need 125 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            player.displayClientMessage(Component.literal("You need 125 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             return InteractionResult.FAIL;
         }
-        if (pPlayer.level().isClientSide()) {
+        if (player.level().isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 
-        Level level = pPlayer.level();
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+        Level level = player.level();
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
         BlockPos positionClicked = context.getClickedPos();
         if (holder.getCurrentSequence() <= 7 && holder.useSpirituality(125)) {
-            applyPotionEffectToEntities(pPlayer, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
-            if (!pPlayer.getAbilities().instabuild) {
-                pPlayer.getCooldowns().addCooldown(this, 300);
+            applyPotionEffectToEntities(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
+            if (!player.getAbilities().instabuild) {
+                player.getCooldowns().addCooldown(this, 300);
             }
         }
         return InteractionResult.SUCCESS;
     }
 
-    private void applyPotionEffectToEntities(Player pPlayer, Level level, BlockPos targetPos, int sequence, int dreamIntoRealityValue) {
+    private void applyPotionEffectToEntities(Player player, Level level, BlockPos targetPos, int sequence, int dreamIntoRealityValue) {
         double radius = (15.0 - sequence) * dreamIntoRealityValue;
         float damage = (float) (18.0 - (sequence / 2));
         int duration = 250 - (sequence * 12) * dreamIntoRealityValue;
 
         AABB boundingBox = new AABB(targetPos).inflate(radius);
         level.getEntitiesOfClass(LivingEntity.class, boundingBox, LivingEntity::isAlive).forEach(livingEntity -> {
-            if (livingEntity != pPlayer) {
+            if (livingEntity != player) {
                 livingEntity.addEffect(new MobEffectInstance(ModEffects.FRENZY.get(), duration, 1, false, false));
                 livingEntity.hurt(livingEntity.damageSources().magic(), damage);
             }
@@ -102,12 +101,12 @@ public class Frenzy extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes all living entities around the targeted block lose control of their movement\n" +
+            tooltipComponents.add(Component.literal("Upon use, makes all living entities around the targeted block lose control of their movement\n" +
                     "Spirituality Used: 125\n" +
                     "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

@@ -1,4 +1,5 @@
 package net.swimmingtuna.lotm.util.effect;
+
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -10,38 +11,6 @@ import net.minecraft.world.entity.player.Player;
 import java.util.Random;
 
 public class NightmareEffect extends MobEffect {
-    private final Random random = new Random();
-    private int nightmareApplyCounter = 0;
-
-    public NightmareEffect(MobEffectCategory mobEffectCategory, int color) {
-        super(mobEffectCategory, color);
-    }
-
-    @Override
-    public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier) {
-        if (!pLivingEntity.level().isClientSide()) {
-            nightmareApplyCounter++;
-            if (nightmareApplyCounter >= 50) {
-                double x = pLivingEntity.getX();
-                double y = pLivingEntity.getY();
-                double z = pLivingEntity.getZ();
-
-
-                SoundEvent randomSound = MOB_SOUNDS[random.nextInt(MOB_SOUNDS.length)];
-                Player pPlayer = (Player) pLivingEntity;
-                pLivingEntity.level().playSound(null, pLivingEntity.getX(), pLivingEntity.getY(), pLivingEntity.getZ(), randomSound, SoundSource.HOSTILE.AMBIENT, 1.0F, 1.0F);
-                pLivingEntity.level().playLocalSound(x,y,z, randomSound,  SoundSource.HOSTILE.AMBIENT, 1.0F, 1.0F, false);
-                nightmareApplyCounter = 0;
-            }
-        }
-        super.applyEffectTick(pLivingEntity, pAmplifier);
-    }
-
-    @Override
-    public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
-        return true;
-    }
-
     private static final SoundEvent[] MOB_SOUNDS = {
             SoundEvents.CREEPER_PRIMED,
             SoundEvents.SPIDER_STEP,
@@ -71,4 +40,34 @@ public class NightmareEffect extends MobEffect {
             SoundEvents.ELDER_GUARDIAN_AMBIENT,
             SoundEvents.PHANTOM_DEATH,
     };
+    private final Random random = new Random();
+    private int nightmareApplyCounter = 0;
+
+    public NightmareEffect(MobEffectCategory mobEffectCategory, int color) {
+        super(mobEffectCategory, color);
+    }
+
+    @Override
+    public void applyEffectTick(LivingEntity livingEntity, int amplifier) {
+        if (!livingEntity.level().isClientSide()) {
+            nightmareApplyCounter++;
+            if (nightmareApplyCounter >= 50) {
+                double x = livingEntity.getX();
+                double y = livingEntity.getY();
+                double z = livingEntity.getZ();
+
+
+                SoundEvent randomSound = MOB_SOUNDS[random.nextInt(MOB_SOUNDS.length)];
+                livingEntity.level().playSound(null, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), randomSound, SoundSource.AMBIENT, 1.0F, 1.0F);
+                livingEntity.level().playLocalSound(x, y, z, randomSound, SoundSource.AMBIENT, 1.0F, 1.0F, false);
+                nightmareApplyCounter = 0;
+            }
+        }
+        super.applyEffectTick(livingEntity, amplifier);
+    }
+
+    @Override
+    public boolean isDurationEffectTick(int duration, int amplifier) {
+        return true;
+    }
 }

@@ -22,56 +22,54 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class LightningBranch extends Item {
-    public LightningBranch(Properties pProperties) {
-        super(pProperties);
+    public LightningBranch(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < 450) {
-                pPlayer.displayClientMessage(Component.literal("You need 450 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You need 450 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
 
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && tyrantSequence.getCurrentSequence() <= 3 && tyrantSequence.useSpirituality(450)) {
-                    summonLightningBranches(pPlayer);
-                }
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 160);
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 3 && holder.useSpirituality(450)) {
+                summonLightningBranches(player);
+            }
+            if (!player.getAbilities().instabuild)
+                player.getCooldowns().addCooldown(this, 160);
 
-            });
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summons a lightning that branches out as it goes on\n" +
+            tooltipComponents.add(Component.literal("Upon use, summons a lightning that branches out as it goes on\n" +
                     "Spirituality Used: 450\n" +
                     "Cooldown: 8 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
-    private void summonLightningBranches(Player pPlayer) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    private void summonLightningBranches(Player player) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
-        if (!pPlayer.level().isClientSide()) {
-            Vec3 lookVec = pPlayer.getLookAngle();
-            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
+        if (!player.level().isClientSide()) {
+            Vec3 lookVec = player.getLookAngle();
+            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), player.level());
             lightningEntity.setSpeed(5.0f);
             lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
             lightningEntity.setMaxLength(130 - (sequence * 20));
-            lightningEntity.setOwner(pPlayer);
-            lightningEntity.setOwner(pPlayer);
+            lightningEntity.setOwner(player);
+            lightningEntity.setOwner(player);
             lightningEntity.setBranchOut(true);
-            lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
-            pPlayer.level().addFreshEntity(lightningEntity);
+            lightningEntity.teleportTo(player.getX(), player.getY(), player.getZ());
+            player.level().addFreshEntity(lightningEntity);
         }
     }
 }

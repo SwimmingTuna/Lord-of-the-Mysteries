@@ -34,11 +34,10 @@ public class BeyonderPotion extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        ItemStack itemStack = pPlayer.getItemInHand(hand);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack itemStack = player.getItemInHand(hand);
         if (level.isClientSide) return InteractionResultHolder.pass(itemStack);
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-        if (holder == null) return InteractionResultHolder.fail(itemStack);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (holder.getCurrentClass() != null && holder.getCurrentClass() != beyonderClassSupplier.get()) {
             return InteractionResultHolder.fail(itemStack);
         }
@@ -53,20 +52,20 @@ public class BeyonderPotion extends Item {
         nauseaEffect.setCurativeItems(List.of());
         MobEffectInstance poisonEffect = new MobEffectInstance(MobEffects.POISON, effectDurations.get(sequence), 20);
         poisonEffect.setCurativeItems(List.of());
-        pPlayer.addEffect(blindnessEffect);
-        pPlayer.addEffect(slownessEffect);
-        pPlayer.addEffect(nauseaEffect);
-        pPlayer.addEffect(poisonEffect);
+        player.addEffect(blindnessEffect);
+        player.addEffect(slownessEffect);
+        player.addEffect(nauseaEffect);
+        player.addEffect(poisonEffect);
         holder.setClassAndSequence(beyonderClassSupplier.get(), sequence);
-        level.playSound(null, pPlayer.getOnPos(), SoundEvents.PORTAL_AMBIENT, SoundSource.PLAYERS, 0.5f, level.random.nextFloat() * 0.1F + 0.9F);
-        pPlayer.sendSystemMessage(Component.translatable("item.lotm.beholder_potion.alert", holder.getCurrentClass().sequenceNames().get(holder.getCurrentSequence())).withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD));
-        pPlayer.getAttribute(Attributes.MAX_HEALTH).setBaseValue(beyonderClassSupplier.get().maxHealth().get(sequence));
-        if (!pPlayer.getAbilities().instabuild) {
+        level.playSound(null, player.getOnPos(), SoundEvents.PORTAL_AMBIENT, SoundSource.PLAYERS, 0.5f, level.random.nextFloat() * 0.1F + 0.9F);
+        player.sendSystemMessage(Component.translatable("item.lotm.beholder_potion.alert", holder.getCurrentClass().sequenceNames().get(holder.getCurrentSequence())).withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD));
+        player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(beyonderClassSupplier.get().maxHealth().get(sequence));
+        if (!player.getAbilities().instabuild) {
             itemStack.shrink(1);
         }
-        CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer) pPlayer, itemStack);
+        CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer) player, itemStack);
 
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
 }

@@ -37,17 +37,17 @@ public class MindReading extends Item {
 
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
-    public MindReading(Properties pProperties) {
-        super(pProperties);
+    public MindReading(Properties properties) {
+        super(properties);
     }
 
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
-        if (pSlot == EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
             return this.lazyAttributeMap.get();
         }
-        return super.getDefaultAttributeModifiers(pSlot);
+        return super.getDefaultAttributeModifiers(slot);
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
@@ -60,54 +60,53 @@ public class MindReading extends Item {
         return attributeBuilder.build();
     }
 
-    public static boolean pUsedHand(Player pPlayer) {
-        ItemStack mainHandStack = pPlayer.getMainHandItem();
+    public static boolean usedHand(Player player) {
+        ItemStack mainHandStack = player.getMainHandItem();
         return mainHandStack.getItem() instanceof MindReading;
     }
 
-    public InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
-        if (!pPlayer.level().isClientSide()) {
-            Style style = BeyonderUtil.getStyle(pPlayer);
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
+        if (!player.level().isClientSide()) {
+            Style style = BeyonderUtil.getStyle(player);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 20) {
-                pPlayer.displayClientMessage(Component.literal("You need 20 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need 20 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 8 && !pInteractionTarget.level().isClientSide && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(20)) {
-                    if (pInteractionTarget instanceof Player) {
-                        for (int i = 0; i < ((Player) pInteractionTarget).getInventory().getContainerSize(); i++) {
-                            ItemStack itemStack = ((Player) pInteractionTarget).getInventory().getItem(i);
-                            if (!itemStack.isEmpty()) {
-                                String playerName = pInteractionTarget.getName().getString();
-                                pPlayer.sendSystemMessage(Component.literal(playerName + "'s inventory is" + itemStack).withStyle(ChatFormatting.BOLD));
-                            }
-                            if (dreamIntoReality.getValue() == 2) {
-                                pInteractionTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1, false, false));
-                            }
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 8 && !interactionTarget.level().isClientSide && BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(20)) {
+                if (interactionTarget instanceof Player playerInteractionTarget) {
+                    for (int i = 0; i < playerInteractionTarget.getInventory().getContainerSize(); i++) {
+                        ItemStack itemStack = playerInteractionTarget.getInventory().getItem(i);
+                        if (!itemStack.isEmpty()) {
+                            String playerName = interactionTarget.getName().getString();
+                            player.sendSystemMessage(Component.literal(playerName + "'s inventory is" + itemStack).withStyle(ChatFormatting.BOLD));
                         }
-                        if (!pPlayer.getAbilities().instabuild) {
-                            pPlayer.getCooldowns().addCooldown(this, 60);
+                        if (dreamIntoReality.getValue() == 2) {
+                            interactionTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1, false, false));
                         }
-                    } else {
-                        pPlayer.sendSystemMessage(Component.literal("Interaction target isn't a player").withStyle(style));
                     }
+                    if (!player.getAbilities().instabuild) {
+                        player.getCooldowns().addCooldown(this, 60);
+                    }
+                } else {
+                    player.sendSystemMessage(Component.literal("Interaction target isn't a player").withStyle(style));
                 }
-            });
+            }
         }
         return InteractionResult.PASS;
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, tells you the inventory of the target player\n" +
+            tooltipComponents.add(Component.literal("Upon use, tells you the inventory of the target player\n" +
                     "Spirituality Used: 20\n" +
                     "Cooldown: 3 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }
 

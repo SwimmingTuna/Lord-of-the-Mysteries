@@ -28,51 +28,51 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class StormSeal extends Item {
 
-    public StormSeal(Properties pProperties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(pProperties);
+    public StormSeal(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
 
             // If no block or entity is targeted, proceed with the original functionality
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < 5000) {
-                pPlayer.displayClientMessage(Component.literal("You need 5000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You need 5000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 0 && sailorSequence.useSpirituality(5000)) {
-                    useItem(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 2400);
-                }
-            });
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 0 && holder.useSpirituality(5000)) {
+                useItem(player);
+                if (!player.getAbilities().instabuild)
+                    player.getCooldowns().addCooldown(this, 2400);
+            }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
-    public static void useItem(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            StormSealEntity stormSealEntity = new StormSealEntity(EntityInit.STORM_SEAL_ENTITY.get(), pPlayer.level());
-            Vec3 lookVec = pPlayer.getLookAngle().normalize().scale(3.0f);
-            stormSealEntity.setOwner(pPlayer);
+
+    public static void useItem(Player player) {
+        if (!player.level().isClientSide()) {
+            StormSealEntity stormSealEntity = new StormSealEntity(EntityInit.STORM_SEAL_ENTITY.get(), player.level());
+            Vec3 lookVec = player.getLookAngle().normalize().scale(3.0f);
+            stormSealEntity.setOwner(player);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(stormSealEntity);
             scaleData.setTargetScale(3.0f);
-            stormSealEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
+            stormSealEntity.teleportTo(player.getX(), player.getY(), player.getZ());
             stormSealEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
-            pPlayer.level().addFreshEntity(stormSealEntity);
+            player.level().addFreshEntity(stormSealEntity);
         }
     }
+
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, lets out a compressed storm, which on hit, traps an entity in a storm for 3 minutes.\n" +
+            tooltipComponents.add(Component.literal("Upon use, lets out a compressed storm, which on hit, traps an entity in a storm for 3 minutes.\n" +
                     "Spirituality Used: 5000\n" +
                     "Cooldown: 2 minutes").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

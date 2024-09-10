@@ -20,49 +20,47 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class EnableOrDisableLightning extends Item {
-    public EnableOrDisableLightning(Properties pProperties) {
-        super(pProperties);
+    public EnableOrDisableLightning(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You are not of the Sailor Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 7) {
-                    useItem(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 10);
-                }
-            });
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 7) {
+                useItem(player);
+                if (!player.getAbilities().instabuild)
+                    player.getCooldowns().addCooldown(this, 10);
+            }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
-    private void useItem(Player pPlayer) {
-        CompoundTag tag = pPlayer.getPersistentData();
+    private void useItem(Player player) {
+        CompoundTag tag = player.getPersistentData();
         boolean lightning = tag.getBoolean("SailorLightning");
         if (lightning) {
             lightning = false;
             tag.putBoolean("SailorLightning", false);
-            pPlayer.displayClientMessage(Component.literal("Lightning effect turned off").withStyle(ChatFormatting.DARK_BLUE).withStyle(ChatFormatting.BOLD), true);
+            player.displayClientMessage(Component.literal("Lightning effect turned off").withStyle(ChatFormatting.DARK_BLUE).withStyle(ChatFormatting.BOLD), true);
         } else {
             lightning = true;
             tag.putBoolean("SailorLightning", true);
-            pPlayer.displayClientMessage(Component.literal("Lightning effect turned on").withStyle(ChatFormatting.DARK_BLUE).withStyle(ChatFormatting.BOLD), true);
+            player.displayClientMessage(Component.literal("Lightning effect turned on").withStyle(ChatFormatting.DARK_BLUE).withStyle(ChatFormatting.BOLD), true);
 
         }
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, disables or enables lightning spawning upon users hitting targets\n" +
+            tooltipComponents.add(Component.literal("Upon use, disables or enables lightning spawning upon users hitting targets\n" +
                     "Spirituality Used: 0\n" +
                     "Cooldown: 0.5 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

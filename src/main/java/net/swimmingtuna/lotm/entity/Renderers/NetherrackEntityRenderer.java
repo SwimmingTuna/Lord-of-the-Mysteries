@@ -19,9 +19,9 @@ public class NetherrackEntityRenderer extends EntityRenderer<NetherrackEntity> {
     public static final ResourceLocation NETHERRACK_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/netherrackentity.png");
     public Model model;
 
-    public NetherrackEntityRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new NetherrackEntityModel<>(pContext.bakeLayer(NetherrackEntityModel.NETHERRACK_MODEL_LOCATION));
+    public NetherrackEntityRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new NetherrackEntityModel<>(context.bakeLayer(NetherrackEntityModel.NETHERRACK_MODEL_LOCATION));
     }
 
     @Override

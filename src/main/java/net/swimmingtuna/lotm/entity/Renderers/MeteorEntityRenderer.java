@@ -19,9 +19,9 @@ public class MeteorEntityRenderer extends EntityRenderer<MeteorEntity> {
     public static final ResourceLocation METEOR_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/meteor.png");
     public Model model;
 
-    public MeteorEntityRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new MeteorModel<>(pContext.bakeLayer(MeteorModel.METEOR_LOCATION));
+    public MeteorEntityRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new MeteorModel<>(context.bakeLayer(MeteorModel.METEOR_LOCATION));
     }
 
     @Override

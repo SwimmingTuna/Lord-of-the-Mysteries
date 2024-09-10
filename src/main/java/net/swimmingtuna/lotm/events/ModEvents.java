@@ -1473,7 +1473,7 @@ public class ModEvents {
                 Random random = new Random();
                 if (random.nextInt(100) >= luck.getValue() * -1) {
                     event.setCanceled(true);
-                    BeyonderHolder holder = BeyonderHolderAttacher.getHolder(player).orElse(null);
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                     luck.setBaseValue(luck.getBaseValue() + holder.getCurrentSequence());
                     player.sendSystemMessage(Component.literal("How unlucky! You made a mistake using " + player.getMainHandItem().getDisplayName() + " and it didn't work").withStyle(BeyonderUtil.getStyle(player)));
                 }
@@ -2050,7 +2050,7 @@ public class ModEvents {
                 entity.setHealth(5.0f);
             }
 
-            if (entity instanceof Player pPlayer) {
+            if (entity instanceof Player player) {
 
 
                 //REMOVE ALL TAGS
@@ -2058,16 +2058,16 @@ public class ModEvents {
 
 
                 //RESET PARTICLE ATTRIBUTES
-                AttributeInstance particleAttributeInstance = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER.get());
-                AttributeInstance particleAttributeInstance1 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER1.get());
-                AttributeInstance particleAttributeInstance2 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER2.get());
-                AttributeInstance particleAttributeInstance3 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
-                AttributeInstance particleAttributeInstance4 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
-                AttributeInstance particleAttributeInstance5 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER5.get());
-                AttributeInstance particleAttributeInstance6 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER6.get());
-                AttributeInstance particleAttributeInstance7 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER7.get());
-                AttributeInstance particleAttributeInstance8 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER8.get());
-                AttributeInstance particleAttributeInstance9 = pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER9.get());
+                AttributeInstance particleAttributeInstance = player.getAttribute(ModAttributes.PARTICLE_HELPER.get());
+                AttributeInstance particleAttributeInstance1 = player.getAttribute(ModAttributes.PARTICLE_HELPER1.get());
+                AttributeInstance particleAttributeInstance2 = player.getAttribute(ModAttributes.PARTICLE_HELPER2.get());
+                AttributeInstance particleAttributeInstance3 = player.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
+                AttributeInstance particleAttributeInstance4 = player.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
+                AttributeInstance particleAttributeInstance5 = player.getAttribute(ModAttributes.PARTICLE_HELPER5.get());
+                AttributeInstance particleAttributeInstance6 = player.getAttribute(ModAttributes.PARTICLE_HELPER6.get());
+                AttributeInstance particleAttributeInstance7 = player.getAttribute(ModAttributes.PARTICLE_HELPER7.get());
+                AttributeInstance particleAttributeInstance8 = player.getAttribute(ModAttributes.PARTICLE_HELPER8.get());
+                AttributeInstance particleAttributeInstance9 = player.getAttribute(ModAttributes.PARTICLE_HELPER9.get());
                 particleAttributeInstance.setBaseValue(0.0f);
                 particleAttributeInstance1.setBaseValue(0.0f);
                 particleAttributeInstance2.setBaseValue(0.0f);

@@ -44,12 +44,12 @@ public class TornadoEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> PICK_UP_BLOCKS = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SUMMON_LIGHTNING = SynchedEntityData.defineId(TornadoEntity.class, EntityDataSerializers.BOOLEAN);
 
-    public TornadoEntity(EntityType<? extends TornadoEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public TornadoEntity(EntityType<? extends TornadoEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public TornadoEntity(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.TORNADO_ENTITY.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+    public TornadoEntity(Level level, LivingEntity shooter, double offsetX, double offsetY, double offsetZ) {
+        super(EntityInit.TORNADO_ENTITY.get(), shooter, offsetX, offsetY, offsetZ, level);
     }
 
     @Override
@@ -98,36 +98,36 @@ public class TornadoEntity extends AbstractHurtingProjectile {
 
     }
 
-    public static void summonTornado(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            TornadoEntity tornado = new TornadoEntity(pPlayer.level(), pPlayer, 0, 0, 0);
+    public static void summonTornado(Player player) {
+        if (!player.level().isClientSide()) {
+            TornadoEntity tornado = new TornadoEntity(player.level(), player, 0, 0, 0);
             tornado.setTornadoHeight(100);
             tornado.setTornadoRadius(25);
-            tornado.setTornadoMov(pPlayer.getLookAngle().scale(0.5f).toVector3f());
-            pPlayer.level().addFreshEntity(tornado);
+            tornado.setTornadoMov(player.getLookAngle().scale(0.5f).toVector3f());
+            player.level().addFreshEntity(tornado);
         }
     }
 
-    public static void summonCalamityTornado(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            TornadoEntity tornado = new TornadoEntity(pPlayer.level(), pPlayer, 0, 0, 0);
+    public static void summonCalamityTornado(Player player) {
+        if (!player.level().isClientSide()) {
+            TornadoEntity tornado = new TornadoEntity(player.level(), player, 0, 0, 0);
             tornado.setTornadoHeight(100);
             tornado.setTornadoRadius(25);
             tornado.setTornadoLifecount(300);
             tornado.setTornadoPickup(true);
-            pPlayer.level().addFreshEntity(tornado);
+            player.level().addFreshEntity(tornado);
         }
     }
 
-    public static void summonTyrantTornado(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            TornadoEntity tornado = new TornadoEntity(pPlayer.level(), pPlayer, 0, 0, 0);
+    public static void summonTyrantTornado(Player player) {
+        if (!player.level().isClientSide()) {
+            TornadoEntity tornado = new TornadoEntity(player.level(), player, 0, 0, 0);
             tornado.setTornadoHeight(200);
             tornado.setTornadoLightning(true);
             tornado.setTornadoRadius(75);
             tornado.setTornadoLifecount(400);
-            tornado.setTornadoMov(pPlayer.getLookAngle().scale(0.5f).toVector3f());
-            pPlayer.level().addFreshEntity(tornado);
+            tornado.setTornadoMov(player.getLookAngle().scale(0.5f).toVector3f());
+            player.level().addFreshEntity(tornado);
         }
     }
 
@@ -148,9 +148,9 @@ public class TornadoEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
+    protected void onHitBlock(BlockHitResult result) {
         if (!this.level().isClientSide()) {
-            BlockPos hitPos = pResult.getBlockPos();
+            BlockPos hitPos = result.getBlockPos();
             BlockPos tornadoPos = this.blockPosition();
             if (hitPos.getY() == tornadoPos.getY() - 1 && hitPos.getX() == tornadoPos.getX() && hitPos.getZ() == tornadoPos.getZ()) {
                 this.setPos(this.getX(), this.getY() + 1, this.getZ());
@@ -346,8 +346,8 @@ public class TornadoEntity extends AbstractHurtingProjectile {
         return this.entityData.get(DATA_LIFECOUNT);
     }
 
-    public void setTornadoLifecount(int lifecount) {
-        this.entityData.set(DATA_LIFECOUNT, lifecount);
+    public void setTornadoLifecount(int lifeCount) {
+        this.entityData.set(DATA_LIFECOUNT, lifeCount);
     }
 
     public Vector3f getTornadoMov() {
@@ -358,8 +358,8 @@ public class TornadoEntity extends AbstractHurtingProjectile {
         this.entityData.set(DATA_TORNADO_MOV, tornadoMov);
     }
 
-    public void setTornadoRandom(boolean pRandom) {
-        this.entityData.set(RANDOM_MOVEMENT, pRandom);
+    public void setTornadoRandom(boolean random) {
+        this.entityData.set(RANDOM_MOVEMENT, random);
     }
 
     public boolean getTornadoRandomness() {
@@ -370,8 +370,8 @@ public class TornadoEntity extends AbstractHurtingProjectile {
         return this.entityData.get(PICK_UP_BLOCKS);
     }
 
-    public void setTornadoPickup(boolean pPickup) {
-        this.entityData.set(PICK_UP_BLOCKS, pPickup);
+    public void setTornadoPickup(boolean pickup) {
+        this.entityData.set(PICK_UP_BLOCKS, pickup);
     }
 
     public boolean getTornadoLightning() {

@@ -28,70 +28,68 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MeteorShower extends Item {
 
-    public MeteorShower(Properties pProperties) {
-        super(pProperties);
+    public MeteorShower(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 2500) {
-                pPlayer.displayClientMessage(Component.literal("You need 2500 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need 2500 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
 
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 1 && spectatorSequence.useSpirituality(2500)) {
-                meteorShower(pPlayer);
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 900);
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 1 && holder.useSpirituality(2500)) {
+                meteorShower(player);
+                if (!player.getAbilities().instabuild)
+                    player.getCooldowns().addCooldown(this, 900);
             }
-        });
-            }
-        return super.use(level, pPlayer, hand);
+        }
+        return super.use(level, player, hand);
     }
 
-    public static void meteorShower(Player pPlayer) {
-        MeteorEntity.summonMultipleMeteors(pPlayer);
-        MeteorEntity.summonMultipleMeteors(pPlayer);
-        MeteorEntity.summonMultipleMeteors(pPlayer);
-        MeteorEntity.summonMultipleMeteors(pPlayer);
-        MeteorEntity.summonMultipleMeteors(pPlayer);
-        MeteorEntity.summonMultipleMeteors(pPlayer);
-        MeteorEntity.summonMultipleMeteors(pPlayer);
+    public static void meteorShower(Player player) {
+        MeteorEntity.summonMultipleMeteors(player);
+        MeteorEntity.summonMultipleMeteors(player);
+        MeteorEntity.summonMultipleMeteors(player);
+        MeteorEntity.summonMultipleMeteors(player);
+        MeteorEntity.summonMultipleMeteors(player);
+        MeteorEntity.summonMultipleMeteors(player);
+        MeteorEntity.summonMultipleMeteors(player);
 
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summons a meteor shower\n" +
+            tooltipComponents.add(Component.literal("Upon use, summons a meteor shower\n" +
                     "Spirituality Used: 1500\n" +
                     "Left Click for a version that deals no block destruction\n" +
                     "Cooldown: 45 secondss").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof MeteorShower) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.METEOR_NO_LEVEL_SHOWER.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.METEOR_NO_LEVEL_SHOWER.get()));
             heldItem.shrink(1);
         }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof MeteorShower) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.METEOR_NO_LEVEL_SHOWER.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof MeteorShower) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.METEOR_NO_LEVEL_SHOWER.get()));
             heldItem.shrink(1);
         }
     }

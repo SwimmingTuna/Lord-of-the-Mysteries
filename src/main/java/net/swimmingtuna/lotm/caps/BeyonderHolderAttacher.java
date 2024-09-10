@@ -11,6 +11,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.core.CapabilityAttacher;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.network.SimpleEntityCapabilityStatusPacket;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -19,10 +20,9 @@ public class BeyonderHolderAttacher extends CapabilityAttacher {
     public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(LOTM.MOD_ID, "beyonder_class");
     private static final Class<BeyonderHolder> CAPABILITY_CLASS = BeyonderHolder.class;
 
-    @SuppressWarnings("ConstantConditions")
-    @Nullable
+    @NotNull
     public static BeyonderHolder getHolderUnwrap(Player player) {
-        return getHolder(player).orElse(null);
+        return getHolder(player).resolve().orElseThrow();
     }
 
     public static LazyOptional<BeyonderHolder> getHolder(Player player) {

@@ -25,42 +25,40 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class Tsunami extends Item {
-    public Tsunami(Properties pProperties) {
-        super(pProperties);
+    public Tsunami(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (holder == null || !holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-                return super.use(level, pPlayer, hand);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
+                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                return super.use(level, player, hand);
             }
             if (holder.getSpirituality() < 500) {
-                pPlayer.displayClientMessage(Component.literal("You need 500 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-                return super.use(level, pPlayer, hand);
+                player.displayClientMessage(Component.literal("You need 500 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                return super.use(level, player, hand);
             }
 
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                if (tyrantSequence.getCurrentSequence() <= 4 && tyrantSequence.useSpirituality(500)) {
-                    startTsunami(pPlayer);
-                }
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 900); // 60 seconds cooldown
-            });
+            if (holder.getCurrentSequence() <= 4 && holder.useSpirituality(500)) {
+                startTsunami(player);
+            }
+            if (!player.getAbilities().instabuild)
+                player.getCooldowns().addCooldown(this, 900); // 60 seconds cooldown
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
-    public static void startTsunami(Player pPlayer) {
-        pPlayer.getPersistentData().putInt("sailorTsunami", 600);
-        float yaw = pPlayer.getYRot();
+    public static void startTsunami(Player player) {
+        player.getPersistentData().putInt("sailorTsunami", 600);
+        float yaw = player.getYRot();
         String direction = getDirectionFromYaw(yaw);
-        pPlayer.getPersistentData().putString("sailorTsunamiDirection", direction);
-        pPlayer.getPersistentData().putInt("sailorTsunamiX", (int) pPlayer.getX());
-        pPlayer.getPersistentData().putInt("sailorTsunamiY", (int) pPlayer.getY());
-        pPlayer.getPersistentData().putInt("sailorTsunamiZ", (int) pPlayer.getZ());
+        player.getPersistentData().putString("sailorTsunamiDirection", direction);
+        player.getPersistentData().putInt("sailorTsunamiX", (int) player.getX());
+        player.getPersistentData().putInt("sailorTsunamiY", (int) player.getY());
+        player.getPersistentData().putInt("sailorTsunamiZ", (int) player.getZ());
     }
 
     private static String getDirectionFromYaw(float yaw) {
@@ -80,17 +78,17 @@ public class Tsunami extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Creates a massive wave of water in front of you\n" +
+            tooltipComponents.add(Component.literal("Creates a massive wave of water in front of you\n" +
                     "Spirituality Used: 500\n" +
                     "Cooldown: 45 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    public static void summonTsunami(Player pPlayer) {
-        CompoundTag tag = pPlayer.getPersistentData();
+    public static void summonTsunami(Player player) {
+        CompoundTag tag = player.getPersistentData();
         int playerX = tag.getInt("sailorTsunamiX");
         int playerY = tag.getInt("sailorTsunamiY");
         int playerZ = tag.getInt("sailorTsunamiZ");
@@ -132,8 +130,8 @@ public class Tsunami extends Item {
                 }
 
                 BlockPos blockPos = new BlockPos(x, y, z);
-                if (pPlayer.level().getBlockState(blockPos).isAir()) {
-                    pPlayer.level().setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
+                if (player.level().getBlockState(blockPos).isAir()) {
+                    player.level().setBlock(blockPos, Blocks.WATER.defaultBlockState(), 3);
                 }
             }
         }

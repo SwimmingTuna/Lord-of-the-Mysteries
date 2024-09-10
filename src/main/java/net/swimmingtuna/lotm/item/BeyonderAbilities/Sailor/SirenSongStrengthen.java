@@ -27,32 +27,32 @@ import java.util.Random;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class SirenSongStrengthen extends Item {
-    public SirenSongStrengthen(Properties pProperties) {
-        super(pProperties);
+    public SirenSongStrengthen(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (holder != null) {
                 if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                    pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                    player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 } else if (holder.getSpirituality() < 300) {
-                    pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                    player.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 } else if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 5 && holder.useSpirituality(300)) {
-                    shootAcidicRain(pPlayer, level);
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 1000);
+                    shootAcidicRain(player, level);
+                    if (!player.getAbilities().instabuild) {
+                        player.getCooldowns().addCooldown(this, 1000);
                     }
                 }
             }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
-    private static void shootAcidicRain(Player pPlayer, Level level) {
-        CompoundTag tag = pPlayer.getPersistentData();
+    private static void shootAcidicRain(Player player, Level level) {
+        CompoundTag tag = player.getPersistentData();
         if (tag.getInt("sirenSongStrengthen") == 0) {
             tag.putInt("sirenSongStrengthen", 400);
             tag.putInt("ssParticleAttributeHelper", 400);
@@ -79,10 +79,10 @@ public class SirenSongStrengthen extends Item {
         }
     }
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player pPlayer) {
-            if (pPlayer.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).getValue() == 1) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-                spawnParticlesInSphere(pPlayer, 50 - (holder.getCurrentSequence() * 6));
+        if (entity instanceof Player player) {
+            if (player.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).getValue() == 1) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+                spawnParticlesInSphere(player, 50 - (holder.getCurrentSequence() * 6));
             }
         }
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
@@ -112,12 +112,12 @@ public class SirenSongStrengthen extends Item {
         return distance <= radius;
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, start singing a song that strengthens you by giving you additional strength to your melee attacks and a higher level of regeneration\n" +
+            tooltipComponents.add(Component.literal("Upon use, start singing a song that strengthens you by giving you additional strength to your melee attacks and a higher level of regeneration\n" +
                     "Spirituality Used: 300\n" +
                     "Cooldown: 50 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

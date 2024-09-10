@@ -14,25 +14,25 @@ import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 
 public class BeyonderResetPotion extends Item {
-    public BeyonderResetPotion(Properties pProperties) {
-        super(pProperties);
+    public BeyonderResetPotion(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        ItemStack itemStack = pPlayer.getItemInHand(hand);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack itemStack = player.getItemInHand(hand);
         if (!level.isClientSide()) {
 
-            level.playSound(null, pPlayer.getOnPos(), SoundEvents.WITHER_DEATH, SoundSource.PLAYERS, 0.5f, level.random.nextFloat() * 0.1F + 0.9F);
-            pPlayer.sendSystemMessage(Component.literal("You are no longer a Beyonder").withStyle(ChatFormatting.BLACK).withStyle(ChatFormatting.BOLD));
-            pPlayer.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0);
-            BeyonderHolderAttacher.getHolderUnwrap(pPlayer).removeClass();
-            if (!pPlayer.getAbilities().instabuild) {
+            level.playSound(null, player.getOnPos(), SoundEvents.WITHER_DEATH, SoundSource.PLAYERS, 0.5f, level.random.nextFloat() * 0.1F + 0.9F);
+            player.sendSystemMessage(Component.literal("You are no longer a Beyonder").withStyle(ChatFormatting.BLACK).withStyle(ChatFormatting.BOLD));
+            player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0);
+            BeyonderHolderAttacher.getHolderUnwrap(player).removeClass();
+            if (!player.getAbilities().instabuild) {
                 itemStack.shrink(1);
-                pPlayer.hurt(pPlayer.damageSources().magic(), 1.0f);
+                player.hurt(player.damageSources().magic(), 1.0f);
 
             }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 }

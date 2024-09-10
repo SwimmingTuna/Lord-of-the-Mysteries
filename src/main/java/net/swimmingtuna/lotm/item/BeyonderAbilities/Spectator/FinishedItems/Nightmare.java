@@ -37,16 +37,16 @@ import java.util.List;
 public class Nightmare extends Item {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
-    public Nightmare(Properties pProperties) {
-        super(pProperties);
+    public Nightmare(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
-        if (pSlot == EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
             return this.lazyAttributeMap.get();
         }
-        return super.getDefaultAttributeModifiers(pSlot);
+        return super.getDefaultAttributeModifiers(slot);
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
@@ -59,38 +59,36 @@ public class Nightmare extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext pContext) {
-        Player pPlayer = pContext.getPlayer();
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResult useOn(UseOnContext context) {
+        Player player = context.getPlayer();
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 100) {
-                pPlayer.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
         }
-        Level level = pPlayer.level();
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        BlockPos positionClicked = pContext.getClickedPos();
-        if (!pContext.getLevel().isClientSide) {
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 5 &&  BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(100)) {
-                    useNightmare(pPlayer, level, positionClicked, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 110);
-                    }
+        Level level = player.level();
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        BlockPos positionClicked = context.getClickedPos();
+        if (!context.getLevel().isClientSide) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 5 &&  BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(100)) {
+                useNightmare(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
+                if (!player.getAbilities().instabuild) {
+                    player.getCooldowns().addCooldown(this, 110);
                 }
-            });
+            }
         }
         return InteractionResult.SUCCESS;
     }
 
-    private void useNightmare(Player pPlayer, Level level, BlockPos targetPos, int sequence, int dir) {
-            double radius = 25.0 - sequence;
-            float damagePlayer = ((float) 120.0 - (sequence * 10)) * dir;
-            float damageMob = ((float) (50.0 - (sequence * 3)) / 2) * dir;
+    private void useNightmare(Player player, Level level, BlockPos targetPos, int sequence, int dir) {
+        double radius = 25.0 - sequence;
+        float damagePlayer = ((float) 120.0 - (sequence * 10)) * dir;
+        float damageMob = ((float) (50.0 - (sequence * 3)) / 2) * dir;
 
         int duration = 200 - (sequence * 20);
 
@@ -98,7 +96,7 @@ public class Nightmare extends Item {
         level.getEntitiesOfClass(LivingEntity.class, boundingBox, entity -> entity.isAlive()).forEach(livingEntity -> {
             AttributeInstance nightmareAttribute = livingEntity.getAttribute(ModAttributes.NIGHTMARE.get());
             String playerName = livingEntity.getDisplayName().getString();
-            if (livingEntity != pPlayer) {
+            if (livingEntity != player) {
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
                 if (livingEntity instanceof Player) {
                     if (nightmareAttribute.getValue() < 3) {
@@ -107,7 +105,7 @@ public class Nightmare extends Item {
                     livingEntity.hurt(livingEntity.damageSources().magic(), damagePlayer);
                     nightmareAttribute.setBaseValue(0);
                 }
-                    pPlayer.sendSystemMessage(Component.literal(playerName + "'s nightmare value is:" + nightmareAttribute.getValue()).withStyle(BeyonderUtil.getStyle(pPlayer)));
+                    player.sendSystemMessage(Component.literal(playerName + "'s nightmare value is:" + nightmareAttribute.getValue()).withStyle(BeyonderUtil.getStyle(player)));
 
                 }
                 else {
@@ -117,12 +115,12 @@ public class Nightmare extends Item {
         });
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes all players around the target enter a nightmare, plunging them into darkness. If this is used 3 times on a player within 30 seconds, they take immense damage. If it's used on a mob, they take less the damage without having to be hit multiple times.\n" +
+            tooltipComponents.add(Component.literal("Upon use, makes all players around the target enter a nightmare, plunging them into darkness. If this is used 3 times on a player within 30 seconds, they take immense damage. If it's used on a mob, they take less the damage without having to be hit multiple times.\n" +
                     "Spirituality Used: 100\n" +
                     "Cooldown: 5.5 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

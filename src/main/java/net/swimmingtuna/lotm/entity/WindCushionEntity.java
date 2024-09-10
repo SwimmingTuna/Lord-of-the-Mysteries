@@ -28,12 +28,12 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
     public final AnimationState animationState = new AnimationState();
     private int animationStateTimeout = 0;
 
-    public WindCushionEntity(EntityType<? extends WindCushionEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public WindCushionEntity(EntityType<? extends WindCushionEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public WindCushionEntity(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.WIND_CUSHION_ENTITY.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+    public WindCushionEntity(Level level, LivingEntity shooter, double offsetX, double offsetY, double offsetZ) {
+        super(EntityInit.WIND_CUSHION_ENTITY.get(), shooter, offsetX, offsetY, offsetZ, level);
     }
 
     @Override
@@ -47,12 +47,12 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult pResult) {
+    protected void onHitEntity(EntityHitResult result) {
         this.discard();
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
+    protected void onHitBlock(BlockHitResult result) {
         this.discard();
     }
 
@@ -77,21 +77,21 @@ public class WindCushionEntity extends AbstractHurtingProjectile {
         return false;
     }
 
-    public static void summonWindCushion(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            Vec3 lookVector = pPlayer.getLookAngle();
-            WindCushionEntity windCushion = new WindCushionEntity(pPlayer.level(), pPlayer, 0, 0, 0);
-            pPlayer.getPersistentData().putInt("windCushionXRot", (int) pPlayer.getXRot());
-            pPlayer.getPersistentData().putInt("windCushionYRot", (int) pPlayer.getYRot());
-            pPlayer.getPersistentData().putInt("windCushion", 1);
-            windCushion.setDeltaMovement(pPlayer.getDeltaMovement().x * 2, pPlayer.getDeltaMovement().y * 1.1, pPlayer.getDeltaMovement().z * 2);
-            windCushion.setOwner(pPlayer);
+    public static void summonWindCushion(Player player) {
+        if (!player.level().isClientSide()) {
+            Vec3 lookVector = player.getLookAngle();
+            WindCushionEntity windCushion = new WindCushionEntity(player.level(), player, 0, 0, 0);
+            player.getPersistentData().putInt("windCushionXRot", (int) player.getXRot());
+            player.getPersistentData().putInt("windCushionYRot", (int) player.getYRot());
+            player.getPersistentData().putInt("windCushion", 1);
+            windCushion.setDeltaMovement(player.getDeltaMovement().x * 2, player.getDeltaMovement().y * 1.1, player.getDeltaMovement().z * 2);
+            windCushion.setOwner(player);
             windCushion.hurtMarked = true;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(windCushion);
             scaleData.setTargetScale(2);
             scaleData.markForSync(true);
-            pPlayer.level().addFreshEntity(windCushion);
-            pPlayer.sendSystemMessage(Component.literal("rotation is" + windCushion.getXRot() + "and" + windCushion.getYRot()));
+            player.level().addFreshEntity(windCushion);
+            player.sendSystemMessage(Component.literal("rotation is" + windCushion.getXRot() + "and" + windCushion.getYRot()));
         }
     }
 

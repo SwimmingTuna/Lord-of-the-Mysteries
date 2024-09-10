@@ -25,12 +25,12 @@ public class LavaEntity extends AbstractArrow {
     private static final EntityDataAccessor<Integer> DATA_LAVA_XROT = SynchedEntityData.defineId(LavaEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_LAVA_YROT = SynchedEntityData.defineId(LavaEntity.class, EntityDataSerializers.INT);
 
-    public LavaEntity(EntityType<? extends LavaEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public LavaEntity(EntityType<? extends LavaEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public LavaEntity(Level pLevel, LivingEntity pShooter) {
-        super(EntityInit.LAVA_ENTITY.get(), pShooter, pLevel);
+    public LavaEntity(Level level, LivingEntity shooter) {
+        super(EntityInit.LAVA_ENTITY.get(), shooter, level);
     }
 
     @Override
@@ -65,9 +65,9 @@ public class LavaEntity extends AbstractArrow {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult pResult) {
-        if (this.level() != null && !this.level().isClientSide && !(pResult.getEntity() instanceof LavaEntity) && !(pResult.getEntity() instanceof StoneEntity)) {
-            Vec3 hitPos = pResult.getLocation();
+    protected void onHitEntity(EntityHitResult result) {
+        if (!this.level().isClientSide && !(result.getEntity() instanceof LavaEntity) && !(result.getEntity() instanceof StoneEntity)) {
+            Vec3 hitPos = result.getLocation();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             int scale = (int) scaleData.getScale();
             this.level().setBlock(BlockPos.containing(hitPos), Blocks.LAVA.defaultBlockState(), 3);
@@ -76,7 +76,7 @@ public class LavaEntity extends AbstractArrow {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
+    protected void onHitBlock(BlockHitResult result) {
         if (this.level() != null && !this.level().isClientSide) {
             Random random = new Random();
             if (random.nextInt(10) == 1) {
@@ -90,7 +90,6 @@ public class LavaEntity extends AbstractArrow {
     public boolean isPickable() {
         return false;
     }
-
 
     public boolean isDangerous() {
         return this.entityData.get(DATA_DANGEROUS);

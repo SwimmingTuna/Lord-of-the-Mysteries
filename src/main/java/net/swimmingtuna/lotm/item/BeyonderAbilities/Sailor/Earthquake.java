@@ -20,8 +20,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class Earthquake extends Item {
-    public Earthquake(Properties pProperties) {
-        super(pProperties);
+    public Earthquake(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -49,18 +49,18 @@ public class Earthquake extends Item {
         return super.use(level, player, hand);
     }
 
-    public static void useItem(Player pPlayer) {
-        pPlayer.getPersistentData().putInt("sailorEarthquake", 200);
+    public static void useItem(Player player) {
+        player.getPersistentData().putInt("sailorEarthquake", 200);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summons an earthquake shooting stone into the ground\n" +
+            tooltipComponents.add(Component.literal("Upon use, summons an earthquake shooting stone into the ground\n" +
                     "Spirituality Used: 600\n" +
                     "Cooldown: 25 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     public static boolean isOnSurface(Level level, BlockPos pos) {

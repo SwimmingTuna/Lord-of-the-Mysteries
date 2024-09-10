@@ -22,8 +22,8 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WindManipulationSense extends SimpleAbilityItem {
-    public WindManipulationSense(Properties pProperties) {
-        super(pProperties, BeyonderClassInit.SAILOR, 7, 0, 10);
+    public WindManipulationSense(Properties properties) {
+        super(properties, BeyonderClassInit.SAILOR, 7, 0, 10);
     }
 
     @Override
@@ -51,22 +51,22 @@ public class WindManipulationSense extends SimpleAbilityItem {
 
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationSense) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_FLIGHT.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_FLIGHT.get()));
             heldItem.shrink(1);
         }
     }
 
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationSense) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AQUEOUS_LIGHT_DROWN.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof WindManipulationSense) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.AQUEOUS_LIGHT_DROWN.get()));
             heldItem.shrink(1);
         }
     }

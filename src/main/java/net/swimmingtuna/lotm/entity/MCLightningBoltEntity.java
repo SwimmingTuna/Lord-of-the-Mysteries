@@ -45,8 +45,8 @@ public class MCLightningBoltEntity extends Entity {
     private int blocksSetOnFire;
     private float damage = 40.0F;
 
-    public MCLightningBoltEntity(EntityType<? extends MCLightningBoltEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public MCLightningBoltEntity(EntityType<? extends MCLightningBoltEntity> entityType, Level level) {
+        super(entityType, level);
         this.noCulling = true;
         this.life = 2;
         this.seed = this.random.nextLong();
@@ -57,12 +57,11 @@ public class MCLightningBoltEntity extends Entity {
         return new LightningBolt(EntityType.LIGHTNING_BOLT, this.level());
     }
 
-
-
-    public void setVisualOnly(boolean pVisualOnly) {
-        this.visualOnly = pVisualOnly;
+    public void setVisualOnly(boolean visualOnly) {
+        this.visualOnly = visualOnly;
     }
 
+    @Override
     public SoundSource getSoundSource() {
         return SoundSource.WEATHER;
     }
@@ -72,8 +71,8 @@ public class MCLightningBoltEntity extends Entity {
         return this.cause;
     }
 
-    public void setCause(@Nullable ServerPlayer pCause) {
-        this.cause = pCause;
+    public void setCause(@Nullable ServerPlayer cause) {
+        this.cause = cause;
     }
 
     private void powerLightningRod() {
@@ -96,12 +95,13 @@ public class MCLightningBoltEntity extends Entity {
     /**
      * Called to update the entity's position/logic.
      */
+    @Override
     public void tick() {
         super.tick();
         if (this.life == 2) {
             for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(60))) {
-                if (entity instanceof Player pPlayer) {
-                    pPlayer.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 10.0f, 0.8f + this.random.nextFloat() * 0.2F, false);
+                if (entity instanceof Player player) {
+                    player.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 10.0f, 0.8f + this.random.nextFloat() * 0.2F, false);
                 }
             }
             if (this.level().isClientSide()) {
@@ -142,20 +142,21 @@ public class MCLightningBoltEntity extends Entity {
         }
 
         if (this.life >= 0) {
-            if (!(this.level() instanceof ServerLevel)) {
-            } else if (!this.visualOnly) {
-                List<Entity> list1 = this.level().getEntities(this, new AABB(this.getX() - 3.0D, this.getY() - 3.0D, this.getZ() - 3.0D, this.getX() + 3.0D, this.getY() + 6.0D + 3.0D, this.getZ() + 3.0D), Entity::isAlive);
+            if (this.level() instanceof ServerLevel) {
+                if (!this.visualOnly) {
+                    List<Entity> list1 = this.level().getEntities(this, new AABB(this.getX() - 3.0D, this.getY() - 3.0D, this.getZ() - 3.0D, this.getX() + 3.0D, this.getY() + 6.0D + 3.0D, this.getZ() + 3.0D), Entity::isAlive);
 
-                for(Entity entity : list1) {
-                    if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this.getAsLightningBolt()))
-                        entity.thunderHit((ServerLevel)this.level(), this.getAsLightningBolt());
+                    for(Entity entity : list1) {
+                        if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this.getAsLightningBolt()))
+                            entity.thunderHit((ServerLevel)this.level(), this.getAsLightningBolt());
 
 
-                }
+                    }
 
-                this.hitEntities.addAll(list1);
-                if (this.cause != null) {
-                    CriteriaTriggers.CHANNELED_LIGHTNING.trigger(this.cause, list1);
+                    this.hitEntities.addAll(list1);
+                    if (this.cause != null) {
+                        CriteriaTriggers.CHANNELED_LIGHTNING.trigger(this.cause, list1);
+                    }
                 }
             }
         }
@@ -167,7 +168,7 @@ public class MCLightningBoltEntity extends Entity {
         return BlockPos.containing(vec3.x, vec3.y - 1.0E-6D, vec3.z);
     }
 
-    private void spawnFire(int pExtraIgnitions) {
+    private void spawnFire(int extraIgnitions) {
         if (!this.visualOnly && !this.level().isClientSide && this.level().getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
             BlockPos blockpos = this.blockPosition();
             BlockState blockstate = BaseFireBlock.getState(this.level(), blockpos);
@@ -176,7 +177,7 @@ public class MCLightningBoltEntity extends Entity {
                 ++this.blocksSetOnFire;
             }
 
-            for(int i = 0; i < pExtraIgnitions; ++i) {
+            for(int i = 0; i < extraIgnitions; ++i) {
                 BlockPos blockpos1 = blockpos.offset(this.random.nextInt(3) - 1, this.random.nextInt(3) - 1, this.random.nextInt(3) - 1);
                 blockstate = BaseFireBlock.getState(this.level(), blockpos1);
                 if (this.level().getBlockState(blockpos1).isAir() && blockstate.canSurvive(this.level(), blockpos1)) {
@@ -188,54 +189,52 @@ public class MCLightningBoltEntity extends Entity {
         }
     }
 
-    private static void clearCopperOnLightningStrike(Level pLevel, BlockPos pPos) {
-        BlockState blockstate = pLevel.getBlockState(pPos);
+    private static void clearCopperOnLightningStrike(Level level, BlockPos pos) {
+        BlockState blockstate = level.getBlockState(pos);
         BlockPos blockpos;
         BlockState blockstate1;
         if (blockstate.is(Blocks.LIGHTNING_ROD)) {
-            blockpos = pPos.relative(blockstate.getValue(LightningRodBlock.FACING).getOpposite());
-            blockstate1 = pLevel.getBlockState(blockpos);
+            blockpos = pos.relative(blockstate.getValue(LightningRodBlock.FACING).getOpposite());
+            blockstate1 = level.getBlockState(blockpos);
         } else {
-            blockpos = pPos;
+            blockpos = pos;
             blockstate1 = blockstate;
         }
 
         if (blockstate1.getBlock() instanceof WeatheringCopper) {
-            pLevel.setBlockAndUpdate(blockpos, WeatheringCopper.getFirst(pLevel.getBlockState(blockpos)));
-            BlockPos.MutableBlockPos blockpos$mutableblockpos = pPos.mutable();
-            int i = pLevel.random.nextInt(3) + 3;
+            level.setBlockAndUpdate(blockpos, WeatheringCopper.getFirst(level.getBlockState(blockpos)));
+            BlockPos.MutableBlockPos blockpos$mutableblockpos = pos.mutable();
+            int i = level.random.nextInt(3) + 3;
 
             for(int j = 0; j < i; ++j) {
-                int k = pLevel.random.nextInt(8) + 1;
-                randomWalkCleaningCopper(pLevel, blockpos, blockpos$mutableblockpos, k);
+                int k = level.random.nextInt(8) + 1;
+                randomWalkCleaningCopper(level, blockpos, blockpos$mutableblockpos, k);
             }
 
         }
     }
 
-    private static void randomWalkCleaningCopper(Level pLevel, BlockPos pPos, BlockPos.MutableBlockPos pMutable, int pSteps) {
-        pMutable.set(pPos);
+    private static void randomWalkCleaningCopper(Level level, BlockPos pos, BlockPos.MutableBlockPos mutable, int steps) {
+        mutable.set(pos);
 
-        for(int i = 0; i < pSteps; ++i) {
-            Optional<BlockPos> optional = randomStepCleaningCopper(pLevel, pMutable);
-            if (!optional.isPresent()) {
+        for(int i = 0; i < steps; ++i) {
+            Optional<BlockPos> optional = randomStepCleaningCopper(level, mutable);
+            if (optional.isEmpty()) {
                 break;
             }
 
-            pMutable.set(optional.get());
+            mutable.set(optional.get());
         }
 
     }
 
-    private static Optional<BlockPos> randomStepCleaningCopper(Level pLevel, BlockPos pPos) {
-        for(BlockPos blockpos : BlockPos.randomInCube(pLevel.random, 10, pPos, 1)) {
-            BlockState blockstate = pLevel.getBlockState(blockpos);
+    private static Optional<BlockPos> randomStepCleaningCopper(Level level, BlockPos pos) {
+        for (BlockPos blockPos : BlockPos.randomInCube(level.random, 10, pos, 1)) {
+            BlockState blockstate = level.getBlockState(blockPos);
             if (blockstate.getBlock() instanceof WeatheringCopper) {
-                WeatheringCopper.getPrevious(blockstate).ifPresent((p_147144_) -> {
-                    pLevel.setBlockAndUpdate(blockpos, p_147144_);
-                });
-                pLevel.levelEvent(3002, blockpos, -1);
-                return Optional.of(blockpos);
+                WeatheringCopper.getPrevious(blockstate).ifPresent(state -> level.setBlockAndUpdate(blockPos, state));
+                level.levelEvent(3002, blockPos, -1);
+                return Optional.of(blockPos);
             }
         }
 
@@ -245,9 +244,9 @@ public class MCLightningBoltEntity extends Entity {
     /**
      * Checks if the entity is in range to render.
      */
-    public boolean shouldRenderAtSqrDistance(double pDistance) {
+    public boolean shouldRenderAtSqrDistance(double distance) {
         double d0 = 64.0D * getViewScale();
-        return pDistance < d0 * d0;
+        return distance < d0 * d0;
     }
 
     protected void defineSynchedData() {
@@ -256,10 +255,10 @@ public class MCLightningBoltEntity extends Entity {
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    protected void readAdditionalSaveData(CompoundTag pCompound) {
+    protected void readAdditionalSaveData(CompoundTag compound) {
     }
 
-    protected void addAdditionalSaveData(CompoundTag pCompound) {
+    protected void addAdditionalSaveData(CompoundTag compound) {
     }
 
     public int getBlocksSetOnFire() {

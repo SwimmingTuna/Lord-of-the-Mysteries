@@ -35,47 +35,45 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MatterAccelerationBlocks extends Item {
 
-    public MatterAccelerationBlocks(Properties pProperties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(pProperties);
+    public MatterAccelerationBlocks(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
 
             // If no block or entity is targeted, proceed with the original functionality
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
             if (holder.getSpirituality() < 1500) {
-                pPlayer.displayClientMessage(Component.literal("You need 2000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                player.displayClientMessage(Component.literal("You need 2000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
             }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(sailorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && sailorSequence.getCurrentSequence() <= 0 && sailorSequence.useSpirituality(2000)) {
-                    useItem(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild)
-                        pPlayer.getCooldowns().addCooldown(this, 300);
-                }
-            });
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 0 && holder.useSpirituality(2000)) {
+                useItem(player);
+                if (!player.getAbilities().instabuild)
+                    player.getCooldowns().addCooldown(this, 300);
+            }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summons 10 blocks from around the player, making the next left clicks the player does shoot them towards the direction they look at with incredible speed\n" +
+            tooltipComponents.add(Component.literal("Upon use, summons 10 blocks from around the player, making the next left clicks the player does shoot them towards the direction they look at with incredible speed\n" +
                     "Spirituality Used: 2000\n" +
                     "Cooldown: 15 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
-    public static void useItem(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", 480);
-            Level level = pPlayer.level();
-            BlockPos playerPos = pPlayer.blockPosition();
+    public static void useItem(Player player) {
+        if (!player.level().isClientSide()) {
+            player.getPersistentData().putInt("matterAccelerationBlockTimer", 480);
+            Level level = player.level();
+            BlockPos playerPos = player.blockPosition();
             BlockPos surfacePos = findSurfaceBelow(level, playerPos);
 
             if (surfacePos != null) {
@@ -83,7 +81,7 @@ public class MatterAccelerationBlocks extends Item {
                     BlockPos posToRemove = surfacePos.below(i);
                     level.destroyBlock(posToRemove, false);
                     if (level.dimension() == Level.OVERWORLD) {
-                        StoneEntity stoneEntity = new StoneEntity(EntityInit.STONE_ENTITY.get(), pPlayer.level());
+                        StoneEntity stoneEntity = new StoneEntity(EntityInit.STONE_ENTITY.get(), player.level());
                         float randomStayX;
                         do { randomStayX = (float) ((Math.random() * 6) - 3);} while (randomStayX > -0.5 && randomStayX < 0.5);
                         float randomStayY = (float) ((Math.random() * 6) - 3);
@@ -93,17 +91,17 @@ public class MatterAccelerationBlocks extends Item {
                         stoneEntity.setStoneStayAtX(randomStayX);
                         stoneEntity.setStoneStayAtY(randomStayY);
                         stoneEntity.setStoneStayAtZ(randomStayZ);
-                        stoneEntity.setOwner(pPlayer);
+                        stoneEntity.setOwner(player);
                         stoneEntity.setRemoveAndHurt(true);
                         stoneEntity.setSent(false);
                         stoneEntity.setPos(surfacePos.getX() + 0.5, surfacePos.getY() + 1, surfacePos.getZ() + 0.5);
                         stoneEntity.setShouldntDamage(true);
 
 
-                        pPlayer.level().addFreshEntity(stoneEntity);
+                        player.level().addFreshEntity(stoneEntity);
                     }
                     if (level.dimension() == Level.NETHER) {
-                        NetherrackEntity stoneEntity = new NetherrackEntity(EntityInit.NETHERRACK_ENTITY.get(), pPlayer.level());
+                        NetherrackEntity stoneEntity = new NetherrackEntity(EntityInit.NETHERRACK_ENTITY.get(), player.level());
                         float randomStayX;
                         do { randomStayX = (float) ((Math.random() * 6) - 3);} while (randomStayX > -0.5 && randomStayX < 0.5);
                         float randomStayY = (float) ((Math.random() * 6) - 3);
@@ -113,7 +111,7 @@ public class MatterAccelerationBlocks extends Item {
                         stoneEntity.setNetherrackStayAtX(randomStayX);
                         stoneEntity.setNetherrackStayAtY(randomStayY);
                         stoneEntity.setNetherrackStayAtZ(randomStayZ);
-                        stoneEntity.setOwner(pPlayer);
+                        stoneEntity.setOwner(player);
                         stoneEntity.setRemoveAndHurt(true);
                         stoneEntity.setSent(false);
                         stoneEntity.setPos(surfacePos.getX() + 0.5, surfacePos.getY() + 1, surfacePos.getZ() + 0.5);
@@ -121,10 +119,10 @@ public class MatterAccelerationBlocks extends Item {
                         stoneEntity.setNetherrackXRot(randomXRot);
                         stoneEntity.setNetherrackYRot(randomYRot);
 
-                        pPlayer.level().addFreshEntity(stoneEntity);
+                        player.level().addFreshEntity(stoneEntity);
                     }
                     if (level.dimension() == Level.NETHER) {
-                        EndStoneEntity stoneEntity = new EndStoneEntity(EntityInit.ENDSTONE_ENTITY.get(), pPlayer.level());
+                        EndStoneEntity stoneEntity = new EndStoneEntity(EntityInit.ENDSTONE_ENTITY.get(), player.level());
                         float randomStayX;
                         do { randomStayX = (float) ((Math.random() * 6) - 3);} while (randomStayX > -0.5 && randomStayX < 0.5);
                         float randomStayY = (float) ((Math.random() * 6) - 3);
@@ -134,17 +132,17 @@ public class MatterAccelerationBlocks extends Item {
                         stoneEntity.setEndstoneStayAtX(randomStayX);
                         stoneEntity.setEndstoneStayAtY(randomStayY);
                         stoneEntity.setEndstoneStayAtZ(randomStayZ);
-                        stoneEntity.setOwner(pPlayer);
+                        stoneEntity.setOwner(player);
                         stoneEntity.setRemoveAndHurt(true);
                         stoneEntity.setSent(false);
                         stoneEntity.setPos(surfacePos.getX() + 0.5, surfacePos.getY() + 1, surfacePos.getZ() + 0.5);
                         stoneEntity.setShouldntDamage(true);
                         stoneEntity.setEndstoneXRot(randomXRot);
                         stoneEntity.setEndstoneYRot(randomYRot);
-                        pPlayer.level().addFreshEntity(stoneEntity);
+                        player.level().addFreshEntity(stoneEntity);
                     }
                     if (level.dimension() != Level.OVERWORLD && level.dimension() != Level.NETHER && level.dimension() != Level.END) {
-                        StoneEntity stoneEntity = new StoneEntity(EntityInit.STONE_ENTITY.get(), pPlayer.level());
+                        StoneEntity stoneEntity = new StoneEntity(EntityInit.STONE_ENTITY.get(), player.level());
                         float randomStayX;
                         do { randomStayX = (float) ((Math.random() * 6) - 3);} while (randomStayX > -0.5 && randomStayX < 0.5);
                         float randomStayY = (float) ((Math.random() * 6) - 3);
@@ -154,14 +152,14 @@ public class MatterAccelerationBlocks extends Item {
                         stoneEntity.setStoneStayAtX(randomStayX);
                         stoneEntity.setStoneStayAtY(randomStayY);
                         stoneEntity.setStoneStayAtZ(randomStayZ);
-                        stoneEntity.setOwner(pPlayer);
+                        stoneEntity.setOwner(player);
                         stoneEntity.setRemoveAndHurt(true);
                         stoneEntity.setSent(false);
                         stoneEntity.setPos(surfacePos.getX() + 0.5, surfacePos.getY() + 1, surfacePos.getZ() + 0.5);
                         stoneEntity.setShouldntDamage(true);
                         stoneEntity.setStoneXRot(randomXRot);
                         stoneEntity.setStoneYRot(randomYRot);
-                        pPlayer.level().addFreshEntity(stoneEntity);
+                        player.level().addFreshEntity(stoneEntity);
                     }
                 }
             }
@@ -183,25 +181,25 @@ public class MatterAccelerationBlocks extends Item {
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
+        Player player = event.getEntity();
         LOTMNetworkHandler.sendToServer(new MatterAccelerationBlockC2S());
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationBlocks) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_SELF.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_SELF.get()));
             heldItem.shrink(1);
         }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        int x = pPlayer.getPersistentData().getInt("matterAccelerationBlockTimer");
+        Player player = event.getEntity();
+        int x = player.getPersistentData().getInt("matterAccelerationBlockTimer");
         if (x >= 1) {
-            Vec3 lookDirection = pPlayer.getLookAngle().normalize().scale(20);
-            if (pPlayer.level().dimension() == Level.OVERWORLD) {
-                StoneEntity stoneEntity = pPlayer.level().getEntitiesOfClass(StoneEntity.class, pPlayer.getBoundingBox().inflate(10))
+            Vec3 lookDirection = player.getLookAngle().normalize().scale(20);
+            if (player.level().dimension() == Level.OVERWORLD) {
+                StoneEntity stoneEntity = player.level().getEntitiesOfClass(StoneEntity.class, player.getBoundingBox().inflate(10))
                         .stream()
-                        .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(pPlayer)))
+                        .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(player)))
                         .orElse(null);
                 if (stoneEntity != null) {
                     stoneEntity.setDeltaMovement(lookDirection);
@@ -210,13 +208,13 @@ public class MatterAccelerationBlocks extends Item {
                     stoneEntity.setTickCount(440);
                 }
                 if (stoneEntity == null) {
-                    pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
+                    player.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
                 }
             }
-            if (pPlayer.level().dimension() == Level.NETHER) {
-                NetherrackEntity netherrackEntity = pPlayer.level().getEntitiesOfClass(NetherrackEntity.class, pPlayer.getBoundingBox().inflate(10))
+            if (player.level().dimension() == Level.NETHER) {
+                NetherrackEntity netherrackEntity = player.level().getEntitiesOfClass(NetherrackEntity.class, player.getBoundingBox().inflate(10))
                         .stream()
-                        .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(pPlayer)))
+                        .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(player)))
                         .orElse(null);
                 if (netherrackEntity != null) {
                     netherrackEntity.setDeltaMovement(lookDirection);
@@ -225,13 +223,13 @@ public class MatterAccelerationBlocks extends Item {
                     netherrackEntity.setTickCount(440);
                 }
                 if (netherrackEntity == null) {
-                    pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
+                    player.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
                 }
             }
-            if (pPlayer.level().dimension() == Level.END) {
-                EndStoneEntity endStoneEntity = pPlayer.level().getEntitiesOfClass(EndStoneEntity.class, pPlayer.getBoundingBox().inflate(10))
+            if (player.level().dimension() == Level.END) {
+                EndStoneEntity endStoneEntity = player.level().getEntitiesOfClass(EndStoneEntity.class, player.getBoundingBox().inflate(10))
                         .stream()
-                        .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(pPlayer)))
+                        .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(player)))
                         .orElse(null);
                 if (endStoneEntity != null) {
                     endStoneEntity.setDeltaMovement(lookDirection);
@@ -240,14 +238,14 @@ public class MatterAccelerationBlocks extends Item {
                     endStoneEntity.setTickCount(440);
                 }
                 if (endStoneEntity == null) {
-                    pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
+                    player.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
                 }
             }
         } else {
-            int activeSlot = pPlayer.getInventory().selected;
-            ItemStack heldItem = pPlayer.getMainHandItem();
+            int activeSlot = player.getInventory().selected;
+            ItemStack heldItem = player.getMainHandItem();
             if (!heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationBlocks) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_SELF.get()));
+                player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_SELF.get()));
                 heldItem.shrink(1);
             }
         }

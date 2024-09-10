@@ -27,12 +27,12 @@ public class SpiritualityBarOverlay implements IGuiOverlay {
     static final int SCREEN_BORDER_MARGIN = 20;
     static final int TEXT_COLOR = ChatFormatting.AQUA.getColor();
 
-    public static boolean shouldShowSpiritualityBar(Player pPlayer) {
+    public static boolean shouldShowSpiritualityBar(Player player) {
         Display display = ClientConfigs.SPIRITUALITY_BAR_DISPLAY.get();
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (holder == null) return false;
 
-        return !pPlayer.isSpectator() && display != Display.NEVER && (display == Display.ALWAYS || holder.getSpirituality() - 1 < holder.getMaxSpirituality());
+        return !player.isSpectator() && display != Display.NEVER && (display == Display.ALWAYS || holder.getSpirituality() - 1 < holder.getMaxSpirituality());
     }
 
     private static int getBarX(Anchor anchor, int screenWidth) {

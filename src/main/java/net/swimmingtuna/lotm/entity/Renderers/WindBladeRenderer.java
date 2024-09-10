@@ -18,9 +18,9 @@ public class WindBladeRenderer extends EntityRenderer<WindBladeEntity> {
     public static final ResourceLocation WIND_BLADE_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/wind_blade.png");
     public Model model;
 
-    public WindBladeRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new WindBladeModel<>(pContext.bakeLayer(WindBladeModel.WIND_BLADE_LOCATION));
+    public WindBladeRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new WindBladeModel<>(context.bakeLayer(WindBladeModel.WIND_BLADE_LOCATION));
     }
 
     @Override

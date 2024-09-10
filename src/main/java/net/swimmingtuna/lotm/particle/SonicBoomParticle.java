@@ -30,14 +30,16 @@ public class SonicBoomParticle extends TextureSheetParticle {
         this.gCol = 1f;
         this.bCol = 1f;
     }
+
     @Override
-    public float getQuadSize(float pScaleFactor) {
+    public float getQuadSize(float scaleFactor) {
         return this.quadSize * 10;
     }
+
     public static void addSizeParticle(ClientLevel level, Player entity, SpriteSet spriteSet, float size) {
         SonicBoomParticle particle = new SonicBoomParticle(level, entity.getX(), entity.getY(), entity.getZ(), spriteSet, 0, 0, 0);
         particle.scale(size);
-        level.addParticle((ParticleOptions) particle, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
+//        level.addParticle(particle, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
     }
 
 

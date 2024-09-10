@@ -30,75 +30,73 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EnvisionWeather extends Item {
 
-    public EnvisionWeather(Properties pProperties) {
-        super(pProperties);
+    public EnvisionWeather(Properties properties) {
+        super(properties);
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("While holding this item, say either Clear, Rain, or Thunder, to change the weather at your disposal\n" +
+            tooltipComponents.add(Component.literal("While holding this item, say either Clear, Rain, or Thunder, to change the weather at your disposal\n" +
                     "Spirituality Used: 500\n" +
                     "Cooldown: 0 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
     @SubscribeEvent
     public static void onChatMessage(ServerChatEvent event) {
 
         Level level = event.getPlayer().serverLevel();
-        Player pPlayer = event.getPlayer();
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-        Style style = BeyonderUtil.getStyle(pPlayer);
-        if (!pPlayer.level().isClientSide() && pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather) {
+        Player player = event.getPlayer();
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        Style style = BeyonderUtil.getStyle(player);
+        if (!player.level().isClientSide() && player.getMainHandItem().getItem() instanceof EnvisionWeather) {
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < (int) 500 / dreamIntoReality.getValue()) {
-                pPlayer.displayClientMessage(Component.literal("You need " + ((int) 500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need " + ((int) 500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             String message = event.getMessage().getString().toLowerCase();
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && pPlayer.getMainHandItem().getItem() instanceof EnvisionWeather && spectatorSequence.getCurrentSequence() == 0) {
-                    if (message.equals("clear") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
-                        setWeatherClear(level);
-                        event.getPlayer().displayClientMessage(Component.literal("Set Weather to Clear").withStyle(style), true);
-                        spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()));
-                        event.setCanceled(true);
-                    }
-                    if (message.equals("rain") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
-                        event.getPlayer().displayClientMessage(Component.literal("Set Weather to Rain").withStyle(style), true);
-                        setWeatherRain(level);
-                        event.setCanceled(true);
-                    }
-                    if (message.equals("thunder") && spectatorSequence.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
-                        event.getPlayer().displayClientMessage(Component.literal("Set Weather to Thunder").withStyle(style), true);
-                        setWeatherThunder(level);
-                        event.setCanceled(true);
-                    }
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && player.getMainHandItem().getItem() instanceof EnvisionWeather && holder.getCurrentSequence() == 0) {
+                if (message.equals("clear") && holder.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
+                    setWeatherClear(level);
+                    event.getPlayer().displayClientMessage(Component.literal("Set Weather to Clear").withStyle(style), true);
+                    holder.useSpirituality((int) (500 / dreamIntoReality.getValue()));
+                    event.setCanceled(true);
                 }
-            });
+                if (message.equals("rain") && holder.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
+                    event.getPlayer().displayClientMessage(Component.literal("Set Weather to Rain").withStyle(style), true);
+                    setWeatherRain(level);
+                    event.setCanceled(true);
+                }
+                if (message.equals("thunder") && holder.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
+                    event.getPlayer().displayClientMessage(Component.literal("Set Weather to Thunder").withStyle(style), true);
+                    setWeatherThunder(level);
+                    event.setCanceled(true);
+                }
+            }
         }
-        if (!pPlayer.level().isClientSide()) {
+        if (!player.level().isClientSide()) {
             String message = event.getMessage().getString().toLowerCase();
             for (Player otherPlayer : level.players()) {
                 if (message.contains(otherPlayer.getName().getString().toLowerCase())) {
-                    BeyonderHolder otherHolder = BeyonderHolderAttacher.getHolder(otherPlayer).orElse(null);
-                    if (otherHolder != null && otherHolder.currentClassMatches(BeyonderClassInit.SPECTATOR) && otherHolder.getCurrentSequence() <= 2 && !otherPlayer.level().isClientSide()) {
-                        otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. Their coordinates are: " + (int) pPlayer.getX() + " ," + (int) pPlayer.getY() + " ," + (int) pPlayer.getZ()).withStyle(style));
+                    BeyonderHolder otherHolder = BeyonderHolderAttacher.getHolderUnwrap(otherPlayer);
+                    if (otherHolder.currentClassMatches(BeyonderClassInit.SPECTATOR) && otherHolder.getCurrentSequence() <= 2 && !otherPlayer.level().isClientSide()) {
+                        otherPlayer.sendSystemMessage(Component.literal(player.getName().getString() + " mentioned you in chat. Their coordinates are: " + (int) player.getX() + " ," + (int) player.getY() + " ," + (int) player.getZ()).withStyle(style));
                     }
-                    if (otherHolder != null && otherHolder.currentClassMatches(BeyonderClassInit.SAILOR) && otherHolder.getCurrentSequence() <= 1 && !otherPlayer.level().isClientSide()) {
+                    if (otherHolder.currentClassMatches(BeyonderClassInit.SAILOR) && otherHolder.getCurrentSequence() <= 1 && !otherPlayer.level().isClientSide()) {
                         otherPlayer.getPersistentData().putInt("tyrantMentionedInChat", 200);
-                        otherPlayer.sendSystemMessage(Component.literal(pPlayer.getName().getString() + " mentioned you in chat. Do you want to summon a lightning storm on them? Type Yes if so, you have 10 seconds").withStyle(style));
-                        otherPlayer.getPersistentData().putInt("sailorStormVecX1", (int) pPlayer.getX());
-                        otherPlayer.getPersistentData().putInt("sailorStormVecY1", (int) pPlayer.getY());
-                        otherPlayer.getPersistentData().putInt("sailorStormVecZ1", (int) pPlayer.getZ());
+                        otherPlayer.sendSystemMessage(Component.literal(player.getName().getString() + " mentioned you in chat. Do you want to summon a lightning storm on them? Type Yes if so, you have 10 seconds").withStyle(style));
+                        otherPlayer.getPersistentData().putInt("sailorStormVecX1", (int) player.getX());
+                        otherPlayer.getPersistentData().putInt("sailorStormVecY1", (int) player.getY());
+                        otherPlayer.getPersistentData().putInt("sailorStormVecZ1", (int) player.getZ());
                     }
                 }
             }
-            if (pPlayer.getPersistentData().getInt("tyrantMentionedInChat") >= 1 && message.contains("yes") && holder.getSpirituality() >= 1200) {
+            if (player.getPersistentData().getInt("tyrantMentionedInChat") >= 1 && message.contains("yes") && holder.getSpirituality() >= 1200) {
                 holder.useSpirituality(1200);
-                pPlayer.getPersistentData().putInt("sailorLightningStorm1", 300);
+                player.getPersistentData().putInt("sailorLightningStorm1", 300);
                 event.setCanceled(true);
             }
         }
@@ -123,21 +121,21 @@ public class EnvisionWeather extends Item {
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionWeather) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_BARRIER.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_BARRIER.get()));
             heldItem.shrink(1);
         }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionWeather) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_BARRIER.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof EnvisionWeather) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ENVISION_BARRIER.get()));
             heldItem.shrink(1);
         }
     }

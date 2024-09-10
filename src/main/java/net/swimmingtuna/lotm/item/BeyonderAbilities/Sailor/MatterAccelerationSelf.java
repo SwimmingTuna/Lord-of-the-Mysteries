@@ -40,37 +40,25 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MatterAccelerationSelf extends Item implements Ability {
 
-    public MatterAccelerationSelf(Properties pProperties) {
-        super(pProperties);
+    public MatterAccelerationSelf(Properties properties) {
+        super(properties);
     }
 
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!player.level().isClientSide()) {
-            int matterAccelerationDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (holder == null) {
-                return InteractionResultHolder.fail(player.getItemInHand(hand));
-            }
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-                return InteractionResultHolder.fail(player.getItemInHand(hand));
-            }
-            if (!holder.useSpirituality(matterAccelerationDistance * 10)) {
-                player.displayClientMessage(Component.literal("You need " + matterAccelerationDistance * 10 + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-                return InteractionResultHolder.fail(player.getItemInHand(hand));
-            }
-            if (holder.getCurrentSequence() > 0) {
-                player.displayClientMessage(Component.literal("You need to be sequence 0 or lower to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
                 return InteractionResultHolder.fail(player.getItemInHand(hand));
             }
             useItem(player);
             if (!player.isCreative()) {
                 player.getCooldowns().addCooldown(this, 300);
             }
+            return InteractionResultHolder.success(player.getItemInHand(hand));
         }
-        return super.use(level, player, hand);
+        return InteractionResultHolder.pass(player.getItemInHand(hand));
     }
 
     @Override
@@ -81,6 +69,22 @@ public class MatterAccelerationSelf extends Item implements Ability {
     public static void useItem(Player player) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (holder == null) return;
+
+        int matterAccelerationDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
+
+        if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
+            player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+            return;
+        }
+        if (!holder.useSpirituality(matterAccelerationDistance * 10)) {
+            player.displayClientMessage(Component.literal("You need " + matterAccelerationDistance * 10 + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+            return;
+        }
+        if (holder.getCurrentSequence() > 0) {
+            player.displayClientMessage(Component.literal("You need to be sequence 0 or lower to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+            return;
+        }
+
         int sequence = holder.getCurrentSequence();
         Level level = player.level();
         int blinkDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
@@ -143,33 +147,33 @@ public class MatterAccelerationSelf extends Item implements Ability {
 
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal("Upon use, moves you at an inhuman speed, instantly getting you to your destination and leaving behind destruction in your path"));
         tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("2500").withStyle(ChatFormatting.YELLOW)));
         tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("15 seconds").withStyle(ChatFormatting.YELLOW)));
         tooltipComponents.add(SimpleAbilityItem.getPathwayText(BeyonderClassInit.SAILOR.get()));
         tooltipComponents.add(SimpleAbilityItem.getClassText(0, BeyonderClassInit.SAILOR.get()));
-        super.appendHoverText(pStack, level, tooltipComponents, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationSelf) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_BLOCKS.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_BLOCKS.get()));
             heldItem.shrink(1);
         }
     }
 
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationSelf) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_BLOCKS.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationSelf) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_BLOCKS.get()));
             heldItem.shrink(1);
         }
     }

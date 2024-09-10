@@ -37,92 +37,88 @@ public class DreamIntoReality extends Item {
     private AtomicInteger spiritualityUseCounter;
 
 
-    public DreamIntoReality(Properties pProperties) {
-        super(pProperties);
+    public DreamIntoReality(Properties properties) {
+        super(properties);
         this.spiritualityUseCounter = new AtomicInteger(0);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 50) {
-                pPlayer.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && spectatorSequence.getCurrentSequence() <= 2) {
-                    toggleFlying(pPlayer);
-                    boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
-                    if (canFly && !pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 300);
-                    }
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 2) {
+                toggleFlying(player);
+                boolean canFly = player.getPersistentData().getBoolean(CAN_FLY);
+                if (canFly && !player.getAbilities().instabuild) {
+                    player.getCooldowns().addCooldown(this, 300);
                 }
-            });
+            }
         }
-        ItemStack itemStack = pPlayer.getItemInHand(hand);
+        ItemStack itemStack = player.getItemInHand(hand);
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemStack);
     }
 
-    private void toggleFlying(Player pPlayer) {
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                boolean canFly = pPlayer.getPersistentData().getBoolean(CAN_FLY);
-                if (canFly) {
-                    stopFlying(pPlayer);
-                } else {
-                    startFlying(pPlayer);
-                }
-        });
+    private void toggleFlying(Player player) {
+        boolean canFly = player.getPersistentData().getBoolean(CAN_FLY);
+        if (canFly) {
+            stopFlying(player);
+        } else {
+            startFlying(player);
+        }
     }
 
-    private void startFlying(Player pPlayer) {
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
+    private void startFlying(Player player) {
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
         if (dreamIntoReality.getValue() != 3) {
-        pPlayer.getPersistentData().putBoolean(CAN_FLY, true);
-        Abilities playerAbilities = pPlayer.getAbilities();
+        player.getPersistentData().putBoolean(CAN_FLY, true);
+        Abilities playerAbilities = player.getAbilities();
         dreamIntoReality.setBaseValue(4);
         if (!playerAbilities.instabuild) {
         playerAbilities.mayfly = true;
         playerAbilities.flying = true;
         playerAbilities.setFlyingSpeed(0.2F);}
-        ScaleData scaleData = ScaleTypes.BASE.getScaleData(pPlayer);
+        ScaleData scaleData = ScaleTypes.BASE.getScaleData(player);
         scaleData.setTargetScale(scaleData.getBaseScale() * 4);
         scaleData.markForSync(true);
-        pPlayer.onUpdateAbilities();
-        if (pPlayer instanceof ServerPlayer serverPlayer) {
+        player.onUpdateAbilities();
+        if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));}}
     }
 
-    public static void stopFlying(Player pPlayer) {
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        pPlayer.getPersistentData().putBoolean(CAN_FLY, false);
-        Abilities playerAbilities = pPlayer.getAbilities();
-        CompoundTag compoundTag = pPlayer.getPersistentData();
+    public static void stopFlying(Player player) {
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        player.getPersistentData().putBoolean(CAN_FLY, false);
+        Abilities playerAbilities = player.getAbilities();
+        CompoundTag compoundTag = player.getPersistentData();
         int mindscape = compoundTag.getInt("inMindscape");
         if (!playerAbilities.instabuild || mindscape >= 1) {
         playerAbilities.mayfly = false;
         playerAbilities.flying = false;}
         dreamIntoReality.setBaseValue(1);
         playerAbilities.setFlyingSpeed(0.05F);
-        pPlayer.onUpdateAbilities();
-        ScaleData scaleData = ScaleTypes.BASE.getScaleData(pPlayer);
+        player.onUpdateAbilities();
+        ScaleData scaleData = ScaleTypes.BASE.getScaleData(player);
         scaleData.setTargetScale(1);
         scaleData.markForSync(true);
-        if (pPlayer instanceof ServerPlayer serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
         }
     }
 
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, turns your dreams into reality, making you a giant with strengthened abilities, quicker regeneration, and stronger melee hits\n" +
+            tooltipComponents.add(Component.literal("Upon use, turns your dreams into reality, making you a giant with strengthened abilities, quicker regeneration, and stronger melee hits\n" +
                     "Spirituality Used: 300 every second\n" +
                     "Cooldown: 30 seconds").withStyle(ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

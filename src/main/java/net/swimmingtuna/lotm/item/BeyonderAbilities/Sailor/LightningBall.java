@@ -24,8 +24,8 @@ import java.util.List;
 
 public class LightningBall extends Item {
 
-    public LightningBall(Properties pProperties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(pProperties);
+    public LightningBall(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
+        super(properties);
     }
 
     @Override
@@ -55,27 +55,27 @@ public class LightningBall extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, summons a lightning ball that launches in the direction the player looks after a bit of time\n" +
+            tooltipComponents.add(Component.literal("Upon use, summons a lightning ball that launches in the direction the player looks after a bit of time\n" +
                     "Spirituality Used: 800\n" +
                     "Cooldown: 20 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    public static void useItem(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            LightningBallEntity lightningBall = new LightningBallEntity(EntityInit.LIGHTNING_BALL.get(), pPlayer.level(), true);
+    public static void useItem(Player player) {
+        if (!player.level().isClientSide()) {
+            LightningBallEntity lightningBall = new LightningBallEntity(EntityInit.LIGHTNING_BALL.get(), player.level(), true);
             lightningBall.setSummoned(true);
             lightningBall.setBallXRot((float) ((Math.random() * 20) - 10));
             lightningBall.setBallYRot((float) ((Math.random() * 20) - 10));
-            lightningBall.setPos(pPlayer.getX(), pPlayer.getY() + 1.5, pPlayer.getZ());
-            lightningBall.setOwner(pPlayer);
+            lightningBall.setPos(player.getX(), player.getY() + 1.5, player.getZ());
+            lightningBall.setOwner(player);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(lightningBall);
             scaleData.setScale(10);
             scaleData.markForSync(true);
-            pPlayer.level().addFreshEntity(lightningBall);
+            player.level().addFreshEntity(lightningBall);
         }
     }
 }

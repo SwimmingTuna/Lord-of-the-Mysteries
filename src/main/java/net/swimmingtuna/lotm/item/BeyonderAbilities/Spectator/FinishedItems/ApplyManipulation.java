@@ -39,16 +39,16 @@ import java.util.List;
 public class ApplyManipulation extends Item {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
-    public ApplyManipulation(Properties pProperties) {
-        super(pProperties);
+    public ApplyManipulation(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
-        if (pSlot == EquipmentSlot.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
             return this.lazyAttributeMap.get();
         }
-        return super.getDefaultAttributeModifiers(pSlot);
+        return super.getDefaultAttributeModifiers(slot);
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
@@ -60,57 +60,56 @@ public class ApplyManipulation extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use on a living entity, gives you the ability to manipulate them for 30 seconds\n" +
+            tooltipComponents.add(Component.literal("Upon use on a living entity, gives you the ability to manipulate them for 30 seconds\n" +
                     "Left Click for Manipulate Emotion\n" +
                     "Spirituality Used: 50\n" +
                     "Cooldown: None").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA));
         }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player pPlayer = event.getEntity();
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+        Player player = event.getEntity();
+        if (player.level().isClientSide()) {
+            return;
+        }
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+        }
+        if (holder.getSpirituality() < 50) {
+            player.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+        }
+        ItemStack itemStack = player.getItemInHand(event.getHand());
+        Entity targetEntity = event.getTarget();
+        if (!targetEntity.level().isClientSide && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && itemStack.getItem() instanceof ApplyManipulation && targetEntity instanceof LivingEntity livingTarget && holder.getCurrentSequence() <= 4 && holder.useSpirituality(50)) {
+            if (!livingTarget.hasEffect(ModEffects.MANIPULATION.get())) {
+                livingTarget.addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false, false));
+                player.sendSystemMessage(Component.literal("Manipulating " + targetEntity.getName().getString()).withStyle(BeyonderUtil.getStyle(player)));
+                event.setCanceled(true);
+                event.setCancellationResult(InteractionResult.SUCCESS);
             }
-            if (holder.getSpirituality() < 50) {
-                pPlayer.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            ItemStack itemStack = pPlayer.getItemInHand(event.getHand());
-            Entity targetEntity = event.getTarget();
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (!targetEntity.level().isClientSide && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && itemStack.getItem() instanceof ApplyManipulation && targetEntity instanceof LivingEntity && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(50)) {
-                    if (!((LivingEntity) targetEntity).hasEffect(ModEffects.MANIPULATION.get())) {
-                        ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false, false));
-                        pPlayer.sendSystemMessage(Component.literal("Manipulating " + targetEntity.getName().getString()).withStyle(BeyonderUtil.getStyle(pPlayer)));
-                        event.setCanceled(true);
-                        event.setCancellationResult(InteractionResult.SUCCESS);
-                    }
-                }
-            });
         }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
         if (!heldItem.isEmpty() && heldItem.getItem() instanceof ApplyManipulation) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MANIPULATE_EMOTION.get()));
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MANIPULATE_EMOTION.get()));
             heldItem.shrink(1);
         }
     }
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ApplyManipulation) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MANIPULATE_EMOTION.get()));
+        Player player = event.getEntity();
+        ItemStack heldItem = player.getMainHandItem();
+        int activeSlot = player.getInventory().selected;
+        if (!player.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ApplyManipulation) {
+            player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MANIPULATE_EMOTION.get()));
             heldItem.shrink(1);
         }
     }
