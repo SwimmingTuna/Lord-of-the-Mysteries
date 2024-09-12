@@ -88,21 +88,26 @@ public class ModEvents implements ReachChangeUUIDs {
         Style style = BeyonderUtil.getStyle(pPlayer);
         CompoundTag tag = pPlayer.getPersistentData();
         AttributeInstance corruption = pPlayer.getAttribute(ModAttributes.CORRUPTION.get());
-        AttributeInstance luck = pPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
         BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
         if (holder != null) {
             Level level = pPlayer.level();
             int sequence = holder.getCurrentSequence();
             if (!pPlayer.level().isClientSide() && event.phase == TickEvent.Phase.START) {
 
+            if (pPlayer.getPersistentData().getBoolean("spiritVision")) {
+                pPlayer.sendSystemMessage(Component.literal("spirit vision on"));
+            }
+
+
 
                 //CORRUPTION AND LUCK MANAGERS
                 if (corruption.getValue() >= 1 && pPlayer.tickCount % 200 == 0) {
                     corruption.setBaseValue(corruption.getValue() - 1);
                 }
+                AttributeInstance luck = pPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
                 Random random = new Random();
                 double lotmLuckValue = luck.getValue();
-                if (pPlayer.tickCount % 400 == 0 && random.nextInt(300) >= lotmLuckValue * -1) {
+                if (pPlayer.tickCount % 400 == 0 && random.nextInt(300) <= lotmLuckValue * -1) {
                     MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), level);
                     meteorEntity.teleportTo(pPlayer.getX(), pPlayer.getY() + 150, pPlayer.getZ());
                     ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
@@ -119,7 +124,7 @@ public class ModEvents implements ReachChangeUUIDs {
                     pPlayer.level().addFreshEntity(meteorEntity);
                     luck.setBaseValue((Math.min(0, lotmLuckValue + 40)));
                 }
-                if (pPlayer.tickCount % 250 == 0 && random.nextInt(100) >= lotmLuckValue * -1) {
+                if (pPlayer.tickCount % 250 == 0 && random.nextInt(100) <= lotmLuckValue * -1) {
                     LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), level);
                     lightningEntity.setSpeed(6.0f);
                     lightningEntity.setNoUp(true);
@@ -128,7 +133,7 @@ public class ModEvents implements ReachChangeUUIDs {
                     pPlayer.level().addFreshEntity(lightningEntity);
                     luck.setBaseValue((Math.min(0, lotmLuckValue + 15)));
                 }
-                if (pPlayer.tickCount % 150 == 0 && random.nextInt(100) >= lotmLuckValue * -2) {
+                if (pPlayer.tickCount % 150 == 0 && random.nextInt(50) <= lotmLuckValue * -1) {
                     pPlayer.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 10, 0, false, false));
                     pPlayer.sendSystemMessage(Component.literal("How unlucky, you tripped!").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
                 }
@@ -471,46 +476,38 @@ public class ModEvents implements ReachChangeUUIDs {
                     }
                 }
                 //ENVISION KINGDOM
+                AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
                 int mindscape = tag.getInt("inMindscape");
+                Abilities playerAbilities = pPlayer.getAbilities();
                 if (mindscape >= 1) {
                     tag.putInt("inMindscape", mindscape + 1);
                 }
                 if (mindscape >= 1200) {
                     tag.putInt("inMindscape", 0);
                 }
-                AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                double maxSpirituality = holder.getMaxSpirituality();
-                Abilities playerAbilities = pPlayer.getAbilities();
-                BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                    if (holder.getCurrentSequence() == 0 && holder.isSpectatorClass()) {
-                        if (mindscape >= 1) {
-                            tag.putInt("mindscapeAbilities", mindscape - 1);
-                            holder.setSpirituality((int) maxSpirituality);
-                            if (!tag.getBoolean("CAN_FLY")) {
-                                dreamIntoReality.setBaseValue(3);
-                                playerAbilities.setFlyingSpeed(0.15F);
-                                playerAbilities.mayfly = true;
-                                pPlayer.onUpdateAbilities();
-                                if (pPlayer instanceof ServerPlayer serverPlayer) {
-                                    serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
-                                }
-                            }
-                        }
-                        if (mindscape == 0) {
-                            if (!tag.getBoolean("CAN_FLY")) {
-                                dreamIntoReality.setBaseValue(1);
-                                playerAbilities.setFlyingSpeed(0.05F);
-                                if (!playerAbilities.instabuild) {
-                                    playerAbilities.mayfly = false;
-                                }
-                                pPlayer.onUpdateAbilities();
-                                if (pPlayer instanceof ServerPlayer serverPlayer) {
-                                    serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
-                                }
-                            }
+                int mindscapeAbilities = tag.getInt("mindscapeAbilities");
+                if (mindscapeAbilities >= 1) {
+                    holder.setSpirituality((int) holder.getMaxSpirituality());
+                    if (!tag.getBoolean("CAN_FLY")) {
+                        dreamIntoReality.setBaseValue(3);
+                        playerAbilities.setFlyingSpeed(0.15F);
+                        playerAbilities.mayfly = true;
+                        pPlayer.onUpdateAbilities();
+                        tag.putInt("mindscapeAbilities", mindscapeAbilities - 1);
+                        if (pPlayer instanceof ServerPlayer serverPlayer) {
+                            serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
                         }
                     }
-                });
+                }
+                if (mindscapeAbilities == 1 && !tag.getBoolean("CAN_FLY")) {
+                    dreamIntoReality.setBaseValue(1);
+                    playerAbilities.setFlyingSpeed(0.05F);
+                    playerAbilities.mayfly = false;
+                    pPlayer.onUpdateAbilities();
+                    if (pPlayer instanceof ServerPlayer serverPlayer) {
+                        serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+                    }
+                }
 
 
                 int mindScape = tag.getInt("inMindscape");
@@ -518,28 +515,31 @@ public class ModEvents implements ReachChangeUUIDs {
                 int y = tag.getInt("mindscapePlayerLocationY");
                 int z = tag.getInt("mindscapePlayerLocationZ");
                 StructureTemplate[] parts = new StructureTemplate[48];
-                if (mindScape == 6) {
-                    pPlayer.teleportTo(pPlayer.getX() + 77, pPlayer.getY() + 8, pPlayer.getZ() + 206);
-                    for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
-                        if (entity != pPlayer) {
-                            entity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ() - 10);
+                if (mindScape >= 1) {
+                    if (mindScape == 6) {
+                        pPlayer.teleportTo(pPlayer.getX() + 77, pPlayer.getY() + 8, pPlayer.getZ() + 206);
+                        for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(250))) {
+                            if (entity != pPlayer) {
+                                entity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ() - 10);
+                            }
                         }
                     }
-                }
-                for (int i = 0; i < 48; i++) {
-                    ServerLevel serverLevel = (ServerLevel) level;
-                    parts[i] = serverLevel.getStructureManager().getOrCreate(new ResourceLocation(LOTM.MOD_ID, "corpse_cathedral_" + (i + 1)));
-                }
-                BlockPos[] tagPos = new BlockPos[48];
-                for (int i = 0; i < 48; i++) {
-                    tagPos[i] = new BlockPos(x, y + (i * 2), z);
-                }
-                StructurePlaceSettings settings = BeyonderUtil.getStructurePlaceSettings(new BlockPos(x, y, z));
-                for (int i = 0; i < 48; i++) {
-                    if (mindScape == (i + 2)) {
+                    for (int i = 0; i < 48; i++) {
                         ServerLevel serverLevel = (ServerLevel) level;
-                        parts[i].placeInWorld(serverLevel, tagPos[i], tagPos[i], settings, null, 3);
+                        parts[i] = serverLevel.getStructureManager().getOrCreate(new ResourceLocation(LOTM.MOD_ID, "corpse_cathedral_" + (i + 1)));
                     }
+                    BlockPos[] tagPos = new BlockPos[48];
+                    for (int i = 0; i < 48; i++) {
+                        tagPos[i] = new BlockPos(x, y + (i * 2), z);
+                    }
+                    StructurePlaceSettings settings = BeyonderUtil.getStructurePlaceSettings(new BlockPos(x, y, z));
+                    for (int i = 0; i < 48; i++) {
+                        if (mindScape == (i + 2)) {
+                            ServerLevel serverLevel = (ServerLevel) level;
+                            parts[i].placeInWorld(serverLevel, tagPos[i], tagPos[i], settings, null, 3);
+                        }
+                    }
+                    tag.putInt("inMindscape", mindscape + 1);
                 }
 
 
@@ -1390,7 +1390,7 @@ public class ModEvents implements ReachChangeUUIDs {
             if (entity instanceof Player pPlayer) {
                 AttributeInstance luck = pPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
                 Random random = new Random();
-                if (random.nextInt(100) >= luck.getValue() * -1) {
+                if (random.nextInt(100) < luck.getValue() * -1) {
                     event.setCanceled(true);
                     BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
                     luck.setBaseValue(luck.getBaseValue() + holder.getCurrentSequence());

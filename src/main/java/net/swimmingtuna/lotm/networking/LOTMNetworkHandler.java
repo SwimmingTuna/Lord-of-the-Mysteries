@@ -8,9 +8,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.networking.packet.LeftClickC2S;
-import net.swimmingtuna.lotm.networking.packet.MatterAccelerationBlockC2S;
-import net.swimmingtuna.lotm.networking.packet.SpiritualityC2S;
+import net.swimmingtuna.lotm.networking.packet.*;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.network.SimpleEntityCapabilityStatusPacket;
 
 import java.util.List;
@@ -45,6 +43,16 @@ public class LOTMNetworkHandler {
                 .decoder(MatterAccelerationBlockC2S::new)
                 .encoder(MatterAccelerationBlockC2S::toByte)
                 .consumerMainThread(MatterAccelerationBlockC2S::handle)
+                .add();
+        INSTANCE.messageBuilder(SpiritVisionC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(SpiritVisionC2S::new)
+                .encoder(SpiritVisionC2S::toByte)
+                .consumerMainThread(SpiritVisionC2S::handle)
+                .add();
+        INSTANCE.messageBuilder(nonVisibleS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(nonVisibleS2C::decode)
+                .encoder(nonVisibleS2C::encode)
+                .consumerMainThread(nonVisibleS2C::handle)
                 .add();
 
     }
