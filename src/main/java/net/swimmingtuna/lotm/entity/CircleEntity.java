@@ -7,7 +7,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -19,8 +18,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
-import net.swimmingtuna.lotm.networking.packet.nonVisibleS2C;
-import net.swimmingtuna.lotm.util.effect.ModEffects;
+import net.swimmingtuna.lotm.networking.packet.NonVisibleS2C;
 import org.jetbrains.annotations.NotNull;
 
 public class CircleEntity extends AbstractHurtingProjectile {
@@ -104,7 +102,7 @@ public class CircleEntity extends AbstractHurtingProjectile {
             if (entity instanceof ServerPlayer pPlayer) {
                 if (entity.tickCount % 20 == 0) {
                     if (!pPlayer.getPersistentData().getBoolean("spiritVision")) {
-                        LOTMNetworkHandler.sendToPlayer(new nonVisibleS2C(), pPlayer);
+                        LOTMNetworkHandler.sendToPlayer(new NonVisibleS2C(), pPlayer);
                         pPlayer.sendSystemMessage(Component.literal("packet sent"));
                     }
                 }
