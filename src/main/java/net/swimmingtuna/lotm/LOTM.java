@@ -15,6 +15,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
@@ -48,7 +49,7 @@ public class LOTM {
 
     public static final String MOD_ID = "lotm";
 
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public LOTM() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -85,27 +86,6 @@ public class LOTM {
 
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BARRIER_BLOCK.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_BLUE_STAINED_GLASS.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_WHITE_STAINED_GLASS.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_LIGHT_BLUE_STAINED_GLASS.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BLACK_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_CYAN_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_LIME_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_GREEN_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_LIGHT_BLUE_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BLUE_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_WHITE_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_GRAY_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_LIGHT_GRAY_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BROWN_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_PURPLE_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_MAGENTA_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_YELLOW_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_RED_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_PINK_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_ORANGE_STAINED_GLASS_PANE.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_GLASS_PANE.get(), RenderType.translucent());
         LOTMNetworkHandler.register();
     }
 
@@ -288,6 +268,34 @@ public class LOTM {
             event.accept(BlockInit.LOTM_OAK_STAIRS);
             event.accept(BlockInit.LOTM_QUARTZ_STAIRS);
             event.accept(BlockInit.LOTM_DEEPSLATEBRICK_STAIRS);
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientModEvents {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BARRIER_BLOCK.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_BLUE_STAINED_GLASS.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_WHITE_STAINED_GLASS.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_LIGHT_BLUE_STAINED_GLASS.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BLACK_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_CYAN_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_LIME_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_GREEN_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_LIGHT_BLUE_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BLUE_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_WHITE_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_GRAY_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_LIGHT_GRAY_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BROWN_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_PURPLE_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_MAGENTA_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_YELLOW_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_RED_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_PINK_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_ORANGE_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_GLASS_PANE.get(), RenderType.translucent());
         }
     }
 }

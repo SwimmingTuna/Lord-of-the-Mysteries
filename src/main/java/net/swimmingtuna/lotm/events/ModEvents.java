@@ -47,6 +47,7 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -83,7 +84,8 @@ public class ModEvents {
 
 
     @SubscribeEvent
-    public static void onPlayerJoinWorld(EntityJoinLevelEvent event) {
+    public static void onPlayerJoinWorld(PlayerEvent.PlayerLoggedInEvent event) {
+        BeyonderAbilityUser.resetClicks(event.getEntity());
     }
 
     @SubscribeEvent
@@ -98,7 +100,6 @@ public class ModEvents {
             return;
         }
 
-        AttributeInstance armorInvisAttribute = player.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
         AttributeInstance corruption = player.getAttribute(ModAttributes.CORRUPTION.get());
         AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
 
@@ -107,7 +108,7 @@ public class ModEvents {
 
         {
             long startTime = System.nanoTime();
-            corruptionAndLuckManagers(serverLevel, corruption, player, luck, holder, sequence);
+//            corruptionAndLuckManagers(serverLevel, corruption, player, luck, holder, sequence);
             long endTime = System.nanoTime();
             times.put("corruptionAndLuckManagers", endTime - startTime);
         }
@@ -127,7 +128,7 @@ public class ModEvents {
 
         {
             long startTime = System.nanoTime();
-            psychologicalInvisibility(armorInvisAttribute, player, playerPersistentData, holder);
+            psychologicalInvisibility(player, playerPersistentData, holder);
             long endTime = System.nanoTime();
             times.put("psychologicalInvisibility", endTime - startTime);
         }
@@ -321,7 +322,7 @@ public class ModEvents {
             times.put("windManipulationFlight", endTime - startTime);
         }
 
-        System.out.println(times.entrySet().stream().max(Map.Entry.comparingByValue()));
+//        System.out.println(times.entrySet().stream().max(Map.Entry.comparingByValue()));
     }
 
     private static void corruptionAndLuckManagers(ServerLevel serverLevel, AttributeInstance corruption, Player player, AttributeInstance luck, BeyonderHolder holder, int sequence) {
@@ -346,7 +347,7 @@ public class ModEvents {
             double speed = 2.0;
             meteorEntity.setDeltaMovement(dx * speed, dy * speed, dz * speed);
             player.level().addFreshEntity(meteorEntity);
-            luck.setBaseValue((Math.min(0, lotmLuckValue + 40)));
+            luck.setBaseValue(Math.min(0, lotmLuckValue + 40));
         }
         if (player.tickCount % 250 == 0 && random.nextInt(100) >= lotmLuckValue * -1) {
             LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), serverLevel);
@@ -355,11 +356,11 @@ public class ModEvents {
             lightningEntity.setTargetPos(player.getOnPos().getCenter());
             lightningEntity.teleportTo(player.getX() + (Math.random() * 60) - 30, player.getY() + 100, player.getZ() + (Math.random() * 60) - 30);
             player.level().addFreshEntity(lightningEntity);
-            luck.setBaseValue((Math.min(0, lotmLuckValue + 15)));
+            luck.setBaseValue(Math.min(0, lotmLuckValue + 15));
         }
         if (player.tickCount % 150 == 0 && random.nextInt(100) >= lotmLuckValue * -2) {
             player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 10, 0, false, false));
-            player.sendSystemMessage(Component.literal("How unlucky, you tripped!").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
+            player.sendSystemMessage(Component.literal("How unlucky, you tripped!").withStyle(ChatFormatting.BOLD));
         }
 
 
@@ -435,8 +436,10 @@ public class ModEvents {
         }
     }
 
-    private static void psychologicalInvisibility(AttributeInstance armorInvisAttribute, Player player, CompoundTag playerPersistentData, BeyonderHolder holder) {
+    private static void psychologicalInvisibility(Player player, CompoundTag playerPersistentData, BeyonderHolder holder) {
         //PSYCHOLOGICAL INVISIBILITY
+
+        AttributeInstance armorInvisAttribute = player.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
         if (armorInvisAttribute.getValue() > 0 && !player.hasEffect(MobEffects.INVISIBILITY)) {
             removeArmor(player);
             armorInvisAttribute.setBaseValue(0);
@@ -454,7 +457,7 @@ public class ModEvents {
         if (!windManipulationSense) {
             return;
         }
-        holder.useSpirituality(2);
+        if (!holder.useSpirituality(2)) return;
         double radius = 100 - (holder.getCurrentSequence() * 10);
         for (Player otherPlayer : player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(radius))) {
             if (otherPlayer == player) {
@@ -525,11 +528,12 @@ public class ModEvents {
         boolean enhancedFlight = playerPersistentData.getBoolean("sailorFlight1");
         if (
                 holder.currentClassMatches(BeyonderClassInit.SAILOR) &&
-                        holder.getCurrentSequence() <= 7 &&
-                        player.isShiftKeyDown() &&
-                        player.getDeltaMovement().y() < 0 &&
-                        !player.getAbilities().instabuild && !
-                        enhancedFlight && regularFlight == 0
+                holder.getCurrentSequence() <= 7 &&
+                player.isShiftKeyDown() &&
+                player.getDeltaMovement().y() < 0 &&
+                !player.getAbilities().instabuild &&
+                !enhancedFlight &&
+                regularFlight == 0
         ) {
             Vec3 movement = player.getDeltaMovement();
             double deltaX = Math.cos(Math.toRadians(player.getYRot() + 90)) * 0.06;
@@ -1438,6 +1442,10 @@ public class ModEvents {
         //WIND MANIPULATION FLIGHT
         Vec3 lookVector = player.getLookAngle();
         if (!playerPersistentData.getBoolean("sailorFlight1")) {
+            return;
+        }
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (!holder.useSpirituality(2)) {
             return;
         }
         int flight = playerPersistentData.getInt("sailorFlight");

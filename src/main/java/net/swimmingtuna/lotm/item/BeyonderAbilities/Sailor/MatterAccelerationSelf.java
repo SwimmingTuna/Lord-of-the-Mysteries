@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -44,41 +45,32 @@ public class MatterAccelerationSelf extends Item implements Ability {
         super(properties);
     }
 
-
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             useItem(player);
-            if (!player.isCreative()) {
-                player.getCooldowns().addCooldown(this, 300);
-            }
-            return InteractionResultHolder.success(player.getItemInHand(hand));
+
+            InteractionResult interactionResult = useAbility(level, player, hand);
+            return new InteractionResultHolder<>(interactionResult, player.getItemInHand(hand));
         }
         return InteractionResultHolder.pass(player.getItemInHand(hand));
     }
 
     @Override
-    public void useAbility(Level level, Player player, InteractionHand hand) {
-        useItem(player);
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        return useItem(player);
     }
 
-    public static void useItem(Player player) {
+    public InteractionResult useItem(Player player) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
 
         int matterAccelerationDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
 
-        if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-            player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            return;
-        }
-        if (!holder.useSpirituality(matterAccelerationDistance * 10)) {
-            player.displayClientMessage(Component.literal("You need " + matterAccelerationDistance * 10 + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            return;
-        }
-        if (holder.getCurrentSequence() > 0) {
-            player.displayClientMessage(Component.literal("You need to be sequence 0 or lower to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            return;
+        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SAILOR.get(), 0, matterAccelerationDistance * 10)) return InteractionResult.FAIL;
+        holder.useSpirituality(matterAccelerationDistance * 10);
+
+        if (!player.isCreative()) {
+            player.getCooldowns().addCooldown(this, 300);
         }
 
         int sequence = holder.getCurrentSequence();
@@ -139,6 +131,7 @@ public class MatterAccelerationSelf extends Item implements Ability {
         BlockHitResult blockHitResult = level.clip(new ClipContext(player.getEyePosition(), new Vec3(endPos.getX() + 0.5, endPos.getY(), endPos.getZ() + 0.5), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
         BlockPos teleportLocation = blockHitResult.getBlockPos().relative(blockHitResult.getDirection());
         player.teleportTo(teleportLocation.getX() + 0.5, teleportLocation.getY(), teleportLocation.getZ() + 0.5);
+        return InteractionResult.SUCCESS;
     }
 
 

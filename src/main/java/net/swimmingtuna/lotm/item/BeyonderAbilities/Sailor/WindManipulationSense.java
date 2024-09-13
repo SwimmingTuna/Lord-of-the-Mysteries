@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -12,6 +13,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
@@ -23,12 +26,14 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WindManipulationSense extends SimpleAbilityItem {
     public WindManipulationSense(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 7, 0, 10);
+        super(properties, BeyonderClassInit.SAILOR, 7, 0, 0);
     }
 
     @Override
-    public void useAbility(Level level, Player player, InteractionHand hand) {
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) return InteractionResult.FAIL;
         shootLight(player);
+        return InteractionResult.SUCCESS;
     }
 
     public static void shootLight(Player player) {
@@ -43,7 +48,7 @@ public class WindManipulationSense extends SimpleAbilityItem {
         tooltipComponents.add(Component.literal("Upon use, controls the surrounding wind to extend your senses, alerting you of players around you and where they are"));
         tooltipComponents.add(Component.literal("Activation Cost: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
         tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("40 per second").withStyle(ChatFormatting.YELLOW)));
-        tooltipComponents.add(getCooldownText(this.cooldown));
+        Component.literal("Cooldown: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW));
         tooltipComponents.add(getPathwayText(this.requiredClass.get()));
         tooltipComponents.add(getClassText(this.requiredSequence, this.requiredClass.get()));
         super.baseHoverText(stack, level, tooltipComponents, isAdvanced);

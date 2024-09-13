@@ -3,9 +3,12 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
@@ -16,7 +19,9 @@ import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -31,7 +36,7 @@ public class Placate extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (player.level().isClientSide()) {
-            return super.use(level, player, hand);
+            return InteractionResultHolder.pass(player.getItemInHand(hand));
         }
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
@@ -57,6 +62,35 @@ public class Placate extends Item {
             }
         }
         return super.use(level, player, hand);
+    }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            if (player.getCooldowns().isOnCooldown(this)) {
+                return InteractionResult.FAIL;
+            }
+
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 7, 120)) {
+                return InteractionResult.FAIL;
+            }
+            if (holder.getCurrentSequence() <= 4 && holder.useSpirituality(250)) {
+                Placate.removeHarmfulEffects(interactionTarget);
+                if (!player.isCreative()) {
+                    player.getCooldowns().addCooldown(stack.getItem(), 120);
+                }
+                return InteractionResult.SUCCESS;
+            }
+            holder.useSpirituality(120);
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+
+            Placate.halfHarmfulEffects(interactionTarget);
+            player.getCooldowns().addCooldown(stack.getItem(), 120 / (int) dreamIntoReality.getValue());
+            return InteractionResult.SUCCESS;
+
+        }
+        return super.interactLivingEntity(stack, player, interactionTarget, hand);
     }
 
     public static void removeHarmfulEffects(LivingEntity entity) {

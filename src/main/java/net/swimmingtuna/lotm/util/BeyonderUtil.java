@@ -210,7 +210,11 @@ public class BeyonderUtil {
             return;
         }
         if (!(item instanceof Ability ability)) {
-            player.sendSystemMessage(Component.literal("Registered ability " + resourceLocation + " for ability number " + abilityNumber + " is not an ability."));
+            player.sendSystemMessage(Component.literal("Registered ability ").append(item.getDescription()).append(" for ability number " + abilityNumber + " is not an ability."));
+            return;
+        }
+        if (player.getCooldowns().isOnCooldown(item)) {
+            player.sendSystemMessage(Component.literal("Ability ").append(item.getDescription()).append(" is on cooldown!"));
             return;
         }
         ability.useAbility(player.level(), player, hand);

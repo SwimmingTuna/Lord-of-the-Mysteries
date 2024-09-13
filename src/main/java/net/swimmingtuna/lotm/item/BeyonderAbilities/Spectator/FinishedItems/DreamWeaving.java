@@ -116,7 +116,7 @@ public class DreamWeaving extends Item {
             spawnMobsAroundTarget(entityType, interactionTarget, level, x, y, z, dreamIntoReality.getValue() == 2 ? 2 : 1);
 
             if (!player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(itemInHand.getItem(), (int) (160 / dreamIntoReality.getValue()));
+                player.getCooldowns().addCooldown(this, (int) (160 / dreamIntoReality.getValue()));
             }
         }
         return InteractionResult.PASS;

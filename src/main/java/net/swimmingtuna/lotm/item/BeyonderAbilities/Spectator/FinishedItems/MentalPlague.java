@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -27,6 +28,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
@@ -67,31 +69,22 @@ public class MentalPlague extends Item {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player player = event.getEntity();
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         if (player.level().isClientSide()) {
-            return;
+            return InteractionResult.PASS;
         }
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return;
-        }
-        if (holder.getSpirituality() < 200) {
-            player.displayClientMessage(Component.literal("You need 200 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return;
+        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 4, 200)) {
+            return InteractionResult.FAIL;
         }
         AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        ItemStack itemStack = player.getItemInHand(event.getHand());
-        Entity targetEntity = event.getTarget();
-        if (itemStack.getItem() instanceof MentalPlague && targetEntity instanceof LivingEntity livingTarget && holder.getCurrentSequence() <= 4 && holder.useSpirituality(200)) {
-            livingTarget.addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(), 620, 1));
-            if (!player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(itemStack.getItem(), (int) (100 / dreamIntoReality.getValue()));
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.SUCCESS);
-            }
+        holder.useSpirituality(200);
+        interactionTarget.addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(), 620, 1));
+        if (!player.isCreative()) {
+            player.getCooldowns().addCooldown(stack.getItem(), (int) (100 / dreamIntoReality.getValue()));
         }
+        return InteractionResult.SUCCESS;
     }
+
 }

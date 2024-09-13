@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -24,9 +25,12 @@ public class Tyranny extends SimpleAbilityItem {
     }
 
     @Override
-    public void useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return;
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) return InteractionResult.FAIL;
+        useSpirituality(player);
+        addCooldown(player);
         applyPotionEffectToEntities(player);
+        return InteractionResult.SUCCESS;
     }
 
     private void applyPotionEffectToEntities(Player player) {

@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -28,8 +29,11 @@ public class WindManipulationCushion extends SimpleAbilityItem {
     }
 
     @Override
-    public void useAbility(Level level, Player player, InteractionHand hand) {
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) return InteractionResult.FAIL;
+        useSpirituality(player);
         cushion(player);
+        return InteractionResult.SUCCESS;
     }
 
     public static void cushion(Player player) {
@@ -52,6 +56,7 @@ public class WindManipulationCushion extends SimpleAbilityItem {
             heldItem.shrink(1);
         }
     }
+
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
         if (entity instanceof Player player) {
             double cushionParticles = player.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER3.get());
@@ -72,6 +77,7 @@ public class WindManipulationCushion extends SimpleAbilityItem {
         }
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
         Player player = event.getEntity();

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -27,6 +28,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
@@ -67,30 +69,25 @@ public class ApplyManipulation extends Item {
                 "Cooldown: None").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
-    @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player player = event.getEntity();
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         if (player.level().isClientSide()) {
-            return;
+            return InteractionResult.PASS;
         }
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 4, 50)) {
+            return InteractionResult.FAIL;
         }
-        if (holder.getSpirituality() < 50) {
-            player.displayClientMessage(Component.literal("You need 50 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+        holder.useSpirituality(50);
+        if (!interactionTarget.hasEffect(ModEffects.MANIPULATION.get())) {
+            interactionTarget.addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false, false));
+            player.sendSystemMessage(Component.literal("Manipulating " + interactionTarget.getName().getString()).withStyle(BeyonderUtil.getStyle(player)));
+            return InteractionResult.SUCCESS;
         }
-        ItemStack itemStack = player.getItemInHand(event.getHand());
-        Entity targetEntity = event.getTarget();
-        if (!targetEntity.level().isClientSide && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && itemStack.getItem() instanceof ApplyManipulation && targetEntity instanceof LivingEntity livingTarget && holder.getCurrentSequence() <= 4 && holder.useSpirituality(50)) {
-            if (!livingTarget.hasEffect(ModEffects.MANIPULATION.get())) {
-                livingTarget.addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false, false));
-                player.sendSystemMessage(Component.literal("Manipulating " + targetEntity.getName().getString()).withStyle(BeyonderUtil.getStyle(player)));
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.SUCCESS);
-            }
-        }
+        return super.interactLivingEntity(stack, player, interactionTarget, hand);
     }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player player = event.getEntity();
@@ -101,6 +98,7 @@ public class ApplyManipulation extends Item {
             heldItem.shrink(1);
         }
     }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
         Player player = event.getEntity();

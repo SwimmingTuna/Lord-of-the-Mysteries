@@ -1,7 +1,9 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
-
+import com.google.common.collect.Comparators;
+import it.unimi.dsi.fastutil.doubles.DoubleComparators;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -25,8 +27,9 @@ import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -59,7 +62,7 @@ public class EnvisionLife extends Item {
                 }
 
                 if (holder.getSpirituality() < 1500) {
-                    player.displayClientMessage(Component.literal("You need " + ((int) 1500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                    player.displayClientMessage(Component.literal("You need " + (int) (1500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 }
         }
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
@@ -102,26 +105,25 @@ public class EnvisionLife extends Item {
             }
         }
         if (waitMakeLifeCounter != 0) {
-            player.sendSystemMessage(Component.literal("Ability on Cooldown for " + (int) ((400 - waitMakeLifeCounter)/20) + " seconds"));
-        }
-        else {
+            player.sendSystemMessage(Component.literal("Ability on Cooldown for " + (400 - waitMakeLifeCounter) / 20 + " seconds"));
+        } else {
             player.sendSystemMessage(Component.literal("Mob not valid"));
         }
     }
+
+    @Nullable
     private static Player findNearestPlayer(Level world, double x, double y, double z, double range, Player excludedPlayer) {
-        List<Player> players = world.getEntitiesOfClass(Player.class, excludedPlayer.getBoundingBox().inflate(range, range, range), player -> player != excludedPlayer);
+        List<Player> players = world.getEntitiesOfClass(Player.class, excludedPlayer.getBoundingBox().inflate(range), player -> player != excludedPlayer);
         if (players.isEmpty()) {
             return null;
         }
 
-        players.sort((p1, p2) -> {
-            double d1 = p1.distanceToSqr(x, y, z);
-            double d2 = p2.distanceToSqr(x, y, z);
-            return Double.compare(d1, d2);
-        });
+
+        players.sort(Comparator.comparing(player -> player.distanceToSqr(x, y, z)));
 
         return players.get(0);
     }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player player = event.getEntity();
@@ -132,6 +134,7 @@ public class EnvisionLife extends Item {
             heldItem.shrink(1);
         }
     }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
         Player player = event.getEntity();

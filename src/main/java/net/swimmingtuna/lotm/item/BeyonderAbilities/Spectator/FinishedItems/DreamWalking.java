@@ -85,7 +85,7 @@ public class DreamWalking extends Item {
             player.teleportTo(x, y, z);
             if (!player.getAbilities().instabuild) {
                 AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-                player.getCooldowns().addCooldown(stack.getItem(), (int) (40 / dreamIntoReality.getValue()));
+                player.getCooldowns().addCooldown(this, (int) (40 / dreamIntoReality.getValue()));
             }
             return InteractionResult.SUCCESS;
         }

@@ -71,19 +71,22 @@ public class DreamIntoReality extends Item {
     private void startFlying(Player player) {
         AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
         if (dreamIntoReality.getValue() != 3) {
-        player.getPersistentData().putBoolean(CAN_FLY, true);
-        Abilities playerAbilities = player.getAbilities();
-        dreamIntoReality.setBaseValue(4);
-        if (!playerAbilities.instabuild) {
-        playerAbilities.mayfly = true;
-        playerAbilities.flying = true;
-        playerAbilities.setFlyingSpeed(0.2F);}
-        ScaleData scaleData = ScaleTypes.BASE.getScaleData(player);
-        scaleData.setTargetScale(scaleData.getBaseScale() * 4);
-        scaleData.markForSync(true);
-        player.onUpdateAbilities();
-        if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));}}
+            player.getPersistentData().putBoolean(CAN_FLY, true);
+            Abilities playerAbilities = player.getAbilities();
+            dreamIntoReality.setBaseValue(4);
+            if (!player.isCreative()) {
+                playerAbilities.mayfly = true;
+                playerAbilities.flying = true;
+                playerAbilities.setFlyingSpeed(0.2F);
+            }
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(player);
+            scaleData.setTargetScale(scaleData.getBaseScale() * 4);
+            scaleData.markForSync(true);
+            player.onUpdateAbilities();
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+            }
+        }
     }
 
     public static void stopFlying(Player player) {

@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
@@ -34,19 +35,20 @@ public class WindManipulationFlight extends SimpleAbilityItem {
     }
 
     @Override
-    public void useAbility(Level level, Player player, InteractionHand hand) {
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder.getCurrentSequence() <= 7 && holder.getCurrentSequence() > 4) {
-            flightRegular(player);
-        }
+        if (!checkAll(player)) return InteractionResult.FAIL;
         if (holder.getCurrentSequence() <= 4) {
             toggleFlying(player);
+        } else {
+            flightRegular(player);
         }
         CompoundTag tag = player.getPersistentData();
         boolean sailorFlight1 = tag.getBoolean("sailorFlight1");
         if (!player.isCreative() && !sailorFlight1) {
             player.getCooldowns().addCooldown(this, 10);
         }
+        return InteractionResult.SUCCESS;
     }
 
     private void flightRegular(Player player) {
@@ -93,29 +95,11 @@ public class WindManipulationFlight extends SimpleAbilityItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (!(entity instanceof Player player)) {
-            return;
-        }
-        if (player.level().isClientSide) {
-            return;
-        }
-        boolean canFly = player.getPersistentData().getBoolean("sailorFlight1");
-        if (!canFly) {
-            return;
-        }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!holder.useSpirituality(2)) {
-            stopFlying(player);
-        }
-    }
-
-    @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         tooltipComponents.add(Component.literal("Upon use, uses the wind to burst forward in the direction the player is looking three times or allow the user to fly, depending on the sequence"));
         tooltipComponents.add(Component.literal("Activation Cost: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
         tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("40 per second").withStyle(ChatFormatting.YELLOW)));
-        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("when disabling, 0.5 seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("after disabling, 0.5 seconds").withStyle(ChatFormatting.YELLOW)));
         tooltipComponents.add(getPathwayText(this.requiredClass.get()));
         tooltipComponents.add(getClassText(this.requiredSequence, this.requiredClass.get()));
         super.baseHoverText(stack, level, tooltipComponents, isAdvanced);

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -28,6 +29,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,42 +69,37 @@ public class PlagueStorm extends Item {
                 "Cooldown: 8 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
-    @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player player = event.getEntity();
-        if (!player.level().isClientSide() && player.getMainHandItem().getItem() instanceof PlagueStorm) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 400) {
-                player.displayClientMessage(Component.literal("You need 400 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (player.level().isClientSide()) {
+            return InteractionResult.PASS;
         }
-        ItemStack itemStack = player.getItemInHand(event.getHand());
-        Entity targetEntity = event.getTarget();
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof PlagueStorm && targetEntity instanceof LivingEntity && holder.getCurrentSequence() <= 3 && holder.useSpirituality(400)) {
-            ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS, 80, 1, false, false));
-            for (LivingEntity targetEntity1 : targetEntity.level().getEntitiesOfClass(LivingEntity.class, targetEntity.getBoundingBox().inflate(30 * dreamIntoReality.getValue()))) {
-                if (targetEntity1 != player) {
-                    if (targetEntity1 != targetEntity) {
-                        targetEntity1.hurt(targetEntity1.damageSources().magic(), (float) ((20 - (holder.getCurrentSequence() * 3)) * dreamIntoReality.getValue()));
-                    } else {
-                        targetEntity1.hurt(targetEntity1.damageSources().magic(), (float) ((40 - (holder.getCurrentSequence() * 6)) * dreamIntoReality.getValue()));
-                    }
-                    targetEntity1.addEffect(new MobEffectInstance(MobEffects.DARKNESS,80,1,false,false));
-                    targetEntity1.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 2, false, false));
-                    targetEntity1.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 1, false, false));
-                    targetEntity1.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 1, false, false));
-                }
-            }
-            if (!player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(itemStack.getItem(), 160);
-            }
-            event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.SUCCESS);
+        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 3, 400)) {
+            return InteractionResult.FAIL;
         }
+        holder.useSpirituality(400);
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        interactionTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 80, 1, false, false));
+        for (LivingEntity entityInRange : interactionTarget.level().getEntitiesOfClass(LivingEntity.class, interactionTarget.getBoundingBox().inflate(30 * dreamIntoReality.getValue()))) {
+            if (entityInRange == player) {
+                continue;
+            }
+            if (entityInRange != interactionTarget) {
+                entityInRange.hurt(entityInRange.damageSources().magic(), (float) ((20 - (holder.getCurrentSequence() * 3)) * dreamIntoReality.getValue()));
+            } else {
+                entityInRange.hurt(entityInRange.damageSources().magic(), (float) ((40 - (holder.getCurrentSequence() * 6)) * dreamIntoReality.getValue()));
+            }
+            entityInRange.addEffect(new MobEffectInstance(MobEffects.DARKNESS,80, 1, false, false));
+            entityInRange.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 2, false, false));
+            entityInRange.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 1, false, false));
+            entityInRange.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 1, false, false));
+        }
+        if (!player.isCreative()) {
+            player.getCooldowns().addCooldown(stack.getItem(), 160);
+        }
+        return InteractionResult.SUCCESS;
     }
+
 }

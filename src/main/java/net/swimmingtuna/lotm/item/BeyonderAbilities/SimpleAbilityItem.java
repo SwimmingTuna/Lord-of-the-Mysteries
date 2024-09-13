@@ -42,18 +42,9 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
 
-            boolean hasAllRequirements = checkAll(player);
-            if (!hasAllRequirements) return InteractionResultHolder.fail(player.getItemInHand(hand));
-
-            if (holder.useSpirituality(this.requiredSpirituality)) {
-                if (!player.isCreative()) {
-                    player.getCooldowns().addCooldown(this, this.cooldown);
-                }
-                useAbility(level, player, hand);
-                return InteractionResultHolder.success(player.getItemInHand(hand));
-            }
+            InteractionResult interactionResult = useAbility(level, player, hand);
+            return new InteractionResultHolder<>(interactionResult, player.getItemInHand(hand));
         }
         return InteractionResultHolder.pass(player.getItemInHand(hand));
     }
@@ -64,16 +55,9 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        Player player = context.getPlayer();
         Level level = context.getLevel();
         if (!level.isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-
-            if (!checkAll(player)) return InteractionResult.FAIL;
-
-            if (holder.useSpirituality(this.requiredSpirituality)) {
-                return useAbilityOnBlock(context);
-            }
+            return useAbilityOnBlock(context);
         }
         return InteractionResult.PASS;
     }
@@ -81,14 +65,7 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
         if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-
-            boolean hasAllRequirements = checkAll(player);
-            if (!hasAllRequirements) return InteractionResult.FAIL;
-
-            if (holder.useSpirituality(this.requiredSpirituality)) {
-                return useAbilityOnEntity(stack, player, interactionTarget, usedHand);
-            }
+            return useAbilityOnEntity(stack, player, interactionTarget, usedHand);
         }
         return InteractionResult.PASS;
     }
@@ -121,6 +98,16 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
                 .withStyle(beyonderClass.getColorFormatting()));
     }
 
+    public static void addCooldown(Player player, Item item, int cooldown) {
+        if (!player.isCreative()) {
+            player.getCooldowns().addCooldown(item, cooldown);
+        }
+    }
+
+    protected void addCooldown(Player player) {
+        addCooldown(player, this, this.cooldown);
+    }
+
     protected void baseHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
     }
@@ -130,7 +117,7 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
         double sec = (double) (ticks % 1200) / 20;
         StringBuilder stringBuilder = new StringBuilder();
         if (min > 0) {
-            stringBuilder.append(min).append(" Minute");
+            stringBuilder.append(min).append(" minute");
             if (min != 1) {
                 stringBuilder.append("s");
             }
@@ -139,24 +126,12 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
             }
         }
         if (sec > 0) {
-            stringBuilder.append(sec).append(" Second");
+            stringBuilder.append(sec).append(" second");
             if (sec != 1) {
                 stringBuilder.append("s");
             }
         }
         return stringBuilder.toString();
-    }
-
-    private boolean sequenceAdvancedEnough(BeyonderHolder holder) {
-        return holder.getCurrentSequence() <= this.requiredSequence;
-    }
-
-    private boolean requiredClassMatches(BeyonderHolder holder) {
-        return holder.currentClassMatches(this.requiredClass);
-    }
-
-    private boolean spiritualitySufficient(BeyonderHolder holder) {
-        return holder.getSpirituality() >= this.requiredSpirituality;
     }
 
     public static boolean checkRequiredClass(BeyonderHolder holder, Player player, BeyonderClass requiredClass) {
@@ -165,7 +140,7 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
 
             player.displayClientMessage(
                     Component.literal("You are not of the ").withStyle(ChatFormatting.AQUA).append(
-                            Component.literal(name).withStyle(ChatFormatting.YELLOW)).append(
+                            Component.literal(name).withStyle(requiredClass.getColorFormatting())).append(
                                     Component.literal(" Pathway").withStyle(ChatFormatting.AQUA)), true);
             return false;
         }
@@ -197,5 +172,14 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     public static boolean checkAll(Player player, BeyonderClass requiredClass, int requiredSequence, int requiredSpirituality) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         return checkRequiredClass(holder, player, requiredClass) && checkRequiredSequence(holder, player, requiredSequence) && checkSpirituality(holder, player, requiredSpirituality);
+    }
+
+    public static boolean useSpirituality(Player player, int spirituality) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        return holder.useSpirituality(spirituality);
+    }
+
+    protected boolean useSpirituality(Player player) {
+        return useSpirituality(player, this.requiredSpirituality);
     }
 }

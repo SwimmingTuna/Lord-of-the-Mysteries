@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -30,6 +31,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
@@ -72,30 +74,22 @@ public class ProphesizeDemise extends Item {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player player = event.getEntity();
-        if (!player.level().isClientSide() && player.getMainHandItem().getItem() instanceof ProphesizeDemise) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 1000) {
-                player.displayClientMessage(Component.literal("You need 1000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (player.level().isClientSide()) {
+            return InteractionResult.PASS;
         }
-        ItemStack itemStack = player.getItemInHand(event.getHand());
-        Entity targetEntity = event.getTarget();
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof ProphesizeDemise && targetEntity instanceof LivingEntity && holder.getCurrentSequence() <= 1 && holder.useSpirituality(1000)) {
-            ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.SPECTATORDEMISE.get(), 600, 1, false, false));
-            if (!player.getAbilities().instabuild) {
-                AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-                player.getCooldowns().addCooldown(itemStack.getItem(), (int) (3000 / dreamIntoReality.getValue()));
-            }
-            event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.SUCCESS);
+        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 1, 1000)) {
+            return InteractionResult.FAIL;
         }
+        holder.useSpirituality(1000);
+        interactionTarget.addEffect(new MobEffectInstance(ModEffects.SPECTATORDEMISE.get(), 600, 1, false, false));
+        if (!player.isCreative()) {
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            player.getCooldowns().addCooldown(this, (int) (3000 / dreamIntoReality.getValue()));
+        }
+        return InteractionResult.SUCCESS;
     }
 
     @SubscribeEvent
@@ -145,6 +139,7 @@ public class ProphesizeDemise extends Item {
             }
         }
     }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         Player player = event.getEntity();
@@ -155,6 +150,7 @@ public class ProphesizeDemise extends Item {
             heldItem.shrink(1);
         }
     }
+
     @SubscribeEvent
     public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
         Player player = event.getEntity();

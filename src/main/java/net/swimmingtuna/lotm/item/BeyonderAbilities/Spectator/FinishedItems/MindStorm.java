@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -28,6 +29,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
@@ -70,54 +72,34 @@ public class MindStorm extends Item {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player player = event.getEntity();
-        ItemStack itemStack = player.getItemInHand(event.getHand());
-        if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (itemStack.getItem() instanceof MindStorm) {
-                if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                    player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-                }
-                if (holder.getSpirituality() < 250) {
-                    player.displayClientMessage(Component.literal("You need 250 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-                }
-            }
-
-            boolean x = !player.getCooldowns().isOnCooldown(itemStack.getItem());
-            Entity targetEntity = event.getTarget();
-            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-            if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof MindStorm && targetEntity instanceof LivingEntity && holder.getCurrentSequence() <= 3 && holder.useSpirituality(250)) {
-                int sequence = holder.getCurrentSequence();
-                int duration = 300 - (sequence * 25);
-                int damage = 30 - (sequence * 2);
-                if (dreamIntoReality.getValue() == 2) {
-                    damage = 50 - (sequence * 2);
-                }
-                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false));
-                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
-                ((LivingEntity) targetEntity).addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
-                targetEntity.hurt(targetEntity.damageSources().magic(), damage);
-                if (!player.getAbilities().instabuild) {
-                    player.getCooldowns().addCooldown(itemStack.getItem(), 200);
-                    event.setCanceled(true);
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                }
-            }
-            if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && holder.getCurrentSequence() <= 7 && holder.getCurrentSequence() > 4 && holder.useSpirituality(120)) {
-                Placate.halfHarmfulEffects((LivingEntity) targetEntity);
-                player.getCooldowns().addCooldown(itemStack.getItem(), 120 / (int) dreamIntoReality.getValue());
-                event.setCanceled(true);
-            }
-            if (x && holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide && !targetEntity.level().isClientSide && itemStack.getItem() instanceof Placate && targetEntity instanceof LivingEntity && holder.getCurrentSequence() <= 4 && holder.useSpirituality(250)) {
-                Placate.removeHarmfulEffects((LivingEntity) targetEntity);
-                event.setCanceled(true);
-                if (!player.getAbilities().mayfly) {
-                    player.getCooldowns().addCooldown(itemStack.getItem(), 120);
-                }
-            }
-
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (player.level().isClientSide()) {
+            return InteractionResult.PASS;
         }
+
+        if (player.getCooldowns().isOnCooldown(this)) {
+            return InteractionResult.FAIL;
+        }
+
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 3, 250)) return InteractionResult.FAIL;
+        holder.useSpirituality(250);
+
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        int sequence = holder.getCurrentSequence();
+        int duration = 300 - (sequence * 25);
+        int damage = 30 - (sequence * 2);
+        if (dreamIntoReality.getValue() == 2) {
+            damage = 50 - (sequence * 2);
+        }
+        interactionTarget.addEffect(new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false));
+        interactionTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
+        interactionTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
+        interactionTarget.hurt(interactionTarget.damageSources().magic(), damage);
+        if (!player.isCreative()) {
+            player.getCooldowns().addCooldown(stack.getItem(), 200);
+        }
+        return InteractionResult.SUCCESS;
     }
 }

@@ -10,7 +10,8 @@ import net.minecraft.world.level.Level;
 
 public interface Ability {
 
-    default void useAbility(Level level, Player player, InteractionHand hand) {
+    default InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        return InteractionResult.PASS;
     }
 
     default InteractionResult useAbilityOnBlock(UseOnContext context) {
