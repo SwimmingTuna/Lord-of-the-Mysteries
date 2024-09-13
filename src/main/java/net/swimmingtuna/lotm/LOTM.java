@@ -89,7 +89,6 @@ public class LOTM {
         LOTMNetworkHandler.register();
     }
 
-
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {

@@ -77,8 +77,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static net.swimmingtuna.lotm.util.BeyonderUtil.getProjectiles;
-
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
 public class ModEvents {
 
@@ -528,12 +526,12 @@ public class ModEvents {
         boolean enhancedFlight = playerPersistentData.getBoolean("sailorFlight1");
         if (
                 holder.currentClassMatches(BeyonderClassInit.SAILOR) &&
-                holder.getCurrentSequence() <= 7 &&
-                player.isShiftKeyDown() &&
-                player.getDeltaMovement().y() < 0 &&
-                !player.getAbilities().instabuild &&
-                !enhancedFlight &&
-                regularFlight == 0
+                        holder.getCurrentSequence() <= 7 &&
+                        player.isShiftKeyDown() &&
+                        player.getDeltaMovement().y() < 0 &&
+                        !player.getAbilities().instabuild &&
+                        !enhancedFlight &&
+                        regularFlight == 0
         ) {
             Vec3 movement = player.getDeltaMovement();
             double deltaX = Math.cos(Math.toRadians(player.getYRot() + 90)) * 0.06;
@@ -592,7 +590,7 @@ public class ModEvents {
 
     private static void projectileEvent(Player player, BeyonderHolder holder) {
         //PROJECTILE EVENT
-        Projectile projectile = getProjectiles(player);
+        Projectile projectile = BeyonderUtil.getProjectiles(player);
         if (projectile == null) return;
         ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile);
         ModEventFactory.onSailorShootProjectile(projectile);
