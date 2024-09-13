@@ -31,23 +31,25 @@ import java.util.Random;
 public class RoarEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(RoarEntity.class, EntityDataSerializers.BOOLEAN);
 
-
-    public RoarEntity(EntityType<? extends RoarEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public RoarEntity(EntityType<? extends RoarEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public RoarEntity(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.ROAR_ENTITY.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+    public RoarEntity(Level level, LivingEntity shooter, double offsetX, double offsetY, double offsetZ) {
+        super(EntityInit.ROAR_ENTITY.get(), shooter, offsetX, offsetY, offsetZ, level);
     }
 
+    @Override
     protected float getInertia() {
         return this.isDangerous() ? 0.73F : super.getInertia();
     }
 
+    @Override
     public boolean isOnFire() {
         return false;
     }
 
+    @Override
     public boolean isNoGravity() {
         return true;
     }
@@ -58,9 +60,9 @@ public class RoarEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult pResult) {
+    protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide()) {
-            Entity entity = pResult.getEntity();
+            Entity entity = result.getEntity();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
 
             // Check if the entity is a player, projectile, or a mob with max health > 100
@@ -78,7 +80,7 @@ public class RoarEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
+    protected void onHitBlock(BlockHitResult result) {
         if (!this.level().isClientSide()) {
 
         }
@@ -119,9 +121,9 @@ public class RoarEntity extends AbstractHurtingProjectile {
                     }
                 }
             }
-            if (this.getOwner() instanceof Player pPlayer) {
+            if (this.getOwner() instanceof Player player) {
                 if (this.tickCount == 1) {
-                    BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                     int sequence = holder.getCurrentSequence();
                     if (sequence <= 4) {
                         scaleData.setTargetScale(7 - (sequence * 1.0f));

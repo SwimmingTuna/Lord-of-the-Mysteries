@@ -4,7 +4,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -20,109 +19,88 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.common.util.Lazy;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.events.ReachChangeUUIDs;
-import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ProphesizeTeleportBlock extends Item implements ReachChangeUUIDs {
+public class ProphesizeTeleportBlock extends Item {
 
-    private final LazyOptional<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = LazyOptional.of(() -> createAttributeMap()); //LazyOptional in this instance basically makes it so that the reach change is only in effect when something happens
+    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
-    public ProphesizeTeleportBlock(Properties pProperties) {
-        super(pProperties);
+    public ProphesizeTeleportBlock(Properties properties) {
+        super(properties);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot pSlot) {
-        if (pSlot == EquipmentSlot.MAINHAND) {
-            return lazyAttributeMap.orElseGet(() -> createAttributeMap());
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
+            return this.lazyAttributeMap.get();
         }
-        return super.getDefaultAttributeModifiers(pSlot);
+        return super.getDefaultAttributeModifiers(slot);
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
 
         ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
         attributeBuilder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND));
-        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(BeyonderEntityReach, "Reach modifier", 200, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
-        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(BeyonderBlockReach, "Reach modifier", 200, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
+        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 200, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
+        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 200, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
         return attributeBuilder.build();
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext pContext) {
-        Player pPlayer = pContext.getPlayer();
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSpectatorClass()) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+    public InteractionResult useOn(UseOnContext context) {
+        Player player = context.getPlayer();
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 600) {
-                pPlayer.displayClientMessage(Component.literal("You need 600 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need 600 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
         }
-        Level level = pPlayer.level();
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        BlockPos positionClicked = pContext.getClickedPos();
-        if (!pContext.getLevel().isClientSide) {
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 1 &&  BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(600)) {
-                    teleportEntities(pPlayer, level, positionClicked, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 300);
-                    }
+        Level level = player.level();
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        BlockPos positionClicked = context.getClickedPos();
+        if (!context.getLevel().isClientSide) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 1 &&  BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(600)) {
+                teleportEntities(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
+                if (!player.getAbilities().instabuild) {
+                    player.getCooldowns().addCooldown(this, 300);
                 }
-            });
+            }
         }
         return InteractionResult.SUCCESS;
     }
 
 
-    private void teleportEntities(Player pPlayer, Level level, BlockPos targetPos, int sequence, int dir) {
+    private void teleportEntities(Player player, Level level, BlockPos targetPos, int sequence, int dir) {
         double radius = (500 - sequence * 100) * dir;
-        for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-            if (entity != pPlayer && !entity.level().isClientSide()) {
-                entity.teleportTo(targetPos.getX(), targetPos.getY() +1, targetPos.getZ());
-                }}
+        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
+            if (entity != player && !entity.level().isClientSide()) {
+                entity.getPersistentData().putInt("prophesizeTeleportationCounter", (int) (150 * Math.random()));
+                entity.getPersistentData().putInt("prophesizeTeleportX", (int) targetPos.getX());
+                entity.getPersistentData().putInt("prophesizeTeleportY", (int) targetPos.getY() + 1);
+                entity.getPersistentData().putInt("prophesizeTeleportZ", (int) targetPos.getZ());
+            }
+        }
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes all living entities around the user teleport to a clicked block\n" +
-                    "Spirituality Used: 600\n" +
-                    "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
-        }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
-    }
-    @SubscribeEvent
-    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportBlock) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeTeleportPlayer.get()));
-            heldItem.shrink(1);
-        }
-    }
-    @SubscribeEvent
-    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportBlock) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeTeleportPlayer.get()));
-            heldItem.shrink(1);
-        }
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use, makes all living entities around the user teleport to a clicked block\n" +
+                "Spirituality Used: 600\n" +
+                "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

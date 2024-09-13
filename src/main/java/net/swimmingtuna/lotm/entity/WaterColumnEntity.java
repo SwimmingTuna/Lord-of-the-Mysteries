@@ -23,35 +23,35 @@ public class WaterColumnEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Integer> DATA_LIFE_COUNT = SynchedEntityData.defineId(WaterColumnEntity.class, EntityDataSerializers.INT);
 
 
-    public WaterColumnEntity(EntityType<? extends WaterColumnEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public WaterColumnEntity(EntityType<? extends WaterColumnEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public WaterColumnEntity(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.WIND_BLADE_ENTITY.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+    public WaterColumnEntity(Level level, LivingEntity shooter, double offsetX, double offsetY, double offsetZ) {
+        super(EntityInit.WIND_BLADE_ENTITY.get(), shooter, offsetX, offsetY, offsetZ, level);
     }
 
-
+    @Override
     protected float getInertia() {
         return this.isDangerous() ? 0.73F : super.getInertia();
     }
 
+    @Override
     public boolean isOnFire() {
         return false;
     }
-
 
     @Override
     public @NotNull ParticleOptions getTrailParticle() {
         return ParticleInit.NULL_PARTICLE.get();
     }
 
-
+    @Override
     public boolean isPickable() {
         return false;
     }
 
-
+    @Override
     protected void defineSynchedData() {
         this.entityData.define(DATA_DANGEROUS, false);
     }
@@ -60,12 +60,10 @@ public class WaterColumnEntity extends AbstractHurtingProjectile {
         return this.entityData.get(DATA_DANGEROUS);
     }
 
-
+    @Override
     protected boolean shouldBurn() {
         return false;
     }
-
-
 
     @Override
     public void tick() {
@@ -78,28 +76,29 @@ public class WaterColumnEntity extends AbstractHurtingProjectile {
         int z = Mth.floor(this.getZ());
         BlockPos currentPos = new BlockPos(x, y, z);
 
-        if (!level.isClientSide()) {
-            // If the entity is below y-level 300, move it upwards
-            if (y <= 300) {
-                this.setDeltaMovement(0, 2, 0);
-            } else {
-                this.setDeltaMovement(Vec3.ZERO);
-            }
+        if (level.isClientSide()) {
+            return;
+        }
+        // If the entity is below y-level 300, move it upwards
+        if (y <= 300) {
+            this.setDeltaMovement(0, 2, 0);
+        } else {
+            this.setDeltaMovement(Vec3.ZERO);
+        }
 
-            if (this.tickCount  % 20 == 0) {
-                for (int dx = -3; dx <= 3; dx++) {
-                    for (int dz = -3; dz <= 3; dz++) {
-                        BlockPos abovePos = currentPos.offset(dx, 1, dz);
-                        BlockState stateAbove = level.getBlockState(abovePos);
-                        if (stateAbove.isAir()) {
-                            level.setBlock(abovePos, Blocks.WATER.defaultBlockState(), 3);
-                        }
+        if (this.tickCount  % 20 == 0) {
+            for (int dx = -3; dx <= 3; dx++) {
+                for (int dz = -3; dz <= 3; dz++) {
+                    BlockPos abovePos = currentPos.offset(dx, 1, dz);
+                    BlockState stateAbove = level.getBlockState(abovePos);
+                    if (stateAbove.isAir()) {
+                        level.setBlock(abovePos, Blocks.WATER.defaultBlockState(), 3);
                     }
                 }
             }
-            if (this.tickCount >= 200) {
-                this.discard();
-            }
+        }
+        if (this.tickCount >= 200) {
+            this.discard();
         }
     }
 }

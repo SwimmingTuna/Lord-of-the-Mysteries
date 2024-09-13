@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
@@ -22,31 +23,33 @@ import virtuoel.pehkui.api.ScaleTypes;
 public class StormSealEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(StormSealEntity.class, EntityDataSerializers.BOOLEAN);
 
-
-    public StormSealEntity(EntityType<? extends StormSealEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public StormSealEntity(EntityType<? extends StormSealEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public StormSealEntity(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.ROAR_ENTITY.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+    public StormSealEntity(Level level, LivingEntity shooter, double offsetX, double offsetY, double offsetZ) {
+        super(EntityInit.ROAR_ENTITY.get(), shooter, offsetX, offsetY, offsetZ, level);
     }
 
+    @Override
     protected float getInertia() {
         return this.isDangerous() ? 1.0F : super.getInertia();
     }
 
+    @Override
     public boolean isOnFire() {
         return false;
     }
 
+    @Override
     public boolean isNoGravity() {
         return true;
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult pResult) {
+    protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide()) {
-            Entity entity = pResult.getEntity();
+            Entity entity = result.getEntity();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
 
             if (entity instanceof Projectile projectile) {
@@ -67,7 +70,7 @@ public class StormSealEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
+    protected void onHitBlock(BlockHitResult result) {
         if (!this.level().isClientSide()) {
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             float explosionRadius = 5 * scaleData.getScale();
@@ -113,7 +116,7 @@ public class StormSealEntity extends AbstractHurtingProjectile {
                 double z = this.getZ() + radius * Math.sin(angle);
                 BlockPos strikePos = new BlockPos((int) x, (int) this.getY(), (int) z);
                 EntityType.LIGHTNING_BOLT.spawn((ServerLevel) this.level(), (ItemStack) null, null, strikePos,
-                        net.minecraft.world.entity.MobSpawnType.TRIGGERED, true, true);
+                        MobSpawnType.TRIGGERED, true, true);
             }
         }
     }

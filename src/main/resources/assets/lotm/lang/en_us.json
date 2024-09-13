@@ -230,7 +230,7 @@
   "attribute.lotm.armorinvisiblity": "Armor Invisibility",
 
 
-  "item.lotm.beholder_potion.alert": "You have advanced to a %s",
+  "item.lotm.beholder_potion.alert": "You have advanced to %s",
   "argument.lotm.beyonder_class.id.invalid": "Unknown Beyonder Class type '%s'",
   "container.lotm.abilities": "Abilities",
 

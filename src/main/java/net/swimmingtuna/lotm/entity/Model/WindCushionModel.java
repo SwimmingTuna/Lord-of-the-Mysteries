@@ -31,30 +31,30 @@ public class WindCushionModel<T extends Entity> extends EntityModel<T> {
 
 		PartDefinition floor = root.addOrReplaceChild("floor", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-		PartDefinition floorsquare = floor.addOrReplaceChild("floorsquare", CubeListBuilder.create().texOffs(0, 30).addBox(-5.0F, -1.0F, 5.0F, 10.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition floorsquare = floor.addOrReplaceChild("floorsquare", CubeListBuilder.create().texOffs(0, 30).addBox(-5.0F, -1.0F, 5.0F, 10.0F, 1.0F, 1.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-		PartDefinition cube_r1 = floorsquare.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(22, 28).addBox(-5.0F, -1.0F, 5.0F, 10.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -1.5708F, 0.0F));
+		PartDefinition cube_r1 = floorsquare.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(22, 28).addBox(-5.0F, -1.0F, 5.0F, 10.0F, 1.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -1.5708F, 0.0F));
 
-		PartDefinition cube_r2 = floorsquare.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(0, 28).addBox(-5.0F, -1.0F, 5.0F, 10.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
+		PartDefinition cube_r2 = floorsquare.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(0, 28).addBox(-5.0F, -1.0F, 5.0F, 10.0F, 1.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 1.5708F, 0.0F));
 
-		PartDefinition cube_r3 = floorsquare.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(0, 24).addBox(-5.0F, -1.0F, 5.0F, 10.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 3.1416F, 0.0F));
+		PartDefinition cube_r3 = floorsquare.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(0, 24).addBox(-5.0F, -1.0F, 5.0F, 10.0F, 1.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 3.1416F, 0.0F));
 
-		PartDefinition floorcirlce = floor.addOrReplaceChild("floorcirlce", CubeListBuilder.create().texOffs(32, 24).addBox(-3.0F, -1.0F, -7.0F, 6.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 6).addBox(-2.0F, -1.0F, -8.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 4).addBox(-2.0F, -1.0F, 7.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-		.texOffs(14, 32).addBox(6.0F, -1.0F, -3.0F, 1.0F, 1.0F, 6.0F, new CubeDeformation(0.0F))
-		.texOffs(32, 22).addBox(-3.0F, -1.0F, 6.0F, 6.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-		.texOffs(32, 8).addBox(-7.0F, -1.0F, -3.0F, 1.0F, 1.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		PartDefinition floorcirlce = floor.addOrReplaceChild("floorcirlce", CubeListBuilder.create().texOffs(32, 24).addBox(-3.0F, -1.0F, -7.0F, 6.0F, 1.0F, 1.0F, CubeDeformation.NONE)
+		.texOffs(0, 6).addBox(-2.0F, -1.0F, -8.0F, 4.0F, 1.0F, 1.0F, CubeDeformation.NONE)
+		.texOffs(0, 4).addBox(-2.0F, -1.0F, 7.0F, 4.0F, 1.0F, 1.0F, CubeDeformation.NONE)
+		.texOffs(14, 32).addBox(6.0F, -1.0F, -3.0F, 1.0F, 1.0F, 6.0F, CubeDeformation.NONE)
+		.texOffs(32, 22).addBox(-3.0F, -1.0F, 6.0F, 6.0F, 1.0F, 1.0F, CubeDeformation.NONE)
+		.texOffs(32, 8).addBox(-7.0F, -1.0F, -3.0F, 1.0F, 1.0F, 6.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-		PartDefinition cube_r4 = floorcirlce.addOrReplaceChild("cube_r4", CubeListBuilder.create().texOffs(0, 0).addBox(-2.0F, -1.0F, -8.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 2).addBox(-2.0F, -1.0F, 7.0F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -1.5708F, 0.0F));
+		PartDefinition cube_r4 = floorcirlce.addOrReplaceChild("cube_r4", CubeListBuilder.create().texOffs(0, 0).addBox(-2.0F, -1.0F, -8.0F, 4.0F, 1.0F, 1.0F, CubeDeformation.NONE)
+		.texOffs(0, 2).addBox(-2.0F, -1.0F, 7.0F, 4.0F, 1.0F, 1.0F, CubeDeformation.NONE), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -1.5708F, 0.0F));
 
 		PartDefinition level1 = root.addOrReplaceChild("level1", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-		PartDefinition level1part1 = level1.addOrReplaceChild("level1part1", CubeListBuilder.create().texOffs(12, 11).addBox(-5.0F, -2.0F, -5.0F, 1.0F, 1.0F, 9.0F, new CubeDeformation(0.0F))
+		PartDefinition level1part1 = level1.addOrReplaceChild("level1part1", CubeListBuilder.create().texOffs(12, 11).addBox(-5.0F, -2.0F, -5.0F, 1.0F, 1.0F, 9.0F, CubeDeformation.NONE)
 		.texOffs(23, 18).addBox(-5.0F, -2.0F, 4.0F, 10.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
 		.texOffs(0, 32).addBox(-4.0F, -2.0F, -5.0F, 9.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
-		.texOffs(0, 11).addBox(4.0F, -2.0F, -5.0F, 1.0F, 1.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+		.texOffs(0, 11).addBox(4.0F, -2.0F, -5.0F, 1.0F, 1.0F, 10.0F, CubeDeformation.NONE), PartPose.offset(0.0F, 0.0F, 0.0F));
 
 		PartDefinition level1part2 = level1.addOrReplaceChild("level1part2", CubeListBuilder.create().texOffs(32, 15).addBox(-4.0F, -2.0F, -4.0F, 8.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
 		.texOffs(32, 20).addBox(-4.0F, -2.0F, 3.0F, 8.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
@@ -77,6 +77,7 @@ public class WindCushionModel<T extends Entity> extends EntityModel<T> {
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 	}
+
 	private void animateModelParts(ModelPart part, AnimationDefinition animation, String animationName, float ageInTicks) {
 	}
 

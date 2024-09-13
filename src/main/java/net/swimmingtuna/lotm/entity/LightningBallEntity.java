@@ -30,8 +30,8 @@ public class LightningBallEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> ABSORB = SynchedEntityData.defineId(LightningBallEntity.class, EntityDataSerializers.BOOLEAN);
 
 
-    public LightningBallEntity(EntityType<? extends LightningBallEntity> pEntityType, Level pLevel, boolean absorb) {
-        super(pEntityType, pLevel);
+    public LightningBallEntity(EntityType<? extends LightningBallEntity> entityType, Level level, boolean absorb) {
+        super(entityType, level);
         this.setAbsorbed(absorb);
     }
 

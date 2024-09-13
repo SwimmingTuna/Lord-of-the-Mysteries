@@ -1,14 +1,17 @@
 package net.swimmingtuna.lotm.networking.packet;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
-import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderAbilityUser;
-import net.swimmingtuna.lotm.REQUEST_FILES.BeyonderUtil;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.Hurricane;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.LightningStorm;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 
 import java.util.function.Supplier;
 
@@ -27,45 +30,39 @@ public class LeftClickC2S {
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context context = supplier.get();
-        ServerPlayer pPlayer = context.getSender();
+        ServerPlayer player = context.getSender();
         context.enqueueWork(() -> {
-            ItemStack heldItem = pPlayer.getMainHandItem();
-            pPlayer.sendSystemMessage(Component.literal("working"));
-            int firstKeyClicked = pPlayer.getPersistentData().getInt("firstKeyClicked");
-            int secondKeyClicked = pPlayer.getPersistentData().getInt("secondKeyClicked");
-            int thirdKeyClicked = pPlayer.getPersistentData().getInt("thirdKeyClicked");
-            int fourthKeyClicked = pPlayer.getPersistentData().getInt("fourthKeyClicked");
-            int fifthKeyClicked = pPlayer.getPersistentData().getInt("fifthKeyClicked");
+            if (player == null) return;
+            ItemStack heldItem = player.getMainHandItem();
+            byte[] keysClicked = player.getPersistentData().getByteArray("keysClicked");
 
             if (!heldItem.isEmpty() && heldItem.getItem() instanceof BeyonderAbilityUser) {
-                if (firstKeyClicked == 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    pPlayer.getPersistentData().putInt("firstKeyClicked", 1);
-                    pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
-                }
-                if (firstKeyClicked != 0 && secondKeyClicked == 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    pPlayer.getPersistentData().putInt("secondKeyClicked", 1);
-                    pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
-                }
-                if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked == 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    pPlayer.getPersistentData().putInt("thirdKeyClicked", 1);
-                    pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
-                }
-                if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked == 0 && fifthKeyClicked == 0) {
-                    pPlayer.getPersistentData().putInt("fourthKeyClicked", 1);
-                    pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
-                }
-                if (firstKeyClicked != 0 && secondKeyClicked != 0 && thirdKeyClicked != 0 && fourthKeyClicked != 0 && fifthKeyClicked == 0) {
-                    pPlayer.getPersistentData().putInt("fifthKeyClicked", 1);
-                    pPlayer.getPersistentData().putInt("keyHasBeenClicked", 40);
+                for (int i = 0; i < keysClicked.length; i++) {
+                    if (keysClicked[i] == 0) {
+                        keysClicked[i] = 1;
+                        BeyonderAbilityUser.clicked(player, InteractionHand.MAIN_HAND);
+                        break;
+                    }
                 }
             }
-            if (pPlayer.getMainHandItem().getItem() instanceof LightningStorm) {
-                CompoundTag tag = pPlayer.getPersistentData();
+            if (player.getMainHandItem().getItem() instanceof LightningStorm) {
+                CompoundTag tag = player.getPersistentData();
                 double distance = tag.getDouble("sailorLightningStormDistance");
                 tag.putDouble("sailorLightningStormDistance", (int) (distance + 30));
-                pPlayer.sendSystemMessage(Component.literal("Storm Radius Is " + distance).withStyle(BeyonderUtil.getStyle(pPlayer)));
+                player.sendSystemMessage(Component.literal("Storm Radius Is " + distance).withStyle(BeyonderUtil.getStyle(player)));
                 if (distance > 300) {
                     tag.putDouble("sailorLightningStormDistance", 0);
+                }
+            }
+            if (player.getMainHandItem().getItem() instanceof Hurricane) {
+                CompoundTag tag = player.getPersistentData();
+                boolean sailorHurricaneRain = tag.getBoolean("sailorHurricaneRain");
+                if (sailorHurricaneRain) {
+                    player.displayClientMessage(Component.literal("Hurricane will only cause rain").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                    tag.putBoolean("sailorHurricaneRain", false);
+                } else {
+                    player.displayClientMessage(Component.literal("Hurricane cause lightning, tornadoes, and rain").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+                    tag.putBoolean("sailorHurricaneRain", true);
                 }
             }
         });

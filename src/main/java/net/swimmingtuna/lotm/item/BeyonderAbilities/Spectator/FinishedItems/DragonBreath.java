@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -14,6 +13,7 @@ import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.DragonBreathEntity;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,41 +21,37 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class DragonBreath extends Item {
-    public DragonBreath(Properties pProperties) {
-        super(pProperties);
+    public DragonBreath(Properties properties) {
+        super(properties);
     }
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSpectatorClass()) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < 500) {
-                pPlayer.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(500)) {
-                    shootFireball(pPlayer, (int) ((30 - spectatorSequence.getCurrentSequence() * 4) * dreamIntoReality.getValue()));
-                }
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 100);
-            });
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 4 && holder.useSpirituality(500)) {
+                shootFireball(player, (int) ((30 - holder.getCurrentSequence() * 4) * dreamIntoReality.getValue()));
+            }
+            if (!player.getAbilities().instabuild)
+                player.getCooldowns().addCooldown(this, 100);
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
-    public static void shootFireball(Player pPlayer, int sequence) {
-        DragonBreathEntity.shootDragonBreath(pPlayer, sequence, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ() );
+    public static void shootFireball(Player player, int sequence) {
+        DragonBreathEntity.shootDragonBreath(player, sequence, player.getX(), player.getY(), player.getZ() );
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, shoots a dragons breath\n" +
-                    "Spirituality Used: 100\n" +
-                    "Cooldown: 0.5 seconds").withStyle(ChatFormatting.AQUA));
-        }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use, shoots a dragons breath\n" +
+                "Spirituality Used: 100\n" +
+                "Cooldown: 0.5 seconds").withStyle(ChatFormatting.AQUA));
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

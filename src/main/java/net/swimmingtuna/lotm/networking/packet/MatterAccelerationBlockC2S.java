@@ -30,15 +30,15 @@ public class MatterAccelerationBlockC2S {
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context context = supplier.get();
-        ServerPlayer pPlayer = context.getSender();
+        ServerPlayer player = context.getSender();
         context.enqueueWork(() -> {
-           int x = pPlayer.getPersistentData().getInt("matterAccelerationBlockTimer");
+           int x = player.getPersistentData().getInt("matterAccelerationBlockTimer");
            if (x >= 1) {
-               Vec3 lookDirection = pPlayer.getLookAngle().normalize().scale(20);
-               if (pPlayer.level().dimension() == Level.OVERWORLD) {
-                   StoneEntity stoneEntity = pPlayer.level().getEntitiesOfClass(StoneEntity.class, pPlayer.getBoundingBox().inflate(10))
+               Vec3 lookDirection = player.getLookAngle().normalize().scale(20);
+               if (player.level().dimension() == Level.OVERWORLD) {
+                   StoneEntity stoneEntity = player.level().getEntitiesOfClass(StoneEntity.class, player.getBoundingBox().inflate(10))
                            .stream()
-                           .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(pPlayer)))
+                           .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(player)))
                            .orElse(null);
                    if (stoneEntity != null) {
                        stoneEntity.setDeltaMovement(lookDirection);
@@ -47,28 +47,28 @@ public class MatterAccelerationBlockC2S {
                        stoneEntity.setTickCount(440);
                    }
                    if (stoneEntity == null) {
-                       pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
+                       player.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
                    }
                }
-               if (pPlayer.level().dimension() == Level.NETHER) {
-                   NetherrackEntity netherrackEntity = pPlayer.level().getEntitiesOfClass(NetherrackEntity.class, pPlayer.getBoundingBox().inflate(10))
+               if (player.level().dimension() == Level.NETHER) {
+                   NetherrackEntity netherrackEntity = player.level().getEntitiesOfClass(NetherrackEntity.class, player.getBoundingBox().inflate(10))
                            .stream()
-                           .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(pPlayer)))
+                           .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(player)))
                            .orElse(null);
                    if (netherrackEntity != null) {
                        netherrackEntity.setDeltaMovement(lookDirection);
                        netherrackEntity.setSent(true);
-                       netherrackEntity.setShouldntDamage(false);
+                       netherrackEntity.setShouldDamage(true);
                        netherrackEntity.setTickCount(440);
                    }
                    if (netherrackEntity == null) {
-                       pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
+                       player.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
                    }
                }
-               if (pPlayer.level().dimension() == Level.END) {
-                   EndStoneEntity endStoneEntity = pPlayer.level().getEntitiesOfClass(EndStoneEntity.class, pPlayer.getBoundingBox().inflate(10))
+               if (player.level().dimension() == Level.END) {
+                   EndStoneEntity endStoneEntity = player.level().getEntitiesOfClass(EndStoneEntity.class, player.getBoundingBox().inflate(10))
                            .stream()
-                           .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(pPlayer)))
+                           .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(player)))
                            .orElse(null);
                    if (endStoneEntity != null) {
                        endStoneEntity.setDeltaMovement(lookDirection);
@@ -77,14 +77,14 @@ public class MatterAccelerationBlockC2S {
                        endStoneEntity.setTickCount(440);
                    }
                    if (endStoneEntity == null) {
-                       pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
+                       player.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
                    }
                }
            } else {
-               int activeSlot = pPlayer.getInventory().selected;
-               ItemStack heldItem = pPlayer.getMainHandItem();
+               int activeSlot = player.getInventory().selected;
+               ItemStack heldItem = player.getMainHandItem();
                if (!heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationBlocks) {
-                   pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MatterAccelerationSelf.get()));
+                   player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_SELF.get()));
                    heldItem.shrink(1);
                }
            }

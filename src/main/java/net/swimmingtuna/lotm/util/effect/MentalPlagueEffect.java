@@ -10,12 +10,12 @@ public class MentalPlagueEffect extends MobEffect {
         }
 
         @Override
-        public void applyEffectTick(LivingEntity pLivingEntity, int pAmplifier){
-            super.applyEffectTick(pLivingEntity, pAmplifier);
+        public void applyEffectTick(LivingEntity livingEntity, int amplifier){
+            super.applyEffectTick(livingEntity, amplifier);
         }
 
         @Override
-        public boolean isDurationEffectTick(int pDuration, int pAmplifier) {
+        public boolean isDurationEffectTick(int duration, int amplifier) {
             return true;
         }
     }

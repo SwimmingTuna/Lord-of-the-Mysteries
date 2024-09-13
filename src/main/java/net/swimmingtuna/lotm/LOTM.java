@@ -3,7 +3,6 @@ package net.swimmingtuna.lotm;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,6 +15,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
@@ -47,20 +47,9 @@ public class LOTM {
     public static Supplier<Double> maxBrightness;
     public static Supplier<Double> fadeRate = () -> maxBrightness.get() / fadeTicks.get();
 
-    public static ResourceLocation modLoc(String name) {
-        return new ResourceLocation(MOD_ID, name);
-    }
-
-
     public static final String MOD_ID = "lotm";
 
-    private static final Logger LOGGER = LogUtils.getLogger();
-
-    public static ResourceLocation rl(String name) {
-        return new ResourceLocation(LOTM.MOD_ID, name);
-    }
-
-
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public LOTM() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -89,13 +78,16 @@ public class LOTM {
         modEventBus.addListener(this::addCreative);
         MinecraftForge.EVENT_BUS.addListener(CommandInit::onCommandRegistration);
 
-
     }
+
     private void serverAboutToStart(ServerAboutToStartEvent event) {
         NameManager.INSTANCE.init();
     }
 
-
+    @SubscribeEvent
+    public static void commonSetup(final FMLCommonSetupEvent event) {
+        LOTMNetworkHandler.register();
+    }
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
@@ -110,70 +102,70 @@ public class LOTM {
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(ItemInit.TestItem);
-            event.accept(ItemInit.LightningStorm);
-            event.accept(ItemInit.Roar);
-            event.accept(ItemInit.CalamityIncarnationTsunami);
-            event.accept(ItemInit.CalamityIncarnationTornado);
-            event.accept(ItemInit.LightningBall);
-            event.accept(ItemInit.LightningBallAbsorb);
-            event.accept(ItemInit.MatterAccelerationBlocks);
-            event.accept(ItemInit.MatterAccelerationEntities);
-            event.accept(ItemInit.MatterAccelerationSelf);
-            event.accept(ItemInit.StormSeal);
-            event.accept(ItemInit.SailorLightningTravel);
-            event.accept(ItemInit.StormSeal);
-            event.accept(ItemInit.VolcanicEruption);
-            event.accept(ItemInit.ExtremeColdness);
-            event.accept(ItemInit.LightningBranch);
-            event.accept(ItemInit.Earthquake);
-            event.accept(ItemInit.StarOfLightning);
-            event.accept(ItemInit.RainEyes);
-            event.accept(ItemInit.SonicBoom);
-            event.accept(ItemInit.SailorLightning);
-            event.accept(ItemInit.WaterSphere);
-            event.accept(ItemInit.ThunderClap);
-            event.accept(ItemInit.Tyranny);
-            event.accept(ItemInit.WaterColumn);
-            event.accept(ItemInit.Hurricane);
-            event.accept(ItemInit.Tornado);
-            event.accept(ItemInit.MindReading);
-            event.accept(ItemInit.Awe);
-            event.accept(ItemInit.Frenzy);
-            event.accept(ItemInit.Placate);
-            event.accept(ItemInit.BattleHypnotism);
-            event.accept(ItemInit.PsychologicalInvisibility);
-            event.accept(ItemInit.Guidance);
-            event.accept(ItemInit.BeyonderAbilityUser);
-            event.accept(ItemInit.Alteration);
-            event.accept(ItemInit.DreamWalking);
-            event.accept(ItemInit.Nightmare);
-            event.accept(ItemInit.ManipulateMovement);
-            event.accept(ItemInit.ManipulateEmotion);
-            event.accept(ItemInit.ApplyManipulation);
-            event.accept(ItemInit.MentalPlague);
-            event.accept(ItemInit.MindStorm);
-            event.accept(ItemInit.ManipulateFondness);
-            event.accept(ItemInit.ConsciousnessStroll);
-            event.accept(ItemInit.DragonBreath);
-            event.accept(ItemInit.PlagueStorm);
-            event.accept(ItemInit.DreamWeaving);
-            event.accept(ItemInit.Discern);
-            event.accept(ItemInit.Tsunami);
-            event.accept(ItemInit.DreamIntoReality);
-            event.accept(ItemInit.ProphesizeTeleportBlock);
-            event.accept(ItemInit.ProphesizeTeleportPlayer);
-            event.accept(ItemInit.ProphesizeDemise);
-            event.accept(ItemInit.EnvisionLife);
-            event.accept(ItemInit.MeteorShower);
-            event.accept(ItemInit.MeteorNoLevelShower);
-            event.accept(ItemInit.EnvisionWeather);
-            event.accept(ItemInit.EnvisionBarrier);
-            event.accept(ItemInit.EnvisionDeath);
-            event.accept(ItemInit.EnvisionKingdom);
-            event.accept(ItemInit.EnvisionLocation);
-            event.accept(ItemInit.EnvisionLocationBlink);
-            event.accept(ItemInit.EnvisionHealth);
+            event.accept(ItemInit.TEST_ITEM);
+            event.accept(ItemInit.LIGHTNING_STORM);
+            event.accept(ItemInit.ROAR);
+            event.accept(ItemInit.CALAMITY_INCARNATION_TSUNAMI);
+            event.accept(ItemInit.CALAMITY_INCARNATION_TORNADO);
+            event.accept(ItemInit.LIGHTNING_BALL);
+            event.accept(ItemInit.LIGHTNING_BALL_ABSORB);
+            event.accept(ItemInit.MATTER_ACCELERATION_BLOCKS);
+            event.accept(ItemInit.MATTER_ACCELERATION_ENTITIES);
+            event.accept(ItemInit.MATTER_ACCELERATION_SELF);
+            event.accept(ItemInit.STORM_SEAL);
+            event.accept(ItemInit.SAILOR_LIGHTNING_TRAVEL);
+            event.accept(ItemInit.STORM_SEAL);
+            event.accept(ItemInit.VOLCANIC_ERUPTION);
+            event.accept(ItemInit.EXTREME_COLDNESS);
+            event.accept(ItemInit.LIGHTNING_BRANCH);
+            event.accept(ItemInit.EARTHQUAKE);
+            event.accept(ItemInit.STAR_OF_LIGHTNING);
+            event.accept(ItemInit.RAIN_EYES);
+            event.accept(ItemInit.SONIC_BOOM);
+            event.accept(ItemInit.SAILOR_LIGHTNING);
+            event.accept(ItemInit.WATER_SPHERE);
+            event.accept(ItemInit.THUNDER_CLAP);
+            event.accept(ItemInit.TYRANNY);
+            event.accept(ItemInit.WATER_COLUMN);
+            event.accept(ItemInit.HURRICANE);
+            event.accept(ItemInit.TORNADO);
+            event.accept(ItemInit.MIND_READING);
+            event.accept(ItemInit.AWE);
+            event.accept(ItemInit.FRENZY);
+            event.accept(ItemInit.PLACATE);
+            event.accept(ItemInit.BATTLE_HYPNOTISM);
+            event.accept(ItemInit.PSYCHOLOGICAL_INVISIBILITY);
+            event.accept(ItemInit.GUIDANCE);
+            event.accept(ItemInit.BEYONDER_ABILITY_USER);
+            event.accept(ItemInit.ALTERATION);
+            event.accept(ItemInit.DREAM_WALKING);
+            event.accept(ItemInit.NIGHTMARE);
+            event.accept(ItemInit.MANIPULATE_MOVEMENT);
+            event.accept(ItemInit.MANIPULATE_EMOTION);
+            event.accept(ItemInit.APPLY_MANIPULATION);
+            event.accept(ItemInit.MENTAL_PLAGUE);
+            event.accept(ItemInit.MIND_STORM);
+            event.accept(ItemInit.MANIPULATE_FONDNESS);
+            event.accept(ItemInit.CONSCIOUSNESS_STROLL);
+            event.accept(ItemInit.DRAGON_BREATH);
+            event.accept(ItemInit.PLAGUE_STORM);
+            event.accept(ItemInit.DREAM_WEAVING);
+            event.accept(ItemInit.DISCERN);
+            event.accept(ItemInit.TSUNAMI);
+            event.accept(ItemInit.DREAM_INTO_REALITY);
+            event.accept(ItemInit.PROPHESIZE_TELEPORT_BLOCK);
+            event.accept(ItemInit.PROPHESIZE_TELEPORT_PLAYER);
+            event.accept(ItemInit.PROPHESIZE_DEMISE);
+            event.accept(ItemInit.ENVISION_LIFE);
+            event.accept(ItemInit.METEOR_SHOWER);
+            event.accept(ItemInit.METEOR_NO_LEVEL_SHOWER);
+            event.accept(ItemInit.ENVISION_WEATHER);
+            event.accept(ItemInit.ENVISION_BARRIER);
+            event.accept(ItemInit.ENVISION_DEATH);
+            event.accept(ItemInit.ENVISION_KINGDOM);
+            event.accept(ItemInit.ENVISION_LOCATION);
+            event.accept(ItemInit.ENVISION_LOCATION_BLINK);
+            event.accept(ItemInit.ENVISIONHEALTH);
             event.accept(ItemInit.SPECTATOR_9_POTION);
             event.accept(ItemInit.SPECTATOR_8_POTION);
             event.accept(ItemInit.SPECTATOR_7_POTION);
@@ -195,22 +187,22 @@ public class LOTM {
             event.accept(ItemInit.TYRANT_2_POTION);
             event.accept(ItemInit.TYRANT_1_POTION);
             event.accept(ItemInit.TYRANT_0_POTION);
-            event.accept(ItemInit.RagingBlows);
-            event.accept(ItemInit.AqueousLightDrown);
-            event.accept(ItemInit.EnableOrDisableLightning);
-            event.accept(ItemInit.AqueousLightPull);
-            event.accept(ItemInit.AqueousLightPush);
-            event.accept(ItemInit.WindManipulationFlight);
-            event.accept(ItemInit.WindManipulationBlade);
-            event.accept(ItemInit.WindManipulationCushion);
-            event.accept(ItemInit.WindManipulationSense);
-            event.accept(ItemInit.AcidicRain);
-            event.accept(ItemInit.AquaticLifeManipulation);
-            event.accept(ItemInit.TsunamiSeal);
-            event.accept(ItemInit.SirenSongHarm);
-            event.accept(ItemInit.SirenSongWeaken);
-            event.accept(ItemInit.SirenSongStun);
-            event.accept(ItemInit.SirenSongStrengthen);
+            event.accept(ItemInit.RAGING_BLOWS);
+            event.accept(ItemInit.AQUEOUS_LIGHT_DROWN);
+            event.accept(ItemInit.ENABLE_OR_DISABLE_LIGHTNING);
+            event.accept(ItemInit.AQUEOUS_LIGHT_PULL);
+            event.accept(ItemInit.AQUEOUS_LIGHT_PUSH);
+            event.accept(ItemInit.WIND_MANIPULATION_FLIGHT);
+            event.accept(ItemInit.WIND_MANIPULATION_BLADE);
+            event.accept(ItemInit.WIND_MANIPULATION_CUSHION);
+            event.accept(ItemInit.WIND_MANIPULATION_SENSE);
+            event.accept(ItemInit.ACIDIC_RAIN);
+            event.accept(ItemInit.AQUATIC_LIFE_MANIPULATION);
+            event.accept(ItemInit.TSUNAMI_SEAL);
+            event.accept(ItemInit.SIREN_SONG_HARM);
+            event.accept(ItemInit.SIREN_SONG_WEAKEN);
+            event.accept(ItemInit.SIREN_SONG_STUN);
+            event.accept(ItemInit.SIREN_SONG_STRENGTHEN);
         }
         if (event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(BlockInit.VISIONARY_BARRIER_BLOCK);
@@ -275,6 +267,34 @@ public class LOTM {
             event.accept(BlockInit.LOTM_OAK_STAIRS);
             event.accept(BlockInit.LOTM_QUARTZ_STAIRS);
             event.accept(BlockInit.LOTM_DEEPSLATEBRICK_STAIRS);
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientModEvents {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BARRIER_BLOCK.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_BLUE_STAINED_GLASS.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_WHITE_STAINED_GLASS.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_LIGHT_BLUE_STAINED_GLASS.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BLACK_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_CYAN_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_LIME_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_GREEN_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_LIGHT_BLUE_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BLUE_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_WHITE_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_GRAY_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_LIGHT_GRAY_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BROWN_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_PURPLE_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_MAGENTA_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_YELLOW_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_RED_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_PINK_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_ORANGE_STAINED_GLASS_PANE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_GLASS_PANE.get(), RenderType.translucent());
         }
     }
 }

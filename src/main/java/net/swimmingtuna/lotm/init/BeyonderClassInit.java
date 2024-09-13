@@ -38,7 +38,6 @@ public class BeyonderClassInit {
     public static final RegistryObject<PrisonerClass> PRISONER = BEYONDER_CLASS.register("prisoner", PrisonerClass::new);
     public static final RegistryObject<CriminalClass> CRIMINAL = BEYONDER_CLASS.register("criminal", CriminalClass::new);
 
-
     public static IForgeRegistry<BeyonderClass> getRegistry() {
         return SUPPLIER.get();
     }

@@ -33,12 +33,12 @@ import java.util.List;
 public class MeteorEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(MeteorEntity.class, EntityDataSerializers.BOOLEAN);
 
-    public MeteorEntity(EntityType<? extends MeteorEntity> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public MeteorEntity(EntityType<? extends MeteorEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public MeteorEntity(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.METEOR_ENTITY.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+    public MeteorEntity(Level level, LivingEntity shooter, double offsetX, double offsetY, double offsetZ) {
+        super(EntityInit.METEOR_ENTITY.get(), shooter, offsetX, offsetY, offsetZ, level);
     }
 
 
@@ -156,14 +156,14 @@ public class MeteorEntity extends AbstractHurtingProjectile {
     }
 
 
-    public static void summonMultipleMeteors(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
+    public static void summonMultipleMeteors(Player player) {
+        if (!player.level().isClientSide()) {
             double scatterRadius = 100.0;
             double randomX, randomY, randomZ;
 
             // Calculate the target position based on the player's look angle
-            Vec3 lookVec = pPlayer.getLookAngle().normalize().scale(100);
-            Vec3 targetPos = pPlayer.getEyePosition().add(lookVec);
+            Vec3 lookVec = player.getLookAngle().normalize().scale(100);
+            Vec3 targetPos = player.getEyePosition().add(lookVec);
 
             // Randomize the position within the scatter radius
             randomX = Math.random() * scatterRadius * 2 - scatterRadius;
@@ -172,19 +172,19 @@ public class MeteorEntity extends AbstractHurtingProjectile {
 
             // Set the meteor spawn position
             BlockPos meteorSpawnPos = new BlockPos(
-                    (int) (pPlayer.getX() + randomX),
-                    (int) (pPlayer.getY() + 100),
-                    (int) (pPlayer.getZ() + randomZ)
+                    (int) (player.getX() + randomX),
+                    (int) (player.getY() + 100),
+                    (int) (player.getZ() + randomZ)
             );
 
             // Create and configure the meteor entity
-            MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), pPlayer.level());
+            MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), player.level());
             meteorEntity.teleportTo(meteorSpawnPos.getX(), meteorSpawnPos.getY(), meteorSpawnPos.getZ());
-            meteorEntity.setOwner(pPlayer);
+            meteorEntity.setOwner(player);
             meteorEntity.noPhysics = true;
 
             // Set the scale of the meteor based on the player's sequence
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int scalecheck = 10 - holder.getCurrentSequence() * 4;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
             scaleData.setScale(scalecheck);
@@ -204,7 +204,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             meteorEntity.setDeltaMovement(directionToTarget.scale(speed));
 
             // Spawn the meteor entity in the world
-            pPlayer.level().addFreshEntity(meteorEntity);
+            player.level().addFreshEntity(meteorEntity);
         }
     }
 

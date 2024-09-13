@@ -17,11 +17,11 @@ import net.swimmingtuna.lotm.entity.WindCushionEntity;
 
 public class WindCushionRenderer extends EntityRenderer<WindCushionEntity> {
     public static final ResourceLocation WIND_CUSHION_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/wind_cushion.png");
-    public Model model;
+    public final Model model;
 
-    public WindCushionRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new WindCushionModel<>(pContext.bakeLayer(WindCushionModel.WIND_CUSHION_LOCATION));
+    public WindCushionRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new WindCushionModel<>(context.bakeLayer(WindCushionModel.WIND_CUSHION_LOCATION));
     }
 
     @Override
@@ -31,13 +31,16 @@ public class WindCushionRenderer extends EntityRenderer<WindCushionEntity> {
         poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entity.xRotO, entity.getXRot())));
 
 
-        VertexConsumer ivertexbuilder = buffers.getBuffer(this.model.renderType(this.getTextureLocation(entity)));
-        this.model.renderToBuffer(poseStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 0.5F);
+        VertexConsumer vertexConsumer = buffers.getBuffer(this.model.renderType(this.getTextureLocation(entity)));
+        this.model.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 0.5F);
         poseStack.popPose();
 
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
     }
+
     @Override
-    public  ResourceLocation getTextureLocation( WindCushionEntity entity) { return WIND_CUSHION_LOCATION; }
+    public ResourceLocation getTextureLocation(WindCushionEntity entity) {
+        return WIND_CUSHION_LOCATION;
+    }
 
 }

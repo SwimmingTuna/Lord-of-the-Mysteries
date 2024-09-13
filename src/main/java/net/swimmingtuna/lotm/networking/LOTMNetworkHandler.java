@@ -49,10 +49,10 @@ public class LOTMNetworkHandler {
                 .encoder(SpiritVisionC2S::toByte)
                 .consumerMainThread(SpiritVisionC2S::handle)
                 .add();
-        INSTANCE.messageBuilder(nonVisibleS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(nonVisibleS2C::decode)
-                .encoder(nonVisibleS2C::encode)
-                .consumerMainThread(nonVisibleS2C::handle)
+        INSTANCE.messageBuilder(NonVisibleS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(NonVisibleS2C::decode)
+                .encoder(NonVisibleS2C::encode)
+                .consumerMainThread(NonVisibleS2C::handle)
                 .add();
 
     }

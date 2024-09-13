@@ -9,7 +9,6 @@ import net.swimmingtuna.lotm.entity.StormSealEntity;
 
 public class StormSealEntityRenderer extends EntityRenderer<StormSealEntity> {
 
-
     public StormSealEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
@@ -21,6 +20,7 @@ public class StormSealEntityRenderer extends EntityRenderer<StormSealEntity> {
 
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
+
     @Override
     public ResourceLocation getTextureLocation(StormSealEntity entity) {
         return null;

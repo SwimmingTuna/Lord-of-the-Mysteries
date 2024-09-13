@@ -27,18 +27,19 @@ import virtuoel.pehkui.api.ScaleTypes;
 public class AqueousLightEntityPush extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(AqueousLightEntityPush.class, EntityDataSerializers.BOOLEAN);
 
-    public AqueousLightEntityPush(EntityType<? extends AqueousLightEntityPush> pEntityType, Level pLevel) {
-        super(pEntityType, pLevel);
+    public AqueousLightEntityPush(EntityType<? extends AqueousLightEntityPush> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public AqueousLightEntityPush(Level pLevel, LivingEntity pShooter, double pOffsetX, double pOffsetY, double pOffsetZ) {
-        super(EntityInit.AQUEOUS_LIGHT_ENTITY_PUSH.get(), pShooter, pOffsetX, pOffsetY, pOffsetZ, pLevel);
+    public AqueousLightEntityPush(Level level, LivingEntity shooter, double offsetX, double offsetY, double offsetZ) {
+        super(EntityInit.AQUEOUS_LIGHT_ENTITY_PUSH.get(), shooter, offsetX, offsetY, offsetZ, level);
     }
 
 
     /**
      * Return the motion factor for this projectile. The factor is multiplied by the original motion.
      */
+    @Override
     protected float getInertia() {
         return this.isDangerous() ? 0.73F : super.getInertia();
     }
@@ -46,6 +47,7 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
     /**
      * Returns {@code true} if the entity is on fire. Used by render to add the fire effect on rendering.
      */
+    @Override
     public boolean isOnFire() {
         return false;
     }
@@ -55,40 +57,45 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
         return ParticleInit.NULL_PARTICLE.get();
     }
 
-    protected void onHitEntity(EntityHitResult pResult) {
-        if (!this.level().isClientSide()) {
-            if (pResult.getEntity() instanceof LivingEntity entity) {
-                LivingEntity owner = (LivingEntity) this.getOwner();
-                double x = entity.getX() - owner.getX();
-                double y = entity.getY() - owner.getY();
-                double z = entity.getZ() - owner.getZ();
-                double magnitude = Math.sqrt(x * x + y * y + z * z);
-                entity.setDeltaMovement(x / magnitude * 4, y / magnitude * 4, z / magnitude * 4);
-                CompoundTag ownerTag = owner.getPersistentData();
-                boolean sailorLightning = ownerTag.getBoolean("SailorLightning");
-                if (owner instanceof Player pPlayer) {
-                    BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(tyrantSequence -> {
-                        if (!entity.level().isClientSide() && !owner.level().isClientSide()) {
-                            int damage = 15 - (tyrantSequence.getCurrentSequence() * 2);
-                        entity.hurt(damageSources().fall(), damage);
-                        if (tyrantSequence.getCurrentSequence() <= 7) {
-                            double chanceOfDamage = (100.0 - (tyrantSequence.getCurrentSequence() * 12.5)); // Decrease chance by 12.5% for each level below 9
-                            if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-                                LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-                                lightningBolt.moveTo(entity.getX(), entity.getY(), entity.getZ());
-                                entity.level().addFreshEntity(lightningBolt);
-                            }
-                            }
-                        }
-                    });
-                }
-                this.discard();
-            }
+    @Override
+    protected void onHitEntity(EntityHitResult result) {
+        if (this.level().isClientSide() || !(result.getEntity() instanceof LivingEntity entity)) {
+            return;
         }
+        LivingEntity owner = (LivingEntity) this.getOwner();
+        double x = entity.getX() - owner.getX();
+        double y = entity.getY() - owner.getY();
+        double z = entity.getZ() - owner.getZ();
+        double magnitude = Math.sqrt(x * x + y * y + z * z);
+        entity.setDeltaMovement(x / magnitude * 4, y / magnitude * 4, z / magnitude * 4);
+        CompoundTag ownerTag = owner.getPersistentData();
+        boolean sailorLightning = ownerTag.getBoolean("SailorLightning");
+        if (!(owner instanceof Player player)) {
+            this.discard();
+            return;
+        }
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (entity.level().isClientSide() || owner.level().isClientSide()) {
+            this.discard();
+            return;
+        }
+        int damage = 15 - (holder.getCurrentSequence() * 2);
+        entity.hurt(damageSources().fall(), damage);
+        if (holder.getCurrentSequence() > 7) {
+            this.discard();
+            return;
+        }
+        double chanceOfDamage = (100.0 - (holder.getCurrentSequence() * 12.5)); // Decrease chance by 12.5% for each level below 9
+        if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
+            LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
+            lightningBolt.moveTo(entity.getX(), entity.getY(), entity.getZ());
+            entity.level().addFreshEntity(lightningBolt);
+        }
+        this.discard();
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult pResult) {
+    protected void onHitBlock(BlockHitResult result) {
         if (!this.level().isClientSide) {
             this.level().broadcastEntityEvent(this, ((byte) 3));
             this.level().setBlock(blockPosition(), Blocks.AIR.defaultBlockState(), 3);
@@ -96,11 +103,12 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
         }
     }
 
+    @Override
     public boolean isPickable() {
         return false;
     }
 
-
+    @Override
     protected void defineSynchedData() {
         this.entityData.define(DATA_DANGEROUS, false);
     }
@@ -109,33 +117,33 @@ public class AqueousLightEntityPush extends AbstractHurtingProjectile {
         return this.entityData.get(DATA_DANGEROUS);
     }
 
-
+    @Override
     protected boolean shouldBurn() {
         return false;
     }
 
-    public static void summonEntityWithSpeed(Vec3 direction, Vec3 initialVelocity, Vec3 eyePosition, double x, double y, double z, Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            AqueousLightEntityPush aqueousLightEntity = new AqueousLightEntityPush(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
+    public static void summonEntityWithSpeed(Vec3 direction, Vec3 initialVelocity, Vec3 eyePosition, double x, double y, double z, Player player) {
+        if (!player.level().isClientSide()) {
+            AqueousLightEntityPush aqueousLightEntity = new AqueousLightEntityPush(player.level(), player, initialVelocity.x, initialVelocity.y, initialVelocity.z);
             aqueousLightEntity.setDeltaMovement(initialVelocity);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(aqueousLightEntity);
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int sequence = holder.getCurrentSequence();
             scaleData.setScale(8.0f - sequence);
             Vec3 lightPosition = eyePosition.add(direction.scale(2.0));
             aqueousLightEntity.setPos(lightPosition);
-            aqueousLightEntity.setOwner(pPlayer);
-            pPlayer.level().addFreshEntity(aqueousLightEntity);
+            aqueousLightEntity.setOwner(player);
+            player.level().addFreshEntity(aqueousLightEntity);
         }
     }
 
-    public static void summonEntityWhip(Player pPlayer, LivingEntity pEntity) {
-        if (!pPlayer.level().isClientSide()) {
-            Vec3 direction = pPlayer.getViewVector(1.0f);
+    public static void summonEntityWhip(Player player, LivingEntity entity) {
+        if (!player.level().isClientSide()) {
+            Vec3 direction = player.getViewVector(1.0f);
             Vec3 initialVelocity = direction.scale(2.0);
-            AqueousLightEntityPush aqueousLightEntity = new AqueousLightEntityPush(pPlayer.level(), pPlayer, initialVelocity.x, initialVelocity.y, initialVelocity.z);
-            Vec3 eyePosition = pPlayer.getEyePosition(1.0f);
-            summonEntityWithSpeed(direction, initialVelocity, eyePosition, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), pPlayer);
+            AqueousLightEntityPush aqueousLightEntity = new AqueousLightEntityPush(player.level(), player, initialVelocity.x, initialVelocity.y, initialVelocity.z);
+            Vec3 eyePosition = player.getEyePosition(1.0f);
+            summonEntityWithSpeed(direction, initialVelocity, eyePosition, player.getX(), player.getY(), player.getZ(), player);
         }
     }
 

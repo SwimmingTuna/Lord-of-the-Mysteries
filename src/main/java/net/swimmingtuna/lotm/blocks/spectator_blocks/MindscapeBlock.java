@@ -4,30 +4,33 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.AbstractGlassBlock;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class MindscapeBlock extends AbstractGlassBlock {
-    public MindscapeBlock(Properties p) {
-        super(Properties.copy(Blocks.GLASS)
-                .destroyTime(2)
-                .strength(15));
+    public MindscapeBlock(Properties properties) {
+        super(properties);
     }
-    public boolean skipRendering(BlockState pState, BlockState pAdjacentBlockState, Direction pSide) {
-        return pAdjacentBlockState.is(this) || super.skipRendering(pState, pAdjacentBlockState, pSide);
+
+    @Override
+    public boolean skipRendering(BlockState state, BlockState adjacentBlockState, Direction side) {
+        return adjacentBlockState.is(this) || super.skipRendering(state, adjacentBlockState, side);
     }
-    public VoxelShape getVisualShape(BlockState pState, BlockGetter pReader, BlockPos pPos, CollisionContext pContext) {
+
+    @Override
+    public VoxelShape getVisualShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
-    public float getShadeBrightness(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
+    @Override
+    public float getShadeBrightness(BlockState state, BlockGetter blockGetter, BlockPos pos) {
         return 1.0F;
     }
 
-    public boolean propagatesSkylightDown(BlockState pState, BlockGetter pReader, BlockPos pPos) {
+    @Override
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter blockGetter, BlockPos pos) {
         return true;
     }
 }

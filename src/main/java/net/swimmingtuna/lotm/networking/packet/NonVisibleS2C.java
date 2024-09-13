@@ -2,27 +2,27 @@ package net.swimmingtuna.lotm.networking.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class nonVisibleS2C {
+public class NonVisibleS2C {
 
-    public nonVisibleS2C() {}
+    public NonVisibleS2C() {}
 
     // Serializer
-    public static void encode(nonVisibleS2C msg, FriendlyByteBuf buf) {
+    public static void encode(NonVisibleS2C msg, FriendlyByteBuf buf) {
         // No data to write
     }
 
     // Deserializer
-    public static nonVisibleS2C decode(FriendlyByteBuf buf) {
-        return new nonVisibleS2C();
+    public static NonVisibleS2C decode(FriendlyByteBuf buf) {
+        return new NonVisibleS2C();
     }
 
-    public static void handle(nonVisibleS2C msg, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(NonVisibleS2C msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player != null) {

@@ -14,16 +14,14 @@ import java.util.Objects;
 public class ProjectileEvent extends Event implements IModBusEvent {
 
 
-
-    public static class ProjectileControlEvent extends ProjectileEvent{
-        private Projectile projectile;
+    public static class ProjectileControlEvent extends ProjectileEvent {
+        private final Projectile projectile;
         private ProjectileImpactEvent.ImpactResult result = ProjectileImpactEvent.ImpactResult.DEFAULT;
 
         public ProjectileControlEvent(Projectile projectile) {
-            super();
-
             this.projectile = projectile;
         }
+
         public Projectile getProjectile() {
             return projectile;
         }
@@ -43,6 +41,7 @@ public class ProjectileEvent extends Event implements IModBusEvent {
         public void setMovement(Projectile projectile, double deltaMovementX, double deltaMovementY, double deltaMovementZ) {
             projectile.setDeltaMovement(deltaMovementX, deltaMovementY, deltaMovementZ);
         }
+
         public void addMovement(Projectile projectile, double deltaMovementX, double deltaMovementY, double deltaMovementZ) {
             if (!projectile.level().isClientSide()) {
                 Vec3 currentDeltaMovement = projectile.getDeltaMovement();

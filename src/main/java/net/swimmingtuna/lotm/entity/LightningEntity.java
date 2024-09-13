@@ -241,8 +241,8 @@ public class LightningEntity extends AbstractHurtingProjectile {
                         if (!this.level().getBlockState(blockPos).isAir() && !this.level().getBlockState(blockPos).getBlock().equals(Blocks.WATER)) {
                             Vec3 hitPos = currentPos;
                             if (this.owner != null) {
-                                if (this.owner instanceof Player pPlayer) {
-                                    BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
+                                if (this.owner instanceof Player player) {
+                                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                                     int sequence = holder.getCurrentSequence();
                                     int radius = 20 - (sequence * 2);
                                     this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, radius, Level.ExplosionInteraction.BLOCK);
@@ -308,18 +308,16 @@ public class LightningEntity extends AbstractHurtingProjectile {
                 if (this.tickCount == getMaxLength()) {
                     this.level().explode(this, lastPos.x(), lastPos.y(), lastPos.z(), 10, Level.ExplosionInteraction.TNT);
                 }
-                if (this.tickCount % 1 == 0) {
-                    LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), this.level());
-                    lightningEntity.setSpeed(8.0f);
-                    lightningEntity.setDeltaMovement(this.getPersistentData().getDouble("sailorLightningDMX") + (Math.random() * 0.5) - 0.25, this.getPersistentData().getDouble("sailorLightningDMY") + (Math.random() * 0.5) - 0.25, this.getPersistentData().getDouble("sailorLightningDMZ") + (Math.random() * 0.5) - 0.25);
-                    lightningEntity.setMaxLength(100);
-                    lightningEntity.teleportTo(lastPos.x(), lastPos.y(), lastPos.z());
-                    lightningEntity.setSynchedMovement(true);
-                    lightningEntity.getPersistentData().putDouble("lightningBranchDMY", this.getPersistentData().getDouble("sailorLightningDMY") + (Math.random() * 0.8) - 0.4);
-                    lightningEntity.getPersistentData().putDouble("lightningBranchDMX", this.getPersistentData().getDouble("sailorLightningDMX") + (Math.random() * 0.8) - 0.4);
-                    lightningEntity.getPersistentData().putDouble("lightningBranchDMZ", this.getPersistentData().getDouble("sailorLightningDMZ") + (Math.random() * 0.8) - 0.4);
-                    this.level().addFreshEntity(lightningEntity);
-                }
+                LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), this.level());
+                lightningEntity.setSpeed(8.0f);
+                lightningEntity.setDeltaMovement(this.getPersistentData().getDouble("sailorLightningDMX") + (Math.random() * 0.5) - 0.25, this.getPersistentData().getDouble("sailorLightningDMY") + (Math.random() * 0.5) - 0.25, this.getPersistentData().getDouble("sailorLightningDMZ") + (Math.random() * 0.5) - 0.25);
+                lightningEntity.setMaxLength(100);
+                lightningEntity.teleportTo(lastPos.x(), lastPos.y(), lastPos.z());
+                lightningEntity.setSynchedMovement(true);
+                lightningEntity.getPersistentData().putDouble("lightningBranchDMY", this.getPersistentData().getDouble("sailorLightningDMY") + (Math.random() * 0.8) - 0.4);
+                lightningEntity.getPersistentData().putDouble("lightningBranchDMX", this.getPersistentData().getDouble("sailorLightningDMX") + (Math.random() * 0.8) - 0.4);
+                lightningEntity.getPersistentData().putDouble("lightningBranchDMZ", this.getPersistentData().getDouble("sailorLightningDMZ") + (Math.random() * 0.8) - 0.4);
+                this.level().addFreshEntity(lightningEntity);
                 if (this.tickCount == 1) {
                     this.getPersistentData().putDouble("sailorLightningDMY", this.getDeltaMovement().y());
                     this.getPersistentData().putDouble("sailorLightningDMX", this.getDeltaMovement().x());
@@ -374,14 +372,14 @@ public class LightningEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult pResult) {
+    protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide()) {
-            if (pResult.getEntity() instanceof LivingEntity entity) {
+            if (result.getEntity() instanceof LivingEntity entity) {
                 entity.hurt(damageSources().fall(), 5);
                 this.discard();
             }
         }
-        super.onHitEntity(pResult);
+        super.onHitEntity(result);
     }
 
     public int getMaxLength() {

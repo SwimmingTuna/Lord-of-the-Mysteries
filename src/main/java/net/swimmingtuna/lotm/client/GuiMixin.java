@@ -12,8 +12,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GuiMixin {
 
     @Inject(method = "renderExperienceBar", at = @At(value = "HEAD"), cancellable = true)
-    public void renderExperienceBar(GuiGraphics guiGraphics, int pXPos, CallbackInfo ci) {
-        if (ClientConfigs.SPIRITUALITY_BAR_ANCHOR.get() == SpiritualityBarOverlay.Anchor.XP && Minecraft.getInstance().player != null && SpiritualityBarOverlay.shouldShowSpiritualityBar(Minecraft.getInstance().player))
+    public void renderExperienceBar(GuiGraphics guiGraphics, int xPos, CallbackInfo ci) {
+        if (
+                ClientConfigs.SPIRITUALITY_BAR_ANCHOR.get() == SpiritualityBarOverlay.Anchor.XP &&
+                Minecraft.getInstance().player != null &&
+                SpiritualityBarOverlay.shouldShowSpiritualityBar(Minecraft.getInstance().player)
+        ) {
             ci.cancel();
+        }
     }
 }

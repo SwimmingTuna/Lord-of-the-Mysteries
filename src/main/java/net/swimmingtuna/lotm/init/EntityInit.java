@@ -10,7 +10,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.entity.*;
-import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 
 public class EntityInit {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, LOTM.MOD_ID);
@@ -86,5 +85,7 @@ public class EntityInit {
     }
 
 
-    public static void register(IEventBus bus) {ENTITIES.register(bus);}
+    public static void register(IEventBus bus) {
+        ENTITIES.register(bus);
+    }
 }

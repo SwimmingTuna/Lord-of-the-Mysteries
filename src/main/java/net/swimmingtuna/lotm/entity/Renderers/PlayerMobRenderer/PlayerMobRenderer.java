@@ -27,14 +27,14 @@ public class PlayerMobRenderer extends HumanoidMobRenderer<PlayerMobEntity, Play
     private final RenderLayer<PlayerMobEntity, PlayerModel<PlayerMobEntity>> alexArmorModel;
 
     private final int armorLayerIndex;
-    public PlayerMobRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext, new PlayerModel<>(pContext.bakeLayer(ModelLayers.PLAYER), false), 0.5F);
+    public PlayerMobRenderer(EntityRendererProvider.Context context) {
+        super(context, new PlayerModel<>(context.bakeLayer(ModelLayers.PLAYER), false), 0.5F);
         steveModel = this.model;
-        alexModel = new PlayerModel<>(pContext.bakeLayer(ModelLayers.PLAYER_SLIM), true);
-        steveArmorModel = new HumanoidArmorLayer<>(this, new HumanoidArmorModel<>(pContext.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidArmorModel<>(pContext.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)), pContext.getModelManager());
-        alexArmorModel = new HumanoidArmorLayer<>(this, new HumanoidArmorModel<>(pContext.bakeLayer(ModelLayers.PLAYER_SLIM_INNER_ARMOR)), new HumanoidArmorModel<>(pContext.bakeLayer(ModelLayers.PLAYER_SLIM_OUTER_ARMOR)), pContext.getModelManager());
+        alexModel = new PlayerModel<>(context.bakeLayer(ModelLayers.PLAYER_SLIM), true);
+        steveArmorModel = new HumanoidArmorLayer<>(this, new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)), context.getModelManager());
+        alexArmorModel = new HumanoidArmorLayer<>(this, new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_SLIM_INNER_ARMOR)), new HumanoidArmorModel<>(context.bakeLayer(ModelLayers.PLAYER_SLIM_OUTER_ARMOR)), context.getModelManager());
 
-        var arrowLayer = new ArrowLayer<>(pContext, this);
+        var arrowLayer = new ArrowLayer<>(context, this);
         this.addLayer(arrowLayer);
         armorLayerIndex = layers.indexOf(arrowLayer);
         this.addLayer(new PlayerMobDeadmau5EarsLayer(this));
@@ -42,8 +42,8 @@ public class PlayerMobRenderer extends HumanoidMobRenderer<PlayerMobEntity, Play
     }
 
     @Override
-    public void render(PlayerMobEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pPackedLight) {
-        boolean slim = TextureUtils.getPlayerSkinType(pEntity.getProfile()) == TextureUtils.SkinType.SLIM;
+    public void render(PlayerMobEntity entity, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
+        boolean slim = TextureUtils.getPlayerSkinType(entity.getProfile()) == TextureUtils.SkinType.SLIM;
         model = slim ? alexModel: steveModel;
         layers.remove(steveArmorModel);
         layers.remove(alexArmorModel);
@@ -52,20 +52,20 @@ public class PlayerMobRenderer extends HumanoidMobRenderer<PlayerMobEntity, Play
 
         model.leftArmPose = HumanoidModel.ArmPose.EMPTY;
         model.rightArmPose = HumanoidModel.ArmPose.EMPTY;
-        ItemStack stack = pEntity.getMainHandItem();
+        ItemStack stack = entity.getMainHandItem();
         if (!stack.isEmpty()) {
             if (stack.getItem() instanceof CrossbowItem) {
-                if (pEntity.isChargingCrossbow())
-                    setHandPose(pEntity, HumanoidModel.ArmPose.CROSSBOW_CHARGE);
+                if (entity.isChargingCrossbow())
+                    setHandPose(entity, HumanoidModel.ArmPose.CROSSBOW_CHARGE);
                 else
-                    setHandPose(pEntity, HumanoidModel.ArmPose.CROSSBOW_HOLD);
-            } else if (stack.getItem() instanceof BowItem && pEntity.isAggressive())
-                setHandPose(pEntity, HumanoidModel.ArmPose.BOW_AND_ARROW);
+                    setHandPose(entity, HumanoidModel.ArmPose.CROSSBOW_HOLD);
+            } else if (stack.getItem() instanceof BowItem && entity.isAggressive())
+                setHandPose(entity, HumanoidModel.ArmPose.BOW_AND_ARROW);
             else
-                setHandPose(pEntity, HumanoidModel.ArmPose.ITEM);
+                setHandPose(entity, HumanoidModel.ArmPose.ITEM);
         }
 
-        super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
+        super.render(entity, entityYaw, partialTicks, matrixStack, buffer, packedLight);
     }
 
     private void setHandPose(PlayerMobEntity entity, HumanoidModel.ArmPose pose) {

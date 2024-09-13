@@ -43,6 +43,7 @@ public class ClientUpdateStructureBlockUnlimit {
                 Mth.clamp(buf.readInt(), 0, newStructureSize)
         );
     }
+
     @Inject(method = "write", at = @At("RETURN"), require = 0)
     public void writeInts(FriendlyByteBuf buf, CallbackInfo ci) {
         buf.writeInt(offset.getX());

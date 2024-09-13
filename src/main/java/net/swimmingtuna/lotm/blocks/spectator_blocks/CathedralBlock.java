@@ -12,20 +12,20 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.swimmingtuna.lotm.init.BlockEntityInit;
 import net.swimmingtuna.lotm.util.TickableBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class CathedralBlock extends HorizontalDirectionalBlock implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public CathedralBlock(Properties pProperties) {
-        super(pProperties);
+
+    public CathedralBlock(Properties properties) {
+        super(properties);
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return BlockEntityInit.CATHEDRAL_BLOCK_ENTITY.get().create(pos,state);
+        return new CathedralBlockEntity(pos, state);
     }
 
     @Override

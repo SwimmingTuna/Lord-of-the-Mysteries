@@ -17,11 +17,11 @@ import net.swimmingtuna.lotm.entity.NetherrackEntity;
 
 public class NetherrackEntityRenderer extends EntityRenderer<NetherrackEntity> {
     public static final ResourceLocation NETHERRACK_LOCATION = new ResourceLocation(LOTM.MOD_ID, "textures/models/netherrackentity.png");
-    public Model model;
+    public final Model model;
 
-    public NetherrackEntityRenderer(EntityRendererProvider.Context pContext) {
-        super(pContext);
-        this.model = new NetherrackEntityModel<>(pContext.bakeLayer(NetherrackEntityModel.NETHERRACK_MODEL_LOCATION));
+    public NetherrackEntityRenderer(EntityRendererProvider.Context context) {
+        super(context);
+        this.model = new NetherrackEntityModel<>(context.bakeLayer(NetherrackEntityModel.NETHERRACK_MODEL_LOCATION));
     }
 
     @Override
@@ -30,14 +30,16 @@ public class NetherrackEntityRenderer extends EntityRenderer<NetherrackEntity> {
         poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot())));
         poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entity.xRotO, entity.getXRot())));
 
-        VertexConsumer ivertexbuilder = buffers.getBuffer(this.model.renderType(this.getTextureLocation(entity)));
-        this.model.renderToBuffer(poseStack, ivertexbuilder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        VertexConsumer vertexConsumer = buffers.getBuffer(this.model.renderType(this.getTextureLocation(entity)));
+        this.model.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.popPose();
 
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
     }
 
     @Override
-    public  ResourceLocation getTextureLocation( NetherrackEntity entity) { return NETHERRACK_LOCATION; }
+    public ResourceLocation getTextureLocation(NetherrackEntity entity) {
+        return NETHERRACK_LOCATION;
+    }
 
 }

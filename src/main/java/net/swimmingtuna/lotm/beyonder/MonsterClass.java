@@ -1,6 +1,8 @@
 package net.swimmingtuna.lotm.beyonder;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
@@ -29,8 +31,11 @@ public class MonsterClass implements BeyonderClass {
     public List<Integer> spiritualityLevels() {
         return List.of(10000, 5000, 3000, 1800, 1200, 700, 450, 300, 175, 125);
     }
+
     @Override
-    public List<Integer> mentalStrength() {return List.of(450,320,210,175,150,110,80,70,50,33);}
+    public List<Integer> mentalStrength() {
+        return List.of(450, 320, 210, 175, 150, 110, 80, 70, 50, 33);
+    }
 
     @Override
     public List<Integer> spiritualityRegen() {
@@ -72,10 +77,15 @@ public class MonsterClass implements BeyonderClass {
     }
 
     @Override
-    public HashMultimap<Integer, Item> getItems() {
+    public Multimap<Integer, Item> getItems() {
         HashMultimap<Integer, Item> items = HashMultimap.create();
-        items.put(0, ItemInit.Placate.get());
+        items.put(0, ItemInit.PLACATE.get());
         return items;
+    }
+
+    @Override
+    public ChatFormatting getColorFormatting() {
+        return ChatFormatting.WHITE;
     }
 
 

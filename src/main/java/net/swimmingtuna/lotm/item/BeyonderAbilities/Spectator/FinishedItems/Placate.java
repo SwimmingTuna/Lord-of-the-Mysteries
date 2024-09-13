@@ -1,9 +1,9 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -16,6 +16,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,38 +26,68 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Placate extends Item {
-    public Placate(Properties pProperties) {
-        super(pProperties);
+    public Placate(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSpectatorClass()) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 75) {
-                pPlayer.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-            }
-            BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-                if (holder != null && holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 7 && spectatorSequence.getCurrentSequence() > 4 && spectatorSequence.useSpirituality(75)) {
-                    AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                    halfHarmfulEffects(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 120 / (int) dreamIntoReality.getValue());
-                    }
-                }
-                if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 4 && spectatorSequence.useSpirituality(200)) {
-                    AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                    removeHarmfulEffects(pPlayer);
-                    if (!pPlayer.getAbilities().instabuild) {
-                        pPlayer.getCooldowns().addCooldown(this, 240 / (int) dreamIntoReality.getValue());
-                    }
-                }
-            });
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (player.level().isClientSide()) {
+            return InteractionResultHolder.pass(player.getItemInHand(hand));
         }
-        return super.use(level, pPlayer, hand);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            return InteractionResultHolder.fail(player.getItemInHand(hand));
+        }
+        if (holder.getSpirituality() < 75) {
+            player.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            return InteractionResultHolder.fail(player.getItemInHand(hand));
+        }
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 7 && holder.getCurrentSequence() > 4 && holder.useSpirituality(75)) {
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            halfHarmfulEffects(player);
+            if (!player.getAbilities().instabuild) {
+                player.getCooldowns().addCooldown(this, 120 / (int) dreamIntoReality.getValue());
+            }
+        }
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 4 && holder.useSpirituality(200)) {
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            removeHarmfulEffects(player);
+            if (!player.getAbilities().instabuild) {
+                player.getCooldowns().addCooldown(this, 240 / (int) dreamIntoReality.getValue());
+            }
+        }
+        return super.use(level, player, hand);
+    }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            if (player.getCooldowns().isOnCooldown(this)) {
+                return InteractionResult.FAIL;
+            }
+
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 7, 120)) {
+                return InteractionResult.FAIL;
+            }
+            if (holder.getCurrentSequence() <= 4 && holder.useSpirituality(250)) {
+                Placate.removeHarmfulEffects(interactionTarget);
+                if (!player.isCreative()) {
+                    player.getCooldowns().addCooldown(stack.getItem(), 120);
+                }
+                return InteractionResult.SUCCESS;
+            }
+            holder.useSpirituality(120);
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+
+            Placate.halfHarmfulEffects(interactionTarget);
+            player.getCooldowns().addCooldown(stack.getItem(), 120 / (int) dreamIntoReality.getValue());
+            return InteractionResult.SUCCESS;
+
+        }
+        return super.interactLivingEntity(stack, player, interactionTarget, hand);
     }
 
     public static void removeHarmfulEffects(LivingEntity entity) {
@@ -69,7 +101,6 @@ public class Placate extends Item {
         for (MobEffect effect : effectsToRemove) {
             entity.removeEffect(effect);
         }
-        System.out.println("removed");
     }
 
     public static void halfHarmfulEffects(LivingEntity entity) {
@@ -81,7 +112,6 @@ public class Placate extends Item {
                 effectsToModify.add(effect);
             }
         }
-        System.out.println("halved");
         // Modify duration of each collected effect
         for (MobEffectInstance effect : effectsToModify) {
             MobEffect type = effect.getEffect();
@@ -95,12 +125,11 @@ public class Placate extends Item {
 
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, reduces or removes the targeted living entity's harmful potion effects\n" +
-                    "Spirituality Used: 125\n" +
-                    "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
-            }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
-        }
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal(
+                "Upon use, reduces or removes the targeted living entity's harmful potion effects\n" +
+                        "Spirituality Used: 125\n" +
+                        "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
+}

@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -13,11 +12,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,68 +23,47 @@ import java.util.List;
 
 public class ProphesizeTeleportPlayer extends Item {
 
-    public ProphesizeTeleportPlayer(Properties pProperties) {
-        super(pProperties);
+    public ProphesizeTeleportPlayer(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        BeyonderHolderAttacher.getHolder(pPlayer).ifPresent(spectatorSequence -> {
-            if (!pPlayer.level().isClientSide()) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-                if (!holder.isSpectatorClass()) {
-                    pPlayer.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-                }
-                if (holder.getSpirituality() < 750) {
-                    pPlayer.displayClientMessage(Component.literal("You need 750 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-                }
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (!player.level().isClientSide()) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (holder.isSpectatorClass() && spectatorSequence.getCurrentSequence() <= 1 && spectatorSequence.useSpirituality(750)) {
-                AttributeInstance dreamIntoReality = pPlayer.getAttribute(ModAttributes.DIR.get());
-                teleportEntities(pPlayer, level, spectatorSequence.getCurrentSequence(), (int) dreamIntoReality.getValue());
-                if (!pPlayer.getAbilities().instabuild)
-                    pPlayer.getCooldowns().addCooldown(this, 400);
+            if (holder.getSpirituality() < 750) {
+                player.displayClientMessage(Component.literal("You need 750 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
-        });
-        return super.use(level, pPlayer, hand);
+        }
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 1 && holder.useSpirituality(750)) {
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            teleportEntities(player, level, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
+            if (!player.getAbilities().instabuild)
+                player.getCooldowns().addCooldown(this, 400);
+        }
+        return super.use(level, player, hand);
     }
 
-    private void teleportEntities(Player pPlayer, Level level, int sequence, int dir) {
+    private void teleportEntities(Player player, Level level, int sequence, int dir) {
         double radius = (500 - sequence * 100) * dir;
-        for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(radius))) {
-            if (entity != pPlayer && !entity.level().isClientSide()) {
-               entity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
-        }}
+        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
+            if (entity != player && !entity.level().isClientSide()) {
+                entity.getPersistentData().putInt("prophesizeTeleportationCounter", (int) (150 * Math.random()));
+                entity.getPersistentData().putInt("prophesizeTeleportX", (int) player.getX());
+                entity.getPersistentData().putInt("prophesizeTeleportY", (int) player.getY());
+                entity.getPersistentData().putInt("prophesizeTeleportZ", (int) player.getZ());
+            }
+        }
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, makes all living entities around the user teleport to the user\n" +
-                    "Spirituality Used: 750\n" +
-                    "Cooldown: 20 seconds").withStyle(ChatFormatting.AQUA));
-        }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
-    }
-    @SubscribeEvent
-    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeDemise.get()));
-            heldItem.shrink(1);
-        }
-    }
-    @SubscribeEvent
-    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        Player pPlayer = event.getEntity();
-        ItemStack heldItem = pPlayer.getMainHandItem();
-        int activeSlot = pPlayer.getInventory().selected;
-        if (!pPlayer.level().isClientSide && !heldItem.isEmpty() && heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
-            pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.ProphesizeDemise.get()));
-            heldItem.shrink(1);
-        }
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use, makes all living entities around the user teleport to the user\n" +
+                "Spirituality Used: 750\n" +
+                "Cooldown: 20 seconds").withStyle(ChatFormatting.AQUA));
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

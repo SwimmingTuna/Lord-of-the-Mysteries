@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -18,6 +17,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.WaterColumnEntity;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,35 +29,35 @@ public class WaterColumn extends Item {
 
     private static final Queue<BlockPos> waterBlocks = new LinkedList<>();
 
-    public WaterColumn(Properties pProperties) {
-        super(pProperties);
+    public WaterColumn(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand hand) {
-        if (!pPlayer.level().isClientSide()) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
             // Your existing checks
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolder(pPlayer).orElse(null);
-            if (!holder.isSailorClass()) {
-                pPlayer.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-                return super.use(level, pPlayer, hand);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
+                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                return super.use(level, player, hand);
             }
             if (holder.getSpirituality() < 2000) {
-                pPlayer.displayClientMessage(Component.literal("You need 2000 spirituality in order to use this").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.AQUA), true);
-                return super.use(level, pPlayer, hand);
+                player.displayClientMessage(Component.literal("You need 2000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                return super.use(level, player, hand);
             }
-            summonColumns(pPlayer);
-            if (!pPlayer.getAbilities().instabuild) {
-                pPlayer.getCooldowns().addCooldown(this, 500);
+            summonColumns(player);
+            if (!player.getAbilities().instabuild) {
+                player.getCooldowns().addCooldown(this, 500);
             }
         }
-        return super.use(level, pPlayer, hand);
+        return super.use(level, player, hand);
     }
 
-    private static void summonColumns(Player pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            Level level = pPlayer.level();
-            BlockPos playerPos = pPlayer.blockPosition();
+    private static void summonColumns(Player player) {
+        if (!player.level().isClientSide()) {
+            Level level = player.level();
+            BlockPos playerPos = player.blockPosition();
             int radius = 200;
             Random random = new Random();
             List<BlockPos> validWaterPositions = new ArrayList<>();
@@ -101,12 +101,10 @@ public class WaterColumn extends Item {
 
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, @Nullable Level level, List<Component> componentList, TooltipFlag tooltipFlag) {
-        if (!Screen.hasShiftDown()) {
-            componentList.add(Component.literal("Upon use, cause the water to intersect with the sky\n" +
-                    "Spirituality Used: 2000\n" +
-                    "Cooldown: 25 seconds").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.BLUE));
-        }
-        super.appendHoverText(pStack, level, componentList, tooltipFlag);
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use, cause the water to intersect with the sky\n" +
+                "Spirituality Used: 2000\n" +
+                "Cooldown: 25 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }
