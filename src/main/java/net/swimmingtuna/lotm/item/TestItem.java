@@ -1,6 +1,5 @@
 package net.swimmingtuna.lotm.item;
 
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -16,7 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 import net.swimmingtuna.lotm.init.EntityInit;
-import net.swimmingtuna.lotm.init.SoundInit;
+import net.swimmingtuna.lotm.util.SpamClass;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class TestItem extends Item {
@@ -27,6 +26,7 @@ public class TestItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 //        useAbilities(player);
+            useAbilities2(player);
         if (!level.isClientSide) LOTM.LOGGER.info("USE");
         return super.use(level, player, hand);
     }
@@ -65,8 +65,7 @@ public class TestItem extends Item {
 
     public static void useAbilities2(Player player) {
         if (!player.level().isClientSide()) {
-            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundInit.SIREN_SONG_HARM_1.get(), SoundSource.NEUTRAL, 1f, 1f);
-
+            SpamClass.sendMonsterMessage(player);
         }
     }
 }

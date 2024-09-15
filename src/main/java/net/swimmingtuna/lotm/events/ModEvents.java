@@ -79,6 +79,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import static net.swimmingtuna.lotm.util.SpamClass.*;
+
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
 public class ModEvents {
 
@@ -127,10 +129,13 @@ public class ModEvents {
 
         AttributeInstance corruption = player.getAttribute(ModAttributes.CORRUPTION.get());
         AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
+        AttributeInstance misfortune = player.getAttribute(ModAttributes.LOTM_MISFORTUNE.get());
 
 
         Map<String, Long> times = new HashMap<>();
-
+        if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && player.tickCount % 250 == 0) {
+            sendMonsterMessage(player);
+        }
         {
             long startTime = System.nanoTime();
 //            corruptionAndLuckManagers(serverLevel, corruption, player, luck, holder, sequence);
@@ -356,42 +361,44 @@ public class ModEvents {
 //        System.out.println(times.entrySet().stream().max(Map.Entry.comparingByValue()));
     }
 
-    private static void corruptionAndLuckManagers(ServerLevel serverLevel, AttributeInstance corruption, Player player, AttributeInstance luck, BeyonderHolder holder, int sequence) {
+    private static void corruptionAndLuckManagers(ServerLevel serverLevel, AttributeInstance misfortune, AttributeInstance corruption, Player player, AttributeInstance luck, BeyonderHolder holder, int sequence) {
         //CORRUPTION AND LUCK MANAGERS
         if (corruption.getValue() >= 1 && player.tickCount % 200 == 0) {
             corruption.setBaseValue(corruption.getValue() - 1);
         }
         Random random = new Random();
         double lotmLuckValue = luck.getValue();
-        if (player.tickCount % 400 == 0 && random.nextInt(300) >= lotmLuckValue * -1) {
-            MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), serverLevel);
-            meteorEntity.teleportTo(player.getX(), player.getY() + 150, player.getZ());
-            ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
-            scaleData.setScale(6.0f);
-            double dx = player.getX() - meteorEntity.getX();
-            double dy = player.getY() - meteorEntity.getY();
-            double dz = player.getZ() - meteorEntity.getZ();
-            double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            dx /= distance;
-            dy /= distance;
-            dz /= distance;
-            double speed = 2.0;
-            meteorEntity.setDeltaMovement(dx * speed, dy * speed, dz * speed);
-            player.level().addFreshEntity(meteorEntity);
-            luck.setBaseValue(Math.min(0, lotmLuckValue + 40));
-        }
-        if (player.tickCount % 250 == 0 && random.nextInt(100) >= lotmLuckValue * -1) {
-            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), serverLevel);
-            lightningEntity.setSpeed(6.0f);
-            lightningEntity.setNoUp(true);
-            lightningEntity.setTargetPos(player.getOnPos().getCenter());
-            lightningEntity.teleportTo(player.getX() + (Math.random() * 60) - 30, player.getY() + 100, player.getZ() + (Math.random() * 60) - 30);
-            player.level().addFreshEntity(lightningEntity);
-            luck.setBaseValue(Math.min(0, lotmLuckValue + 15));
-        }
-        if (player.tickCount % 150 == 0 && random.nextInt(100) >= lotmLuckValue * -2) {
-            player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 10, 0, false, false));
-            player.sendSystemMessage(Component.literal("How unlucky, you tripped!").withStyle(ChatFormatting.BOLD));
+        double lotmMisfortunateValue = misfortune.getValue();
+        if (lotmMisfortunateValue >= 1) {
+            if (player.tickCount % 400 == 0 && random.nextInt(300) >= lotmMisfortunateValue) {
+                MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), serverLevel);
+                meteorEntity.teleportTo(player.getX(), player.getY() + 150, player.getZ());
+                ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
+                scaleData.setScale(6.0f);
+                double dx = player.getX() - meteorEntity.getX();
+                double dy = player.getY() - meteorEntity.getY();
+                double dz = player.getZ() - meteorEntity.getZ();
+                double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                dx /= distance;
+                dy /= distance;
+                dz /= distance;
+                double speed = 2.0;
+                meteorEntity.setDeltaMovement(dx * speed, dy * speed, dz * speed);
+                player.level().addFreshEntity(meteorEntity);
+                luck.setBaseValue(Math.min(0, lotmLuckValue + 40));
+            }
+            if (player.tickCount % 250 == 0 && random.nextInt(100) >= lotmMisfortunateValue) {
+                LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), serverLevel);
+                lightningEntity.setSpeed(6.0f);
+                lightningEntity.setTargetPos(player.getOnPos().getCenter());
+                lightningEntity.teleportTo(player.getX() + (Math.random() * 60) - 30, player.getY() + 100, player.getZ() + (Math.random() * 60) - 30);
+                player.level().addFreshEntity(lightningEntity);
+                luck.setBaseValue(Math.min(0, lotmLuckValue + 15));
+            }
+            if (player.tickCount % 150 == 0 && random.nextInt(50) >= lotmMisfortunateValue) {
+                player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 10, 0, false, false));
+                player.sendSystemMessage(Component.literal("How unlucky, you tripped!").withStyle(ChatFormatting.BOLD));
+            }
         }
 
 
@@ -622,6 +629,7 @@ public class ModEvents {
             serverPlayer.setGameMode(GameType.SURVIVAL);
         }
     }
+
     private static void prophesizeTeleportation(CompoundTag playerPersistentData, LivingEntity livingEntity) {
         //PROPHESIZE TELEPORT BLOCK/PLAYER
         if (playerPersistentData.getInt("prophesizeTeleportationCounter") >= 1) {
@@ -632,7 +640,7 @@ public class ModEvents {
             int x = playerPersistentData.getInt("prophesizeTeleportX");
             int y = playerPersistentData.getInt("prophesizeTeleportY");
             int z = playerPersistentData.getInt("prophesizeTeleportZ");
-            livingEntity.teleportTo(x,y,z);
+            livingEntity.teleportTo(x, y, z);
         }
     }
 
@@ -1023,6 +1031,9 @@ public class ModEvents {
         if (hurricane < 1) {
             return;
         }
+        if (hurricane >= 1) {
+            playerPersistentData.putInt("sailorHurricane", hurricane - 1);
+        }
         if (sailorHurricaneRain) {
             playerPersistentData.putInt("sailorHurricane", hurricane - 1);
             if (hurricane == 600 && player.level() instanceof ServerLevel serverLevel) {
@@ -1043,9 +1054,10 @@ public class ModEvents {
                 }
             }
         }
-        if (!sailorHurricaneRain && player.level() instanceof ServerLevel serverLevel && hurricane == 600) {
-            playerPersistentData.putInt("sailorHurricane", hurricane - 1);
-            serverLevel.setWeatherParameters(0, 700, true, false);
+        if (!sailorHurricaneRain && player.level() instanceof ServerLevel serverLevel) {
+            if (hurricane == 600) {
+                serverLevel.setWeatherParameters(0, 700, true, false);
+            }
         }
     }
 
@@ -1553,8 +1565,6 @@ public class ModEvents {
             mentalPlague(entity);
 
 
-
-
             //PROPHESIZE DEMISE
             double prevX = tag.getDouble("prevX");
             double prevY = tag.getDouble("prevY");
@@ -1758,7 +1768,7 @@ public class ModEvents {
             }
             if (aqueousLight >= 1) {
                 if (entity.getDeltaMovement().y <= 0.2) {
-                    entity.setDeltaMovement(entity.getDeltaMovement().x, Math.min(0,entity.getDeltaMovement().y - 0.5), entity.getDeltaMovement().z);
+                    entity.setDeltaMovement(entity.getDeltaMovement().x, Math.min(0, entity.getDeltaMovement().y - 0.5), entity.getDeltaMovement().z);
                 }
                 tag.putInt("lightDrowning", aqueousLight + 1);
                 if (level.getBlockState(headPos).is(Blocks.AIR)) {
@@ -2069,6 +2079,8 @@ public class ModEvents {
 
             //MONSTER LUCK
             AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
+            AttributeInstance misfortune = player.getAttribute(ModAttributes.LOTM_MISFORTUNE.get());
+            double misfortuanteValue = misfortune.getValue();
             double luckValue = luck.getValue();
             float damage = event.getAmount();
             if (luckValue >= 1) {
@@ -2077,8 +2089,8 @@ public class ModEvents {
                     luck.setBaseValue((Math.min(0, luckValue - damage)));
                 }
             }
-            if (luckValue < 0) {
-                if (Math.random() * luckValue < 50) {
+            if (misfortuanteValue >= 1) {
+                if (Math.random() * misfortuanteValue < 50) {
                     event.setAmount(damage * 2);
                 }
             }
@@ -2188,6 +2200,30 @@ public class ModEvents {
 
     private static boolean randomDrop(RandomSource rand, double baseChance, int looting) {
         return rand.nextDouble() <= Math.max(0, baseChance * Math.max(looting + 1, 1));
+    }
+
+    private static final Random RANDOM = new Random();
+
+    public static void sendMonsterMessage(Player pPlayer) {
+        Random random = new Random();
+        AttributeInstance corruption = pPlayer.getAttribute(ModAttributes.CORRUPTION.get());
+        int randomNumber = random.nextInt(25) + 1;
+        if (randomNumber <= 1) {
+            corruption.setBaseValue(corruption.getValue() + 50);
+            int index = RANDOM.nextInt(monsterCorruptedWhispers().size());
+            pPlayer.displayClientMessage(Component.literal(monsterCorruptedWhispers().get(index)).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.DARK_RED), true);
+        } else if (randomNumber >= 2 && randomNumber <= 4) {
+            corruption.setBaseValue(corruption.getValue() + 10);
+            int index = RANDOM.nextInt(monsterSemiCorruptedWhispers().size());
+            pPlayer.displayClientMessage(Component.literal(monsterSemiCorruptedWhispers().get(index)).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.RED), true);
+        } else if (randomNumber >= 5 && randomNumber <= 12) {
+            corruption.setBaseValue(corruption.getValue() + 5);
+            int index = RANDOM.nextInt(monsterSlightyCorruptedWhispers().size());
+            pPlayer.displayClientMessage(Component.literal(monsterSlightyCorruptedWhispers().get(index)).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.GRAY), true);
+        } else if (randomNumber >= 13 && randomNumber <= 25) {
+            int index = RANDOM.nextInt(monsterNonCorruptedWhispers().size());
+            pPlayer.displayClientMessage(Component.literal(monsterNonCorruptedWhispers().get(index)).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE), true);
+        }
     }
 
     @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)

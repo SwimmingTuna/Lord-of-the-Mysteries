@@ -29,6 +29,7 @@ public class AttributeAdder {
         addToPlayer(event, ModAttributes.PARTICLE_HELPER9);
         addToPlayer(event, ModAttributes.CORRUPTION);
         addToPlayer(event, ModAttributes.LOTM_LUCK);
+        addToPlayer(event, ModAttributes.LOTM_MISFORTUNE);
     }
 
     @SafeVarargs

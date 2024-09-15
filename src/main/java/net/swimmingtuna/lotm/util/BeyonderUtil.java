@@ -262,7 +262,7 @@ public class BeyonderUtil {
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty()) {
             if (heldItem.getItem() instanceof BeyonderAbilityUser) {
-                LOTMNetworkHandler.sendToServer(new LeftClickC2S()); //DIFFERENT FOR LEFT CLICK BLOCK
+                LOTMNetworkHandler.sendToServer(new LeftClickC2S());
             } else if (heldItem.getItem() instanceof AqueousLightPush) {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.AQUEOUS_LIGHT_PULL.get())));
                 heldItem.shrink(1);
@@ -273,9 +273,9 @@ public class BeyonderUtil {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.AQUEOUS_LIGHT_PUSH.get())));
                 heldItem.shrink(1);
             } else if (heldItem.getItem() instanceof Hurricane) {
-                LOTMNetworkHandler.sendToServer(new LeftClickC2S()); //DIFFERENT FOR LEFT CLICK BLOCK
+                LOTMNetworkHandler.sendToServer(new LeftClickC2S());
             } else if (heldItem.getItem() instanceof LightningStorm) {
-                LOTMNetworkHandler.sendToServer(new LeftClickC2S()); //DIFFERENT FOR LEFT CLICK BLOCK
+                LOTMNetworkHandler.sendToServer(new LeftClickC2S());
             } else if (heldItem.getItem() instanceof MatterAccelerationBlocks) {
                 LOTMNetworkHandler.sendToServer(new MatterAccelerationBlockC2S());
             } else if (heldItem.getItem() instanceof MatterAccelerationEntities) {
