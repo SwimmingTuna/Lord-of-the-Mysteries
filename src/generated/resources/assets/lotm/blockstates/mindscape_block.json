@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "lotm:block/mindscape_block"
+    }
+  }
+}
