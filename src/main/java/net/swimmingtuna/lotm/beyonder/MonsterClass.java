@@ -3,12 +3,8 @@ package net.swimmingtuna.lotm.beyonder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.init.ItemInit;
 
@@ -53,127 +49,26 @@ public class MonsterClass implements BeyonderClass {
 
     @Override
     public void tick(Player player, int sequenceLevel) {
-        if (player.level().getGameTime() % 20 == 0) {
-            MobEffectInstance speed = player.getEffect(MobEffects.MOVEMENT_SPEED);
-            MobEffectInstance haste = player.getEffect(MobEffects.DIG_SPEED);
-            MobEffectInstance resistance = player.getEffect(MobEffects.DAMAGE_RESISTANCE);
-            MobEffectInstance strength = player.getEffect(MobEffects.DAMAGE_BOOST);
-            MobEffectInstance regen = player.getEffect(MobEffects.REGENERATION);
-            if (sequenceLevel <= 8) {
-                if (speed != null && strength != null && player.getMainHandItem().getItem() instanceof SwordItem) {
-                    int x = speed.getAmplifier();
-                    int y = strength.getAmplifier();
-                    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, x + 1, true, true));
-                    player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 15 * 20, y + 1, true, true));
-                }
-                if (strength != null && resistance != null && player.getMainHandItem().getItem() instanceof AxeItem) {
-                    int x = resistance.getAmplifier();
-                    int y = strength.getAmplifier();
-                    player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, x + 1, true, true));
-                    player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, y + 1, true, true));
-                }
-                if (haste != null) {
-                    if (player.getMainHandItem().getItem() instanceof PickaxeItem || player.getMainHandItem().getItem() instanceof ShovelItem) {
-                        int x = haste.getAmplifier();
-                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 15 * 20, x + 2, true, true));
-                    }
-                }
-                if (speed != null) {
-                    if (player.getMainHandItem().getItem() instanceof BowItem || player.getMainHandItem().getItem() instanceof CrossbowItem) {
-                        int x = speed.getAmplifier();
-                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, x + 2  , true, true));
-                    }
-                }
-            }
-        }
         if (player.level().getGameTime() % 50 == 0) {
             if (sequenceLevel == 9) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
             }
             if (sequenceLevel == 8) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 1, false, false));
             }
             if (sequenceLevel == 7) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
             }
             if (sequenceLevel == 6) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
             }
             if (sequenceLevel == 5) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
             }
             if (sequenceLevel == 4) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
             }
             if (sequenceLevel == 3) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
             }
             if (sequenceLevel == 2) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
             }
             if (sequenceLevel == 1) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, 4, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 4, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
             }
             if (sequenceLevel == 0) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 3, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, 4, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 5, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
             }
         }
     }
