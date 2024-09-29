@@ -15,6 +15,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import java.util.function.Predicate;
 
 public class RotationUtil {
+
     private static Vec2 getTargetAdjustedRotation(Vec3 start, Entity entity) {
         if (!(entity instanceof Targeting targeting)) {
             return new Vec2(entity.getXRot(), entity.getYRot());

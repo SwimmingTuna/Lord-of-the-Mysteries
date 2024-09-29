@@ -32,14 +32,10 @@ import net.swimmingtuna.lotm.init.*;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.PlayerMobs.NameManager;
-import net.swimmingtuna.lotm.util.ProjectileDangerSense.PreviewProvider;
-import net.swimmingtuna.lotm.util.ProjectileDangerSense.TrajectoryPlugin;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import net.swimmingtuna.lotm.worldgen.biome.BiomeModifierRegistry;
 import org.slf4j.Logger;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,30 +53,11 @@ public class LOTM {
     public static Supplier<Double> fadeRate = () -> maxBrightness.get() / fadeTicks.get();
 
     public static final String MOD_ID = "lotm";
-    static Set<PreviewProvider> previewProviders = new HashSet<>();
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public LOTM() {
         Set<String> classNames = new HashSet<>();
         List<ModFileScanData> modFileScanData = ModList.get().getAllScanData();
-        modFileScanData.forEach(modFileScanData1 -> {
-            modFileScanData1.getAnnotations().stream().filter(annotationData -> annotationData.annotationType().getClassName().equals(TrajectoryPlugin.class.getName())).forEach(annotationData -> {
-                classNames.add(annotationData.memberName());
-            });
-        });
-        classNames.forEach(s -> {
-            try {
-                Class<?> clss = Class.forName(s);
-                Constructor<?> constructor = clss.getConstructor();
-                PreviewProvider previewProvider = (PreviewProvider) constructor.newInstance();
-                previewProviders.add(previewProvider);
-            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
-                     InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        previewProviders.forEach(PreviewProvider::prepare);
-        LOGGER.info("Loaded and prepared {} plugin(s)", previewProviders.size());
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MinecraftForge.EVENT_BUS.addListener(this::serverAboutToStart);
         BeyonderClassInit.BEYONDER_CLASS.register(modEventBus);
@@ -148,6 +125,9 @@ public class LOTM {
             event.accept(ItemInit.EXTREME_COLDNESS);
             event.accept(ItemInit.LIGHTNING_BRANCH);
             event.accept(ItemInit.EARTHQUAKE);
+            event.accept(ItemInit.SAILORPROJECTILECTONROL);
+            event.accept(ItemInit.MONSTERDANGERSENSE);
+            event.accept(ItemInit.MONSTERPROJECTILECONTROL);
             event.accept(ItemInit.STAR_OF_LIGHTNING);
             event.accept(ItemInit.RAIN_EYES);
             event.accept(ItemInit.SONIC_BOOM);

@@ -74,6 +74,7 @@ public class CreativeTabInit {
                         output.accept(ItemInit.HURRICANE.get());
                         output.accept(ItemInit.TORNADO.get());
                         output.accept(ItemInit.EARTHQUAKE.get());
+                        output.accept(ItemInit.SAILORPROJECTILECTONROL.get());
                         output.accept(ItemInit.ROAR.get());
                         output.accept(ItemInit.AQUATIC_LIFE_MANIPULATION.get());
                         output.accept(ItemInit.LIGHTNING_STORM.get());

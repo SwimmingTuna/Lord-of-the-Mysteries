@@ -10,13 +10,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.entity.MeteorEntity;
 import net.swimmingtuna.lotm.entity.MeteorTrailEntity;
-import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.SoundInit;
 import virtuoel.pehkui.api.ScaleData;
@@ -58,14 +58,8 @@ public class TestItem extends Item {
 
     public static void useAbilities(Player player) {
         if (!player.level().isClientSide()) {
-            MeteorEntity meteor = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), player.level());
-            MeteorTrailEntity trailEntity = new MeteorTrailEntity(EntityInit.METEOR_TRAIL_ENTITY.get(), player.level(), meteor);
-            meteor.teleportTo(player.getX(), player.getY() + 100, player.getZ());
-            ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteor);
-            scaleData.setScale(10.0f);
-            meteor.setDeltaMovement(player.getLookAngle().scale(6));
-            player.level().addFreshEntity(meteor);
-            player.level().addFreshEntity(trailEntity);
+            Vec3 lookVec = player.getLookAngle().scale(20);
+            player.teleportTo(lookVec.x(),lookVec.y(),lookVec.z());
         }
     }
 

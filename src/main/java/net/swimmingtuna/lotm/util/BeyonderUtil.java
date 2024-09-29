@@ -142,6 +142,7 @@ public class BeyonderUtil {
                 abilityNames.add(ItemInit.AQUEOUS_LIGHT_PUSH.get());
                 abilityNames.add(ItemInit.AQUEOUS_LIGHT_PULL.get());
                 abilityNames.add(ItemInit.AQUEOUS_LIGHT_DROWN.get());
+                abilityNames.add(ItemInit.SAILORPROJECTILECTONROL.get());
             }
             if (sequence <= 6) {
                 abilityNames.add(ItemInit.WIND_MANIPULATION_BLADE.get());

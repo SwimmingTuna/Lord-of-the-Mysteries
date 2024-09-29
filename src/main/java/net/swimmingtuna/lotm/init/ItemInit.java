@@ -7,6 +7,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.MonsterDangerSense;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.MonsterProjectileControl;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
@@ -17,8 +19,14 @@ public class ItemInit {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, LOTM.MOD_ID);
 
+    public static final RegistryObject<Item> MONSTERDANGERSENSE = ITEMS.register("monsterdangersense",
+            () -> new MonsterDangerSense(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MONSTERPROJECTILECONTROL = ITEMS.register("monsterprojectilecontrol",
+            () -> new MonsterProjectileControl(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EARTHQUAKE = ITEMS.register("earthquake",
             () -> new Earthquake(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SAILORPROJECTILECTONROL = ITEMS.register("sailorprojectilecontrol",
+            () -> new SailorProjectileControl(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> STAR_OF_LIGHTNING = ITEMS.register("staroflightning",
             () -> new StarOfLightning(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LIGHTNING_REDIRECTION = ITEMS.register("lightningredirection",

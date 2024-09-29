@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.events;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
@@ -27,6 +28,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -44,7 +47,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -72,14 +74,12 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.Envi
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.CorruptionAndLuckHandler;
+import net.swimmingtuna.lotm.util.SMath;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
 public class ModEvents {
@@ -114,9 +114,20 @@ public class ModEvents {
         }
         event.setCanceled(true);
     }
+    @SubscribeEvent
+    public static void onPlayerTickClient(TickEvent.PlayerTickEvent event) {
+        Player player = event.player;
+        Style style = BeyonderUtil.getStyle(player);
+        CompoundTag playerPersistentData = player.getPersistentData();
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        int sequence = holder.getCurrentSequence();
+        if (player.level().isClientSide() && holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 8 && player.tickCount % 15 == 0) {
+            checkForProjectiles(player);
+        }
+    }
 
     @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+    public static void onPlayerTickServer(TickEvent.PlayerTickEvent event) {
         Player player = event.player;
         Style style = BeyonderUtil.getStyle(player);
         CompoundTag playerPersistentData = player.getPersistentData();
@@ -306,7 +317,6 @@ public class ModEvents {
             long endTime = System.nanoTime();
             times.put("rainEyes", endTime - startTime);
         }
-
         {
             long startTime = System.nanoTime();
             sirenSongs(playerPersistentData, holder, player, sequence);
@@ -401,6 +411,48 @@ public class ModEvents {
         if (playerPersistentData.getBoolean("armorStored")) {
             player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, 1, false, false));
             holder.useSpirituality((int) holder.getMaxSpirituality() / 100);
+        }
+    }
+    private static void monsterDangerSense(CompoundTag playerPersistentData, BeyonderHolder holder, Player player) {
+        //WIND MANIPULATION SENSE
+        boolean monsterDangerSense = playerPersistentData.getBoolean("monsterDangerSense");
+        if (!monsterDangerSense) {
+            return;
+        }
+        if (!holder.useSpirituality(2)) return;
+        double radius = 150 - (holder.getCurrentSequence() * 15);
+        for (Player otherPlayer : player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(radius))) {
+            if (otherPlayer == player) {
+                continue;
+            }
+            Vec3 directionToPlayer = otherPlayer.position().subtract(player.position()).normalize();
+            Vec3 lookAngle = player.getLookAngle();
+            double horizontalAngle = Math.atan2(directionToPlayer.x, directionToPlayer.z) - Math.atan2(lookAngle.x, lookAngle.z);
+
+            String horizontalDirection;
+            if (Math.abs(horizontalAngle) < Math.PI / 4) {
+                horizontalDirection = "in front of";
+            } else if (horizontalAngle < -Math.PI * 3 / 4 || horizontalAngle > Math.PI * 3 / 4) {
+                horizontalDirection = "behind";
+            } else if (horizontalAngle < 0) {
+                horizontalDirection = "to the right of";
+            } else {
+                horizontalDirection = "to the left of";
+            }
+
+            String verticalDirection;
+            if (directionToPlayer.y > 0.2) {
+                verticalDirection = "above";
+            } else if (directionToPlayer.y < -0.2) {
+                verticalDirection = "below";
+            } else {
+                verticalDirection = "at the same level as";
+            }
+
+            String message = otherPlayer.getName().getString() + " is " + horizontalDirection + " and " + verticalDirection + " you.";
+            if (player.tickCount % 200 == 0) {
+                player.sendSystemMessage(Component.literal(message).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE));
+            }
         }
     }
 
@@ -598,11 +650,20 @@ public class ModEvents {
         //SAILOR PASSIVE CHECK FROM HERE
         LivingEntity target = projectileEvent.getTarget(75, 0);
         if (target != null) {
-            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 7) {
+            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 7 && player.getPersistentData().getBoolean("sailorProjectileMovement")) {
                 projectileEvent.addMovement(projectile, (target.getX() - projectile.getX()) * 0.1, (target.getY() - projectile.getY()) * 0.1, (target.getZ() - projectile.getZ()) * 0.1);
                 projectile.hurtMarked = true;
             }
         }
+
+        //MONSTER CALCULATION PASSIVE
+        if (target != null) {
+            if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 8 && player.getPersistentData().getBoolean("monsterProjectileControl")) {
+                projectileEvent.addMovement(projectile, (target.getX() - projectile.getX()) * 0.1, (target.getY() - projectile.getY()) * 0.1, (target.getZ() - projectile.getZ()) * 0.1);
+                projectile.hurtMarked = true;
+            }
+        }
+
     }
 
     private static void envisionBarrier(BeyonderHolder holder, Player player, Style style) {
@@ -738,7 +799,7 @@ public class ModEvents {
                 }
             }
         }
-        StructureTemplate part = serverLevel.getStructureManager().getOrCreate(new ResourceLocation(LOTM.MOD_ID, "corpse_cathedral" + (partIndex + 1)));
+        StructureTemplate part = serverLevel.getStructureManager().getOrCreate(new ResourceLocation(LOTM.MOD_ID, "corpse_cathedral_" + (partIndex + 1)));
         BlockPos tagPos = new BlockPos(x, y + (partIndex * 2), z);
         StructurePlaceSettings settings = BeyonderUtil.getStructurePlaceSettings(new BlockPos(x, y, z));
         part.placeInWorld(serverLevel, tagPos, tagPos, settings, null, Block.UPDATE_ALL);
@@ -2125,5 +2186,75 @@ public class ModEvents {
                 }
             }
         }
+    }
+    public static void checkForProjectiles(Player player) {
+        Level level = player.level();
+
+        for (Projectile projectile : level.getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(100))) {
+            List<Vec3> trajectory = predictProjectileTrajectory(projectile, player);
+            float scale = ScaleTypes.BASE.getScaleData(projectile).getScale();
+            double maxDistance = 20 * scale;
+            double deltaX = Math.abs(projectile.getX() - player.getX());
+            double deltaY = Math.abs(projectile.getY() - player.getY());
+            double deltaZ = Math.abs(projectile.getZ() - player.getZ());
+            if (deltaX <= maxDistance || deltaY <= maxDistance || deltaZ <= maxDistance) {
+                drawParticleLine(level, trajectory);
+            }
+        }
+    }
+
+    private static void drawParticleLine(Level level, List<Vec3> points) {
+        int particleInterval = 5; // Only spawn a particle every 5 points
+        for (int i = 0; i < points.size() - 1; i += particleInterval) {
+            Vec3 start = points.get(i);
+            Vec3 end = i + particleInterval < points.size() ? points.get(i + particleInterval) : points.get(points.size() - 1);
+
+            Vec3 direction = end.subtract(start).normalize();
+            double distance = start.distanceTo(end);
+
+            // Spawn only one particle between each interval
+            Vec3 particlePosition = start.add(direction.scale(distance / 2));
+            level.addParticle(DustParticleOptions.REDSTONE, particlePosition.x, particlePosition.y, particlePosition.z, 0, 0, 0);
+        }
+    }
+
+    private static List<Vec3> predictProjectileTrajectory(Projectile projectile, Player player) {
+        List<Vec3> trajectory = new ArrayList<>();
+        Vec3 projectilePos = projectile.position();
+        Vec3 projectileDelta = projectile.getDeltaMovement();
+        Level level = projectile.level();
+
+        boolean isArrow = projectile instanceof AbstractArrow;
+
+        trajectory.add(projectilePos);
+
+        int maxIterations = 1000; // Increased for a longer trajectory
+        double maxDistance = 100.0; // Maximum distance to calculate the trajectory
+
+        for (int i = 0; i < maxIterations; i++) {
+            projectilePos = projectilePos.add(projectileDelta);
+            trajectory.add(projectilePos);
+
+            // Check if the block at the projectile's position is not air
+            BlockPos blockPos = new BlockPos((int)Math.floor(projectilePos.x), (int)Math.floor(projectilePos.y), (int)Math.floor(projectilePos.z));
+            if (!level.getBlockState(blockPos).isAir()) {
+                break;
+            }
+
+            // Check if we've reached the maximum distance
+            if (projectilePos.distanceTo(projectile.position()) > maxDistance) {
+                break;
+            }
+
+            if (isArrow) {
+                projectileDelta = projectileDelta.scale(0.99F);
+                projectileDelta = projectileDelta.add(0, -0.05, 0);
+            } else {
+                projectileDelta = projectileDelta.scale(0.99F); // Air resistance
+                projectileDelta = projectileDelta.add(0, -0.03, 0); // Gravity effect
+            }
+        }
+
+        return trajectory;
     }
 }

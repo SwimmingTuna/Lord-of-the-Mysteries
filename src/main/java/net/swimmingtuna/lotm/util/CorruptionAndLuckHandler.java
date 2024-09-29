@@ -1,4 +1,5 @@
 package net.swimmingtuna.lotm.util;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -21,6 +22,7 @@ import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -49,7 +51,7 @@ public class CorruptionAndLuckHandler {
                 double speed = 2.0;
                 meteorEntity.setDeltaMovement(dx * speed, dy * speed, dz * speed);
                 player.level().addFreshEntity(meteorEntity);
-                misfortune.setBaseValue(lotmMisfortunateValue - 40);
+                misfortune.setBaseValue(Math.max(0,lotmMisfortunateValue - 40));
             }
             if (player.tickCount % 250 == 0 && random.nextInt(100) >= lotmMisfortunateValue) {
                 LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), serverLevel);
@@ -58,12 +60,12 @@ public class CorruptionAndLuckHandler {
                 lightningEntity.setMaxLength(15);
                 lightningEntity.teleportTo(player.getX() + (Math.random() * 60) - 30, player.getY() + 100, player.getZ() + (Math.random() * 60) - 30);
                 player.level().addFreshEntity(lightningEntity);
-                misfortune.setBaseValue(lotmMisfortunateValue - 15);
+                misfortune.setBaseValue(Math.max(0,lotmMisfortunateValue - 15));
             }
             if (player.tickCount % 150 == 0 && random.nextInt(50) >= lotmMisfortunateValue) {
                 player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 10, 0, false, false));
                 player.sendSystemMessage(Component.literal("How unlucky, you tripped!").withStyle(ChatFormatting.BOLD));
-                misfortune.setBaseValue(lotmMisfortunateValue - 5);
+                misfortune.setBaseValue(Math.max(0,lotmMisfortunateValue - 5));
             }
             if (player.tickCount % 150 == 0 && random.nextInt(75) >= lotmMisfortunateValue) {
                 List<EquipmentSlot> armorSlots = Arrays.asList(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET);
@@ -75,7 +77,7 @@ public class CorruptionAndLuckHandler {
                     ItemStack armorPiece = player.getItemBySlot(randomArmorSlot);
                     player.spawnAtLocation(armorPiece);
                     player.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
-                    misfortune.setBaseValue(lotmMisfortunateValue - 10);
+                    misfortune.setBaseValue(Math.max(0,lotmMisfortunateValue - 10));
                 }
             }
             if (player.tickCount % 350 == 0 && random.nextInt(320) >= lotmMisfortunateValue && player.onGround()) {
@@ -83,18 +85,18 @@ public class CorruptionAndLuckHandler {
                 warden.setAttackTarget(player);
                 warden.setLastHurtByPlayer(player);
                 player.level().addFreshEntity(warden);
-                misfortune.setBaseValue(lotmMisfortunateValue - 30);
+                misfortune.setBaseValue(Math.max(0,lotmMisfortunateValue - 30));
             }
             if (player.tickCount % 40 == 0 && random.nextInt(50) >= lotmMisfortunateValue && player.getHealth() <= 5) {
                 LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, player.level());
                 lightningBolt.teleportTo(player.getX(), player.getY(), player.getZ());
                 lightningBolt.setDamage(10.0f);
                 player.level().addFreshEntity(lightningBolt);
-                misfortune.setBaseValue(lotmMisfortunateValue - 15);
+                misfortune.setBaseValue(Math.max(0,lotmMisfortunateValue - 15));
             }
             if (player.tickCount % 200 == 0 && random.nextInt(150) >= lotmMisfortunateValue && !player.hasEffect(MobEffects.POISON)) {
                 player.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 2, false,false));
-                misfortune.setBaseValue(lotmMisfortunateValue - 8);
+                misfortune.setBaseValue(Math.max(0,lotmMisfortunateValue - 8));
             }
             if (player.tickCount % 300 == 0 && random.nextInt(300) >= lotmMisfortunateValue) {
                 TornadoEntity tornado = new TornadoEntity(EntityInit.TORNADO_ENTITY.get(), player.level());
@@ -104,25 +106,20 @@ public class CorruptionAndLuckHandler {
                 tornado.setTornadoHeight(100);
                 tornado.setTornadoRadius(20);
                 player.level().addFreshEntity(tornado);
-                misfortune.setBaseValue(lotmMisfortunateValue - 25);
+                misfortune.setBaseValue(Math.max(0,lotmMisfortunateValue - 25));
             }
             if (player.tickCount % 120 == 0 && random.nextInt(100) >= lotmMisfortunateValue) {
                 StoneEntity stoneEntity = new StoneEntity(EntityInit.STONE_ENTITY.get(), player.level());
                 stoneEntity.teleportTo(player.getX(), player.getY() + 30, player.getZ());
                 stoneEntity.setDeltaMovement(0,-5,0);
                 player.level().addFreshEntity(stoneEntity);
-                misfortune.setBaseValue(lotmMisfortunateValue - 12);
-            }
-            if (player.tickCount % 100 == 0 && random.nextInt(150) >= lotmMisfortunateValue && corruption.getValue() >= 60) {
-                corruption.setBaseValue(corruption.getValue() + 10);
-                misfortune.setBaseValue(lotmMisfortunateValue - 10);
-                //corruption messages
+                misfortune.setBaseValue(Math.max(0,lotmMisfortunateValue - 12));
             }
         }
         if (luck.getValue() >= 1) {
             if (player.tickCount % 40 == 0 && random.nextInt(100) >= lotmLuckValue && player.getHealth() <= 10 && !player.hasEffect(MobEffects.REGENERATION)) {
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,40,4,false,false));
-                luck.setBaseValue(lotmLuckValue - 5);
+                luck.setBaseValue(Math.max(0,lotmLuckValue - 5));
             }
         }
         if (holder.currentClassMatches(BeyonderClassInit.MONSTER)) {
@@ -131,42 +128,42 @@ public class CorruptionAndLuckHandler {
             }
             if (sequence == 7) {
                 if (player.tickCount % 400 == 0) {
-                    luck.setBaseValue(luck.getValue() + 1);
+                    luck.setBaseValue(Math.max(0,luck.getValue() + 1));
                 }
             }
             if (sequence == 6) {
                 if (player.tickCount % 360 == 0) {
-                    luck.setBaseValue(luck.getValue() + 1);
+                    luck.setBaseValue(Math.max(0,luck.getValue() + 1));
                 }
             }
             if (sequence == 5) {
                 if (player.tickCount % 310 == 0) {
-                    luck.setBaseValue(luck.getValue() + 1);
+                    luck.setBaseValue(Math.max(0,luck.getValue() + 1));
                 }
             }
             if (sequence == 4) {
                 if (player.tickCount % 220 == 0) {
-                    luck.setBaseValue(luck.getValue() + 1);
+                    luck.setBaseValue(Math.max(0,luck.getValue() + 1));
                 }
             }
             if (sequence == 3) {
                 if (player.tickCount % 140 == 0) {
-                    luck.setBaseValue(luck.getValue() + 1);
+                    luck.setBaseValue(Math.max(0,luck.getValue() + 1));
                 }
             }
             if (sequence == 2) {
                 if (player.tickCount % 100 == 0) {
-                    luck.setBaseValue(luck.getValue() + 1);
+                    luck.setBaseValue(Math.max(0,luck.getValue() + 1));
                 }
             }
             if (sequence == 1) {
                 if (player.tickCount % 70 == 0) {
-                    luck.setBaseValue(luck.getValue() + 1);
+                    luck.setBaseValue(Math.max(0,luck.getValue() + 1));
                 }
             }
             if (sequence == 0) {
                 if (player.tickCount % 40 == 0) {
-                    luck.setBaseValue(luck.getValue() + 1);
+                    luck.setBaseValue(Math.max(0,luck.getValue() + 1));
                 }
             }
         }
