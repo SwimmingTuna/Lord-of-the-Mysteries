@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "render_type": "translucent",
-  "textures": {
-    "all": "lotm:block/white_stained_glass"
-  }
-}
