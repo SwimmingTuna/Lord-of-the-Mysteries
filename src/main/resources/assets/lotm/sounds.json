@@ -1,0 +1,514 @@
+{
+  "siren_song_harm": {
+    "subtitle": "sounds.lotm.siren_song_harm",
+    "sounds": [
+      "lotm:siren_song_harm"
+    ]
+  },
+  "siren_song_harm_1": {
+    "subtitle": "sounds.lotm.siren_song_harm_1",
+    "sounds": [
+      "lotm:siren_song_harm_1"
+    ]
+  },
+  "siren_song_harm_2": {
+    "subtitle": "sounds.lotm.siren_song_harm_2",
+    "sounds": [
+      "lotm:siren_song_harm_2"
+    ]
+  },
+  "siren_song_harm_3": {
+    "subtitle": "sounds.lotm.siren_song_harm_3",
+    "sounds": [
+      "lotm:siren_song_harm_3"
+    ]
+  },
+  "siren_song_harm_4": {
+    "subtitle": "sounds.lotm.siren_song_harm_4",
+    "sounds": [
+      "lotm:siren_song_harm_4"
+    ]
+  },
+  "siren_song_harm_5": {
+    "subtitle": "sounds.lotm.siren_song_harm_5",
+    "sounds": [
+      "lotm:siren_song_harm_5"
+    ]
+  },
+  "siren_song_harm_6": {
+    "subtitle": "sounds.lotm.siren_song_harm_6",
+    "sounds": [
+      "lotm:siren_song_harm_6"
+    ]
+  },
+  "siren_song_harm_7": {
+    "subtitle": "sounds.lotm.siren_song_harm_7",
+    "sounds": [
+      "lotm:siren_song_harm_7"
+    ]
+  },
+  "siren_song_harm_8": {
+    "subtitle": "sounds.lotm.siren_song_harm_8",
+    "sounds": [
+      "lotm:siren_song_harm_8"
+    ]
+  },
+  "siren_song_harm_9": {
+    "subtitle": "sounds.lotm.siren_song_harm_9",
+    "sounds": [
+      "lotm:siren_song_harm_9"
+    ]
+  },
+  "siren_song_harm_10": {
+    "subtitle": "sounds.lotm.siren_song_harm_10",
+    "sounds": [
+      "lotm:siren_song_harm_10"
+    ]
+  },
+  "siren_song_harm_11": {
+    "subtitle": "sounds.lotm.siren_song_harm_11",
+    "sounds": [
+      "lotm:siren_song_harm_11"
+    ]
+  },
+  "siren_song_harm_12": {
+    "subtitle": "sounds.lotm.siren_song_harm_12",
+    "sounds": [
+      "lotm:siren_song_harm_12"
+    ]
+  },
+  "siren_song_harm_13": {
+    "subtitle": "sounds.lotm.siren_song_harm_13",
+    "sounds": [
+      "lotm:siren_song_harm_13"
+    ]
+  },
+  "siren_song_harm_14": {
+    "subtitle": "sounds.lotm.siren_song_harm_14",
+    "sounds": [
+      "lotm:siren_song_harm_14"
+    ]
+  },
+  "siren_song_harm_15": {
+    "subtitle": "sounds.lotm.siren_song_harm_15",
+    "sounds": [
+      "lotm:siren_song_harm_15"
+    ]
+  },
+  "siren_song_harm_16": {
+    "subtitle": "sounds.lotm.siren_song_harm_16",
+    "sounds": [
+      "lotm:siren_song_harm_16"
+    ]
+  },
+  "siren_song_harm_17": {
+    "subtitle": "sounds.lotm.siren_song_harm_17",
+    "sounds": [
+      "lotm:siren_song_harm_17"
+    ]
+  },
+  "siren_song_harm_18": {
+    "subtitle": "sounds.lotm.siren_song_harm_18",
+    "sounds": [
+      "lotm:siren_song_harm_18"
+    ]
+  },
+  "siren_song_harm_19": {
+    "subtitle": "sounds.lotm.siren_song_harm_19",
+    "sounds": [
+      "lotm:siren_song_harm_19"
+    ]
+  },
+  "siren_song_harm_20": {
+    "subtitle": "sounds.lotm.siren_song_harm_20",
+    "sounds": [
+      "lotm:siren_song_harm_20"
+    ]
+  },
+
+
+  "siren_song_weaken": {
+    "subtitle": "sounds.lotm.siren_song_weaken",
+    "sounds": [
+      "lotm:siren_song_weaken"
+    ]
+  },
+  "siren_song_weaken_1": {
+  "subtitle": "sounds.lotm.siren_song_weaken_1",
+  "sounds": [
+    "lotm:siren_song_weaken_1"
+  ]
+},
+  "siren_song_weaken_2": {
+    "subtitle": "sounds.lotm.siren_song_weaken_2",
+    "sounds": [
+      "lotm:siren_song_weaken_2"
+    ]
+  },
+  "siren_song_weaken_3": {
+    "subtitle": "sounds.lotm.siren_song_weaken_3",
+    "sounds": [
+      "lotm:siren_song_weaken_3"
+    ]
+  },
+  "siren_song_weaken_4": {
+    "subtitle": "sounds.lotm.siren_song_weaken_4",
+    "sounds": [
+      "lotm:siren_song_weaken_4"
+    ]
+  },
+  "siren_song_weaken_5": {
+    "subtitle": "sounds.lotm.siren_song_weaken_5",
+    "sounds": [
+      "lotm:siren_song_weaken_5"
+    ]
+  },
+  "siren_song_weaken_6": {
+    "subtitle": "sounds.lotm.siren_song_weaken_6",
+    "sounds": [
+      "lotm:siren_song_weaken_6"
+    ]
+  },
+  "siren_song_weaken_7": {
+    "subtitle": "sounds.lotm.siren_song_weaken_7",
+    "sounds": [
+      "lotm:siren_song_weaken_7"
+    ]
+  },
+  "siren_song_weaken_8": {
+    "subtitle": "sounds.lotm.siren_song_weaken_8",
+    "sounds": [
+      "lotm:siren_song_weaken_8"
+    ]
+  },
+  "siren_song_weaken_9": {
+    "subtitle": "sounds.lotm.siren_song_weaken_9",
+    "sounds": [
+      "lotm:siren_song_weaken_9"
+    ]
+  },
+  "siren_song_weaken_10": {
+    "subtitle": "sounds.lotm.siren_song_weaken_10",
+    "sounds": [
+      "lotm:siren_song_weaken_10"
+    ]
+  },
+  "siren_song_weaken_11": {
+    "subtitle": "sounds.lotm.siren_song_weaken_11",
+    "sounds": [
+      "lotm:siren_song_weaken_11"
+    ]
+  },
+  "siren_song_weaken_12": {
+    "subtitle": "sounds.lotm.siren_song_weaken_12",
+    "sounds": [
+      "lotm:siren_song_weaken_12"
+    ]
+  },
+  "siren_song_weaken_13": {
+    "subtitle": "sounds.lotm.siren_song_weaken_13",
+    "sounds": [
+      "lotm:siren_song_weaken_13"
+    ]
+  },
+  "siren_song_weaken_14": {
+    "subtitle": "sounds.lotm.siren_song_weaken_14",
+    "sounds": [
+      "lotm:siren_song_weaken_14"
+    ]
+  },
+  "siren_song_weaken_15": {
+    "subtitle": "sounds.lotm.siren_song_weaken_15",
+    "sounds": [
+      "lotm:siren_song_weaken_15"
+    ]
+  },
+  "siren_song_weaken_16": {
+    "subtitle": "sounds.lotm.siren_song_weaken_16",
+    "sounds": [
+      "lotm:siren_song_weaken_16"
+    ]
+  },
+  "siren_song_weaken_17": {
+    "subtitle": "sounds.lotm.siren_song_weaken_17",
+    "sounds": [
+      "lotm:siren_song_weaken_17"
+    ]
+  },
+  "siren_song_weaken_18": {
+    "subtitle": "sounds.lotm.siren_song_weaken_18",
+    "sounds": [
+      "lotm:siren_song_weaken_18"
+    ]
+  },
+  "siren_song_weaken_19": {
+    "subtitle": "sounds.lotm.siren_song_weaken_19",
+    "sounds": [
+      "lotm:siren_song_weaken_19"
+    ]
+  },
+  "siren_song_weaken_20": {
+    "subtitle": "sounds.lotm.siren_song_weaken_20",
+    "sounds": [
+      "lotm:siren_song_weaken_20"
+    ]
+  },
+
+
+  "siren_song_stun": {
+    "subtitle": "siren_song_stun",
+    "sounds": [
+      "lotm:siren_song_stun"
+    ]
+  },
+  "siren_song_stun_1": {
+    "subtitle": "siren_song_stun_1",
+    "sounds": [
+      "lotm:siren_song_stun_1"
+    ]
+  },
+  "siren_song_stun_2": {
+    "subtitle": "siren_song_stun_2",
+    "sounds": [
+      "lotm:siren_song_stun_2"
+    ]
+  },
+  "siren_song_stun_3": {
+    "subtitle": "siren_song_stun_3",
+    "sounds": [
+      "lotm:siren_song_stun_3"
+    ]
+  },
+  "siren_song_stun_4": {
+    "subtitle": "siren_song_stun_4",
+    "sounds": [
+      "lotm:siren_song_stun_4"
+    ]
+  },
+  "siren_song_stun_5": {
+    "subtitle": "siren_song_stun_5",
+    "sounds": [
+      "lotm:siren_song_stun_5"
+    ]
+  },
+  "siren_song_stun_6": {
+    "subtitle": "siren_song_stun_6",
+    "sounds": [
+      "lotm:siren_song_stun_6"
+    ]
+  },
+  "siren_song_stun_7": {
+    "subtitle": "siren_song_stun_7",
+    "sounds": [
+      "lotm:siren_song_stun_7"
+    ]
+  },
+  "siren_song_stun_8": {
+    "subtitle": "siren_song_stun_8",
+    "sounds": [
+      "lotm:siren_song_stun_8"
+    ]
+  },
+  "siren_song_stun_9": {
+    "subtitle": "siren_song_stun_9",
+    "sounds": [
+      "lotm:siren_song_stun_9"
+    ]
+  },
+  "siren_song_stun_10": {
+    "subtitle": "siren_song_stun_10",
+    "sounds": [
+      "lotm:siren_song_stun_10"
+    ]
+  },
+  "siren_song_stun_11": {
+    "subtitle": "siren_song_stun_11",
+    "sounds": [
+      "lotm:siren_song_stun_11"
+    ]
+  },
+  "siren_song_stun_12": {
+    "subtitle": "siren_song_stun_12",
+    "sounds": [
+      "lotm:siren_song_stun_12"
+    ]
+  },
+  "siren_song_stun_13": {
+    "subtitle": "siren_song_stun_13",
+    "sounds": [
+      "lotm:siren_song_stun_13"
+    ]
+  },
+  "siren_song_stun_14": {
+    "subtitle": "siren_song_stun_14",
+    "sounds": [
+      "lotm:siren_song_stun_14"
+    ]
+  },
+  "siren_song_stun_15": {
+    "subtitle": "siren_song_stun_15",
+    "sounds": [
+      "lotm:siren_song_stun_15"
+    ]
+  },
+  "siren_song_stun_16": {
+    "subtitle": "siren_song_stun_16",
+    "sounds": [
+      "lotm:siren_song_stun_16"
+    ]
+  },
+  "siren_song_stun_17": {
+    "subtitle": "siren_song_stun_17",
+    "sounds": [
+      "lotm:siren_song_stun_17"
+    ]
+  },
+  "siren_song_stun_18": {
+    "subtitle": "siren_song_stun_18",
+    "sounds": [
+      "lotm:siren_song_stun_18"
+    ]
+  },
+  "siren_song_stun_19": {
+    "subtitle": "siren_song_stun_19",
+    "sounds": [
+      "lotm:siren_song_stun_19"
+    ]
+  },
+  "siren_song_stun_20": {
+    "subtitle": "siren_song_stun_20",
+    "sounds": [
+      "lotm:siren_song_stun_20"
+    ]
+  },
+
+
+  "siren_song_strengthen": {
+    "subtitle": "sounds.siren_song_strengthen",
+    "sounds": [
+      "lotm:siren_song_strengthen"
+    ]
+  },
+  "siren_song_strengthen_1": {
+    "subtitle": "sounds.siren_song_strengthen_1",
+    "sounds": [
+      "lotm:siren_song_strengthen_1"
+    ]
+  },
+  "siren_song_strengthen_2": {
+    "subtitle": "sounds.siren_song_strengthen_2",
+    "sounds": [
+      "lotm:siren_song_strengthen_2"
+    ]
+  },
+  "siren_song_strengthen_3": {
+    "subtitle": "sounds.siren_song_strengthen_3",
+    "sounds": [
+      "lotm:siren_song_strengthen_3"
+    ]
+  },
+  "siren_song_strengthen_4": {
+    "subtitle": "sounds.siren_song_strengthen_4",
+    "sounds": [
+      "lotm:siren_song_strengthen_4"
+    ]
+  },
+  "siren_song_strengthen_5": {
+    "subtitle": "sounds.siren_song_strengthen_5",
+    "sounds": [
+      "lotm:siren_song_strengthen_5"
+    ]
+  },
+  "siren_song_strengthen_6": {
+    "subtitle": "sounds.siren_song_strengthen_6",
+    "sounds": [
+      "lotm:siren_song_strengthen_6"
+    ]
+  },
+  "siren_song_strengthen_7": {
+    "subtitle": "sounds.siren_song_strengthen_7",
+    "sounds": [
+      "lotm:siren_song_strengthen_7"
+    ]
+  },
+  "siren_song_strengthen_8": {
+    "subtitle": "sounds.siren_song_strengthen_8",
+    "sounds": [
+      "lotm:siren_song_strengthen_8"
+    ]
+  },
+  "siren_song_strengthen_9": {
+    "subtitle": "sounds.siren_song_strengthen_9",
+    "sounds": [
+      "lotm:siren_song_strengthen_9"
+    ]
+  },
+  "siren_song_strengthen_10": {
+    "subtitle": "sounds.siren_song_strengthen_10",
+    "sounds": [
+      "lotm:siren_song_strengthen_10"
+    ]
+  },
+  "siren_song_strengthen_11": {
+    "subtitle": "sounds.siren_song_strengthen_11",
+    "sounds": [
+      "lotm:siren_song_strengthen_11"
+    ]
+  },
+  "siren_song_strengthen_12": {
+    "subtitle": "sounds.siren_song_strengthen_12",
+    "sounds": [
+      "lotm:siren_song_strengthen_12"
+    ]
+  },
+  "siren_song_strengthen_13": {
+    "subtitle": "sounds.siren_song_strengthen_13",
+    "sounds": [
+      "lotm:siren_song_strengthen_13"
+    ]
+  },
+  "siren_song_strengthen_14": {
+    "subtitle": "sounds.siren_song_strengthen_14",
+    "sounds": [
+      "lotm:siren_song_strengthen_14"
+    ]
+  },
+  "siren_song_strengthen_15": {
+    "subtitle": "sounds.siren_song_strengthen_15",
+    "sounds": [
+      "lotm:siren_song_strengthen_15"
+    ]
+  },
+  "siren_song_strengthen_16": {
+    "subtitle": "sounds.siren_song_strengthen_16",
+    "sounds": [
+      "lotm:siren_song_strengthen_16"
+    ]
+  },
+  "siren_song_strengthen_17": {
+    "subtitle": "sounds.siren_song_strengthen_17",
+    "sounds": [
+      "lotm:siren_song_strengthen_17"
+    ]
+  },
+  "siren_song_strengthen_18": {
+    "subtitle": "sounds.siren_song_strengthen_18",
+    "sounds": [
+      "lotm:siren_song_strengthen_18"
+    ]
+  },
+  "siren_song_strengthen_19": {
+    "subtitle": "sounds.siren_song_strengthen_19",
+    "sounds": [
+      "lotm:siren_song_strengthen_19"
+    ]
+  },
+  "siren_song_strengthen_20": {
+    "subtitle": "sounds.siren_song_strengthen_20",
+    "sounds": [
+      "lotm:siren_song_strengthen_20"
+    ]
+  }
+
+
+}
