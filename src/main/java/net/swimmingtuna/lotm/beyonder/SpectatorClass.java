@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.beyonder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -61,43 +62,43 @@ public class SpectatorClass implements BeyonderClass {
             }
 
             if (sequenceLevel == 6) {
-               applyMobEffect(player,MobEffects.DAMAGE_BOOST, 15 * 20, 0, false, false);
+               applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 0, false, false);
             }
             if (sequenceLevel == 5) {
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 15 * 20, 0, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 15 * 20, 0, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 0, false, false);
+                applyMobEffect(player,MobEffects.REGENERATION, 300, 0, false, false);
 
             }
             if (sequenceLevel == 4) {
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 15 * 20, 1, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 15 * 20, 0, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 15 * 20, 0, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 1, false, false);
+                applyMobEffect(player,MobEffects.REGENERATION, 300, 0, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
 
             }
             if (sequenceLevel == 3) {
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 15 * 20, 1, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 15 * 20, 1, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 15 * 20, 0, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 1, false, false);
+                applyMobEffect(player,MobEffects.REGENERATION, 300, 1, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
             }
             if (sequenceLevel == 2) {
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 15 * 20, 2, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 15 * 20, 1, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 15 * 20, 1, false, false);
-                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 15 * 20, 0, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 2, false, false);
+                applyMobEffect(player,MobEffects.REGENERATION, 300, 1, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 0, false, false);
 
             }
             if (sequenceLevel == 1) {
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 15 * 20, 2, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 15 * 20, 1, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 15 * 20, 2, false, false);
-                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 15 * 20, 0, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 2, false, false);
+                applyMobEffect(player,MobEffects.REGENERATION, 300, 1, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
+                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 0, false, false);
 
             }
             if (sequenceLevel == 0) {
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 15 * 20, 3, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 15 * 20, 2, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 15 * 20, 2, false, false);
-                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 15 * 20, 0, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 3, false, false);
+                applyMobEffect(player,MobEffects.REGENERATION, 300, 2, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
+                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 0, false, false);
             }
         }
     }
@@ -146,6 +147,7 @@ public class SpectatorClass implements BeyonderClass {
         return ChatFormatting.AQUA;
     }
 
+
     public void applyMobEffect(Player pPlayer, MobEffect mobEffect, int duration, int amplifier, boolean ambient, boolean visible) {
         MobEffectInstance currentEffect = pPlayer.getEffect(mobEffect);
         MobEffectInstance newEffect = new MobEffectInstance(mobEffect, duration, amplifier, ambient, visible);
@@ -153,6 +155,9 @@ public class SpectatorClass implements BeyonderClass {
             pPlayer.addEffect(newEffect);
         } else if (currentEffect.getAmplifier() < amplifier) {
             pPlayer.addEffect(newEffect);
+        } else if (currentEffect.getAmplifier() == amplifier && duration >= currentEffect.getDuration()) {
+            pPlayer.addEffect(newEffect);
         }
     }
+
 }
