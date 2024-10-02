@@ -115,6 +115,7 @@ public class ModEvents {
         }
         event.setCanceled(true);
     }
+
     @SubscribeEvent
     public static void onPlayerTickClient(TickEvent.PlayerTickEvent event) {
         Player player = event.player;
@@ -371,7 +372,6 @@ public class ModEvents {
     }
 
 
-
     private static void nightmare(Player player, CompoundTag playerPersistentData) {
         //NIGHTMARE
         AttributeInstance nightmareAttribute = player.getAttribute(ModAttributes.NIGHTMARE.get());
@@ -414,6 +414,7 @@ public class ModEvents {
             holder.useSpirituality((int) holder.getMaxSpirituality() / 100);
         }
     }
+
     private static void monsterDangerSense(CompoundTag playerPersistentData, BeyonderHolder holder, Player player) {
         //WIND MANIPULATION SENSE
         boolean monsterDangerSense = playerPersistentData.getBoolean("monsterDangerSense");
@@ -597,6 +598,7 @@ public class ModEvents {
             serverPlayer.setGameMode(GameType.SURVIVAL);
         }
     }
+
     private static void prophesizeTeleportation(CompoundTag playerPersistentData, LivingEntity livingEntity) {
         //PROPHESIZE TELEPORT BLOCK/PLAYER
         if (playerPersistentData.getInt("prophesizeTeleportationCounter") >= 1) {
@@ -607,7 +609,7 @@ public class ModEvents {
             int x = playerPersistentData.getInt("prophesizeTeleportX");
             int y = playerPersistentData.getInt("prophesizeTeleportY");
             int z = playerPersistentData.getInt("prophesizeTeleportZ");
-            livingEntity.teleportTo(x,y,z);
+            livingEntity.teleportTo(x, y, z);
         }
     }
 
@@ -1521,7 +1523,7 @@ public class ModEvents {
         }
     }
 
-    
+
     @SubscribeEvent
     public static void handleLivingTick(LivingEvent.LivingTickEvent event) {
         LivingEntity entity = event.getEntity();
@@ -1536,8 +1538,6 @@ public class ModEvents {
             matterAccelerationEntities(entity);
 
             mentalPlague(entity);
-
-
 
 
             //PROPHESIZE DEMISE
@@ -1743,7 +1743,7 @@ public class ModEvents {
             }
             if (aqueousLight >= 1) {
                 if (entity.getDeltaMovement().y <= 0.2) {
-                    entity.setDeltaMovement(entity.getDeltaMovement().x, Math.min(0,entity.getDeltaMovement().y - 0.5), entity.getDeltaMovement().z);
+                    entity.setDeltaMovement(entity.getDeltaMovement().x, Math.min(0, entity.getDeltaMovement().y - 0.5), entity.getDeltaMovement().z);
                 }
                 tag.putInt("lightDrowning", aqueousLight + 1);
                 if (level.getBlockState(headPos).is(Blocks.AIR)) {
@@ -2039,7 +2039,36 @@ public class ModEvents {
     public static void hurtEvent(LivingHurtEvent event) {
         Entity entity = event.getEntity();
         CompoundTag tag = entity.getPersistentData();
+        DamageSource source = event.getSource();
+        Entity entitySource = source.getEntity();
         if (!event.getEntity().level().isClientSide()) {
+
+            if (entity instanceof LivingEntity livingEntity) {
+                int lotmLightningDamage = tag.getInt("luckLightningLOTMDamage");
+                int meteorDamage = tag.getInt("luckMeteorDamage");
+                int MCLightingDamage = tag.getInt("luckLightningMCDamage");
+                int stoneDamage = tag.getInt("luckStoneDamage");
+                if (entitySource instanceof StoneEntity) {
+                    if (stoneDamage >= 1) {
+                        event.setAmount(event.getAmount() / 2);
+                    }
+                }
+                if (entitySource instanceof MeteorEntity) {
+                    if (meteorDamage >= 1) {
+                        event.setAmount(event.getAmount() / 2);
+                    }
+                }
+                if (entitySource instanceof LightningBolt) {
+                    if (MCLightingDamage >= 1) {
+                        event.setAmount(event.getAmount() / 2);
+                    }
+                }
+                if (entitySource instanceof LightningEntity) {
+                    if (lotmLightningDamage >= 1) {
+                        event.setAmount(event.getAmount() / 2);
+                    }
+                }
+            }
             //SAILOR FLIGHT
             if (entity instanceof Player player) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
@@ -2144,6 +2173,7 @@ public class ModEvents {
             }
         }
     }
+
     private static void dodgeProjectiles(Player pPlayer) {
         if (pPlayer.getPersistentData().getInt("windMovingProjectilesCounter") >= 1) {
             AttributeInstance luck = pPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
@@ -2230,6 +2260,7 @@ public class ModEvents {
             }
         }
     }
+
     public static void checkForProjectiles(Player player) {
         Level level = player.level();
         for (Projectile projectile : level.getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(100))) {
@@ -2297,6 +2328,7 @@ public class ModEvents {
 
         return trajectory;
     }
+
     @SubscribeEvent
     public static void onLivingJoinWorld(EntityJoinLevelEvent event) {
         Entity entity = event.getEntity();
@@ -2305,7 +2337,7 @@ public class ModEvents {
                 AttributeInstance luck = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
                 AttributeInstance misfortune = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
                 if (luck == null) {
-                return;
+                    return;
                 }
                 luck.setBaseValue(0);
                 if (misfortune == null) {

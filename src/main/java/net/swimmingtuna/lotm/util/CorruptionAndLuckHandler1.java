@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Ravager;
 import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -50,6 +51,10 @@ public class CorruptionAndLuckHandler1 {
             int regeneration = tag.getInt("luckRegeneration");
             int diamondsDropped = tag.getInt("luckDiamonds");
             int windMovingProjectiles = tag.getInt("windMovingProjectilesCounter");
+            int lotmLightningDamage = tag.getInt("luckLightningLOTMDamage");
+            int meteorDamage = tag.getInt("luckMeteorDamage");
+            int MCLightingDamage = tag.getInt("luckLightningMCDamage");
+            int stoneDamage = tag.getInt("luckStoneDamage");
             Random random = new Random();
             double lotmLuckValue = luck.getValue();
             double lotmMisfortunateValue = misfortune.getValue();
@@ -201,6 +206,9 @@ public class CorruptionAndLuckHandler1 {
                     meteorEntity.setDeltaMovement(dx * speed, dy * speed, dz * speed);
                     player.level().addFreshEntity(meteorEntity);
                     tag.putInt("luckMeteor", 0);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6) {
+                        tag.putInt("luckMeteorDamage",6);
+                    }
                 }
                 if (lotmLightning == 1) {
                     LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), serverLevel);
@@ -209,10 +217,15 @@ public class CorruptionAndLuckHandler1 {
                     lightningEntity.setMaxLength(15);
                     lightningEntity.teleportTo(player.getX() + (Math.random() * 60) - 30, player.getY() + 100, player.getZ() + (Math.random() * 60) - 30);
                     player.level().addFreshEntity(lightningEntity);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6) {
+                        tag.putInt("luckLightningLOTMDamage",5);
+                    }
                     tag.putInt("luckLightningLOTM", 0);
                 }
                 if (paralysis == 1) {
-                    player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 10, 0, false, false));
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6) {
+                        player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 5, 0, false, false));
+                    } else player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 10, 0, false, false));
                     player.sendSystemMessage(Component.literal("How unlucky, you tripped!").withStyle(ChatFormatting.BOLD));
                     tag.putInt("luckParalysis", 0);
                 }
@@ -224,7 +237,12 @@ public class CorruptionAndLuckHandler1 {
                     if (!equippedArmor.isEmpty()) {
                         EquipmentSlot randomArmorSlot = equippedArmor.get(random.nextInt(equippedArmor.size()));
                         ItemStack armorPiece = player.getItemBySlot(randomArmorSlot);
-                        player.spawnAtLocation(armorPiece);
+                        if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6) {
+                            if (random.nextInt(2) == 1) {
+                                player.spawnAtLocation(armorPiece);
+                                player.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
+                            }
+                        } else player.spawnAtLocation(armorPiece);
                         player.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
                     }
                     tag.putInt("luckUnequipArmor", 0);
@@ -235,7 +253,11 @@ public class CorruptionAndLuckHandler1 {
                     warden.setLastHurtByPlayer(player);
                     AttributeInstance maxHP = warden.getAttribute(Attributes.MAX_HEALTH);
                     maxHP.setBaseValue(60);
-                    player.level().addFreshEntity(warden);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6) {
+                        Ravager ravager = new Ravager(EntityType.RAVAGER, player.level());
+                        ravager.setLastHurtByPlayer(player);
+                        player.level().addFreshEntity(ravager);
+                    } else player.level().addFreshEntity(warden);
                     tag.putInt("luckWarden", 0);
                 }
                 if (mcLightning == 1 && player.getHealth() <= 5) {
@@ -244,10 +266,14 @@ public class CorruptionAndLuckHandler1 {
                     lightningBolt.teleportTo(player.getX(), player.getY(), player.getZ());
                     lightningBolt.setDamage(10.0f);
                     player.level().addFreshEntity(lightningBolt);
-                    tag.putInt("luckLightningMC", 0);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6) {
+                        tag.putInt("luckLightningMCDamage",2);
+                    }
                 }
                 if (poison == 1 && !player.hasEffect(MobEffects.POISON)) {
-                    player.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 2, false, false));
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6) {
+                        player.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 2, false, false));
+                    } else player.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 2, false, false));
                     tag.putInt("luckPoison", 0);
                 }
                 if (tornadoInt == 1) {
@@ -255,7 +281,10 @@ public class CorruptionAndLuckHandler1 {
                     tornado.setTornadoLifecount(120);
                     tornado.setTornadoPickup(true);
                     tornado.setTornadoRandom(true);
-                    tornado.setTornadoHeight(100);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6) {
+                        tornado.setTornadoHeight(50);
+                        tornado.setTornadoRadius(10);
+                    } else tornado.setTornadoHeight(100);
                     tornado.setTornadoRadius(20);
                     player.level().addFreshEntity(tornado);
                     tag.putInt("luckTornado", 0);
@@ -266,6 +295,9 @@ public class CorruptionAndLuckHandler1 {
                     stoneEntity.setDeltaMovement(0, -5, 0);
                     player.level().addFreshEntity(stoneEntity);
                     tag.putInt("luckStone", 0);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6) {
+                        tag.putInt("luckStoneDamage",5);
+                    }
                 }
                 if (regeneration == 1 && !player.hasEffect(MobEffects.REGENERATION)) {
                     if (player.getEffect(MobEffects.REGENERATION).getAmplifier() <= 4) {
@@ -279,6 +311,18 @@ public class CorruptionAndLuckHandler1 {
                     player.addItem(Items.DIAMOND.getDefaultInstance());
                     player.displayClientMessage(Component.literal("How lucky! You found some diamonds on the ground"), true);
                     tag.putInt("luckDiamonds", 0);
+                }
+                if (lotmLightningDamage >= 1) {
+                    tag.putInt("luckLightningLOTMDamage", lotmLightningDamage - 1);
+                }
+                if (MCLightingDamage >= 1) {
+                    tag.putInt("luckLightningMCDamage", MCLightingDamage - 1);
+                }
+                if (stoneDamage >= 1) {
+                    tag.putInt("luckStoneDamage", stoneDamage - 1);
+                }
+                if (lotmLightningDamage >= 1) {
+                    tag.putInt("luckMeteorDamage", meteorDamage - 1);
                 }
             }
         }

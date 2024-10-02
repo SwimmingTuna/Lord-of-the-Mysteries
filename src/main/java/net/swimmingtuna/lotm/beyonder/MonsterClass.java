@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.beyonder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +14,11 @@ import net.swimmingtuna.lotm.init.ItemInit;
 import java.util.List;
 
 public class MonsterClass implements BeyonderClass {
+    private int speed;
+    private int resistance;
+    private int strength;
+    private int regen;
+
     @Override
     public List<String> sequenceNames() {
         return List.of(
@@ -52,35 +58,144 @@ public class MonsterClass implements BeyonderClass {
     @Override
     public void tick(Player player, int sequenceLevel) {
         if (player.level().getGameTime() % 20 == 0) {
-            MobEffectInstance speed = player.getEffect(MobEffects.MOVEMENT_SPEED);
-            MobEffectInstance haste = player.getEffect(MobEffects.DIG_SPEED);
-            MobEffectInstance resistance = player.getEffect(MobEffects.DAMAGE_RESISTANCE);
-            MobEffectInstance strength = player.getEffect(MobEffects.DAMAGE_BOOST);
-            if (sequenceLevel <= 8) {
-                if (speed != null && strength != null && player.getMainHandItem().getItem() instanceof SwordItem) {
-                    int x = speed.getAmplifier();
-                    int y = strength.getAmplifier();
-                    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, x + 1, true, true));
-                    player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 15 * 20, y + 1, true, true));
-                }
-                if (strength != null && resistance != null && player.getMainHandItem().getItem() instanceof AxeItem) {
-                    int x = resistance.getAmplifier();
-                    int y = strength.getAmplifier();
-                    player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, x + 1, true, true));
-                    player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, y + 1, true, true));
-                }
-                if (haste != null) {
-                    if (player.getMainHandItem().getItem() instanceof PickaxeItem || player.getMainHandItem().getItem() instanceof ShovelItem) {
-                        int x = haste.getAmplifier();
-                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 15 * 20, x + 2, true, true));
+            MobEffectInstance speedEffect = player.getEffect(MobEffects.MOVEMENT_SPEED);
+            MobEffectInstance hasteEffect = player.getEffect(MobEffects.DIG_SPEED);
+            MobEffectInstance resistanceEffect = player.getEffect(MobEffects.DAMAGE_RESISTANCE);
+            MobEffectInstance strengthEffect = player.getEffect(MobEffects.DAMAGE_BOOST);
+            MobEffectInstance regenEffect = player.getEffect(MobEffects.REGENERATION);
+            if (sequenceLevel == 8 || sequenceLevel == 7) {
+                if (player.getMainHandItem().getItem() instanceof SwordItem) {
+                    if (speedEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 1, false, false));
+                    } else if (speedEffect.getAmplifier() < speed + 2) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 1, false, false));
                     }
                 }
-                if (speed != null) {
-                    if (player.getMainHandItem().getItem() instanceof BowItem || player.getMainHandItem().getItem() instanceof CrossbowItem) {
-                        int x = speed.getAmplifier();
-                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, x + 2  , true, true));
+
+
+                if (player.getMainHandItem().getItem() instanceof AxeItem) {
+                    if (strengthEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 45, strength + 1, false, false));
+                    } else if (strengthEffect.getAmplifier() < strength + 1) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 45, strength + 1, false, false));
                     }
                 }
+
+
+                if (player.getMainHandItem().getItem() instanceof PickaxeItem || player.getMainHandItem().getItem() instanceof ShovelItem) {
+                    if (hasteEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 45, 1, false, false));
+                    } else if (hasteEffect.getAmplifier() < 1) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 45, 1, false, false));
+                    }
+                }
+
+
+                if (player.getMainHandItem().getItem() instanceof BowItem || player.getMainHandItem().getItem() instanceof CrossbowItem) {
+                    if (speedEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 1, false, false));
+                    } else if (speedEffect.getAmplifier() < speed + 1) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 1, false, false));
+                    }
+                }
+
+
+            }
+            if (sequenceLevel == 6 || sequenceLevel == 5) {
+                if (player.getMainHandItem().getItem() instanceof SwordItem) {
+                    if (speedEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 1, false, false));
+                    } else if (speedEffect.getAmplifier() < speed + 1) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 1, false, false));
+                    }
+                    if (hasteEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 45, 1, false, false));
+                    } else if (hasteEffect.getAmplifier() < 1) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 45, 1, false, false));
+                    }
+                }
+
+
+                if (player.getMainHandItem().getItem() instanceof AxeItem) {
+                    if (strengthEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 45, strength + 1, false, false));
+                    } else if (strengthEffect.getAmplifier() < strength + 1) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 45, strength + 1, false, false));
+                    }
+                    if (resistanceEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 45, resistance + 1, false, false));
+                    } else if (resistanceEffect.getAmplifier() < resistance + 1) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 45, resistance + 1, false, false));
+                    }
+                }
+
+
+                if (player.getMainHandItem().getItem() instanceof PickaxeItem || player.getMainHandItem().getItem() instanceof ShovelItem) {
+                    if (hasteEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 45, 2, false, false));
+                    } else if (hasteEffect.getAmplifier() < 2) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 45, 2, false, false));
+                    }
+                }
+
+
+                if (player.getMainHandItem().getItem() instanceof BowItem || player.getMainHandItem().getItem() instanceof CrossbowItem) {
+                    if (speedEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 2, false, false));
+                    } else if (speedEffect.getAmplifier() < speed + 2) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 2, false, false));
+                    }
+                }
+
+
+            }
+            if (sequenceLevel <= 4) {
+                if (player.getMainHandItem().getItem() instanceof SwordItem) {
+                    if (speedEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 2, false, false));
+                    } else if (speedEffect.getAmplifier() < speed + 2) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 2, false, false));
+                    }
+                    if (hasteEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 45, 1, false, false));
+                    } else if (hasteEffect.getAmplifier() < 1) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 45, 1, false, false));
+                    }
+                }
+
+
+                if (player.getMainHandItem().getItem() instanceof AxeItem) {
+                    if (strengthEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 45, strength + 2, false, false));
+                    } else if (strengthEffect.getAmplifier() < strength + 2) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 45, strength + 2, false, false));
+                    }
+                    if (resistanceEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 45, resistance + 1, false, false));
+                    } else if (resistanceEffect.getAmplifier() < resistance) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 45, resistance + 1, false, false));
+                    }
+                }
+
+
+                if (player.getMainHandItem().getItem() instanceof PickaxeItem || player.getMainHandItem().getItem() instanceof ShovelItem) {
+                    if (hasteEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 45, 3, false, false));
+                    } else if (hasteEffect.getAmplifier() < 3) {
+                        player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 45, 3, false, false));
+                    }
+                }
+
+
+                if (player.getMainHandItem().getItem() instanceof BowItem || player.getMainHandItem().getItem() instanceof CrossbowItem) {
+                    if (speedEffect == null) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 3, false, false));
+                    } else if (speedEffect.getAmplifier() < speed + 3) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 45, speed + 3, false, false));
+                    }
+                }
+
+
             }
         }
         if (player.level().getGameTime() % 50 == 0) {
@@ -88,13 +203,21 @@ public class MonsterClass implements BeyonderClass {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 0, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
+                speed = 0;
+                resistance = 1;
+                regen = 0;
+                strength = 0;
             }
             if (sequenceLevel == 8) {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, 0, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 1, false, false));
+                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
+                speed = 1;
+                resistance = 1;
+                regen = 0;
+                strength = 0;
             }
             if (sequenceLevel == 7) {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 1, false, false));
@@ -102,6 +225,10 @@ public class MonsterClass implements BeyonderClass {
                 player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
+                speed = 1;
+                resistance = 1;
+                regen = 0;
+                strength = 1;
             }
             if (sequenceLevel == 6) {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 1, false, false));
@@ -110,7 +237,11 @@ public class MonsterClass implements BeyonderClass {
                 player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 15 * 20, 0, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
+                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 1, false, false));
+                speed = 1;
+                resistance = 2;
+                regen = 1;
+                strength = 1;
             }
             if (sequenceLevel == 5) {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 2, false, false));
@@ -120,7 +251,11 @@ public class MonsterClass implements BeyonderClass {
                 player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 1, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
+                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 1, false, false));
+                speed = 2;
+                resistance = 2;
+                regen = 1;
+                strength = 2;
             }
             if (sequenceLevel == 4) {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 2, false, false));
@@ -130,7 +265,11 @@ public class MonsterClass implements BeyonderClass {
                 player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 2, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
+                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 1, false, false));
+                speed = 2;
+                resistance = 3;
+                regen = 2;
+                strength = 3;
             }
             if (sequenceLevel == 3) {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 2, false, false));
@@ -140,7 +279,11 @@ public class MonsterClass implements BeyonderClass {
                 player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 3, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
+                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 1, false, false));
+                speed = 2;
+                resistance = 3;
+                regen = 3;
+                strength = 3;
             }
             if (sequenceLevel == 2) {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 3, false, false));
@@ -150,7 +293,11 @@ public class MonsterClass implements BeyonderClass {
                 player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 3, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
+                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 1, false, false));
+                speed = 3;
+                resistance = 3;
+                regen = 3;
+                strength = 3;
             }
             if (sequenceLevel == 1) {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 3, false, false));
@@ -160,7 +307,11 @@ public class MonsterClass implements BeyonderClass {
                 player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 4, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
+                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 1, false, false));
+                speed = 3;
+                resistance = 3;
+                regen = 4;
+                strength = 4;
             }
             if (sequenceLevel == 0) {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 15 * 20, 3, false, false));
@@ -170,7 +321,11 @@ public class MonsterClass implements BeyonderClass {
                 player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 15 * 20, 1, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 15 * 20, 5, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 15 * 20, 2, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 0, false, false));
+                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 15 * 20, 1, false, false));
+                speed = 3;
+                resistance = 3;
+                regen = 5;
+                strength = 4;
             }
         }
     }
@@ -187,5 +342,14 @@ public class MonsterClass implements BeyonderClass {
         return ChatFormatting.WHITE;
     }
 
+    public void applyMobEffect(Player pPlayer, MobEffect mobEffect, int duration, int amplifier, boolean ambient, boolean visible) {
+        MobEffectInstance currentEffect = pPlayer.getEffect(mobEffect);
+        MobEffectInstance newEffect = new MobEffectInstance(mobEffect, duration, amplifier, ambient, visible);
+        if (currentEffect == null) {
+            pPlayer.addEffect(newEffect);
+        } else if (currentEffect.getAmplifier() < amplifier) {
+            pPlayer.addEffect(newEffect);
+        }
+    }
 
 }
