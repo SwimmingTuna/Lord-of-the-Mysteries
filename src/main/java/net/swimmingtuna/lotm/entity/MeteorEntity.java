@@ -22,6 +22,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import org.jetbrains.annotations.NotNull;
@@ -70,10 +71,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             float scale = scaleData.getScale();
-            // Define the radius of the sphere
-            double radius = scale * 4; // Adjust multiplier as needed
-
-            // Loop through all blocks in the spherical area
+            double radius = scale * 4;
             for (BlockPos pos : BlockPos.betweenClosed(
                     hitPos.offset((int) -radius, (int) -radius, (int) -radius),
                     hitPos.offset((int) radius, (int) radius, (int) radius))) {
@@ -87,8 +85,13 @@ public class MeteorEntity extends AbstractHurtingProjectile {
                     new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
                             hitPos.offset((int) radius, (int) radius, (int) radius)));
             for (Entity entity : entities) {
+                if (entity instanceof Player pPlayer) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (this.getOwner() == pPlayer && holder.currentClassMatches(BeyonderClassInit.MONSTER)  && holder.getCurrentSequence() <= 6) {
+                        pPlayer.hurt(damageSources().generic(), 5 * scale);
+                    }
+                } else
                 if (entity instanceof LivingEntity livingEntity) {
-                    // Damage the entity if it's within the radius
                     livingEntity.hurt(damageSources().generic(), 10 * scale); // Adjust damage as needed
                 }
             }
@@ -105,27 +108,26 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             float scale = scaleData.getScale();
             if (hitEntity instanceof LivingEntity) {
                 BlockPos hitPos = hitEntity.blockPosition();
-
-                // Define the radius of the sphere
-                double radius = scale * 4; // Adjust multiplier as needed
-
-                // Loop through all blocks in the spherical area
+                double radius = scale * 4;
                 for (BlockPos pos : BlockPos.betweenClosed(
                         hitPos.offset((int) -radius, (int) -radius, (int) -radius),
                         hitPos.offset((int) radius, (int) radius, (int) radius))) {
                     if (pos.distSqr(hitPos) <= radius * radius) {
-                        // Destroy the block if it's within the radius
                         if (this.level().getBlockState(pos).getDestroySpeed(this.level(), pos) >= 0) {
                             this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
                         }
                     }
                 }
-
-                // Loop through all entities in the spherical area
                 List<Entity> entities = this.level().getEntities(this,
                         new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
                                 hitPos.offset((int) radius, (int) radius, (int) radius)));
                 for (Entity entity : entities) {
+                    if (entity instanceof Player pPlayer) {
+                        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                        if (this.getOwner() == pPlayer && holder.currentClassMatches(BeyonderClassInit.MONSTER)  && holder.getCurrentSequence() <= 6) {
+                            pPlayer.hurt(damageSources().generic(), 5 * scale);
+                        }
+                    } else
                     if (entity instanceof LivingEntity livingEntity) {
                         // Damage the entity if it's within the radius
                         livingEntity.hurt(damageSources().generic(), 10 * scale); // Adjust damage as needed
@@ -160,12 +162,8 @@ public class MeteorEntity extends AbstractHurtingProjectile {
         if (!player.level().isClientSide()) {
             double scatterRadius = 100.0;
             double randomX, randomY, randomZ;
-
-            // Calculate the target position based on the player's look angle
             Vec3 lookVec = player.getLookAngle().normalize().scale(100);
             Vec3 targetPos = player.getEyePosition().add(lookVec);
-
-            // Randomize the position within the scatter radius
             randomX = Math.random() * scatterRadius * 2 - scatterRadius;
             randomY = Math.random() * scatterRadius * 2 - scatterRadius;
             randomZ = Math.random() * scatterRadius * 2 - scatterRadius;
@@ -177,24 +175,21 @@ public class MeteorEntity extends AbstractHurtingProjectile {
                     (int) (player.getZ() + randomZ)
             );
 
-            // Create and configure the meteor entity
             MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), player.level());
             meteorEntity.teleportTo(meteorSpawnPos.getX(), meteorSpawnPos.getY(), meteorSpawnPos.getZ());
             meteorEntity.setOwner(player);
             meteorEntity.noPhysics = true;
 
-            // Set the scale of the meteor based on the player's sequence
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int scalecheck = 10 - holder.getCurrentSequence() * 4;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
             scaleData.setScale(scalecheck);
             scaleData.markForSync(true);
 
-            // Adjust the target position by adding some randomness within a 70-block radius
             Vec3 randomizedTargetPos = targetPos.add(
-                    (Math.random() * 140 - 70),  // Random X offset within -70 to +70
-                    (Math.random() * 140 - 70),  // Random Y offset within -70 to +70
-                    (Math.random() * 140 - 70)   // Random Z offset within -70 to +70
+                    (Math.random() * 140 - 70),
+                    (Math.random() * 140 - 70),
+                    (Math.random() * 140 - 70)
             );
 
             // Calculate the direction and set the meteor's movement speed
@@ -204,6 +199,23 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             meteorEntity.setDeltaMovement(directionToTarget.scale(speed));
 
             // Spawn the meteor entity in the world
+            player.level().addFreshEntity(meteorEntity);
+        }
+    }
+    public static void summonMeteorAtPosition(Player player, int x, int y, int z) {
+        if (!player.level().isClientSide()) {
+            BlockPos meteorSpawnPos = new BlockPos(x,y,z);
+            MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), player.level());
+            meteorEntity.teleportTo(meteorSpawnPos.getX(), meteorSpawnPos.getY(), meteorSpawnPos.getZ());
+            meteorEntity.noPhysics = true;
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
+            scaleData.setScale(6);
+            scaleData.markForSync(true);
+            Vec3 randomizedTargetPos = new Vec3(x,y,z);
+            Vec3 meteorPos = meteorEntity.position();
+            Vec3 directionToTarget = randomizedTargetPos.subtract(meteorPos).normalize();
+            double speed = 3.0;
+            meteorEntity.setDeltaMovement(directionToTarget.scale(speed));
             player.level().addFreshEntity(meteorEntity);
         }
     }

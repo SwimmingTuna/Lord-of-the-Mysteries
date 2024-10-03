@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.item;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -55,9 +56,8 @@ public class TestItem extends Item {
 
     public static void useAbilities(Player player) {
         if (!player.level().isClientSide()) {
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,60,1));
-            player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED,60,1));
-
+            player.sendSystemMessage(Component.literal("worked"));
+            player.getPersistentData().putInt("calamityUndeadArmy", 15);
         }
     }
 

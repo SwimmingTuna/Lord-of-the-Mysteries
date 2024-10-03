@@ -129,6 +129,7 @@ public class LOTM {
             event.accept(ItemInit.MONSTERDANGERSENSE);
             event.accept(ItemInit.MONSTERPROJECTILECONTROL);
             event.accept(ItemInit.LUCKPERCEPTION);
+            event.accept(ItemInit.MONSTERCALAMITYATTRACTION);
             event.accept(ItemInit.STAR_OF_LIGHTNING);
             event.accept(ItemInit.RAIN_EYES);
             event.accept(ItemInit.SONIC_BOOM);

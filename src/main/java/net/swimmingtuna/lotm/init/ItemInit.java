@@ -7,7 +7,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.LuckPerception;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.MonsterDangerSense;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.MonsterDisableEnableCalamities;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.MonsterProjectileControl;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
@@ -21,8 +23,10 @@ public class ItemInit {
 
     public static final RegistryObject<Item> MONSTERDANGERSENSE = ITEMS.register("monsterdangersense",
             () -> new MonsterDangerSense(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MONSTERCALAMITYATTRACTION = ITEMS.register("monstercalamityattraction",
+            () -> new MonsterDisableEnableCalamities(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LUCKPERCEPTION = ITEMS.register("luckperception",
-            () -> new MonsterDangerSense(new Item.Properties().stacksTo(1)));
+            () -> new LuckPerception(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MONSTERPROJECTILECONTROL = ITEMS.register("monsterprojectilecontrol",
             () -> new MonsterProjectileControl(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EARTHQUAKE = ITEMS.register("earthquake",

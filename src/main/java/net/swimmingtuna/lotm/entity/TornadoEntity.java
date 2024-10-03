@@ -25,6 +25,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
@@ -221,6 +224,7 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                 if (entity instanceof TornadoEntity || entity == this.getOwner()) {
                     continue;
                 }
+
                 double dx = entity.getX() - this.getX();
                 double dz = entity.getZ() - this.getZ();
                 double distance = Math.sqrt(dx * dx + dz * dz);

@@ -20,12 +20,17 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -35,6 +40,7 @@ import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
@@ -54,6 +60,7 @@ import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -70,6 +77,7 @@ import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.SoundInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.DreamIntoReality;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionBarrier;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
@@ -146,7 +154,18 @@ public class ModEvents {
         assert corruption != null;
 
         Map<String, Long> times = new HashMap<>();
-
+        {
+            long startTime = System.nanoTime();
+            calamityLightningStorm(player);
+            long endTime = System.nanoTime();
+            times.put("calamityLightningStorm", endTime - startTime);
+        }
+        {
+            long startTime = System.nanoTime();
+            calamityUndeadArmy(player);
+            long endTime = System.nanoTime();
+            times.put("calamityUndeadArmy", endTime - startTime);
+        }
         {
             long startTime = System.nanoTime();
             CorruptionAndLuckHandler.corruptionAndLuckManagers(serverLevel, misfortune, corruption, player, luck, holder, sequence);
@@ -1511,12 +1530,10 @@ public class ModEvents {
                 event.setCanceled(true);
             }
             if (entity instanceof Player player) {
-                AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-                Random random = new Random();
-                if (random.nextInt(100) <= misfortune.getValue() && misfortune.getValue() >= 1 && !(player.getMainHandItem().getItem() instanceof BowItem)) {
+                CompoundTag tag = player.getPersistentData();
+                if (tag.getInt("luckIgnoreAbility") >= 1 && player.getMainHandItem().getItem() instanceof SimpleAbilityItem) {
                     event.setCanceled(true);
-                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                    misfortune.setBaseValue(misfortune.getBaseValue() - (9 - holder.getCurrentSequence()));
+                    tag.putInt("luckIgnoreAbility", tag.getInt("luckIgnoreAbility") - 1);
                     player.sendSystemMessage(Component.literal("How unlucky! You made a mistake using " + player.getMainHandItem().getDisplayName().getString() + " and it didn't work").withStyle(BeyonderUtil.getStyle(player)));
                 }
             }
@@ -2035,6 +2052,7 @@ public class ModEvents {
         }
     }
 
+
     @SubscribeEvent
     public static void hurtEvent(LivingHurtEvent event) {
         Entity entity = event.getEntity();
@@ -2044,10 +2062,13 @@ public class ModEvents {
         if (!event.getEntity().level().isClientSide()) {
 
             if (entity instanceof LivingEntity livingEntity) {
+                int lightningBoltResistance2 = tag.getInt("calamityLightningBoltMonsterResistance");
+                int calamityExplosionOccurrenceDamage = tag.getInt("calamityExplosionOccurrence");
                 int lotmLightningDamage = tag.getInt("luckLightningLOTMDamage");
                 int meteorDamage = tag.getInt("luckMeteorDamage");
                 int MCLightingDamage = tag.getInt("luckLightningMCDamage");
                 int stoneDamage = tag.getInt("luckStoneDamage");
+                int lotmLightningDamageCalamity = tag.getInt("calamityLightningStormSummon");
                 if (entitySource instanceof StoneEntity) {
                     if (stoneDamage >= 1) {
                         event.setAmount(event.getAmount() / 2);
@@ -2063,8 +2084,13 @@ public class ModEvents {
                         event.setAmount(event.getAmount() / 2);
                     }
                 }
+                if (source.getMsgId().toLowerCase().equals("explosion") || source.getMsgId().toLowerCase().equals("explosion.player")) {
+                    if (calamityExplosionOccurrenceDamage >= 1) {
+                        event.setAmount(event.getAmount() / 2);
+                    }
+                }
                 if (entitySource instanceof LightningEntity) {
-                    if (lotmLightningDamage >= 1) {
+                    if (lotmLightningDamage >= 1 || lotmLightningDamage >= 1 || lightningBoltResistance2 >= 1) {
                         event.setAmount(event.getAmount() / 2);
                     }
                 }
@@ -2094,17 +2120,13 @@ public class ModEvents {
                 double misfortuneValue = misfortune.getValue();
                 double luckValue = luck.getValue();
                 float damage = event.getAmount();
-                if (luckValue >= 1) {
-                    if (Math.random() * misfortuneValue > 50) {
-                        event.setCanceled(true);
-                        luck.setBaseValue((Math.min(0, misfortuneValue - damage)));
-                    }
-                } else if (misfortuneValue > 0) {
-                    if (Math.random() * misfortuneValue > 40) {
-                        event.setAmount(damage * 2);
-                    }
+                int doubleDamage = tag.getInt("luckDoubleDamage");
+                int ignoreDamage = tag.getInt("luckIgnoreDamage");
+                if (ignoreDamage >= 1) {
+                    event.setCanceled(true);
+                } else if (doubleDamage >= 1) {
+                    event.setAmount(event.getAmount() * 2);
                 }
-
             }
 
 
@@ -2176,8 +2198,6 @@ public class ModEvents {
 
     private static void dodgeProjectiles(Player pPlayer) {
         if (pPlayer.getPersistentData().getInt("windMovingProjectilesCounter") >= 1) {
-            AttributeInstance luck = pPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
-            double lotmLuckValue = pPlayer.getAttribute(ModAttributes.LOTM_LUCK.get()).getBaseValue();
             if (!pPlayer.level().isClientSide()) {
                 for (Projectile projectile : pPlayer.level().getEntitiesOfClass(Projectile.class, pPlayer.getBoundingBox().inflate(200))) {
                     if (projectile.getPersistentData().getInt("windDodgeProjectilesCounter") == 0) {
@@ -2327,6 +2347,251 @@ public class ModEvents {
         }
 
         return trajectory;
+    }
+    private static void calamityLightningStorm(Player pPlayer) {
+        CompoundTag tag = pPlayer.getPersistentData();
+        int stormCounter = tag.getInt("calamityLightningStormSummon");
+        if (stormCounter >= 1) {
+            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
+            tag.putInt("calamityLightningStormSummon", stormCounter - 1);
+            lightningEntity.setSpeed(6);
+            lightningEntity.setNoUp(true);
+            lightningEntity.setDeltaMovement((Math.random() * 0.4) - 0.2, -4, (Math.random() * 0.4) - 0.2);
+            int stormX = tag.getInt("calamityLightningStormX");
+            int stormY = tag.getInt("calamityLightningStormY");
+            int stormZ = tag.getInt("calamityLightningStormZ");
+            double random  = (Math.random() * 60) - 30;
+            lightningEntity.teleportTo(stormX + random, stormY + 60, stormZ + random);
+            lightningEntity.setMaxLength(60);
+            pPlayer.level().addFreshEntity(lightningEntity);
+        }
+    }
+    private static void calamityUndeadArmy(Player pPlayer) {
+        CompoundTag tag = pPlayer.getPersistentData();
+        int x = tag.getInt("calamityUndeadArmyX");
+        int y = tag.getInt("calamityUndeadArmyY");
+        int z = tag.getInt("calamityUndeadArmyZ");
+        int subtractX = (int) (x - pPlayer.getX());
+        int subtractY = (int) (y - pPlayer.getY());
+        int subtractZ = (int) (z - pPlayer.getZ());
+        int surfaceY = pPlayer.level().getHeight(Heightmap.Types.WORLD_SURFACE, x, z) + 1;
+        int undeadArmyCounter = tag.getInt("calamityUndeadArmyCounter");
+        if (undeadArmyCounter >= 1) {
+            Random random = new Random();
+            ItemStack leatherHelmet = new ItemStack(Items.LEATHER_HELMET);
+            ItemStack leatherChestplate = new ItemStack(Items.LEATHER_CHESTPLATE);
+            ItemStack leatherLeggings = new ItemStack(Items.LEATHER_LEGGINGS);
+            ItemStack leatherBoots = new ItemStack(Items.LEATHER_BOOTS);
+            ItemStack ironHelmet = new ItemStack(Items.IRON_HELMET);
+            ItemStack ironChestplate = new ItemStack(Items.IRON_CHESTPLATE);
+            ItemStack ironLeggings = new ItemStack(Items.IRON_LEGGINGS);
+            ItemStack ironBoots = new ItemStack(Items.IRON_BOOTS);
+            ItemStack diamondHelmet = new ItemStack(Items.DIAMOND_HELMET);
+            ItemStack diamondChestplate = new ItemStack(Items.DIAMOND_CHESTPLATE);
+            ItemStack diamondLeggings = new ItemStack(Items.DIAMOND_LEGGINGS);
+            ItemStack diamondBoots = new ItemStack(Items.DIAMOND_BOOTS);
+            ItemStack netheriteHelmet = new ItemStack(Items.NETHERITE_HELMET);
+            ItemStack netheriteChestplate = new ItemStack(Items.NETHERITE_CHESTPLATE);
+            ItemStack netheriteLeggings = new ItemStack(Items.NETHERITE_LEGGINGS);
+            ItemStack netheriteBoots = new ItemStack(Items.NETHERITE_BOOTS);
+            ItemStack enchantedBow = new ItemStack(Items.BOW);
+            ItemStack woodSword = new ItemStack(Items.WOODEN_SWORD);
+            ItemStack ironSword = new ItemStack(Items.IRON_SWORD);
+            ItemStack diamondSword = new ItemStack(Items.DIAMOND_SWORD);
+            ItemStack netheriteSword = new ItemStack(Items.NETHERITE_SWORD);
+            Zombie zombie = new Zombie(EntityType.ZOMBIE, pPlayer.level());
+            Skeleton skeleton = new Skeleton(EntityType.SKELETON, pPlayer.level());
+            int randomPos = (int) ((Math.random() * 24) - 12);
+            if (random.nextInt(10) == 10) {
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(20))) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
+                        if (entity != null) {
+                            zombie.setTarget(entity);
+                        }
+                    }
+                }
+                pPlayer.level().addFreshEntity(zombie);
+            }
+            if (random.nextInt(10) == 9) {
+                zombie.setPos(x + randomPos, surfaceY, z + randomPos);
+                zombie.setItemSlot(EquipmentSlot.HEAD, leatherHelmet);
+                zombie.setItemSlot(EquipmentSlot.CHEST, leatherChestplate);
+                zombie.setItemSlot(EquipmentSlot.LEGS, leatherLeggings);
+                zombie.setItemSlot(EquipmentSlot.FEET, leatherBoots);
+                zombie.setItemSlot(EquipmentSlot.MAINHAND, woodSword);
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(20))) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
+                        if (entity != null) {
+                            zombie.setTarget(entity);
+                        }
+                    }
+                }
+                pPlayer.level().addFreshEntity(zombie);
+            }
+            if (random.nextInt(10) == 8) {
+                zombie.setPos(x + randomPos, surfaceY, z + randomPos);
+                zombie.setItemSlot(EquipmentSlot.HEAD, ironHelmet);
+                zombie.setItemSlot(EquipmentSlot.CHEST, ironChestplate);
+                zombie.setItemSlot(EquipmentSlot.LEGS, ironLeggings);
+                zombie.setItemSlot(EquipmentSlot.FEET, ironBoots);
+                zombie.setItemSlot(EquipmentSlot.MAINHAND, ironSword);
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(20))) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
+                        if (entity != null) {
+                            zombie.setTarget(entity);
+                        }
+                    }
+                }
+                pPlayer.level().addFreshEntity(zombie);
+            }
+            if (random.nextInt(10) == 7) {
+                zombie.setPos(x + randomPos, surfaceY, z + randomPos);
+                zombie.setItemSlot(EquipmentSlot.HEAD, diamondHelmet);
+                zombie.setItemSlot(EquipmentSlot.CHEST, diamondChestplate);
+                zombie.setItemSlot(EquipmentSlot.LEGS, diamondLeggings);
+                zombie.setItemSlot(EquipmentSlot.FEET, diamondBoots);
+                zombie.setItemSlot(EquipmentSlot.MAINHAND, diamondSword);
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(20))) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
+                        if (entity != null) {
+                            zombie.setTarget(entity);
+                        }
+                    }
+                }
+                pPlayer.level().addFreshEntity(zombie);
+            }
+            if (random.nextInt(10) == 6) {
+                zombie.setPos(x + randomPos, surfaceY, z + randomPos);
+                zombie.setItemSlot(EquipmentSlot.HEAD, netheriteHelmet);
+                zombie.setItemSlot(EquipmentSlot.CHEST, netheriteChestplate);
+                zombie.setItemSlot(EquipmentSlot.LEGS, netheriteLeggings);
+                zombie.setItemSlot(EquipmentSlot.FEET, netheriteBoots);
+                zombie.setItemSlot(EquipmentSlot.MAINHAND, netheriteSword);
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(20))) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
+                        if (entity != null) {
+                            zombie.setTarget(entity);
+                        }
+                    }
+                }
+                pPlayer.level().addFreshEntity(zombie);
+            }
+            if (random.nextInt(20) == 5) {
+                skeleton.setPos(x + randomPos, surfaceY, z + randomPos);
+                skeleton.setItemSlot(EquipmentSlot.MAINHAND, enchantedBow);
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(20))) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
+                        if (entity != null) {
+                            zombie.setTarget(entity);
+                        }
+                    }
+                }
+                pPlayer.level().addFreshEntity(skeleton);
+            }
+            if (random.nextInt(20) == 4) {
+                skeleton.setPos(x + randomPos, surfaceY, z + randomPos);
+                skeleton.setItemSlot(EquipmentSlot.HEAD, leatherHelmet);
+                skeleton.setItemSlot(EquipmentSlot.CHEST, leatherChestplate);
+                skeleton.setItemSlot(EquipmentSlot.LEGS, leatherLeggings);
+                skeleton.setItemSlot(EquipmentSlot.FEET, leatherBoots);
+                enchantedBow.enchant(Enchantments.POWER_ARROWS, 1);
+                skeleton.setItemSlot(EquipmentSlot.MAINHAND, enchantedBow);
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(20))) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
+                        if (entity != null) {
+                            zombie.setTarget(entity);
+                        }
+                    }
+                }
+                pPlayer.level().addFreshEntity(skeleton);
+            }
+            if (random.nextInt(20) == 3) {
+                skeleton.setPos(x + randomPos, surfaceY, z + randomPos);
+                skeleton.setItemSlot(EquipmentSlot.HEAD, ironHelmet);
+                skeleton.setItemSlot(EquipmentSlot.CHEST, ironChestplate);
+                skeleton.setItemSlot(EquipmentSlot.LEGS, ironLeggings);
+                skeleton.setItemSlot(EquipmentSlot.FEET, ironBoots);
+                enchantedBow.enchant(Enchantments.POWER_ARROWS, 2);
+                skeleton.setItemSlot(EquipmentSlot.MAINHAND, enchantedBow);
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(20))) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
+                        if (entity != null) {
+                            zombie.setTarget(entity);
+                        }
+                    }
+                }
+                pPlayer.level().addFreshEntity(skeleton);
+            }
+            if (random.nextInt(20) == 2) {
+                skeleton.setPos(x + randomPos, surfaceY, z + randomPos);
+                skeleton.setItemSlot(EquipmentSlot.HEAD, diamondHelmet);
+                skeleton.setItemSlot(EquipmentSlot.CHEST, diamondChestplate);
+                skeleton.setItemSlot(EquipmentSlot.LEGS, diamondLeggings);
+                skeleton.setItemSlot(EquipmentSlot.FEET, diamondBoots);
+                enchantedBow.enchant(Enchantments.POWER_ARROWS, 3);
+                skeleton.setItemSlot(EquipmentSlot.MAINHAND, enchantedBow);
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(20))) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
+                        if (entity != null) {
+                            zombie.setTarget(entity);
+                        }
+                    }
+                }
+                pPlayer.level().addFreshEntity(skeleton);
+            }
+            if (random.nextInt(20) == 1) {
+                skeleton.setPos(x + randomPos, surfaceY, z + randomPos);
+                skeleton.setItemSlot(EquipmentSlot.HEAD, netheriteHelmet);
+                skeleton.setItemSlot(EquipmentSlot.CHEST, netheriteChestplate);
+                skeleton.setItemSlot(EquipmentSlot.LEGS, netheriteLeggings);
+                skeleton.setItemSlot(EquipmentSlot.FEET, netheriteBoots);
+                enchantedBow.enchant(Enchantments.POWER_ARROWS, 4);
+                skeleton.setItemSlot(EquipmentSlot.MAINHAND, enchantedBow);
+                for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(20))) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
+                        if (entity != null) {
+                            zombie.setTarget(entity);
+                        }
+                    }
+                }
+                pPlayer.level().addFreshEntity(skeleton);
+            }
+            zombie.setDropChance(EquipmentSlot.HEAD, 0.0F);
+            zombie.setDropChance(EquipmentSlot.CHEST, 0.0F);
+            zombie.setDropChance(EquipmentSlot.LEGS, 0.0F);
+            zombie.setDropChance(EquipmentSlot.FEET, 0.0F);
+            skeleton.setDropChance(EquipmentSlot.HEAD, 0.0F);
+            skeleton.setDropChance(EquipmentSlot.CHEST, 0.0F);
+            skeleton.setDropChance(EquipmentSlot.LEGS, 0.0F);
+            skeleton.setDropChance(EquipmentSlot.FEET, 0.0F);
+            tag.putInt("calamityUndeadArmyCounter", tag.getInt("calamityUndeadArmyCounter") - 1);
+        }
+    }
+    private static void calamityExplosion (Player pPlayer) {
+        CompoundTag tag = pPlayer.getPersistentData();
+        int x = tag.getInt("calamityExplosionOccurrence");
+        if (x >= 1 && pPlayer.tickCount % 20 == 0 && !pPlayer.level().isClientSide()) {
+            int explosionX = tag.getInt("calamityExplosionX");
+            int explosionY = tag.getInt("calamityExplosionY");
+            int explosionZ = tag.getInt("calamityExplosionZ");
+            tag.putInt("calamityExplosionOccurrence", x - 1);
+        }
+        if (x == 1) {
+            int explosionX = tag.getInt("calamityExplosionX");
+            int explosionY = tag.getInt("calamityExplosionY");
+            int explosionZ = tag.getInt("calamityExplosionZ");
+            Explosion explosion1 = new Explosion(pPlayer.level(), null, explosionX, explosionY, explosionZ, 10.0F, true, Explosion.BlockInteraction.DESTROY);
+        }
     }
 
     @SubscribeEvent

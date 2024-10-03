@@ -9,22 +9,28 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
+
+import java.util.List;
 
 public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(MeteorNoLevelEntity.class, EntityDataSerializers.BOOLEAN);
@@ -49,13 +55,27 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
 
 
     protected void onHitEntity(EntityHitResult result) {
-        if (!this.level().isClientSide) {
-            Vec3 hitPos = result.getLocation();
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 5.0F, 5.0F);
-            if (result.getEntity() instanceof LivingEntity entity) {
-                Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
-                DamageSource damageSource = damageSources().explosion(explosion);
-                entity.hurt(damageSource, 30.0F);
+        if (!this.level().isClientSide()) {
+            this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+            Entity hitEntity = result.getEntity();
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
+            float scale = scaleData.getScale();
+            if (hitEntity instanceof LivingEntity) {
+                BlockPos hitPos = hitEntity.blockPosition();
+                double radius = scale * 4;
+                List<Entity> entities = this.level().getEntities(this,
+                        new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                                hitPos.offset((int) radius, (int) radius, (int) radius)));
+                for (Entity entity : entities) {
+                    if (entity instanceof Player pPlayer) {
+                        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                        if (this.getOwner() == pPlayer && holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
+                            pPlayer.hurt(damageSources().generic(), 5 * scale);
+                        }
+                    } else if (entity instanceof LivingEntity livingEntity) {
+                        livingEntity.hurt(damageSources().generic(), 10 * scale); // Adjust damage as needed
+                    }
+                }
             }
             this.discard();
         }
@@ -68,14 +88,25 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
-        if (!this.level().isClientSide) {
-            Vec3 hitPos = result.getLocation();
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0F, 1.0F);
-            for (LivingEntity entity : this.getOwner().level().getEntitiesOfClass(LivingEntity.class, this.getOwner().getBoundingBox().inflate(50))) {
-                Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
-                DamageSource damageSource = damageSources().explosion(explosion);
-                entity.hurt(damageSource, 30.0F);
-                entity.hurt(damageSource, 25.0F);
+        if (!this.level().isClientSide()) {
+            BlockPos hitPos = result.getBlockPos();
+            this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
+            float scale = scaleData.getScale();
+            double radius = scale * 4;
+            List<Entity> entities = this.level().getEntities(this,
+                    new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                            hitPos.offset((int) radius, (int) radius, (int) radius)));
+            for (Entity entity : entities) {
+                if (entity instanceof Player pPlayer) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (this.getOwner() == pPlayer && holder.currentClassMatches(BeyonderClassInit.MONSTER)  && holder.getCurrentSequence() <= 6) {
+                        pPlayer.hurt(damageSources().generic(), 5 * scale);
+                    }
+                } else
+                if (entity instanceof LivingEntity livingEntity) {
+                    livingEntity.hurt(damageSources().generic(), 10 * scale); // Adjust damage as needed
+                }
             }
             this.discard();
         }

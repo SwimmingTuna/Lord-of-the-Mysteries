@@ -3,16 +3,33 @@ package net.swimmingtuna.lotm.beyonder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.Explosion;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.entity.LightningEntity;
+import net.swimmingtuna.lotm.entity.MeteorEntity;
+import net.swimmingtuna.lotm.entity.TornadoEntity;
+import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.effect.ModEffects;
 
 import java.util.List;
+import java.util.Random;
 
 public class MonsterClass implements BeyonderClass {
     private int speed;
@@ -58,6 +75,7 @@ public class MonsterClass implements BeyonderClass {
 
     @Override
     public void tick(Player player, int sequenceLevel) {
+        CompoundTag tag = player.getPersistentData();
         if (player.level().getGameTime() % 20 == 0) {
             if (sequenceLevel == 8 || sequenceLevel == 7) {
                 if (player.getMainHandItem().getItem() instanceof SwordItem) {
@@ -136,129 +154,129 @@ public class MonsterClass implements BeyonderClass {
         }
         if (player.level().getGameTime() % 50 == 0) {
             if (sequenceLevel == 9) {
-                applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.JUMP, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.JUMP, 300, 0, false, false);
                 speed = 0;
                 resistance = 1;
                 regen = -1;
                 strength = -1;
             }
             if (sequenceLevel == 8) {
-                applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.JUMP, 3000, 0, false, false);
+                applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.NIGHT_VISION, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.JUMP, 3000, 0, false, false);
                 speed = 1;
                 resistance = 1;
                 regen = -1;
                 strength = 0;
             }
             if (sequenceLevel == 7) {
-                applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300300, 1, false, false);
-                applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.JUMP, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300300, 1, false, false);
+                applyMobEffect(player, MobEffects.NIGHT_VISION, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.JUMP, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.REGENERATION, 300, 0, false, false);
                 speed = 1;
                 resistance = 1;
                 regen = 0;
                 strength = 1;
             }
             if (sequenceLevel == 6) {
-                applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.JUMP, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.NIGHT_VISION, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.REGENERATION, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.JUMP, 300, 1, false, false);
                 speed = 1;
                 resistance = 2;
                 regen = 1;
                 strength = 1;
             }
             if (sequenceLevel == 5) {
-                applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.JUMP, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.NIGHT_VISION, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.REGENERATION, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.WATER_BREATHING, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.JUMP, 300, 1, false, false);
                 speed = 2;
                 resistance = 2;
                 regen = 1;
                 strength = 2;
             }
             if (sequenceLevel == 4) {
-                applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.JUMP, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.NIGHT_VISION, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.REGENERATION, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.WATER_BREATHING, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.JUMP, 300, 1, false, false);
                 speed = 2;
                 resistance = 3;
                 regen = 2;
                 strength = 3;
             }
             if (sequenceLevel == 3) {
-                applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.JUMP, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.NIGHT_VISION, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.REGENERATION, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.WATER_BREATHING, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.JUMP, 300, 1, false, false);
                 speed = 2;
                 resistance = 3;
                 regen = 3;
                 strength = 3;
             }
             if (sequenceLevel == 2) {
-                applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.JUMP, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.NIGHT_VISION, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.REGENERATION, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.WATER_BREATHING, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.JUMP, 300, 1, false, false);
                 speed = 3;
                 resistance = 3;
                 regen = 3;
                 strength = 3;
             }
             if (sequenceLevel == 1) {
-                applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 4, false, false);
-                applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 4, false, false);
-                applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.JUMP, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 4, false, false);
+                applyMobEffect(player, MobEffects.NIGHT_VISION, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.REGENERATION, 300, 4, false, false);
+                applyMobEffect(player, MobEffects.WATER_BREATHING, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.JUMP, 300, 1, false, false);
                 speed = 3;
                 resistance = 3;
                 regen = 4;
                 strength = 4;
             }
             if (sequenceLevel == 0) {
-                applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 4, false, false);
-                applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 5, false, false);
-                applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.JUMP, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 3, false, false);
+                applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 4, false, false);
+                applyMobEffect(player, MobEffects.NIGHT_VISION, 300, 0, false, false);
+                applyMobEffect(player, MobEffects.FIRE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player, MobEffects.REGENERATION, 300, 5, false, false);
+                applyMobEffect(player, MobEffects.WATER_BREATHING, 300, 2, false, false);
+                applyMobEffect(player, MobEffects.JUMP, 300, 1, false, false);
                 speed = 3;
                 resistance = 3;
                 regen = 5;
