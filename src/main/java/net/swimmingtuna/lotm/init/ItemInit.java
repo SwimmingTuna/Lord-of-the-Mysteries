@@ -27,6 +27,8 @@ public class ItemInit {
             () -> new MonsterDisableEnableCalamities(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LUCKPERCEPTION = ITEMS.register("luckperception",
             () -> new LuckPerception(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PSYCHESTORM = ITEMS.register("psychestorm",
+            () -> new LuckPerception(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MONSTERPROJECTILECONTROL = ITEMS.register("monsterprojectilecontrol",
             () -> new MonsterProjectileControl(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EARTHQUAKE = ITEMS.register("earthquake",

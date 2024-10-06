@@ -229,6 +229,11 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                 double dz = entity.getZ() - this.getZ();
                 double distance = Math.sqrt(dx * dx + dz * dz);
                 if (this.tickCount % 10 == 0) {
+                    if (entity.getPersistentData().getInt("luckTornadoResistance") >= 1) {
+                        entity.hurt(damageSources().fall(), 2);
+                    } else if (entity.getPersistentData().getInt("luckTornadoImmunity") >= 1) {
+                        continue;
+                    } else
                     entity.hurt(damageSources().fall(), 5);
                 }
                 if (distance < tornadoRadius) {
@@ -253,8 +258,12 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                         outwardX /= outwardDistance;
                         outwardZ /= outwardDistance;
                     }
-
-                    entity.setDeltaMovement(
+                    if (entity.getPersistentData().getInt("luckTornadoResistance") >= 1) {
+                        entity.setDeltaMovement(outwardX/2,motionY/2, outwardZ/2);
+                    } else if (entity.getPersistentData().getInt("luckTornadoImmunity") >= 1) {
+                        continue;
+                    } else
+                        entity.setDeltaMovement(
                             outwardX,
                             motionY,
                             outwardZ

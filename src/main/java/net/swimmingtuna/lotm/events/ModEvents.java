@@ -20,9 +20,6 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
-import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -36,7 +33,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -60,7 +56,6 @@ import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -2062,25 +2057,38 @@ public class ModEvents {
         if (!event.getEntity().level().isClientSide()) {
 
             if (entity instanceof LivingEntity livingEntity) {
-                int lightningBoltResistance2 = tag.getInt("calamityLightningBoltMonsterResistance");
+                int stoneImmunity = tag.getInt("luckStoneDamageImmunity");
+                int stoneDamage = tag.getInt("luckStoneDamage");
+                int meteorDamage = tag.getInt("luckMeteorDamage");
+                int meteorImmunity = tag.getInt("calamityMeteorImmunity");
+                int MCLightingDamage = tag.getInt("luckLightningMCDamage");
+                int mcLightningImmunity = tag.getInt("luckMCLightningImmunity");
                 int calamityExplosionOccurrenceDamage = tag.getInt("calamityExplosionOccurrence");
                 int lotmLightningDamage = tag.getInt("luckLightningLOTMDamage");
-                int meteorDamage = tag.getInt("luckMeteorDamage");
-                int MCLightingDamage = tag.getInt("luckLightningMCDamage");
-                int stoneDamage = tag.getInt("luckStoneDamage");
-                int lotmLightningDamageCalamity = tag.getInt("calamityLightningStormSummon");
+                int lightningBoltResistance = tag.getInt("calamityLightningBoltMonsterResistance");
+                int lotmLightningDamageCalamity = tag.getInt("calamityLightningStormResistance");
+                int tornadoResistance = tag.getInt("luckTornadoResistance");
+                int tornadoImmunity = tag.getInt("luckTornadoImmunity");
+                int lotmLightningImmunity = tag.getInt("calamityLOTMLightningImmunity");
+                int lightningStormImmunity = tag.getInt("calamityLightningStormImmunity");
                 if (entitySource instanceof StoneEntity) {
-                    if (stoneDamage >= 1) {
+                    if (stoneImmunity >= 1) {
+                        event.setCanceled(true);
+                    } else if (stoneDamage >= 1) {
                         event.setAmount(event.getAmount() / 2);
                     }
                 }
                 if (entitySource instanceof MeteorEntity) {
-                    if (meteorDamage >= 1) {
+                    if (meteorImmunity >= 1) {
+                        event.setCanceled(true);
+                    } else if (meteorDamage >= 1) {
                         event.setAmount(event.getAmount() / 2);
                     }
                 }
                 if (entitySource instanceof LightningBolt) {
-                    if (MCLightingDamage >= 1) {
+                    if (mcLightningImmunity >= 1) {
+                        event.setCanceled(true);
+                    } else if (MCLightingDamage >= 1) {
                         event.setAmount(event.getAmount() / 2);
                     }
                 }
@@ -2090,7 +2098,9 @@ public class ModEvents {
                     }
                 }
                 if (entitySource instanceof LightningEntity) {
-                    if (lotmLightningDamage >= 1 || lotmLightningDamage >= 1 || lightningBoltResistance2 >= 1) {
+                    if (lotmLightningImmunity >= 1 || lightningStormImmunity >= 1) {
+                        event.setCanceled(true);
+                    } else if (lotmLightningDamage >= 1 || lightningBoltResistance >= 1 || lotmLightningDamageCalamity >= 1) {
                         event.setAmount(event.getAmount() / 2);
                     }
                 }
@@ -2348,6 +2358,7 @@ public class ModEvents {
 
         return trajectory;
     }
+
     private static void calamityLightningStorm(Player pPlayer) {
         CompoundTag tag = pPlayer.getPersistentData();
         int stormCounter = tag.getInt("calamityLightningStormSummon");
@@ -2360,12 +2371,24 @@ public class ModEvents {
             int stormX = tag.getInt("calamityLightningStormX");
             int stormY = tag.getInt("calamityLightningStormY");
             int stormZ = tag.getInt("calamityLightningStormZ");
-            double random  = (Math.random() * 60) - 30;
+            int subtractX = (int) (stormX - pPlayer.getX());
+            int subtractY = (int) (stormY - pPlayer.getY());
+            int subtractZ = (int) (stormZ - pPlayer.getZ());
+            for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(40))) {
+                if (entity instanceof Player player) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 3) {
+                        player.getPersistentData().putInt("calamityLightningStormImmunity", 20);
+                    }
+                }
+            }
+            double random = (Math.random() * 60) - 30;
             lightningEntity.teleportTo(stormX + random, stormY + 60, stormZ + random);
             lightningEntity.setMaxLength(60);
             pPlayer.level().addFreshEntity(lightningEntity);
         }
     }
+
     private static void calamityUndeadArmy(Player pPlayer) {
         CompoundTag tag = pPlayer.getPersistentData();
         int x = tag.getInt("calamityUndeadArmyX");
@@ -2577,14 +2600,26 @@ public class ModEvents {
             tag.putInt("calamityUndeadArmyCounter", tag.getInt("calamityUndeadArmyCounter") - 1);
         }
     }
-    private static void calamityExplosion (Player pPlayer) {
+
+    private static void calamityExplosion(Player pPlayer) {
         CompoundTag tag = pPlayer.getPersistentData();
         int x = tag.getInt("calamityExplosionOccurrence");
         if (x >= 1 && pPlayer.tickCount % 20 == 0 && !pPlayer.level().isClientSide()) {
             int explosionX = tag.getInt("calamityExplosionX");
             int explosionY = tag.getInt("calamityExplosionY");
             int explosionZ = tag.getInt("calamityExplosionZ");
+            int subtractX = explosionX - (int) pPlayer.getX();
+            int subtractY = explosionY - (int) pPlayer.getY();
+            int subtractZ = explosionZ - (int) pPlayer.getZ();
             tag.putInt("calamityExplosionOccurrence", x - 1);
+            for (LivingEntity entity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(15))) {
+                if (entity instanceof Player player) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 3) {
+                        player.getPersistentData().putInt("calamityExplosionImmunity", 2);
+                    }
+                }
+            }
         }
         if (x == 1) {
             int explosionX = tag.getInt("calamityExplosionX");
