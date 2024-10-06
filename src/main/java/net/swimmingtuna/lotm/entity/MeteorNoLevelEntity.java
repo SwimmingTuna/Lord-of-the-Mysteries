@@ -67,12 +67,7 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
                         new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
                                 hitPos.offset((int) radius, (int) radius, (int) radius)));
                 for (Entity entity : entities) {
-                    if (entity instanceof Player pPlayer) {
-                        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-                        if (this.getOwner() == pPlayer && holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 6) {
-                            pPlayer.hurt(damageSources().generic(), 5 * scale);
-                        }
-                    } else if (entity instanceof LivingEntity livingEntity) {
+                    if (entity instanceof LivingEntity livingEntity) {
                         livingEntity.hurt(damageSources().generic(), 10 * scale); // Adjust damage as needed
                     }
                 }
@@ -98,12 +93,6 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
                     new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
                             hitPos.offset((int) radius, (int) radius, (int) radius)));
             for (Entity entity : entities) {
-                if (entity instanceof Player pPlayer) {
-                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-                    if (this.getOwner() == pPlayer && holder.currentClassMatches(BeyonderClassInit.MONSTER)  && holder.getCurrentSequence() <= 6) {
-                        pPlayer.hurt(damageSources().generic(), 5 * scale);
-                    }
-                } else
                 if (entity instanceof LivingEntity livingEntity) {
                     livingEntity.hurt(damageSources().generic(), 10 * scale); // Adjust damage as needed
                 }

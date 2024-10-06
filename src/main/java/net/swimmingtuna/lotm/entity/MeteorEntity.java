@@ -8,6 +8,8 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -85,12 +87,6 @@ public class MeteorEntity extends AbstractHurtingProjectile {
                     new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
                             hitPos.offset((int) radius, (int) radius, (int) radius)));
             for (Entity entity : entities) {
-                if (entity instanceof Player pPlayer) {
-                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-                    if (this.getOwner() == pPlayer && holder.currentClassMatches(BeyonderClassInit.MONSTER)  && holder.getCurrentSequence() <= 6) {
-                        pPlayer.hurt(damageSources().generic(), 5 * scale);
-                    }
-                } else
                 if (entity instanceof LivingEntity livingEntity) {
                     livingEntity.hurt(damageSources().generic(), 10 * scale); // Adjust damage as needed
                 }
@@ -98,6 +94,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             this.discard();
         }
     }
+
 
     @Override
     public void onHitEntity(EntityHitResult result) {
@@ -122,12 +119,6 @@ public class MeteorEntity extends AbstractHurtingProjectile {
                         new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
                                 hitPos.offset((int) radius, (int) radius, (int) radius)));
                 for (Entity entity : entities) {
-                    if (entity instanceof Player pPlayer) {
-                        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-                        if (this.getOwner() == pPlayer && holder.currentClassMatches(BeyonderClassInit.MONSTER)  && holder.getCurrentSequence() <= 6) {
-                            pPlayer.hurt(damageSources().generic(), 5 * scale);
-                        }
-                    } else
                     if (entity instanceof LivingEntity livingEntity) {
                         // Damage the entity if it's within the radius
                         livingEntity.hurt(damageSources().generic(), 10 * scale); // Adjust damage as needed

@@ -60,6 +60,9 @@ public class BeyonderHolder extends PlayerCapability {
         this.spirituality = 100;
         this.maxSpirituality = 100;
         this.spiritualityRegen = 1;
+        this.player.setHealth(20);
+        this.player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
+
         updateTracking();
     }
 
