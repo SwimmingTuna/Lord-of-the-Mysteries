@@ -20,6 +20,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftforge.registries.RegisterEvent;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.ClientConfigs;
 import net.swimmingtuna.lotm.client.Configs;
@@ -65,6 +66,7 @@ public class LOTM {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Configs.commonSpec);
         BlockEntityInit.BLOCK_ENTITIES.register(modEventBus);
         CreativeTabInit.register(modEventBus);
+
         ItemInit.register(modEventBus);
         BlockInit.register(modEventBus);
         ModEffects.register(modEventBus);
@@ -89,6 +91,7 @@ public class LOTM {
     private void serverAboutToStart(ServerAboutToStartEvent event) {
         NameManager.INSTANCE.init();
     }
+
 
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {

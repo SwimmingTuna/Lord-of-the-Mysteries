@@ -3,12 +3,18 @@ package net.swimmingtuna.lotm.util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
@@ -52,6 +58,16 @@ public class BeyonderUtil {
             }
         }
         return null;
+    }
+    public static DamageSource genericSource(Entity entity) {
+        Level level = entity.level();
+        Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.GENERIC);
+        return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
+    }
+    public static DamageSource explosionSource(Entity entity) {
+        Level level = entity.level();
+        Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.EXPLOSION);
+        return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
     }
 
     public static StructurePlaceSettings getStructurePlaceSettings(BlockPos pos) {

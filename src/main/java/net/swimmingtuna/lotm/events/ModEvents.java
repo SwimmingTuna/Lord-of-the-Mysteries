@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.events;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.critereon.DamageSourcePredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +21,8 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -2028,6 +2031,8 @@ public class ModEvents {
         }
     }
 
+
+
     private static void applyEffectsAndDamage(LivingEntity entity) {
         entity.addEffect(new MobEffectInstance(MobEffects.POISON, 400, 2, false, false));
         entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 400, 2, false, false));
@@ -2055,8 +2060,7 @@ public class ModEvents {
         DamageSource source = event.getSource();
         Entity entitySource = source.getEntity();
         if (!event.getEntity().level().isClientSide()) {
-
-            if (entity instanceof LivingEntity livingEntity) {
+            if (entity instanceof LivingEntity) {
                 int stoneImmunity = tag.getInt("luckStoneDamageImmunity");
                 int stoneDamage = tag.getInt("luckStoneDamage");
                 int meteorDamage = tag.getInt("luckMeteorDamage");

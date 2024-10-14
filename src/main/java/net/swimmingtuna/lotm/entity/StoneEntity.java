@@ -21,6 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
@@ -92,7 +93,7 @@ public class StoneEntity extends AbstractArrow {
             if (result.getEntity() instanceof LivingEntity entity) {
                 Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 10.0F, true, Explosion.BlockInteraction.DESTROY);
                 DamageSource damageSource = this.level().damageSources().explosion(explosion);
-                entity.hurt(damageSource, 10.0F * scaleData.getScale());
+                entity.hurt(BeyonderUtil.explosionSource(this), 10.0F * scaleData.getScale());
             }
             this.discard();
         }
@@ -159,7 +160,7 @@ public class StoneEntity extends AbstractArrow {
                 }
                 for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(5))) {
                     if (entity != this.getOwner()) {
-                        entity.hurt(entity.damageSources().lightningBolt(), 10);
+                        entity.hurt(BeyonderUtil.explosionSource(entity), 10);
                     }
                 }
                 if (this.tickCount >= 480) {
