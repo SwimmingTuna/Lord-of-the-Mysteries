@@ -2102,11 +2102,13 @@ public class ModEvents {
     public static void attackEvent(LivingAttackEvent event) {
         LivingEntity attacked = event.getEntity();
         LivingEntity attacker = (LivingEntity) event.getSource().getEntity();
-        if (!attacker.level().isClientSide()) {
-            if (attacked instanceof Player pPlayer) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-                if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 5) {
-                    attacker.getPersistentData().putInt("attackedMonster", 100);
+        if (attacker != null) {
+            if (!attacker.level().isClientSide()) {
+                if (attacked instanceof Player pPlayer) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 5) {
+                        attacker.getPersistentData().putInt("attackedMonster", 100);
+                    }
                 }
             }
         }

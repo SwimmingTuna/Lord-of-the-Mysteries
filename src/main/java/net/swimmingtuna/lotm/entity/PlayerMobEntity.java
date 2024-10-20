@@ -108,6 +108,10 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
         setCombatTask();
     }
 
+    public PlayerMobEntity(EntityType<PlayerMobEntity> playerMobEntityEntityType, Level level) {
+        super(playerMobEntityEntityType,level);
+    }
+
     public static AttributeSupplier.Builder registerAttributes() {
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.FOLLOW_RANGE, 35D)
