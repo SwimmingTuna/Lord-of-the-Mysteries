@@ -46,6 +46,8 @@ public class ModAttributes {
             ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,100).setSyncable(true));
     public static final RegistryObject<Attribute> LOTM_LUCK = ATTRIBUTES.register("luck",
             ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,10000).setSyncable(true));
+    public static final RegistryObject<Attribute> MOB_SPIRITUALITY = ATTRIBUTES.register("mob_spirituality",
+            ()-> new RangedAttribute("attribute.lotm.mob_spirituality",0.0D,0.0D,10000).setSyncable(true));
 
 
 

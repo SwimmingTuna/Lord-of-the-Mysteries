@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.events;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.critereon.DamageSourcePredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +20,6 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -151,7 +149,20 @@ public class ModEvents {
         AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
         assert corruption != null;
 
+
         Map<String, Long> times = new HashMap<>();
+        {
+            decrementMonsterAttackEvent(player);
+        }
+        {
+            monsterLuckIgnoreMobs(player);
+        }
+        {
+            monsterLuckPoisonAttacker(player);
+        }
+        {
+            calamityExplosion(player);
+        }
         {
             long startTime = System.nanoTime();
             calamityLightningStorm(player);
@@ -2032,7 +2043,6 @@ public class ModEvents {
     }
 
 
-
     private static void applyEffectsAndDamage(LivingEntity entity) {
         entity.addEffect(new MobEffectInstance(MobEffects.POISON, 400, 2, false, false));
         entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 400, 2, false, false));
@@ -2047,6 +2057,56 @@ public class ModEvents {
                 ItemStack armorStack = player.getItemBySlot(slot);
                 if (!armorStack.isEmpty()) {
                     player.setItemSlot(slot, ItemStack.EMPTY);
+                }
+            }
+        }
+    }
+    private static void monsterLuckPoisonAttacker(Player pPlayer) {
+        if (pPlayer.tickCount % 100 == 0) {
+            if (pPlayer.getPersistentData().getInt("luckAttackerPoisoned") >= 1) {
+                for (Player player : pPlayer.level().getEntitiesOfClass(Player.class, pPlayer.getBoundingBox().inflate(50))) {
+                    if (player.getPersistentData().getInt("attackedMonster") >= 1) {
+                        player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(),60,1,false,false));
+                        player.addEffect(new MobEffectInstance(MobEffects.POISON,60,3,false,false));
+                        pPlayer.getPersistentData().putInt("luckAttackerPoisoned", pPlayer.getPersistentData().getInt("luckAttackerPoisoned") - 1);
+                    }
+                }
+            }
+        }
+    }
+    private static void monsterLuckIgnoreMobs(Player pPlayer) {
+        if (pPlayer.tickCount % 40 == 0) {
+            if (pPlayer.getPersistentData().getInt("luckIgnoreMobs") >= 1) {
+                for (Mob mob : pPlayer.level().getEntitiesOfClass(Mob.class, pPlayer.getBoundingBox().inflate(20))) {
+                    if (mob.getTarget() == pPlayer) {
+                        for (LivingEntity livingEntity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(50))) {
+                            if (livingEntity != null) {
+                                mob.setTarget(livingEntity);
+                            } else
+                                mob.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
+                        }
+                        pPlayer.getPersistentData().putInt("luckIgnoreMobs", pPlayer.getPersistentData().getInt("luckIgnoreMobs") - 1);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void decrementMonsterAttackEvent(Player pPlayer) {
+        if (pPlayer.getPersistentData().getInt("attackedMonster") >= 1) {
+            pPlayer.getPersistentData().putInt("attackedMonster", pPlayer.getPersistentData().getInt("attackedMonster") - 1);
+        }
+    }
+
+    @SubscribeEvent
+    public static void attackEvent(LivingAttackEvent event) {
+        LivingEntity attacked = event.getEntity();
+        LivingEntity attacker = (LivingEntity) event.getSource().getEntity();
+        if (!attacker.level().isClientSide()) {
+            if (attacked instanceof Player pPlayer) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 5) {
+                    attacker.getPersistentData().putInt("attackedMonster", 100);
                 }
             }
         }
@@ -2082,26 +2142,28 @@ public class ModEvents {
                         event.setAmount(event.getAmount() / 2);
                     }
                 }
-                if (entitySource instanceof MeteorEntity) {
+                if (entitySource instanceof MeteorEntity || entitySource instanceof MeteorNoLevelEntity) {
                     if (meteorImmunity >= 1) {
                         event.setCanceled(true);
                     } else if (meteorDamage >= 1) {
                         event.setAmount(event.getAmount() / 2);
                     }
                 }
-                if (entitySource instanceof LightningBolt) {
+                if (source.is(DamageTypes.LIGHTNING_BOLT)) {
                     if (mcLightningImmunity >= 1) {
                         event.setCanceled(true);
                     } else if (MCLightingDamage >= 1) {
                         event.setAmount(event.getAmount() / 2);
                     }
                 }
-                if (source.getMsgId().toLowerCase().equals("explosion") || source.getMsgId().toLowerCase().equals("explosion.player")) {
+                if (source.is(DamageTypes.EXPLOSION)) {
+                    entity.sendSystemMessage(Component.literal("explosion"));
                     if (calamityExplosionOccurrenceDamage >= 1) {
                         event.setAmount(event.getAmount() / 2);
                     }
                 }
                 if (entitySource instanceof LightningEntity) {
+                    entity.sendSystemMessage(Component.literal("lightningentity"));
                     if (lotmLightningImmunity >= 1 || lightningStormImmunity >= 1) {
                         event.setCanceled(true);
                     } else if (lotmLightningDamage >= 1 || lightningBoltResistance >= 1 || lotmLightningDamageCalamity >= 1) {
@@ -2129,13 +2191,12 @@ public class ModEvents {
                 }
 
                 //MONSTER LUCK
-                AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
-                AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-                double misfortuneValue = misfortune.getValue();
-                double luckValue = luck.getValue();
-                float damage = event.getAmount();
                 int doubleDamage = tag.getInt("luckDoubleDamage");
                 int ignoreDamage = tag.getInt("luckIgnoreDamage");
+                int halveDamage = tag.getInt("luckHalveDamage");
+                if (halveDamage >= 1) {
+                    event.setAmount(event.getAmount() / 2);
+                }
                 if (ignoreDamage >= 1) {
                     event.setCanceled(true);
                 } else if (doubleDamage >= 1) {
@@ -2325,7 +2386,7 @@ public class ModEvents {
         }
     }
 
-    public static List<Vec3> predictProjectileTrajectory(Projectile projectile, Player player) {
+    public static List<Vec3> predictProjectileTrajectory(Projectile projectile, LivingEntity player) {
         List<Vec3> trajectory = new ArrayList<>();
         Vec3 projectilePos = projectile.position();
         Vec3 projectileDelta = projectile.getDeltaMovement();
@@ -2609,6 +2670,7 @@ public class ModEvents {
         CompoundTag tag = pPlayer.getPersistentData();
         int x = tag.getInt("calamityExplosionOccurrence");
         if (x >= 1 && pPlayer.tickCount % 20 == 0 && !pPlayer.level().isClientSide()) {
+            pPlayer.sendSystemMessage(Component.literal("working"));
             int explosionX = tag.getInt("calamityExplosionX");
             int explosionY = tag.getInt("calamityExplosionY");
             int explosionZ = tag.getInt("calamityExplosionZ");
@@ -2629,7 +2691,11 @@ public class ModEvents {
             int explosionX = tag.getInt("calamityExplosionX");
             int explosionY = tag.getInt("calamityExplosionY");
             int explosionZ = tag.getInt("calamityExplosionZ");
-            Explosion explosion1 = new Explosion(pPlayer.level(), null, explosionX, explosionY, explosionZ, 10.0F, true, Explosion.BlockInteraction.DESTROY);
+            pPlayer.level().playSound(null, explosionX, explosionY, explosionZ, SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 5.0F, 5.0F);
+            Explosion explosion = new Explosion(pPlayer.level(), null, explosionX, explosionY, explosionZ, 10.0F, true, Explosion.BlockInteraction.DESTROY);
+            explosion.explode();
+            explosion.finalizeExplosion(true);
+            tag.putInt("calamityExplosionOccurrence", 0);
         }
     }
 
@@ -2640,6 +2706,38 @@ public class ModEvents {
             if (!livingEntity.level().isClientSide()) {
                 AttributeInstance luck = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
                 AttributeInstance misfortune = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
+                AttributeInstance particle = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER.get());
+                AttributeInstance particle1 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER1.get());
+                AttributeInstance particle2 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER2.get());
+                AttributeInstance particle3 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
+                AttributeInstance particle4 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
+                AttributeInstance particle5 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER5.get());
+                AttributeInstance particle6 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER6.get());
+                AttributeInstance particle7 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER7.get());
+                AttributeInstance particle8 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER8.get());
+                AttributeInstance particle9 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER9.get());
+                AttributeInstance nightmare = livingEntity.getAttribute(ModAttributes.NIGHTMARE.get());
+                AttributeInstance armorinvis = livingEntity.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
+                AttributeInstance mobSpirituality = livingEntity.getAttribute(ModAttributes.MOB_SPIRITUALITY.get());
+                AttributeInstance dir = livingEntity.getAttribute(ModAttributes.DIR.get());
+                if (!(livingEntity instanceof Player)) {
+                    if (mobSpirituality == null) {
+                        return;
+                    }
+                    mobSpirituality.setBaseValue(0);
+                }
+                if (nightmare == null) {
+                    return;
+                }
+                nightmare.setBaseValue(0);
+                if (dir == null) {
+                    return;
+                }
+                dir.setBaseValue(1);
+                if (armorinvis == null) {
+                    return;
+                }
+                armorinvis.setBaseValue(0);
                 if (luck == null) {
                     return;
                 }
@@ -2648,6 +2746,47 @@ public class ModEvents {
                     return;
                 }
                 misfortune.setBaseValue(0);
+
+                if (particle == null) {
+                    return;
+                }
+                particle.setBaseValue(0);
+                if (particle1 == null) {
+                    return;
+                }
+                particle1.setBaseValue(0);
+                if (particle2 == null) {
+                    return;
+                }
+                particle2.setBaseValue(0);
+                if (particle3 == null) {
+                    return;
+                }
+                particle3.setBaseValue(0);
+                if (particle4 == null) {
+                    return;
+                }
+                particle4.setBaseValue(0);
+                if (particle5 == null) {
+                    return;
+                }
+                particle5.setBaseValue(0);
+                if (particle6 == null) {
+                    return;
+                }
+                particle6.setBaseValue(0);
+                if (particle7 == null) {
+                    return;
+                }
+                particle7.setBaseValue(0);
+                if (particle8 == null) {
+                    return;
+                }
+                particle8.setBaseValue(0);
+                if (particle9 == null) {
+                    return;
+                }
+                particle9.setBaseValue(0);
             }
         }
     }

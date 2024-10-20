@@ -162,6 +162,19 @@ public class SailorLightning extends Item implements Ability {
             level.addFreshEntity(lightningEntity);
         }
     }
+    public static void shootLineBlockHighPM(LivingEntity player, Level level) {
+        if (!level.isClientSide()) {
+            float speed = 10.0f;
+            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), level);
+            lightningEntity.setSpeed(speed);
+            lightningEntity.setDeltaMovement(0, -2, 0);
+            lightningEntity.setMaxLength(60);
+            lightningEntity.setOwner(player);
+            lightningEntity.setOwner(player);
+            lightningEntity.teleportTo(player.getX() + ((Math.random() * 150) - 75), player.getY() + 60, player.getZ() + ((Math.random() * 150) - 75));
+            level.addFreshEntity(lightningEntity);
+        }
+    }
 
 
     @SubscribeEvent

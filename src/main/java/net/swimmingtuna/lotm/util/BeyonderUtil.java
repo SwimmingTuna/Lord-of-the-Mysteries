@@ -15,6 +15,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
@@ -40,6 +41,7 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.networking.packet.LeftClickC2S;
 import net.swimmingtuna.lotm.networking.packet.MatterAccelerationBlockC2S;
+import net.swimmingtuna.lotm.networking.packet.UpdateItemInHandC2S;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -59,14 +61,40 @@ public class BeyonderUtil {
         }
         return null;
     }
+    public static Projectile getLivingEntitiesProjectile(LivingEntity player) {
+        if (player.level().isClientSide()) {
+            return null;
+        }
+        List<Projectile> projectiles = player.level().getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(30));
+        for (Projectile projectile : projectiles) {
+            if (projectile.getOwner() == player && projectile.tickCount > 8 && projectile.tickCount < 50) {
+                return projectile;
+            }
+        }
+        return null;
+    }
+
     public static DamageSource genericSource(Entity entity) {
         Level level = entity.level();
         Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.GENERIC);
         return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
     }
+
     public static DamageSource explosionSource(Entity entity) {
         Level level = entity.level();
         Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.EXPLOSION);
+        return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
+    }
+
+    public static DamageSource fallSource(Entity entity) {
+        Level level = entity.level();
+        Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.FALL);
+        return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
+    }
+
+    public static DamageSource lightningSource(Entity entity) {
+        Level level = entity.level();
+        Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.LIGHTNING_BOLT);
         return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
     }
 
@@ -280,90 +308,94 @@ public class BeyonderUtil {
         if (!heldItem.isEmpty()) {
             if (heldItem.getItem() instanceof BeyonderAbilityUser) {
                 LOTMNetworkHandler.sendToServer(new LeftClickC2S()); //DIFFERENT FOR LEFT CLICK BLOCK
+
             } else if (heldItem.getItem() instanceof AqueousLightPush) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.AQUEOUS_LIGHT_PULL.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.AQUEOUS_LIGHT_PULL.get())));
+
             } else if (heldItem.getItem() instanceof AqueousLightPull) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.AQUEOUS_LIGHT_DROWN.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.AQUEOUS_LIGHT_DROWN.get())));
+
             } else if (heldItem.getItem() instanceof AqueousLightDrown) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.AQUEOUS_LIGHT_PUSH.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.AQUEOUS_LIGHT_PUSH.get())));
+
             } else if (heldItem.getItem() instanceof Hurricane) {
                 LOTMNetworkHandler.sendToServer(new LeftClickC2S());
+
             } else if (heldItem.getItem() instanceof LightningStorm) {
                 LOTMNetworkHandler.sendToServer(new LeftClickC2S());
+
             } else if (heldItem.getItem() instanceof MatterAccelerationBlocks) {
                 LOTMNetworkHandler.sendToServer(new MatterAccelerationBlockC2S());
+
             } else if (heldItem.getItem() instanceof MatterAccelerationEntities) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.MATTER_ACCELERATION_SELF.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_SELF.get())));
+
             } else if (heldItem.getItem() instanceof MatterAccelerationSelf) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.MATTER_ACCELERATION_BLOCKS.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_BLOCKS.get())));
+
             } else if (heldItem.getItem() instanceof WindManipulationBlade) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.WIND_MANIPULATION_CUSHION.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_CUSHION.get())));
+
             } else if (heldItem.getItem() instanceof WindManipulationCushion) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.WIND_MANIPULATION_FLIGHT.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_FLIGHT.get())));
+
             } else if (heldItem.getItem() instanceof WindManipulationFlight) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.WIND_MANIPULATION_SENSE.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_SENSE.get())));
+
             } else if (heldItem.getItem() instanceof WindManipulationSense) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.WIND_MANIPULATION_BLADE.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.WIND_MANIPULATION_BLADE.get())));
+
             } else if (heldItem.getItem() instanceof ApplyManipulation) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.MANIPULATE_EMOTION.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.MANIPULATE_EMOTION.get())));
+
             } else if (heldItem.getItem() instanceof ManipulateEmotion) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.MANIPULATE_MOVEMENT.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.MANIPULATE_MOVEMENT.get())));
+
             } else if (heldItem.getItem() instanceof ManipulateMovement) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.MANIPULATE_FONDNESS.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.MANIPULATE_FONDNESS.get())));
+
             } else if (heldItem.getItem() instanceof ManipulateFondness) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.APPLY_MANIPULATION.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.APPLY_MANIPULATION.get())));
+
             } else if (heldItem.getItem() instanceof EnvisionBarrier) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISION_DEATH.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISION_DEATH.get())));
+
             } else if (heldItem.getItem() instanceof EnvisionDeath) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISIONHEALTH.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISIONHEALTH.get())));
+
             } else if (heldItem.getItem() instanceof EnvisionHealth) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISION_LIFE.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISION_LIFE.get())));
+
             } else if (heldItem.getItem() instanceof EnvisionLife) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISION_WEATHER.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISION_WEATHER.get())));
+
             } else if (heldItem.getItem() instanceof EnvisionWeather) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISION_LOCATION.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISION_LOCATION.get())));
+
             } else if (heldItem.getItem() instanceof EnvisionLocation) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISION_LOCATION_BLINK.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISION_LOCATION_BLINK.get())));
+
             } else if (heldItem.getItem() instanceof EnvisionLocationBlink) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISION_KINGDOM.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISION_KINGDOM.get())));
+
             } else if (heldItem.getItem() instanceof EnvisionKingdom) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISION_BARRIER.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISION_BARRIER.get())));
+
             } else if (heldItem.getItem() instanceof MeteorShower) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.METEOR_NO_LEVEL_SHOWER.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.METEOR_NO_LEVEL_SHOWER.get())));
+
             } else if (heldItem.getItem() instanceof MeteorNoLevelShower) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.METEOR_SHOWER.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.METEOR_SHOWER.get())));
+
             } else if (heldItem.getItem() instanceof ProphesizeDemise) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.PROPHESIZE_TELEPORT_BLOCK.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROPHESIZE_TELEPORT_BLOCK.get())));
+
             } else if (heldItem.getItem() instanceof ProphesizeTeleportBlock) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.PROPHESIZE_TELEPORT_PLAYER.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROPHESIZE_TELEPORT_PLAYER.get())));
+
             } else if (heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.PROPHESIZE_DEMISE.get())));
-                heldItem.shrink(1);
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROPHESIZE_DEMISE.get())));
+
             }
         }
     }
@@ -403,71 +435,16 @@ public class BeyonderUtil {
 
 
             } else if (heldItem.getItem() instanceof MatterAccelerationBlocks) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.MATTER_ACCELERATION_ENTITIES.get())));
-                heldItem.shrink(1);
+                MatterAccelerationBlocks.leftClick(pPlayer);
             } else if (heldItem.getItem() instanceof MatterAccelerationEntities) {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.MATTER_ACCELERATION_SELF.get())));
                 heldItem.shrink(1);
             } else if (heldItem.getItem() instanceof MatterAccelerationSelf) {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.MATTER_ACCELERATION_BLOCKS.get())));
                 heldItem.shrink(1);
-            } else if (heldItem.getItem() instanceof WindManipulationBlade) {
-                int x = pPlayer.getPersistentData().getInt("matterAccelerationBlockTimer");
-                if (x >= 1) {
-                    Vec3 lookDirection = pPlayer.getLookAngle().normalize().scale(20);
-                    if (pPlayer.level().dimension() == Level.OVERWORLD) {
-                        StoneEntity stoneEntity = pPlayer.level().getEntitiesOfClass(StoneEntity.class, pPlayer.getBoundingBox().inflate(10))
-                                .stream()
-                                .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(pPlayer)))
-                                .orElse(null);
-                        if (stoneEntity != null) {
-                            stoneEntity.setDeltaMovement(lookDirection);
-                            stoneEntity.setSent(true);
-                            stoneEntity.setShouldntDamage(false);
-                            stoneEntity.setTickCount(440);
-                        }
-                        if (stoneEntity == null) {
-                            pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
-                        }
-                    }
-                    if (pPlayer.level().dimension() == Level.NETHER) {
-                        NetherrackEntity netherrackEntity = pPlayer.level().getEntitiesOfClass(NetherrackEntity.class, pPlayer.getBoundingBox().inflate(10))
-                                .stream()
-                                .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(pPlayer)))
-                                .orElse(null);
-                        if (netherrackEntity != null) {
-                            netherrackEntity.setDeltaMovement(lookDirection);
-                            netherrackEntity.setSent(true);
-                            netherrackEntity.setShouldDamage(true);
-                            netherrackEntity.setTickCount(440);
-                        }
-                        if (netherrackEntity == null) {
-                            pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
-                        }
-                    }
-                    if (pPlayer.level().dimension() == Level.END) {
-                        EndStoneEntity endStoneEntity = pPlayer.level().getEntitiesOfClass(EndStoneEntity.class, pPlayer.getBoundingBox().inflate(10))
-                                .stream()
-                                .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(pPlayer)))
-                                .orElse(null);
-                        if (endStoneEntity != null) {
-                            endStoneEntity.setDeltaMovement(lookDirection);
-                            endStoneEntity.setSent(true);
-                            endStoneEntity.setShouldntDamage(false);
-                            endStoneEntity.setTickCount(440);
-                        }
-                        if (endStoneEntity == null) {
-                            pPlayer.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
-                        }
-                    }
-                } else {
-                    if (!heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationBlocks) {
-                        pPlayer.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_SELF.get()));
-                        heldItem.shrink(1);
-                    }
-                }
-
-
+            }  else if (heldItem.getItem() instanceof WindManipulationBlade) {
+                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.WIND_MANIPULATION_CUSHION.get())));
+                heldItem.shrink(1);
             } else if (heldItem.getItem() instanceof WindManipulationCushion) {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.WIND_MANIPULATION_FLIGHT.get())));
                 heldItem.shrink(1);

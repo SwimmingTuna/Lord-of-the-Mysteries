@@ -60,7 +60,7 @@ public class Tsunami extends Item {
         player.getPersistentData().putInt("sailorTsunamiZ", (int) player.getZ());
     }
 
-    private static String getDirectionFromYaw(float yaw) {
+    public static String getDirectionFromYaw(float yaw) {
         if (yaw < 0) {
             yaw += 360;
         }

@@ -24,6 +24,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
@@ -85,7 +86,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
                             hitPos.offset((int) radius, (int) radius, (int) radius)));
             for (Entity entity : entities) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.hurt(damageSources().generic(), 10 * scale); // Adjust damage as needed
+                    livingEntity.hurt(BeyonderUtil.genericSource(this), 10 * scale); // Adjust damage as needed
                 }
             }
             this.discard();
@@ -117,7 +118,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
                                 hitPos.offset((int) radius, (int) radius, (int) radius)));
                 for (Entity entity : entities) {
                     if (entity instanceof LivingEntity livingEntity) {
-                        livingEntity.hurt(damageSources().generic(), 10 * scale);
+                        livingEntity.hurt(BeyonderUtil.genericSource(this), 10 * scale);
                     }
                 }
             }
@@ -190,7 +191,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             player.level().addFreshEntity(meteorEntity);
         }
     }
-    public static void summonMeteorAtPosition(Player player, int x, int y, int z) {
+    public static void summonMeteorAtPosition(LivingEntity player, int x, int y, int z) {
         if (!player.level().isClientSide()) {
             BlockPos meteorSpawnPos = new BlockPos(x,y,z);
             MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), player.level());

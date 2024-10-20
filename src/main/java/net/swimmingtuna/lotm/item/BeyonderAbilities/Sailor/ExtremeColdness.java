@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -58,7 +59,7 @@ public class ExtremeColdness extends Item {
     }
 
 
-    public static boolean canFreezeBlock(Player player, BlockPos targetPos) {
+    public static boolean canFreezeBlock(LivingEntity player, BlockPos targetPos) {
         Block block = player.level().getBlockState(targetPos).getBlock();
         return block != Blocks.BEDROCK && block != Blocks.AIR &&
                 block != Blocks.CAVE_AIR && block != Blocks.VOID_AIR &&

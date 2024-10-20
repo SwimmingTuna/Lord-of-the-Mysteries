@@ -39,6 +39,11 @@ public class LOTMNetworkHandler {
                 .encoder(LeftClickC2S::toByte)
                 .consumerMainThread(LeftClickC2S::handle)
                 .add();
+        INSTANCE.messageBuilder(UpdateItemInHandC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(UpdateItemInHandC2S::new)
+                .encoder(UpdateItemInHandC2S::toByte)
+                .consumerMainThread(UpdateItemInHandC2S::handle)
+                .add();
         INSTANCE.messageBuilder(MatterAccelerationBlockC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(MatterAccelerationBlockC2S::new)
                 .encoder(MatterAccelerationBlockC2S::toByte)

@@ -7,7 +7,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Ravager;
@@ -17,12 +20,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
+import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.entity.LightningEntity;
-import net.swimmingtuna.lotm.entity.MeteorEntity;
-import net.swimmingtuna.lotm.entity.StoneEntity;
-import net.swimmingtuna.lotm.entity.TornadoEntity;
+import net.swimmingtuna.lotm.entity.*;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.Earthquake;
@@ -34,14 +35,16 @@ import virtuoel.pehkui.api.ScaleTypes;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
-public class CorruptionAndLuckHandler {
+public class PlayerMobCorruptionAndLuckHandler {
 
-    public static void corruptionAndLuckManagers(ServerLevel serverLevel, AttributeInstance misfortune, AttributeInstance corruption, Player player, AttributeInstance luck, BeyonderHolder holder, int sequence) {
+    public static void corruptionAndLuckManagers(ServerLevel serverLevel, AttributeInstance misfortune, AttributeInstance corruption, PlayerMobEntity player, AttributeInstance luck, int sequence) {
         if (!player.level().isClientSide()) {
             if (corruption.getValue() >= 1 && player.tickCount % 200 == 0) {
                 corruption.setBaseValue(corruption.getValue() - 1);
             }
+            Supplier<? extends BeyonderClass> pathway = player.getCurrentPathway();
             CompoundTag tag = player.getPersistentData();
             int meteor = tag.getInt("luckMeteor");
             int lotmLightning = tag.getInt("luckLightningLOTM");
@@ -130,23 +133,20 @@ public class CorruptionAndLuckHandler {
                     tag.putInt("luckHalveDamage", tag.getInt("luckHalveDamage") + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 7));
                 }
-                if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && player.tickCount % 51 == 0 && random.nextInt(70) <= lotmLuckValue) {
+                if (pathway == BeyonderClassInit.MONSTER && player.tickCount % 51 == 0 && random.nextInt(70) <= lotmLuckValue) {
                     tag.putInt("luckIgnoreMobs", luckIgnoreMobs + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 3));
                 }
-                if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 5 && player.tickCount % 383 == 0 && random.nextInt(200) <= lotmLuckValue) {
+                if (pathway == BeyonderClassInit.MONSTER && sequence <= 5 && player.tickCount % 383 == 0 && random.nextInt(200) <= lotmLuckValue) {
                     tag.putInt("luckAttackerPoisoned", attackerPoisoned + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 15));
                 }
-                if (player.tickCount % 503 == 0 && random.nextInt(225) <= lotmLuckValue && holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 5) {
+                if (player.tickCount % 503 == 0 && random.nextInt(225) <= lotmLuckValue && pathway == BeyonderClassInit.MONSTER && sequence <= 5) {
                     tag.putInt("luckIgnoreDamage", ignoreDamage + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 13));
                 }
             }
-            if (holder.currentClassMatches(BeyonderClassInit.MONSTER)) {
-                if (player.tickCount % 500 == 0) {
-                    SpamClass.sendMonsterMessage(player);
-                }
+            if (pathway == BeyonderClassInit.MONSTER) {
                 if (sequence == 7) {
                     if (player.tickCount % 400 == 0) {
                         luck.setBaseValue(Math.max(0, luck.getValue() + 1));
@@ -381,6 +381,11 @@ public class CorruptionAndLuckHandler {
                                     pPlayer.getPersistentData().putInt("calamityMeteorImmunity", 5);
                                 }
                             }
+                            if (entity == player) {
+                                if (sequence <= 3) {
+                                    player.getPersistentData().putInt("calamityMeteorImmunity",5);
+                                }
+                            }
                         }
                         tag.putInt("luckMeteorDamage", 6);
                         MeteorEntity.summonMeteorAtPosition(player, meteorX, meteorY, meteorZ);
@@ -453,13 +458,16 @@ public class CorruptionAndLuckHandler {
                                     BeyonderHolder holder1 = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
                                     if (holder1.currentClassMatches(BeyonderClassInit.MONSTER) && holder1.getCurrentSequence() <= 3) {
                                         return;
-                                    } else pPlayer.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
+                                    } else
+                                        pPlayer.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
                                     pPlayer.setTicksFrozen(60);
-                                } else entity.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
+                                } else
+                                    entity.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
                                 entity.setTicksFrozen(60);
                             } else if (sequence <= 3) {
                                 return;
-                            } else player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
+                            } else
+                                player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
                             player.setTicksFrozen(60);
                         }
                     }
@@ -503,17 +511,16 @@ public class CorruptionAndLuckHandler {
                                 if (!equippedArmor.isEmpty()) {
                                     EquipmentSlot randomArmorSlot = equippedArmor.get(random.nextInt(equippedArmor.size()));
                                     ItemStack armorPiece = pPlayer.getItemBySlot(randomArmorSlot);
-                                    if (entity != player) {
-                                        if (holder1.currentClassMatches(BeyonderClassInit.MONSTER) && holder1.getCurrentSequence() <= 3) {
-                                            return;
-                                        } else if (holder1.currentClassMatches(BeyonderClassInit.MONSTER) && holder1.getCurrentSequence() <= 6 && holder1.getCurrentSequence() >= 4) {
-                                            if (random.nextInt(2) == 1) {
-                                                pPlayer.spawnAtLocation(armorPiece);
-                                                pPlayer.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
-                                            }
-                                        } else pPlayer.spawnAtLocation(armorPiece);
-                                        pPlayer.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
-                                    } else if (sequence >= 3) {
+                                    if (holder1.currentClassMatches(BeyonderClassInit.MONSTER) && holder1.getCurrentSequence() <= 3) {
+                                        return;
+                                    } else if (holder1.currentClassMatches(BeyonderClassInit.MONSTER) && holder1.getCurrentSequence() <= 6 && holder1.getCurrentSequence() >= 4) {
+                                        if (random.nextInt(2) == 1) {
+                                            pPlayer.spawnAtLocation(armorPiece);
+                                            pPlayer.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
+                                        }
+                                    } else pPlayer.spawnAtLocation(armorPiece);
+                                    pPlayer.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
+                                    if (sequence >= 3) {
                                         return;
                                     } else if (random.nextInt(2) == 1) {
                                         player.spawnAtLocation(armorPiece);
@@ -532,14 +539,16 @@ public class CorruptionAndLuckHandler {
                         int subtractZ = groundTremorZ - (int) player.getZ();
                         for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(50))) {
                             if (entity instanceof Player pPlayer && pPlayer.onGround()) {
-                                if (entity != player) {
-                                    BeyonderHolder holder1 = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-                                    if (holder1.currentClassMatches(BeyonderClassInit.MONSTER) && holder1.getCurrentSequence() <= 3) {
-                                        return;
-                                    } else entity.hurt(entity.damageSources().generic(), 12);
-                                } else if (sequence <= 3) {
+                                BeyonderHolder holder1 = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                                if (holder1.currentClassMatches(BeyonderClassInit.MONSTER) && holder1.getCurrentSequence() <= 3) {
                                     return;
+                                } else if (holder1.currentClassMatches(BeyonderClassInit.MONSTER) && holder1.getCurrentSequence() > 4) {
+                                    entity.hurt(entity.damageSources().generic(), 12);
                                 } else entity.hurt(entity.damageSources().generic(), 6);
+                            } else if (entity == player) {
+                                if (sequence <= 3) {
+                                    return;
+                                } else player.hurt(player.damageSources().generic(),6);
                             } else if (entity.onGround()) {
                                 entity.hurt(entity.damageSources().generic(), 12);
                             }
@@ -580,7 +589,7 @@ public class CorruptionAndLuckHandler {
                         zombie.getAttribute(Attributes.MAX_HEALTH).setBaseValue(100);
                         zombie.teleportTo(babyZombieX, babyZombieY, babyZombieZ);
                         for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().move(subtractX, subtractY, subtractZ).inflate(10))) {
-                            if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
+                            if (sequence <= 3) {
                                 if (entity != null) {
                                     zombie.setTarget(entity);
                                 }
@@ -604,6 +613,10 @@ public class CorruptionAndLuckHandler {
                                 if (holder1.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
                                     pPlayer.getPersistentData().putInt("calamityLightningBoltImmunity", 10);
                                 }
+                            } else if (entity == player) {
+                                if (sequence <= 3) {
+                                    player.getPersistentData().putInt("calamityLightningBoltImmunity", 10);
+                                }
                             }
                         }
                         LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), player.level());
@@ -615,7 +628,7 @@ public class CorruptionAndLuckHandler {
                         lightningEntity.setTargetPos(pos.getCenter());
                         lightningEntity.setMaxLength(60);
                         player.level().addFreshEntity(lightningEntity);
-                            tag.putInt("calamityLightningBoltMonsterResistance", 5);
+                        tag.putInt("calamityLightningBoltMonsterResistance", 5);
                     }
                 }
             }
@@ -674,7 +687,7 @@ public class CorruptionAndLuckHandler {
                     meteorEntity.setDeltaMovement(dx * speed, dy * speed, dz * speed);
                     player.level().addFreshEntity(meteorEntity);
                     tag.putInt("luckMeteor", 0);
-                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6) {
+                    if (pathway == BeyonderClassInit.MONSTER && sequence <= 6) {
                         tag.putInt("luckMeteorDamage", 6);
                     }
                     for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(50))) {
@@ -694,7 +707,7 @@ public class CorruptionAndLuckHandler {
                     lightningEntity.setMaxLength(15);
                     lightningEntity.teleportTo(player.getX() + (Math.random() * 60) - 30, player.getY() + 100, player.getZ() + (Math.random() * 60) - 30);
                     player.level().addFreshEntity(lightningEntity);
-                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
+                    if (pathway == BeyonderClassInit.MONSTER && sequence <= 6 && sequence >= 4) {
                         tag.putInt("luckLightningLOTMDamage", 5);
                     }
                     for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(20))) {
@@ -704,14 +717,19 @@ public class CorruptionAndLuckHandler {
                                 tag.putInt("calamityLOTMLightningImmunity", 6);
                             }
                         }
+                        if (entity == player) {
+                            if (sequence <= 3) {
+                                player.getPersistentData().putInt("calamityLOTMLightningImmunity",6);
+                            }
+                        }
                     }
                     tag.putInt("luckLightningLOTM", 0);
                 }
                 if (paralysis == 1) {
-                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
+                    if (pathway == BeyonderClassInit.MONSTER && sequence <= 6 && sequence >= 4) {
                         player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 5, 0, false, false));
                         player.sendSystemMessage(Component.literal("How unlucky, you tripped!").withStyle(ChatFormatting.BOLD));
-                    } else if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
+                    } else if (pathway == BeyonderClassInit.MONSTER && sequence <= 3) {
                         return;
                     } else player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 10, 0, false, false));
                     player.sendSystemMessage(Component.literal("How unlucky, you tripped!").withStyle(ChatFormatting.BOLD));
@@ -725,12 +743,12 @@ public class CorruptionAndLuckHandler {
                     if (!equippedArmor.isEmpty()) {
                         EquipmentSlot randomArmorSlot = equippedArmor.get(random.nextInt(equippedArmor.size()));
                         ItemStack armorPiece = player.getItemBySlot(randomArmorSlot);
-                        if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
+                        if (pathway == BeyonderClassInit.MONSTER && sequence <= 6 && sequence >= 4) {
                             if (random.nextInt(2) == 1) {
                                 player.spawnAtLocation(armorPiece);
                                 player.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
                             }
-                        } else if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
+                        } else if (pathway == BeyonderClassInit.MONSTER && sequence <= 3) {
                             return;
                         } else player.spawnAtLocation(armorPiece);
                         player.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
@@ -740,14 +758,14 @@ public class CorruptionAndLuckHandler {
                 if (wardenSpawn == 1 && player.onGround()) {
                     Warden warden = new Warden(EntityType.WARDEN, player.level());
                     warden.setAttackTarget(player);
-                    warden.setLastHurtByPlayer(player);
+                    warden.setTarget(player);
                     AttributeInstance maxHP = warden.getAttribute(Attributes.MAX_HEALTH);
                     maxHP.setBaseValue(60);
-                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
+                    if (pathway == BeyonderClassInit.MONSTER && sequence <= 6 && sequence >= 4) {
                         Ravager ravager = new Ravager(EntityType.RAVAGER, player.level());
-                        ravager.setLastHurtByPlayer(player);
+                        ravager.setTarget(player);
                         player.level().addFreshEntity(ravager);
-                    } else if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
+                    } else if (pathway == BeyonderClassInit.MONSTER && sequence <= 3) {
                         return;
                     } else player.level().addFreshEntity(warden);
                     tag.putInt("luckWarden", 0);
@@ -758,16 +776,16 @@ public class CorruptionAndLuckHandler {
                     lightningBolt.teleportTo(player.getX(), player.getY(), player.getZ());
                     lightningBolt.setDamage(10.0f);
                     player.level().addFreshEntity(lightningBolt);
-                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
+                    if (pathway == BeyonderClassInit.MONSTER && sequence <= 6 && sequence >= 4) {
                         tag.putInt("luckLightningMCDamage", 2);
-                    } else if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
+                    } else if (pathway == BeyonderClassInit.MONSTER && sequence <= 3) {
                         tag.putInt("luckMCLightningImmunity", 2);
                     }
                 }
                 if (poison == 1 && !player.hasEffect(MobEffects.POISON)) {
-                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
+                    if (pathway == BeyonderClassInit.MONSTER && sequence <= 6 && sequence >= 4) {
                         player.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 2, false, false));
-                    } else if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
+                    } else if (pathway == BeyonderClassInit.MONSTER && sequence <= 3) {
                         return;
                     } else player.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 2, false, false));
                     tag.putInt("luckPoison", 0);
@@ -777,9 +795,9 @@ public class CorruptionAndLuckHandler {
                     tornado.setTornadoLifecount(120);
                     tornado.setTornadoPickup(true);
                     tornado.setTornadoRandom(true);
-                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
+                    if (pathway == BeyonderClassInit.MONSTER && sequence <= 6 && sequence >= 4) {
                         tag.putInt("luckTornadoResistance", 6);
-                    } else if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
+                    } else if (pathway == BeyonderClassInit.MONSTER && sequence <= 3) {
                         tag.putInt("luckTornadoImmunity", 6);
                     }
                     player.level().addFreshEntity(tornado);
@@ -791,9 +809,9 @@ public class CorruptionAndLuckHandler {
                     stoneEntity.setDeltaMovement(0, -5, 0);
                     player.level().addFreshEntity(stoneEntity);
                     tag.putInt("luckStone", 0);
-                    if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
+                    if (pathway == BeyonderClassInit.MONSTER && sequence <= 6 && sequence >= 4) {
                         tag.putInt("luckStoneDamage", 5);
-                    } else if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
+                    } else if (pathway == BeyonderClassInit.MONSTER && sequence <= 3) {
                         tag.putInt("luckStoneDamageImmunity", 5);
                     }
                 }
@@ -806,10 +824,7 @@ public class CorruptionAndLuckHandler {
                     } else player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 4, false, false));
                 }
                 if (diamondsDropped == 1 && player.onGround()) {
-                    player.addItem(Items.DIAMOND.getDefaultInstance());
-                    player.addItem(Items.DIAMOND.getDefaultInstance());
-                    player.addItem(Items.DIAMOND.getDefaultInstance());
-                    player.displayClientMessage(Component.literal("How lucky! You found some diamonds on the ground"), true);
+                    player.addEffect(new MobEffectInstance(MobEffects.REGENERATION,40,5,false,false));
                     tag.putInt("luckDiamonds", 0);
                 }
                 int stoneImmunity = tag.getInt("luckStoneDamageImmunity");

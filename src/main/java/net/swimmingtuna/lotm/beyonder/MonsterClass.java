@@ -3,33 +3,16 @@ package net.swimmingtuna.lotm.beyonder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.Explosion;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
-import net.swimmingtuna.lotm.caps.BeyonderHolder;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.entity.LightningEntity;
-import net.swimmingtuna.lotm.entity.MeteorEntity;
-import net.swimmingtuna.lotm.entity.TornadoEntity;
-import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ItemInit;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
-import net.swimmingtuna.lotm.util.effect.ModEffects;
 
 import java.util.List;
-import java.util.Random;
 
 public class MonsterClass implements BeyonderClass {
     private int speed;

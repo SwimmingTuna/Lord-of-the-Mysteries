@@ -14,6 +14,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.Difficulty;
@@ -46,6 +47,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.client.Configs;
 import net.swimmingtuna.lotm.entity.EntityGoals.PlayerMobGoals;
 import net.swimmingtuna.lotm.init.EntityInit;
@@ -56,10 +58,8 @@ import net.swimmingtuna.lotm.util.PlayerMobs.PlayerName;
 import net.swimmingtuna.lotm.util.PlayerMobs.ProfileUpdater;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Supplier;
 
 public class PlayerMobEntity extends Monster implements RangedAttackMob, CrossbowAttackMob {
 
@@ -71,6 +71,8 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
     private ResourceLocation cape;
     private boolean skinAvailable;
     private boolean capeAvailable;
+
+    protected Supplier<? extends BeyonderClass> requiredClass;
 
 
     public double xCloakO;
@@ -87,7 +89,8 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
     private static final EntityDataAccessor<Boolean> IS_CHILD = SynchedEntityData.defineId(PlayerMobEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<String> NAME = SynchedEntityData.defineId(PlayerMobEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> SEQUENCE = SynchedEntityData.defineId(PlayerMobEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<String> PATHWAY = SynchedEntityData.defineId(PlayerMobEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Integer> SPIRITUALITY = SynchedEntityData.defineId(PlayerMobEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> MAXSPIRITUALITY = SynchedEntityData.defineId(PlayerMobEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(PlayerMobEntity.class, EntityDataSerializers.BOOLEAN);
 
     private boolean canBreakDoors;
@@ -95,12 +98,13 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
     private final RangedBowAttackGoal<PlayerMobEntity> bowAttackGoal = new RangedBowAttackGoal<>(this, 1.0D, 20, 15.0F);
     private final RangedCrossbowAttackGoal<PlayerMobEntity> crossbowAttackGoal = new RangedCrossbowAttackGoal<>(this, 1.0D, 15.0F);
 
-    public PlayerMobEntity(Level worldIn) {
-        this(EntityInit.PLAYER_MOB_ENTITY.get(), worldIn);
+    public PlayerMobEntity(Level worldIn, Supplier<? extends BeyonderClass> requiredClass) {
+        this(EntityInit.PLAYER_MOB_ENTITY.get(), worldIn, requiredClass);
     }
 
-    public PlayerMobEntity(EntityType<? extends Monster> entityType, Level worldIn) {
+    public PlayerMobEntity(EntityType<? extends Monster> entityType, Level worldIn, Supplier<? extends BeyonderClass> requiredClass) {
         super(entityType, worldIn);
+        this.requiredClass = requiredClass;
         setCombatTask();
     }
 
@@ -149,7 +153,7 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
         getEntityData().define(IS_CHILD, false);
         getEntityData().define(IS_CHARGING_CROSSBOW, false);
         getEntityData().define(SEQUENCE, 10);
-        getEntityData().define(PATHWAY, "null");
+
     }
 
     @Override
@@ -467,11 +471,28 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
         if (compound.contains("sequence")) {
             this.setSequence(compound.getInt("sequence"));
         }
-        if (compound.contains("pathway")) {
-            this.setPathway(compound.getString("pathway"));
-        }
 
         setCombatTask();
+    }
+
+
+    public void setPathway (Supplier<? extends BeyonderClass> classToBeSet) {
+        this.requiredClass = classToBeSet;
+    }
+    public void setSpirituality(int spirituality) {
+        this.entityData.set(SPIRITUALITY, spirituality);
+    }
+    public int getSpirituality() {
+        return this.entityData.get(SPIRITUALITY);
+    }
+    public void setMaxSpirituality(int maxSpirituality) {
+        this.entityData.set(MAXSPIRITUALITY, maxSpirituality);
+    }
+    public int getMaxSpirituality() {
+        return this.entityData.get(MAXSPIRITUALITY);
+    }
+    public Supplier<? extends BeyonderClass> getCurrentPathway() {
+        return this.requiredClass;
     }
 
     @Override
@@ -529,18 +550,13 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
         }
         return new PlayerName(getEntityData().get(NAME));
     }
-    public int getSequence() {
+    public int getCurrentSequence() {
         return this.entityData.get(SEQUENCE);
     }
     public void setSequence(int sequence) {
         this.entityData.set(SEQUENCE, sequence);
     }
-    public String getPathway() {
-        return this.entityData.get(PATHWAY);
-    }
-    public void setPathway(String pathway) {
-        this.entityData.set(PATHWAY, pathway);
-    }
+
 
     public void setUsername(String username) {
         PlayerName playerName = new PlayerName(username);
@@ -566,6 +582,13 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
             setProfile(null);
             getProfile();
         }
+    }
+    public boolean useSpirituality(int amount) {
+        if (this.getSpirituality() - amount < 0) {
+            return false;
+        }
+        this.setSpirituality(Mth.clamp(this.getSpirituality() - amount, 0, getMaxSpirituality()));
+        return true;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -603,5 +626,6 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
     public void setOwner(LivingEntity owner) {
         this.owner = owner;
     }
+
 }
 

@@ -7,12 +7,10 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -91,8 +89,6 @@ public class StoneEntity extends AbstractArrow {
             this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 5.0F, 5.0F);
             if (result.getEntity() instanceof LivingEntity entity) {
-                Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 10.0F, true, Explosion.BlockInteraction.DESTROY);
-                DamageSource damageSource = this.level().damageSources().explosion(explosion);
                 entity.hurt(BeyonderUtil.explosionSource(this), 10.0F * scaleData.getScale());
             }
             this.discard();
@@ -161,6 +157,7 @@ public class StoneEntity extends AbstractArrow {
                 for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(5))) {
                     if (entity != this.getOwner()) {
                         entity.hurt(BeyonderUtil.explosionSource(entity), 10);
+                        this.discard();
                     }
                 }
                 if (this.tickCount >= 480) {

@@ -25,11 +25,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.swimmingtuna.lotm.caps.BeyonderHolder;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -230,11 +228,11 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                 double distance = Math.sqrt(dx * dx + dz * dz);
                 if (this.tickCount % 10 == 0) {
                     if (entity.getPersistentData().getInt("luckTornadoResistance") >= 1) {
-                        entity.hurt(damageSources().fall(), 2);
+                        entity.hurt(BeyonderUtil.genericSource(this), 2);
                     } else if (entity.getPersistentData().getInt("luckTornadoImmunity") >= 1) {
                         continue;
                     } else
-                    entity.hurt(damageSources().fall(), 5);
+                    entity.hurt(BeyonderUtil.genericSource(this), 5);
                 }
                 if (distance < tornadoRadius) {
                     double angle = Math.atan2(dz, dx) + Math.PI / 2; // Change angle to push outward

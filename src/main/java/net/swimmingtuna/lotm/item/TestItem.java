@@ -16,8 +16,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 
-import static net.swimmingtuna.lotm.util.BeyonderUtil.genericSource;
-
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class TestItem extends Item {
     public TestItem(Properties properties) {
@@ -64,7 +62,7 @@ public class TestItem extends Item {
 
     public static void useAbilities2(Player player) {
         if (!player.level().isClientSide()) {
-            player.hurt(genericSource(player), 10);
+            player.getPersistentData().putInt("calamityExplosion", 12);
         }
     }
 
