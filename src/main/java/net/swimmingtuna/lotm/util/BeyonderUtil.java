@@ -25,26 +25,23 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.entity.EndStoneEntity;
-import net.swimmingtuna.lotm.entity.NetherrackEntity;
-import net.swimmingtuna.lotm.entity.StoneEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Ability;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.LuckManipulation;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.networking.packet.LeftClickC2S;
+import net.swimmingtuna.lotm.networking.packet.LuckManipulationLeftClickC2S;
 import net.swimmingtuna.lotm.networking.packet.MatterAccelerationBlockC2S;
 import net.swimmingtuna.lotm.networking.packet.UpdateItemInHandC2S;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class BeyonderUtil {
@@ -395,6 +392,10 @@ public class BeyonderUtil {
 
             } else if (heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROPHESIZE_DEMISE.get())));
+
+            }
+            else if (heldItem.getItem() instanceof LuckManipulation) {
+                LOTMNetworkHandler.sendToServer(new LuckManipulationLeftClickC2S());
 
             }
         }

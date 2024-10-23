@@ -39,6 +39,8 @@ public class LightningEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> NO_UP = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SYNCHED_MOVEMENT = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
 
+    private int interpolationSteps = 10;
+    private int currentStep = 0;
     private List<Vec3> positions = new ArrayList<>();
     private List<AABB> boundingBoxes = new ArrayList<>();
     private Random random = new Random();

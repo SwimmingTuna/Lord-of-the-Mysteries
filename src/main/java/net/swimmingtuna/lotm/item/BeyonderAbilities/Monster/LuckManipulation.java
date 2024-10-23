@@ -35,7 +35,7 @@ public class LuckManipulation extends SimpleAbilityItem {
     }
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
         if (entity instanceof Player player) {
-            if (player.tickCount % 5 == 0) {
+            if (player.tickCount % 5 == 0 && !level.isClientSide()) {
                 if (player.getMainHandItem().getItem() instanceof LuckManipulation) {
                     player.displayClientMessage(Component.literal("Current Luck Manipulation is: " + luckManipulationString(player)), true);
                 }

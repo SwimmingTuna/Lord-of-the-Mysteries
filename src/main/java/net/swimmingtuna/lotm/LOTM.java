@@ -180,6 +180,7 @@ public class LOTM {
             event.accept(ItemInit.ENVISION_LOCATION);
             event.accept(ItemInit.ENVISION_LOCATION_BLINK);
             event.accept(ItemInit.ENVISIONHEALTH);
+            event.accept(ItemInit.LUCK_MANIPULATION);
             event.accept(ItemInit.SPECTATOR_9_POTION);
             event.accept(ItemInit.SPECTATOR_8_POTION);
             event.accept(ItemInit.SPECTATOR_7_POTION);

@@ -34,6 +34,11 @@ public class LOTMNetworkHandler {
                 .build();
         packets.forEach(consumer -> consumer.accept(INSTANCE, id()));
 
+        INSTANCE.messageBuilder(LuckManipulationLeftClickC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(LuckManipulationLeftClickC2S::new)
+                .encoder(LuckManipulationLeftClickC2S::toByte)
+                .consumerMainThread(LuckManipulationLeftClickC2S::handle)
+                .add();
         INSTANCE.messageBuilder(LeftClickC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(LeftClickC2S::new)
                 .encoder(LeftClickC2S::toByte)

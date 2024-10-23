@@ -143,7 +143,6 @@ public class ModEvents {
         if (player.level().isClientSide() || event.phase != TickEvent.Phase.START) {
             return;
         }
-
         AttributeInstance corruption = player.getAttribute(ModAttributes.CORRUPTION.get());
         AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
         AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());

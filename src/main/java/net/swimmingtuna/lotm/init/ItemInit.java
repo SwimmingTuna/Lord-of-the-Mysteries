@@ -7,10 +7,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.LuckPerception;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.MonsterDangerSense;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.MonsterDisableEnableCalamities;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.MonsterProjectileControl;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
@@ -161,6 +158,8 @@ public class ItemInit {
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ENVISIONHEALTH = ITEMS.register("envisionhealth",
             () -> new EnvisionHealth(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LUCK_MANIPULATION = ITEMS.register("luckmanipulation",
+            () -> new LuckManipulation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SPECTATOR_9_POTION = ITEMS.register("spectator_9_potion",
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SPECTATOR, 9));
     public static final RegistryObject<Item> SPECTATOR_8_POTION = ITEMS.register("spectator_8_potion",
