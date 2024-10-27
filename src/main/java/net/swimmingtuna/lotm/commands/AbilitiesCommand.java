@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.util.BeyonderAbilitiesItemMenu;
 import org.jetbrains.annotations.Nullable;
 
 public class AbilitiesCommand {
@@ -32,7 +33,7 @@ public class AbilitiesCommand {
                         @Nullable
                         @Override
                         public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-                            return new ChestMenu(MenuType.GENERIC_9x5, containerId, context.getSource().getPlayer().getInventory(), holder.getCurrentClass().getAbilityItemsContainer(holder.getCurrentSequence()), 3);
+                            return new BeyonderAbilitiesItemMenu(containerId, playerInventory, holder.getCurrentClass().getAbilityItemsContainer(holder.getCurrentSequence()));
                         }
                     });
                     return 1;

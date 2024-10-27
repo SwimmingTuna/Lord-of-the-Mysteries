@@ -105,7 +105,7 @@ public class Nightmare extends Item {
                     livingEntity.hurt(livingEntity.damageSources().magic(), damagePlayer);
                     nightmareAttribute.setBaseValue(0);
                 }
-                    player.sendSystemMessage(Component.literal(playerName + "'s nightmare value is:" + nightmareAttribute.getValue()).withStyle(BeyonderUtil.getStyle(player)));
+                    player.sendSystemMessage(Component.literal(playerName + "'s nightmare value is:" + (int) nightmareAttribute.getValue()).withStyle(BeyonderUtil.getStyle(player)));
 
                 }
                 else {

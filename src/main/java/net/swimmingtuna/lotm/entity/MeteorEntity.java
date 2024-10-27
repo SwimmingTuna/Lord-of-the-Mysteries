@@ -84,9 +84,10 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             List<Entity> entities = this.level().getEntities(this,
                     new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
                             hitPos.offset((int) radius, (int) radius, (int) radius)));
+
             for (Entity entity : entities) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.hurt(BeyonderUtil.genericSource(this), 10 * scale); // Adjust damage as needed
+                    livingEntity.hurt(BeyonderUtil.genericSource(this), 10 * scale); // problem w/ damage sources
                 }
             }
             this.discard();
@@ -125,7 +126,6 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             this.discard();
         }
     }
-
 
 
     public boolean isPickable() {
@@ -191,16 +191,17 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             player.level().addFreshEntity(meteorEntity);
         }
     }
+
     public static void summonMeteorAtPosition(LivingEntity player, int x, int y, int z) {
         if (!player.level().isClientSide()) {
-            BlockPos meteorSpawnPos = new BlockPos(x,y,z);
+            BlockPos meteorSpawnPos = new BlockPos(x, y, z);
             MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), player.level());
             meteorEntity.teleportTo(meteorSpawnPos.getX(), meteorSpawnPos.getY(), meteorSpawnPos.getZ());
             meteorEntity.noPhysics = true;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
             scaleData.setScale(6);
             scaleData.markForSync(true);
-            Vec3 randomizedTargetPos = new Vec3(x,y,z);
+            Vec3 randomizedTargetPos = new Vec3(x, y, z);
             Vec3 meteorPos = meteorEntity.position();
             Vec3 directionToTarget = randomizedTargetPos.subtract(meteorPos).normalize();
             double speed = 3.0;
