@@ -42,7 +42,6 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide()) {
-
             InteractionResult interactionResult = useAbility(level, player, hand);
             return new InteractionResultHolder<>(interactionResult, player.getItemInHand(hand));
         }

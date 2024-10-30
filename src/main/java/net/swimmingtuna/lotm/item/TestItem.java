@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.item;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -39,17 +40,13 @@ public class TestItem extends Item {
 
     @Override
     public @NotNull InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
-        if (!pPlayer.level().isClientSide) LOTM.LOGGER.info("INTERACT LIVING ENTITY");
+        if (!pPlayer.level().isClientSide) {
+            LOTM.LOGGER.info("INTERACT LIVING ENTITY");
+            pPlayer.sendSystemMessage(Component.literal("Entity is " + pInteractionTarget));
+        }
         return InteractionResult.FAIL;
-//        return super.interactLivingEntity(pStack, pPlayer, pInteractionTarget, pUsedHand);
     }
 
-    @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        if (!event.getLevel().isClientSide) LOTM.LOGGER.info("ENTITY INTERACT EVENT");
-        event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.FAIL);
-    }
 
     public static void useAbilities(Player player) {
         if (!player.level().isClientSide()) {
@@ -66,5 +63,4 @@ public class TestItem extends Item {
             player.getPersistentData().putInt("calamityExplosion", 12);
         }
     }
-
 }

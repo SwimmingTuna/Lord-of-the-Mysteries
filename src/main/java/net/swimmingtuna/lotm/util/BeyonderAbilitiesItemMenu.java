@@ -1,14 +1,13 @@
 package net.swimmingtuna.lotm.util;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.inventory.ClickType;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.networking.packet.AddItemInInventoryC2S;
 
@@ -16,12 +15,16 @@ public class BeyonderAbilitiesItemMenu extends AbstractContainerMenu {
     private final Container container;
 
     public BeyonderAbilitiesItemMenu(int containerId, Inventory playerInventory, Container abilityContainer) {
-        super(MenuType.GENERIC_9x3, containerId);
+        super(MenuType.GENERIC_9x5, containerId);
         this.container = abilityContainer;
         for (int i = 0; i < this.container.getContainerSize(); i++) {
             this.addSlot(new Slot(this.container, i, 8 + (i % 9) * 18, 18 + (i / 9) * 18) {
                 @Override
                 public boolean mayPickup(Player player) {
+                    return false;
+                }
+                @Override
+                public boolean mayPlace(ItemStack stack) {
                     return false;
                 }
             });

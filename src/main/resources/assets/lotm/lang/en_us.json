@@ -158,7 +158,7 @@
   "item.lotm.sailorlightningstorm": "Lightning: Storm",
   "item.lotm.roar": "Roar",
   "item.lotm.tsunami": "Tsunami",
-
+  "item.lotm.sailorprojectilecontrol": "Sailor Projectile Control",
   "item.lotm.tyranttornado": "Tornado: Empowered",
   "item.lotm.calamityincarnationtornado": "Calamity Incarnation: Tornado",
   "item.lotm.calamityincarnationtsunami": "Calamity Incarnation: Tsunami",
@@ -180,6 +180,13 @@
   "item.lotm.hurricane": "Hurricane",
   "item.lotm.tornado": "Tornado",
 
+  "item.lotm.monsterdangersense": "Monster Danger Sense",
+  "item.lotm.monstercalamityattraction": "Monster Calamity Attraction",
+  "item.lotm.luckperception": "Luck Perception",
+  "item.lotm.psychestorm": "Psyche Storm",
+  "item.lotm.spiritvision": "Spirit Vision",
+  "item.lotm.monsterprojectilecontrol": "Monster Projectile Control",
+  "item.lotm.luckmanipulation": "Luck Manipulation",
 
 
   "item.lotm.spectator_9_potion": "Spectator 9 Potion",
@@ -202,6 +209,8 @@
   "item.lotm.tyrant_2_potion": "Spectator 2 Potion",
   "item.lotm.tyrant_1_potion": "Spectator 1 Potion",
   "item.lotm.tyrant_0_potion": "Spectator 0 Potion",
+  "item.lotm.zqdsndnkawdnsalnkw": "Icon for the Mod - Useless",
+
 
 
 

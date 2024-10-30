@@ -19,6 +19,7 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
@@ -30,13 +31,15 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class LuckPerception extends Item {
+import static net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem.checkAll;
+
+public class LuckPerception extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public LuckPerception(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.MONSTER, 7, 100, 200);
     }
+
 
     @SuppressWarnings("deprecation")
     @Override
@@ -66,18 +69,17 @@ public class LuckPerception extends Item {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
-        if (player.level().isClientSide()) {
-            return InteractionResult.PASS;
-        }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 7, 200)) {
-            return InteractionResult.FAIL;
-        }
-        holder.useSpirituality(200);
-        player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s luck value is " + interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get())).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
-        player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s misfortune value is " + interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get())).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
-        if (!player.isCreative()) {
-            player.getCooldowns().addCooldown(stack.getItem(), 50);
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            if (!checkAll(player)) {
+                return InteractionResult.FAIL;
+            }
+            holder.useSpirituality(200);
+            player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s luck value is " + interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get())).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
+            player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s misfortune value is " + interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get())).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
+            if (!player.isCreative()) {
+                player.getCooldowns().addCooldown(stack.getItem(), 50);
+            }
         }
         return InteractionResult.SUCCESS;
     }

@@ -19,6 +19,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -50,6 +51,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -72,11 +74,10 @@ import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.SoundInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.LuckPerception;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.DreamIntoReality;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionBarrier;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.CorruptionAndLuckHandler;
@@ -85,6 +86,10 @@ import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
 import java.util.*;
+
+import static net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLife.spawnMob;
+import static net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocation.isThreeIntegers;
+import static net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionWeather.*;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
 public class ModEvents {
@@ -543,13 +548,13 @@ public class ModEvents {
             playerPersistentData.putInt("windManipulationCushion", cushion - 1);
             player.resetFallDistance();
         }
-        if (cushion >= 80 && player.getDeltaMovement().y <= 0) {
+        if (cushion >= 20 && player.getDeltaMovement().y <= 0) {
             AttributeInstance cushionParticles = player.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
             cushionParticles.setBaseValue(1.0f);
-            player.setDeltaMovement(player.getDeltaMovement().x(), player.getDeltaMovement().y() * 0.9, player.getDeltaMovement().z());
+            player.setDeltaMovement(player.getDeltaMovement().x(), player.getDeltaMovement().y() * 0.7, player.getDeltaMovement().z());
             player.hurtMarked = true;
         }
-        if (cushion == 79) {
+        if (cushion == 1) {
             player.setDeltaMovement(player.getLookAngle().scale(2.0f));
             player.hurtMarked = true;
             player.resetFallDistance();
@@ -704,10 +709,11 @@ public class ModEvents {
         int barrierRadius = player.getPersistentData().getInt("BarrierRadius");
         if (player.isShiftKeyDown() && player.getMainHandItem().getItem() instanceof EnvisionBarrier) {
             barrierRadius++;
-            player.displayClientMessage(Component.literal("Barrier Radius " + barrierRadius).withStyle(style), true);
+            player.displayClientMessage(Component.literal("Barrier Radius: " + barrierRadius).withStyle(style), true);
         }
-        if (barrierRadius > 100) {
+        if (barrierRadius > 101) {
             barrierRadius = 0;
+            player.displayClientMessage(Component.literal("Barrier Radius: 0").withStyle(style), true);
         }
         player.getPersistentData().putInt("BarrierRadius", barrierRadius);
     }
@@ -924,40 +930,42 @@ public class ModEvents {
         }
     }
 
-    private static void earthquake(Player player, int sequence) {
-        //EARTHQUAKE
+    private static void earthquake (Player player, int sequence) {
         int sailorEarthquake = player.getPersistentData().getInt("sailorEarthquake");
-        if (sailorEarthquake >= 0) {
-            player.getPersistentData().putInt("sailorEarthquake", sailorEarthquake - 1);
-        }
-        if (!(sailorEarthquake % 20 == 0 && sailorEarthquake != 0 || sailorEarthquake == 1)) {
-            return;
-        }
-        int radius = 100 - (sequence * 10);
-        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate((radius)))) {
-            if (entity != player) {
-                if (entity.onGround()) {
-                    entity.hurt(player.damageSources().fall(), 35 - (sequence * 5));
+        if (sailorEarthquake >= 1) {
+            if (sailorEarthquake % 20 == 0) {
+                int radius = 100 - (sequence * 10);
+                for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate((radius)))) {
+                    if (entity != player) {
+                        if (entity.onGround()) {
+                            entity.hurt(player.damageSources().fall(), 35 - (sequence * 5));
+                        }
+                    }
+                }
+                AABB checkArea = player.getBoundingBox().inflate(radius);
+                Random random = new Random();
+                for (BlockPos blockPos : BlockPos.betweenClosed(
+                        new BlockPos((int) checkArea.minX, (int) checkArea.minY, (int) checkArea.minZ),
+                        new BlockPos((int) checkArea.maxX, (int) checkArea.maxY, (int) checkArea.maxZ))) {
+
+                    if (!player.level().getBlockState(blockPos).isAir() && Earthquake.isOnSurface(player.level(), blockPos)) {
+                        if (random.nextInt(200) == 1) { // 50% chance to destroy a block
+                            player.level().destroyBlock(blockPos, false);
+                        } else if (random.nextInt(500) == 2) { // 10% chance to spawn a stone entity
+                            StoneEntity stoneEntity = new StoneEntity(player.level(), player);
+                            ScaleData scaleData = ScaleTypes.BASE.getScaleData(stoneEntity);
+                            stoneEntity.teleportTo(blockPos.getX(), blockPos.getY() + 3, blockPos.getZ());
+                            stoneEntity.setDeltaMovement(0, (3 + (Math.random() * (6 - 3))), 0);
+                            stoneEntity.setStoneYRot((int) (Math.random() * 18));
+                            stoneEntity.setStoneXRot((int) (Math.random() * 18));
+                            scaleData.setScale((float) (1 + (Math.random()) * 2.0f));
+                            player.level().addFreshEntity(stoneEntity);
+                        }
+                    }
                 }
             }
-        }
-        AABB checkArea = player.getBoundingBox().inflate(radius);
-        Random random = new Random();
-        for (BlockPos blockPos : BlockPos.betweenClosedStream(checkArea).toList()) {
-
-            if (!player.level().getBlockState(blockPos).isAir() && Earthquake.isOnSurface(player.level(), blockPos)) {
-                if (random.nextInt(200) == 1) { // 50% chance to destroy a block
-                    player.level().destroyBlock(blockPos, false);
-                } else if (random.nextInt(200) == 2) { // 10% chance to spawn a stone entity
-                    StoneEntity stoneEntity = new StoneEntity(player.level(), player);
-                    ScaleData scaleData = ScaleTypes.BASE.getScaleData(stoneEntity);
-                    stoneEntity.teleportTo(blockPos.getX(), blockPos.getY() + 3, blockPos.getZ());
-                    stoneEntity.setDeltaMovement(0, 3 + Math.random() * 3, 0);
-                    stoneEntity.setStoneYRot((int) (Math.random() * 18));
-                    stoneEntity.setStoneXRot((int) (Math.random() * 18));
-                    scaleData.setScale((float) (1 + Math.random() * 2.0f));
-                    player.level().addFreshEntity(stoneEntity);
-                }
+            if (sailorEarthquake >= 0) {
+                player.getPersistentData().putInt("sailorEarthquake", sailorEarthquake - 1);
             }
         }
     }
@@ -1042,7 +1050,7 @@ public class ModEvents {
                 serverLevel.setWeatherParameters(0, 700, true, true);
             }
             if (hurricane % 5 == 0) {
-                SailorLightning.shootLineBlockHigh(player, player.level());
+                SailorLightning.lightningHigh(player, player.level());
             }
             if (hurricane == 600 || hurricane == 300) {
                 for (int i = 0; i < 5; i++) {
@@ -1117,7 +1125,8 @@ public class ModEvents {
                 playerPersistentData.putInt("sailorStormVec", stormVec + 10);
                 player.displayClientMessage(Component.literal("Sailor Storm Spawn Distance is " + stormVec).withStyle(style), true);
             }
-            if (stormVec > 300) {
+            if (stormVec > 301) {
+                player.displayClientMessage(Component.literal("Sailor Storm Spawn Distance is 0").withStyle(style), true);
                 playerPersistentData.putInt("sailorStormVec", 0);
                 stormVec = 0;
             }
@@ -1139,10 +1148,12 @@ public class ModEvents {
             player.getPersistentData().putInt("BlinkDistance", blinkDistance);
             player.displayClientMessage(Component.literal("Blink Distance is " + blinkDistance).withStyle(style), true);
         }
-        if (matterAccelerationDistance >= 1000) {
+        if (matterAccelerationDistance >= 1001) {
+            player.displayClientMessage(Component.literal("Matter Acceleration Distance is 0").withStyle(style), true);
             player.getPersistentData().putInt("tyrantSelfAcceleration", 0);
         }
-        if (blinkDistance > 200) {
+        if (blinkDistance > 201) {
+            player.displayClientMessage(Component.literal("Blink Distance is 0").withStyle(style), true);
             player.getPersistentData().putInt("BlinkDistance", 0);
         }
     }
@@ -1531,6 +1542,28 @@ public class ModEvents {
     }
 
     @SubscribeEvent
+    public static void onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
+        Player player = event.getEntity();
+        ItemStack itemStack = player.getItemInHand(event.getHand());
+
+        // Check if the player is holding your SimpleAbilityItem
+        if (itemStack.getItem() instanceof SimpleAbilityItem) {
+            LivingEntity targetEntity = (LivingEntity) event.getTarget();
+
+            // Execute custom interaction logic
+            InteractionResult result = ((SimpleAbilityItem) itemStack.getItem())
+                    .interactLivingEntity(itemStack, player, targetEntity, event.getHand());
+
+            // Cancel the default interaction if your item interaction is successful
+            if (result == InteractionResult.SUCCESS) {
+                event.setCanceled(true);  // Cancels the event, preventing default interaction
+                event.setCancellationResult(InteractionResult.SUCCESS);
+            }
+        }
+    }
+
+
+    @SubscribeEvent
     public static void stunEffect(LivingEntityUseItemEvent event) {
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide()) {
@@ -1563,6 +1596,8 @@ public class ModEvents {
             matterAccelerationEntities(entity);
 
             mentalPlague(entity);
+
+            AqueousLightDrown.lightTickEvent(entity);
 
 
             //PROPHESIZE DEMISE
@@ -2100,13 +2135,15 @@ public class ModEvents {
     @SubscribeEvent
     public static void attackEvent(LivingAttackEvent event) {
         LivingEntity attacked = event.getEntity();
-        LivingEntity attacker = (LivingEntity) event.getSource().getEntity();
+        Entity attacker = event.getSource().getEntity();
         if (attacker != null) {
             if (!attacker.level().isClientSide()) {
                 if (attacked instanceof Player pPlayer) {
                     BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
                     if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() <= 5) {
-                        attacker.getPersistentData().putInt("attackedMonster", 100);
+                        if (attacker instanceof LivingEntity) {
+                            attacker.getPersistentData().putInt("attackedMonster", 100);
+                        }
                     }
                 }
             }
@@ -2219,6 +2256,21 @@ public class ModEvents {
         CompoundTag tag = entity.getPersistentData();
         if (!entity.level().isClientSide()) {
 
+            //AQUEOUS LIGHT DROWN
+            if (entity.getPersistentData().getInt("lightDrowning") >= 1) {
+                Level level = entity.level();
+                BlockPos headPos = BlockPos.containing(entity.getEyePosition());
+                for (int x = -3; x <= 3; x++) {
+                    for (int y = -3; y <= 3; y++) {
+                        for (int z = -3; z <= 3; z++) {
+                            BlockPos blockPos = headPos.offset(x, y, z);
+                            if (level.getBlockState(blockPos).is(Blocks.WATER)) {
+                                level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+                            }
+                        }
+                    }
+                }
+            }
 
             //STORM SEAL
             if (tag.getInt("inStormSeal") >= 1) {
@@ -2791,4 +2843,156 @@ public class ModEvents {
             }
         }
     }
+    @SubscribeEvent
+    public static void onChatMessage(ServerChatEvent event) {
+        Level level = event.getPlayer().serverLevel();
+        ServerPlayer player = event.getPlayer();
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        Style style = BeyonderUtil.getStyle(player);
+        player.sendSystemMessage(Component.literal("you said " + event.getMessage()));
+        if (!player.level().isClientSide() && player.getMainHandItem().getItem() instanceof EnvisionWeather) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            }
+            if (holder.getSpirituality() < (int) 500 / dreamIntoReality.getValue()) {
+                player.displayClientMessage(Component.literal("You need " + ((int) 500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            }
+            String message = event.getMessage().getString().toLowerCase();
+            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && player.getMainHandItem().getItem() instanceof EnvisionWeather && holder.getCurrentSequence() == 0) {
+                if (message.equals("clear") && holder.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
+                    setWeatherClear(level);
+                    event.getPlayer().displayClientMessage(Component.literal("Set Weather to Clear").withStyle(style), true);
+                    holder.useSpirituality((int) (500 / dreamIntoReality.getValue()));
+                    event.setCanceled(true);
+                }
+                if (message.equals("rain") && holder.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
+                    event.getPlayer().displayClientMessage(Component.literal("Set Weather to Rain").withStyle(style), true);
+                    setWeatherRain(level);
+                    event.setCanceled(true);
+                }
+                if (message.equals("thunder") && holder.useSpirituality((int) (500 / dreamIntoReality.getValue()))) {
+                    event.getPlayer().displayClientMessage(Component.literal("Set Weather to Thunder").withStyle(style), true);
+                    setWeatherThunder(level);
+                    event.setCanceled(true);
+                }
+            }
+        }
+        if (!player.level().isClientSide()) {
+            String message = event.getMessage().getString().toLowerCase();
+            for (Player otherPlayer : level.players()) {
+                if (message.contains(otherPlayer.getName().getString().toLowerCase())) {
+                    BeyonderHolder otherHolder = BeyonderHolderAttacher.getHolderUnwrap(otherPlayer);
+                    if (otherHolder.currentClassMatches(BeyonderClassInit.SPECTATOR) && otherHolder.getCurrentSequence() <= 2 && !otherPlayer.level().isClientSide()) {
+                        otherPlayer.sendSystemMessage(Component.literal(player.getName().getString() + " mentioned you in chat. Their coordinates are: " + (int) player.getX() + " ," + (int) player.getY() + " ," + (int) player.getZ()).withStyle(style));
+                    }
+                    if (otherHolder.currentClassMatches(BeyonderClassInit.SAILOR) && otherHolder.getCurrentSequence() <= 1 && !otherPlayer.level().isClientSide()) {
+                        otherPlayer.getPersistentData().putInt("tyrantMentionedInChat", 200);
+                        otherPlayer.sendSystemMessage(Component.literal(player.getName().getString() + " mentioned you in chat. Do you want to summon a lightning storm on them? Type Yes if so, you have 10 seconds").withStyle(style));
+                        otherPlayer.getPersistentData().putInt("sailorStormVecX1", (int) player.getX());
+                        otherPlayer.getPersistentData().putInt("sailorStormVecY1", (int) player.getY());
+                        otherPlayer.getPersistentData().putInt("sailorStormVecZ1", (int) player.getZ());
+                    }
+                }
+            }
+            if (player.getPersistentData().getInt("tyrantMentionedInChat") >= 1 && message.contains("yes") && holder.getSpirituality() >= 1200) {
+                holder.useSpirituality(1200);
+                player.getPersistentData().putInt("sailorLightningStorm1", 300);
+                event.setCanceled(true);
+            }
+        }
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide() && player.getMainHandItem().getItem() instanceof ConsciousnessStroll) {
+            String message = event.getMessage().getString();
+            for (ServerPlayer onlinePlayer : player.getServer().getPlayerList().getPlayers()) {
+                if (message.equalsIgnoreCase(onlinePlayer.getName().getString())) {
+                    if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+                        player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                    } else if (holder.getSpirituality() < 300) {
+                        player.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                    } else {
+                        player.getPersistentData().putInt("consciousnessStrollActivated", 60);
+                        PlayerMobEntity playerMobEntity = new PlayerMobEntity(EntityInit.PLAYER_MOB_ENTITY.get(), player.level());
+                        AttributeInstance playerMaxHealth = player.getAttribute(Attributes.MAX_HEALTH);
+                        AttributeInstance playerMobMaxHealth = playerMobEntity.getAttribute(Attributes.MAX_HEALTH);
+                        playerMobMaxHealth.setBaseValue(playerMaxHealth.getValue());
+                        playerMobEntity.setHealth(player.getHealth());
+                        playerMobEntity.teleportTo(player.getX(), player.getY(), player.getZ());
+                        playerMobEntity.setOwner(player);
+                        playerMobEntity.getPersistentData().putInt("CSlifetime", 60);
+                        playerMobEntity.setUsername(player.getName().getString());
+                        player.level().addFreshEntity(playerMobEntity);
+                        player.getPersistentData().putInt("consciousnessStrollActivatedX", (int) player.getX());
+                        player.getPersistentData().putInt("consciousnessStrollActivatedY", (int) player.getY());
+                        player.getPersistentData().putInt("consciousnessStrollActivatedZ", (int) player.getZ());
+                        ((ServerPlayer) player).setGameMode(GameType.SPECTATOR);
+                        holder.useSpirituality(300);
+                        player.teleportTo(onlinePlayer.getX(), onlinePlayer.getY(), onlinePlayer.getZ());
+                        event.setCanceled(true);
+                    }
+                }
+            }
+        }
+        if (player.getMainHandItem().getItem() instanceof EnvisionLife && !player.level().isClientSide()) {
+            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            }
+
+            if (holder.getSpirituality() < 1500) {
+                player.displayClientMessage(Component.literal("You need " + (int) (1500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            }
+        }
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide() && player.getMainHandItem().getItem() instanceof EnvisionLife && holder.getCurrentSequence() == 0) {
+            String message = event.getMessage().getString().toLowerCase();
+            spawnMob(player, message);
+            holder.useSpirituality((int) (1500 / dreamIntoReality.getValue()));
+            event.setCanceled(true);
+        }
+        String message = event.getMessage().getString();
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide() && player.getMainHandItem().getItem() instanceof EnvisionLocation && holder.getCurrentSequence() == 0) {
+            if (isThreeIntegers(message)) {
+                if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+                    player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                } else if (holder.getSpirituality() < (int) (500 / dreamIntoReality.getValue())) {
+                    player.displayClientMessage(Component.literal("You need " + (int) (500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                } else {
+                    String[] coordinates = message.split(" ");
+                    if (coordinates.length == 3) {
+                        int x = Integer.parseInt(coordinates[0]);
+                        int y = Integer.parseInt(coordinates[1]);
+                        int z = Integer.parseInt(coordinates[2]);
+                        player.teleportTo(x, y, z);
+                        event.getPlayer().displayClientMessage(Component.literal("Teleported to " + x + ", " + y + ", " + z).withStyle(BeyonderUtil.getStyle(player)), true);
+                        holder.useSpirituality((int) (500 / dreamIntoReality.getValue()));
+                        event.setCanceled(true);
+                    }
+                }
+            } else {
+                Player targetPlayer = null;
+                for (Player serverPlayer : level.players()) {
+                    if (serverPlayer.getUUID().toString().equals(message)) {
+                        targetPlayer = serverPlayer;
+                        break;
+                    }
+                }
+                if (targetPlayer != null) {
+                    if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
+                        player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                    }
+                    if (holder.getSpirituality() < (int) (500 / dreamIntoReality.getValue())) {
+                        player.displayClientMessage(Component.literal("You need " + (int) (500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                    } else {
+                        int x = (int) targetPlayer.getX();
+                        int y = (int) targetPlayer.getY();
+                        int z = (int) targetPlayer.getZ();
+                        player.teleportTo(x, y, z);
+                        holder.useSpirituality(500);
+                    }
+                }else {
+                    event.getPlayer().displayClientMessage(Component.literal("Player:" + message + " not found").withStyle(BeyonderUtil.getStyle(player)), true);
+                }
+                event.setCanceled(true);
+            }
+        }
+    }
+
 }

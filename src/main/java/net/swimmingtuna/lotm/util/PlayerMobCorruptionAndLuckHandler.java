@@ -18,7 +18,6 @@ import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;

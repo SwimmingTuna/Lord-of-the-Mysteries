@@ -23,7 +23,9 @@ public class MonsterDangerSense extends SimpleAbilityItem {
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
         changeBoolean(player);
         return InteractionResult.SUCCESS;
     }

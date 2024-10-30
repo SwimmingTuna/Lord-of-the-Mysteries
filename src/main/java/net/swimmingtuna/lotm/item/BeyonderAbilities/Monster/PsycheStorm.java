@@ -22,9 +22,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
+import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
@@ -32,13 +34,14 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class PsycheStorm extends Item {
+public class PsycheStorm extends SimpleAbilityItem {
 
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public PsycheStorm(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.MONSTER, 6, 100, 300);
     }
+
 
     @SuppressWarnings("deprecation")
     @Override
@@ -53,8 +56,8 @@ public class PsycheStorm extends Item {
 
         ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
         attributeBuilder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND));
-            attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 12, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
-        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 12, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
+            attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 15, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
+        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 15, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
         return attributeBuilder.build();
     }
 

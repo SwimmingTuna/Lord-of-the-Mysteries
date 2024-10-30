@@ -26,14 +26,14 @@ public class Tyranny extends SimpleAbilityItem {
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
-        useSpirituality(player);
-        addCooldown(player);
-        applyPotionEffectToEntities(player);
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        tyranny(player);
         return InteractionResult.SUCCESS;
     }
 
-    private void applyPotionEffectToEntities(Player player) {
+    private void tyranny(Player player) {
         double radius = 500;
         int duration = 250;
         for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {

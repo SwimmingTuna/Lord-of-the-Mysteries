@@ -9,8 +9,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.common.Mod;
-import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
@@ -19,22 +17,23 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WindManipulationCushion extends SimpleAbilityItem {
+
     public WindManipulationCushion(Properties properties) {
         super(properties, BeyonderClassInit.SAILOR, 7, 150, 120);
     }
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
-        useSpirituality(player);
-        cushion(player);
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        windManipulationCushion(player);
         return InteractionResult.SUCCESS;
     }
 
-    public static void cushion(Player player) {
-        player.getPersistentData().putInt("windManipulationCushion", 100);
+    public static void windManipulationCushion(Player player) {
+        player.getPersistentData().putInt("windManipulationCushion", 20);
     }
 
     @Override

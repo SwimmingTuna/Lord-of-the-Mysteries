@@ -1,11 +1,17 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -13,59 +19,63 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.LightningEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
+import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class LightningRedirection extends Item {
+public class LightningRedirection extends SimpleAbilityItem {
 
-    public LightningRedirection(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(properties);
+    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
+
+    @Override
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot == EquipmentSlot.MAINHAND) {
+            return this.lazyAttributeMap.get();
+        }
+        return super.getDefaultAttributeModifiers(slot);
+    }
+
+    private Multimap<Attribute, AttributeModifier> createAttributeMap() {
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
+        attributeBuilder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND));
+        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 200, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
+        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 200, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
+        return attributeBuilder.build();
+    }
+
+    public LightningRedirection(Properties properties) {
+        super(properties, BeyonderClassInit.SAILOR, 1, 600, 100);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!player.level().isClientSide()) {
-
-            // If no block or entity is targeted, proceed with the original functionality
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            }
-            if (holder.getSpirituality() < 600) {
-                player.displayClientMessage(Component.literal("You need 600 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            }
-            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 1 && holder.useSpirituality(900)) {
-                useItem(player);
-                if (!player.getAbilities().instabuild)
-                    player.getCooldowns().addCooldown(this, 100);
-            }
+    public InteractionResult useAbilityOnBlock(UseOnContext pContext) {
+        Player player = pContext.getPlayer();
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
-        return super.use(level, player, hand);
+        lightningRedirection(player, pContext.getClickedPos());
+        return InteractionResult.SUCCESS;
     }
 
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Player player = context.getPlayer();
-        Level level = context.getLevel();
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 1) {
-            for (Entity entity : level.getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
-                if (entity instanceof LightningEntity lightning) {
-                    lightning.setTargetPos(context.getClickLocation());
-                }
+    private static void lightningRedirection(Player player, BlockPos pos) {
+        Level level = player.level();
+        for (Entity entity : level.getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
+            if (entity instanceof LightningEntity lightning) {
+                lightning.setTargetPos(pos.getCenter());
             }
-            return InteractionResult.SUCCESS;
         }
-        return InteractionResult.PASS;
     }
 
     @Override
@@ -74,18 +84,5 @@ public class LightningRedirection extends Item {
                 "Spirituality Used: 600\n" +
                 "Cooldown: 5 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
-    }
-
-    public static void useItem(Player player) {
-        if (!player.level().isClientSide()) {
-            for (Entity entity : player.level().getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
-                if (entity instanceof LightningEntity lightning) {
-                    Vec3 lookVec = player.getLookAngle();
-                    lightning.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
-                    lightning.hurtMarked = true;
-                    lightning.setMaxLength(lightning.getMaxLength() + 10);
-                }
-            }
-        }
     }
 }

@@ -99,4 +99,21 @@ public class MindStorm extends Item {
         }
         return InteractionResult.SUCCESS;
     }
+    public void mindStorm(Player player, LivingEntity interactionTarget) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        int sequence = holder.getCurrentSequence();
+        int duration = 300 - (sequence * 25);
+        int damage = 30 - (sequence * 2);
+        if (dreamIntoReality.getValue() == 2) {
+            damage = 50 - (sequence * 2);
+        }
+        interactionTarget.addEffect(new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false));
+        interactionTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
+        interactionTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
+        interactionTarget.hurt(interactionTarget.damageSources().magic(), damage);
+        if (!player.isCreative()) {
+            player.getCooldowns().addCooldown(this, 200);
+        }
+    }
 }

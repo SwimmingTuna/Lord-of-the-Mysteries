@@ -84,4 +84,7 @@ public class MentalPlague extends Item {
         return InteractionResult.SUCCESS;
     }
 
+    public void mentalPlauge(LivingEntity interactionTarget) {
+        interactionTarget.addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(), 620, 1));
+    }
 }

@@ -128,11 +128,6 @@ public class LOTM {
             event.accept(ItemInit.LIGHTNING_BRANCH);
             event.accept(ItemInit.EARTHQUAKE);
             event.accept(ItemInit.SAILORPROJECTILECTONROL);
-            event.accept(ItemInit.MONSTERDANGERSENSE);
-            event.accept(ItemInit.MONSTERPROJECTILECONTROL);
-            event.accept(ItemInit.LUCKPERCEPTION);
-            event.accept(ItemInit.PSYCHESTORM);
-            event.accept(ItemInit.MONSTERCALAMITYATTRACTION);
             event.accept(ItemInit.STAR_OF_LIGHTNING);
             event.accept(ItemInit.RAIN_EYES);
             event.accept(ItemInit.SONIC_BOOM);
@@ -181,6 +176,12 @@ public class LOTM {
             event.accept(ItemInit.ENVISION_LOCATION_BLINK);
             event.accept(ItemInit.ENVISIONHEALTH);
             event.accept(ItemInit.LUCK_MANIPULATION);
+            event.accept(ItemInit.MONSTERDANGERSENSE);
+            event.accept(ItemInit.MONSTERPROJECTILECONTROL);
+            event.accept(ItemInit.LUCKPERCEPTION);
+            event.accept(ItemInit.PSYCHESTORM);
+            event.accept(ItemInit.SPIRITVISION);
+            event.accept(ItemInit.MONSTERCALAMITYATTRACTION);
             event.accept(ItemInit.SPECTATOR_9_POTION);
             event.accept(ItemInit.SPECTATOR_8_POTION);
             event.accept(ItemInit.SPECTATOR_7_POTION);

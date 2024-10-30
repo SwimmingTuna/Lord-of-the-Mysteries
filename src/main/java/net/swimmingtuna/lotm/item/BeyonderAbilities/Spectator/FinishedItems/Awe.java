@@ -4,6 +4,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
@@ -23,30 +25,19 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class Awe extends Item {
+public class Awe extends SimpleAbilityItem {
 
     public Awe(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 7, 75, 240);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 75) {
-                player.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 7 && holder.useSpirituality(75)) {
-                AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-                applyPotionEffectToEntities(player);
-                if (!player.getAbilities().instabuild)
-                    player.getCooldowns().addCooldown(this, 240);
-            }
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
-        return super.use(level, player, hand);
+        applyPotionEffectToEntities(player);
+        return InteractionResult.SUCCESS;
     }
 
     public static void applyPotionEffectToEntities(Player player) {
@@ -72,5 +63,4 @@ public class Awe extends Item {
                 "Cooldown: 12 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
-
 }

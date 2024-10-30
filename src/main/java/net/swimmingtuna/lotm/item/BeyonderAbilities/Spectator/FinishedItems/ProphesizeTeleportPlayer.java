@@ -40,14 +40,14 @@ public class ProphesizeTeleportPlayer extends Item {
         }
         if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 1 && holder.useSpirituality(750)) {
             AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-            teleportEntities(player, level, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
+            teleportEntities(player, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
             if (!player.getAbilities().instabuild)
                 player.getCooldowns().addCooldown(this, 400);
         }
         return super.use(level, player, hand);
     }
 
-    private void teleportEntities(Player player, Level level, int sequence, int dir) {
+    private void teleportEntities(Player player, int sequence, int dir) {
         double radius = (500 - sequence * 100) * dir;
         for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
             if (entity != player && !entity.level().isClientSide()) {

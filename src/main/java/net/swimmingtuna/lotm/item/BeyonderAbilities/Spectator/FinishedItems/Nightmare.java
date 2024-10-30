@@ -76,7 +76,7 @@ public class Nightmare extends Item {
         if (!context.getLevel().isClientSide) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 5 &&  BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(100)) {
-                useNightmare(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
+                nightmare(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
                 if (!player.getAbilities().instabuild) {
                     player.getCooldowns().addCooldown(this, 110);
                 }
@@ -85,7 +85,7 @@ public class Nightmare extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    private void useNightmare(Player player, Level level, BlockPos targetPos, int sequence, int dir) {
+    private void nightmare(Player player, Level level, BlockPos targetPos, int sequence, int dir) {
         double radius = 25.0 - sequence;
         float damagePlayer = ((float) 120.0 - (sequence * 10)) * dir;
         float damageMob = ((float) (50.0 - (sequence * 3)) / 2) * dir;

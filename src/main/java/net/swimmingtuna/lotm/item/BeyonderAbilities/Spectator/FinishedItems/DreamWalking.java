@@ -23,6 +23,8 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
@@ -30,14 +32,12 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class DreamWalking extends Item {
+public class DreamWalking extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public DreamWalking(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 5, 40, 0);
     }
-
     @SuppressWarnings("deprecation")
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
@@ -66,30 +66,21 @@ public class DreamWalking extends Item {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
-        if (player.level().isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+        if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
-        if (!holder.useSpirituality(70)) {
-            player.displayClientMessage(Component.literal("You need 70 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return InteractionResult.FAIL;
-        }
-        if (holder.getCurrentSequence() <= 5) {
-            double x = interactionTarget.getX();
-            double y = interactionTarget.getY();
-            double z = interactionTarget.getZ();
-            player.teleportTo(x, y, z);
-            if (!player.getAbilities().instabuild) {
-                AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-                player.getCooldowns().addCooldown(this, (int) (40 / dreamIntoReality.getValue()));
-            }
-            return InteractionResult.SUCCESS;
-        }
+        dreamWalk(interactionTarget, player);
+        return InteractionResult.SUCCESS;
+    }
 
-        return super.interactLivingEntity(stack, player, interactionTarget, hand);
+    public static void dreamWalk(LivingEntity interactionTarget, Player player) {
+        double x = interactionTarget.getX();
+        double y = interactionTarget.getY();
+        double z = interactionTarget.getZ();
+        player.teleportTo(x, y, z);
+        if (!player.getAbilities().instabuild) {
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            player.getCooldowns().addCooldown(ItemInit.DREAM_WALKING.get(), (int) (40 / dreamIntoReality.getValue()));
+        }
     }
 }

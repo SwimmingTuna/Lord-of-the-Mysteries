@@ -29,6 +29,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
@@ -37,20 +38,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class DreamWeaving extends Item {
-    private static final List<EntityType<? extends Mob>> MOB_TYPES = List.of(
-            EntityType.ZOMBIE,
-            EntityType.SKELETON,
-            EntityType.CREEPER,
-            EntityType.ENDERMAN,
-            EntityType.RAVAGER,
-            EntityType.VEX,
-            EntityType.ENDERMITE,
-            EntityType.SPIDER,
-            EntityType.WITHER,
-            EntityType.PHANTOM
-    );
 
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
@@ -76,13 +64,6 @@ public class DreamWeaving extends Item {
         return attributeBuilder.build();
     }
 
-    @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use on a living entity, brings their nightmares into reality, giving them darkness temporarily and summoning a random array of mobs around the target\n" +
-                "Spirituality Used: 250\n" +
-                "Cooldown: 8 seconds").withStyle(ChatFormatting.AQUA));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
-    }
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
@@ -121,6 +102,13 @@ public class DreamWeaving extends Item {
         }
         return InteractionResult.PASS;
     }
+    @Override
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use on a living entity, brings their nightmares into reality, giving them darkness temporarily and summoning a random array of mobs around the target\n" +
+                "Spirituality Used: 250\n" +
+                "Cooldown: 8 seconds").withStyle(ChatFormatting.AQUA));
+        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+    }
 
     private static void spawnMobsAroundTarget(EntityType<? extends Mob> mobEntityType, LivingEntity entity, Level level, double x, double y, double z, int numberOfMobs) {
         for (int i = 0; i < numberOfMobs; i++) {
@@ -142,4 +130,36 @@ public class DreamWeaving extends Item {
         entity.moveTo(x + xOffset, y +1, z + zOffset);
         level.addFreshEntity(entity);
     }
+    public void dreamWeave(Player player, LivingEntity interactionTarget) {
+        Level level = player.level();
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        double x = interactionTarget.getX();
+        double y = interactionTarget.getY();
+        double z = interactionTarget.getZ();
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        interactionTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 150, 1, false, false));
+        RandomSource random = player.getRandom();
+        int times = 20 - (holder.getCurrentSequence() * 3);
+        for (int i = 0; i < times; i++) {
+            int randomNumber = random.nextInt(10);
+            EntityType<? extends Mob> entityType = MOB_TYPES.get(randomNumber);
+            spawnMobsAroundTarget(entityType, interactionTarget, level, x, y, z, dreamIntoReality.getValue() == 2 ? 2 : 1);
+
+            if (!player.getAbilities().instabuild) {
+                player.getCooldowns().addCooldown(this, (int) (160 / dreamIntoReality.getValue()));
+            }
+        }
+    }
+    private static final List<EntityType<? extends Mob>> MOB_TYPES = List.of(
+            EntityType.ZOMBIE,
+            EntityType.SKELETON,
+            EntityType.CREEPER,
+            EntityType.ENDERMAN,
+            EntityType.RAVAGER,
+            EntityType.VEX,
+            EntityType.ENDERMITE,
+            EntityType.SPIDER,
+            EntityType.WITHER,
+            EntityType.PHANTOM
+    );
 }

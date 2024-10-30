@@ -6,28 +6,22 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
-import net.swimmingtuna.lotm.init.BeyonderClassInit;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EnvisionLife extends Item {
 
     public EnvisionLife(Properties properties) {
@@ -44,65 +38,48 @@ public class EnvisionLife extends Item {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    @SubscribeEvent
-    public static void onChatMessage(ServerChatEvent event) {
-        Level level = event.getPlayer().serverLevel();
-        Player player = event.getPlayer();
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        String message = event.getMessage().getString().toLowerCase();
-        if (player.getMainHandItem().getItem() instanceof EnvisionLife && !player.level().isClientSide()) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                    player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-                }
 
-                if (holder.getSpirituality() < 1500) {
-                    player.displayClientMessage(Component.literal("You need " + (int) (1500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-                }
-        }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide() && player.getMainHandItem().getItem() instanceof EnvisionLife && holder.getCurrentSequence() == 0) {
-            spawnMob(player, message);
-            holder.useSpirituality((int) (1500 / dreamIntoReality.getValue()));
-            event.setCanceled(true);
-        }
-    }
-
-    private static void spawnMob(Player player, String mobName) {
-        // Get the world level and position of the player
+    public static void spawnMob(Player player, String mobName) {
         Level level = player.level();
         double x = player.getX();
         double y = player.getY();
         double z = player.getZ();
 
-        // Find the EntityType based on the mobName (assuming it's a valid EntityType)
-        EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(mobName));
+        // Create resource location and check if it exists in registry
+        ResourceLocation resourceLocation = new ResourceLocation(mobName);
+        if (!ForgeRegistries.ENTITY_TYPES.containsKey(resourceLocation)) {
+            player.sendSystemMessage(Component.literal("Invalid mob name: " + mobName));
+            return;
+        }
+
+        EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(resourceLocation);
 
         int waitMakeLifeCounter = player.getPersistentData().getInt("waitMakeLifeTimer");
         if (waitMakeLifeCounter == 0) {
-            if (entityType != null) {
-                Entity entity = entityType.create(level);
-                if (entity != null) {
-                    Mob mob = (Mob) entity;
-                    entity.setPos(x, y, z);
-                    Player nearestPlayer = findNearestPlayer(level, x, y, z, 100, player);
-                    if (nearestPlayer != null) {
-                        mob.setLastHurtByPlayer(nearestPlayer);
-                    }
-                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                    if (holder.getSpirituality() >= ((Mob) entity).getMaxHealth() * 3) {
-                        holder.useSpirituality((int) (((Mob) entity).getMaxHealth() * 3));
-                        level.addFreshEntity(entity);
-                    } else {
-                        player.sendSystemMessage(Component.literal("You need " + (((Mob) entity).getMaxHealth() * 3 - holder.getSpirituality()) + " more spirituality in order to envision" + entity.getName().getString()));
-                    }
+            Entity entity = entityType.create(level);
+            if (entity != null && entity instanceof Mob mob) {
+                entity.setPos(x, y, z);
+                Player nearestPlayer = findNearestPlayer(level, x, y, z, 100, player);
+                if (nearestPlayer != null) {
+                    mob.setLastHurtByPlayer(nearestPlayer);
+                }
+
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+                if (holder.getSpirituality() >= mob.getMaxHealth() * 3) {
+                    holder.useSpirituality((int) (mob.getMaxHealth() * 3));
+                    level.addFreshEntity(entity);
+
+                    // Get the translated name of the entity
+                    String entityName = entity.getType().getDescription().getString();
+                    player.displayClientMessage(Component.literal("Envisioned a " + entityName + " into the world"), true);
+                } else {
+                    // Get the translated name for the error message too
+                    String entityName = entity.getType().getDescription().getString();
+                    player.sendSystemMessage(Component.literal("You need " + (mob.getMaxHealth() * 3 - holder.getSpirituality()) + " more spirituality in order to envision " + entityName));
                 }
             }
-        }
-        if (waitMakeLifeCounter != 0) {
-            player.sendSystemMessage(Component.literal("Ability on Cooldown for " + (400 - waitMakeLifeCounter) / 20 + " seconds"));
         } else {
-            player.sendSystemMessage(Component.literal("Mob not valid"));
+            player.sendSystemMessage(Component.literal("Ability on Cooldown for " + (400 - waitMakeLifeCounter) / 20 + " seconds"));
         }
     }
 

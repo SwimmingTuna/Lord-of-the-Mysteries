@@ -104,6 +104,7 @@ public class TornadoEntity extends AbstractHurtingProjectile {
             TornadoEntity tornado = new TornadoEntity(player.level(), player, 0, 0, 0);
             tornado.setTornadoHeight(100);
             tornado.setTornadoRadius(25);
+            tornado.setTornadoLifecount(150);
             tornado.setTornadoMov(player.getLookAngle().scale(0.5f).toVector3f());
             player.level().addFreshEntity(tornado);
         }

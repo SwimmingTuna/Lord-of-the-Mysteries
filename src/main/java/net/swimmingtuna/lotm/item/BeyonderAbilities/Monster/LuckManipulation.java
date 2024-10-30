@@ -12,7 +12,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -20,12 +19,14 @@ import java.util.List;
 
 public class LuckManipulation extends SimpleAbilityItem {
     public LuckManipulation(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 9, 0, 0);
+        super(properties, BeyonderClassInit.SAILOR, 5, 250, 60);
     }
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
         changeBoolean(player);
         return InteractionResult.SUCCESS;
     }

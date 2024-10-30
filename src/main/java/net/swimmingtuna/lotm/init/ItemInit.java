@@ -25,9 +25,17 @@ public class ItemInit {
     public static final RegistryObject<Item> LUCKPERCEPTION = ITEMS.register("luckperception",
             () -> new LuckPerception(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PSYCHESTORM = ITEMS.register("psychestorm",
-            () -> new LuckPerception(new Item.Properties().stacksTo(1)));
+            () -> new PsycheStorm(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SPIRITVISION = ITEMS.register("spiritvision",
+            () -> new SpiritVision(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MONSTERPROJECTILECONTROL = ITEMS.register("monsterprojectilecontrol",
             () -> new MonsterProjectileControl(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LUCK_MANIPULATION = ITEMS.register("luckmanipulation",
+            () -> new LuckManipulation(new Item.Properties().stacksTo(1)));
+
+
+    public static final RegistryObject<Item> TSUNAMI = ITEMS.register("tsunami",
+            () -> new Tsunami(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EARTHQUAKE = ITEMS.register("earthquake",
             () -> new Earthquake(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> SAILORPROJECTILECTONROL = ITEMS.register("sailorprojectilecontrol",
@@ -84,6 +92,8 @@ public class ItemInit {
             () -> new Hurricane(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> TORNADO = ITEMS.register("tornado",
             () -> new Tornado(new Item.Properties().stacksTo(1)));
+
+
     public static final RegistryObject<Item> MIND_READING = ITEMS.register("mindreading",
             () -> new MindReading(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> AWE = ITEMS.register("awe",
@@ -98,8 +108,6 @@ public class ItemInit {
             () -> new PsychologicalInvisibility(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> GUIDANCE = ITEMS.register("guidance",
             () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> BEYONDER_ABILITY_USER = ITEMS.register("beyonderabilityuser",
-            () -> new BeyonderAbilityUser(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DREAM_WALKING = ITEMS.register("dreamwalking",
             () -> new DreamWalking(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> NIGHTMARE = ITEMS.register("nightmare",
@@ -126,8 +134,6 @@ public class ItemInit {
             () -> new DreamWeaving(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DISCERN = ITEMS.register("discern",
             () -> new Discern(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> TSUNAMI = ITEMS.register("tsunami",
-            () -> new Tsunami(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> DREAM_INTO_REALITY = ITEMS.register("dreamintoreality",
             () -> new DreamIntoReality(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PROPHESIZE_TELEPORT_BLOCK = ITEMS.register("prophesizeblock",
@@ -158,8 +164,12 @@ public class ItemInit {
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ENVISIONHEALTH = ITEMS.register("envisionhealth",
             () -> new EnvisionHealth(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> LUCK_MANIPULATION = ITEMS.register("luckmanipulation",
-            () -> new LuckManipulation(new Item.Properties().stacksTo(1)));
+
+    public static final RegistryObject<Item> BEYONDER_ABILITY_USER = ITEMS.register("beyonderabilityuser",
+            () -> new BeyonderAbilityUser(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ICONITEM = ITEMS.register("zqdsndnkawdnsalnkw",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+
     public static final RegistryObject<Item> SPECTATOR_9_POTION = ITEMS.register("spectator_9_potion",
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SPECTATOR, 9));
     public static final RegistryObject<Item> SPECTATOR_8_POTION = ITEMS.register("spectator_8_potion",

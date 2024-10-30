@@ -44,7 +44,7 @@ public class ManipulateFondness extends Item {
         }
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 4 && holder.useSpirituality(100)) {
-            manipulateEmotion(player);
+            manipulateFondness(player);
             if (!player.getAbilities().instabuild)
                 player.getCooldowns().addCooldown(this, 100);
         }
@@ -60,7 +60,7 @@ public class ManipulateFondness extends Item {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    private static void manipulateEmotion(Player player) {
+    private static void manipulateFondness(Player player) {
         for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(250))) {
             if (entity != player && entity.hasEffect(ModEffects.MANIPULATION.get())) {
                 AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());

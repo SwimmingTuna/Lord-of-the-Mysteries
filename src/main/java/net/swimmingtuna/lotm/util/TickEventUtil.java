@@ -47,6 +47,7 @@ import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
+
 import java.util.*;
 
 import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SirenSongHarm.isInsideSphere;
@@ -299,7 +300,7 @@ public class TickEventUtil {
                 serverLevel.setWeatherParameters(0, 700, true, true);
             }
             if (hurricane % 5 == 0) {
-                SailorLightning.shootLineBlockHighPM(player, player.level());
+                SailorLightning.lightningHighPlayerMob(player, player.level());
             }
             if (hurricane == 600 || hurricane == 300) {
                 for (int i = 0; i < 5; i++) {

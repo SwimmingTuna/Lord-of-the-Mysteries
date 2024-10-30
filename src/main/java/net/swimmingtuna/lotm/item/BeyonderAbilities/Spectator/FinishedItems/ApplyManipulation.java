@@ -32,12 +32,20 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ApplyManipulation extends Item {
+public class ApplyManipulation extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public ApplyManipulation(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 4, 50, 10);
+    }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        applyManipulation(interactionTarget, player);
+        return InteractionResult.SUCCESS;
     }
 
     @SuppressWarnings("deprecation")
@@ -66,21 +74,11 @@ public class ApplyManipulation extends Item {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
-        if (player.level().isClientSide()) {
-            return InteractionResult.PASS;
-        }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 4, 50)) {
-            return InteractionResult.FAIL;
-        }
-        holder.useSpirituality(50);
+
+    private static void applyManipulation(LivingEntity interactionTarget, Player player) {
         if (!interactionTarget.hasEffect(ModEffects.MANIPULATION.get())) {
             interactionTarget.addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false, false));
             player.sendSystemMessage(Component.literal("Manipulating " + interactionTarget.getName().getString()).withStyle(BeyonderUtil.getStyle(player)));
-            return InteractionResult.SUCCESS;
         }
-        return super.interactLivingEntity(stack, player, interactionTarget, hand);
     }
 }

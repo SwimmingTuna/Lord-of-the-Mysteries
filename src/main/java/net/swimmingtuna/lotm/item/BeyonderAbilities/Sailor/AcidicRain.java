@@ -3,11 +3,10 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -15,36 +14,29 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class AcidicRain extends Item {
+public class AcidicRain extends SimpleAbilityItem {
+
     public AcidicRain(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SAILOR, 5, 175, 500);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!level.isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            } else if (holder.getSpirituality() < 175) {
-                player.displayClientMessage(Component.literal("You need 175 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            } else if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 5 && holder.useSpirituality(175)) {
-                shootAcidicRain(player);
-                if (!player.getAbilities().instabuild) {
-                    player.getCooldowns().addCooldown(this, 500);
-                }
-            }
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
-        return super.use(level, player, hand);
+        acidicRain(player);
+        return InteractionResult.SUCCESS;
     }
 
-    private static void shootAcidicRain(Player player) {
+    private static void acidicRain(Player player) {
         player.getPersistentData().putInt("sailorAcidicRain", 1);
         AttributeInstance particleAttribute = player.getAttribute(ModAttributes.PARTICLE_HELPER.get());
         particleAttribute.setBaseValue(1);
@@ -69,7 +61,7 @@ public class AcidicRain extends Item {
     }
 
 
-    private static void spawnAcidicRainParticles(Player player) {
+    public static void spawnAcidicRainParticles(Player player) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
         double x = player.getX();

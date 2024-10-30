@@ -3,49 +3,44 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ThunderClap extends Item {
+public class ThunderClap extends SimpleAbilityItem {
 
     public ThunderClap(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SAILOR, 3, 700, 400);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 700) {
-                player.displayClientMessage(Component.literal("You need 700 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 3 && holder.useSpirituality(700)) {
-                applyPotionEffectToEntities(player);
-                if (!player.getAbilities().instabuild)
-                    player.getCooldowns().addCooldown(this, 400);
-            }
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
-        return super.use(level, player, hand);
+        thunderClap(player);
+        return InteractionResult.SUCCESS;
     }
-    private void applyPotionEffectToEntities(Player player) {
+
+    private void thunderClap(Player player) {
+        player.level().playSound(null, player.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 30.0f, player.level().random.nextFloat() * 0.1F + 0.9F);
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
         double radius = 300 - (sequence * 50);

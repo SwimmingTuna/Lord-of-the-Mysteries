@@ -40,7 +40,7 @@ public class MeteorNoLevelShower extends Item {
             }
 
             if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 1 && holder.useSpirituality(2500)) {
-                meteorShower(player);
+                meteorNoLevelShower(player);
                 if (!player.getAbilities().instabuild)
                     player.getCooldowns().addCooldown(this, 900);
             }
@@ -48,7 +48,7 @@ public class MeteorNoLevelShower extends Item {
         return super.use(level, player, hand);
     }
 
-    public static void meteorShower(Player player) {
+    public static void meteorNoLevelShower(Player player) {
         MeteorNoLevelEntity.summonMultipleMeteors(player);
         MeteorNoLevelEntity.summonMultipleMeteors(player);
         MeteorNoLevelEntity.summonMultipleMeteors(player);

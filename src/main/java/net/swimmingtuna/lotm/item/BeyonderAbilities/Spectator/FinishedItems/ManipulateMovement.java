@@ -99,4 +99,27 @@ public class ManipulateMovement extends Item {
                 "Cooldown: 30 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
+    public void manipulateMovement(Player player, UseOnContext context) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        int sequence = holder.getCurrentSequence();
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && sequence <= 4 && holder.useSpirituality(200)) {
+            boolean x = player.getPersistentData().getBoolean("manipulateMovementBoolean");
+            if (!x) {
+                player.getPersistentData().putBoolean("manipulateMovementBoolean", true);
+                BlockPos pos = context.getClickedPos();
+                player.getPersistentData().putInt("manipulateMovementX", pos.getX());
+                player.getPersistentData().putInt("manipulateMovementY", pos.getY());
+                player.getPersistentData().putInt("manipulateMovementZ", pos.getZ());
+                player.displayClientMessage(Component.literal("Manipulate Movement Position is " + pos.getX() + " " + pos.getY() + " " + pos.getZ()).withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+
+            }
+            if (x) {
+                player.getPersistentData().remove("manipulateMovementX");
+                player.getPersistentData().remove("manipulateMovementY");
+                player.getPersistentData().remove("manipulateMovementZ");
+                player.getPersistentData().putBoolean("manipulateMovementBoolean", false);
+                player.displayClientMessage(Component.literal("Manipulate Movement Position Reset").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+            }
+        }
+    }
 }

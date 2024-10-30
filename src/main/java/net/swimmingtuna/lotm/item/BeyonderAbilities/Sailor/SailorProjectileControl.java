@@ -23,12 +23,14 @@ public class SailorProjectileControl extends SimpleAbilityItem {
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
-        changeBoolean(player);
+        if (!checkAll(player)){
+            return InteractionResult.FAIL;
+        }
+        projectileControl(player);
         return InteractionResult.SUCCESS;
     }
 
-    public static void changeBoolean(Player player) {
+    public static void projectileControl(Player player) {
         CompoundTag tag = player.getPersistentData();
         boolean sailorProjectileMovement = tag.getBoolean("sailorProjectileMovement");
         tag.putBoolean("sailorProjectileMovement", !sailorProjectileMovement);

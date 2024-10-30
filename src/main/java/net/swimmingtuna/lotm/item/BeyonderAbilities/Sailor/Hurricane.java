@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -14,41 +15,29 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class Hurricane extends Item {
+public class Hurricane extends SimpleAbilityItem {
 
-    public Hurricane(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(properties);
+    public Hurricane(Properties properties) {
+        super(properties, BeyonderClassInit.SAILOR, 4, 1250, 1200);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (player.level().isClientSide()) {
-            return super.use(level, player, hand);
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
+        hurricane(player);
+        return InteractionResult.SUCCESS;
+    }
 
-        // If no block or entity is targeted, proceed with the original functionality
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-            player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            return InteractionResultHolder.pass(player.getItemInHand(hand));
-        }
-        if (!holder.useSpirituality(1250)) {
-            player.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            return InteractionResultHolder.pass(player.getItemInHand(hand));
-        }
-        if (holder.getCurrentSequence() <= 4) {
-            player.getPersistentData().putInt("sailorHurricane", 600);
-            if (!player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(this, 1200);
-            }
-        }
-        return super.use(level, player, hand);
+    private static void hurricane(Player pPlayer) {
+        pPlayer.getPersistentData().putInt("sailorHurricane", 600);
     }
 
     @Override

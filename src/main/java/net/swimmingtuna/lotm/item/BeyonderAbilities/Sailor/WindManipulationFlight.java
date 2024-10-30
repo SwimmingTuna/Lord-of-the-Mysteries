@@ -23,8 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WindManipulationFlight extends SimpleAbilityItem {
+
+
     public WindManipulationFlight(Properties properties) {
         super(properties, BeyonderClassInit.SAILOR, 7, 0, 0);
     }
@@ -32,7 +33,9 @@ public class WindManipulationFlight extends SimpleAbilityItem {
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!checkAll(player)) return InteractionResult.FAIL;
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
         if (holder.getCurrentSequence() <= 4) {
             toggleFlying(player);
         } else {

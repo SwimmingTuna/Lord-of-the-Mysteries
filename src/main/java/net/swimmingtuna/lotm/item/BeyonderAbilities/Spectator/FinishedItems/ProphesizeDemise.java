@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -87,6 +88,9 @@ public class ProphesizeDemise extends Item {
             player.getCooldowns().addCooldown(this, (int) (3000 / dreamIntoReality.getValue()));
         }
         return InteractionResult.SUCCESS;
+    }
+    public void prophesizeDemise(LivingEntity interactionTarget) {
+        interactionTarget.addEffect(new MobEffectInstance(ModEffects.SPECTATORDEMISE.get(), 600, 1, false, false));
     }
 
     @SubscribeEvent

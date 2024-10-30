@@ -159,6 +159,7 @@ public class BeyonderUtil {
             if (sequence <= 1) {
                 abilityNames.add(ItemInit.PROPHESIZE_DEMISE.get());
                 abilityNames.add(ItemInit.PROPHESIZE_TELEPORT_PLAYER.get());
+                abilityNames.add(ItemInit.PROPHESIZE_TELEPORT_BLOCK.get());
                 abilityNames.add(ItemInit.METEOR_SHOWER.get());
                 abilityNames.add(ItemInit.METEOR_NO_LEVEL_SHOWER.get());
             }

@@ -4,10 +4,13 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
+
+import java.util.function.Supplier;
 
 public class CreativeTabInit {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
@@ -16,6 +19,7 @@ public class CreativeTabInit {
     public static final RegistryObject<CreativeModeTab> ABILITIES_TAB = CREATIVE_MODE_TABS.register("abilities_tab",
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemInit.AWE.get()))
                     .title(Component.translatable("creativetab.abilities_tab"))
+                    .icon(() -> new ItemStack(ItemInit.ICONITEM.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(ItemInit.BEYONDER_ABILITY_USER.get());
                         output.accept(ItemInit.MIND_READING.get());
@@ -97,6 +101,13 @@ public class CreativeTabInit {
                         output.accept(ItemInit.MATTER_ACCELERATION_SELF.get());
                         output.accept(ItemInit.TYRANNY.get());
 
+                        output.accept(ItemInit.LUCK_MANIPULATION.get());
+                        output.accept(ItemInit.MONSTERDANGERSENSE.get());
+                        output.accept(ItemInit.MONSTERPROJECTILECONTROL.get());
+                        output.accept(ItemInit.LUCKPERCEPTION.get());
+                        output.accept(ItemInit.PSYCHESTORM.get());
+                        output.accept(ItemInit.SPIRITVISION.get());
+                        output.accept(ItemInit.MONSTERCALAMITYATTRACTION.get());
 
 
                     })

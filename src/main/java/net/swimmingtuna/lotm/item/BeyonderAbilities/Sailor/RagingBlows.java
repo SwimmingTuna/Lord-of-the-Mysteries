@@ -5,51 +5,39 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.common.Mod;
-import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class RagingBlows extends Item {
+public class RagingBlows extends SimpleAbilityItem {
+
     public RagingBlows(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SAILOR, 8, 20, 200);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            }
-            if (holder.getSpirituality() < 20) {
-                player.displayClientMessage(Component.literal("You need 20 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            }
-            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 8 && holder.useSpirituality(20)) {
-                useItem(player);
-            }
-            if (!player.getAbilities().instabuild)
-                player.getCooldowns().addCooldown(this, 200);
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
-        return super.use(level, player, hand);
+        ragingBlows(player);
+        return InteractionResult.SUCCESS;
     }
 
-    public static void useItem(Player player) {
+    public static void ragingBlows(Player player) {
         if (!player.level().isClientSide()) {
             CompoundTag persistentData = player.getPersistentData();
             int ragingBlows = persistentData.getInt("ragingBlows");
@@ -78,7 +66,7 @@ public class RagingBlows extends Item {
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
 
-    private static void spawnRagingBlowsParticles(Player player) {
+    public static void spawnRagingBlowsParticles(Player player) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         Vec3 playerPos = player.position();
         Vec3 playerLookVector = player.getViewVector(1.0F);
