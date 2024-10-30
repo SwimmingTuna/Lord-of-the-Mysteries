@@ -29,6 +29,8 @@ public class Tyranny extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         tyranny(player);
         return InteractionResult.SUCCESS;
     }

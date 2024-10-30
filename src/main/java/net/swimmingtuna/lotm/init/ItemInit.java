@@ -112,9 +112,9 @@ public class ItemInit {
             () -> new DreamWalking(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> NIGHTMARE = ITEMS.register("nightmare",
             () -> new Nightmare(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> MANIPULATE_MOVEMENT = ITEMS.register("manipulateemotion",
+    public static final RegistryObject<Item> MANIPULATE_MOVEMENT = ITEMS.register("manipulatemovement",
             () -> new ManipulateMovement(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> MANIPULATE_EMOTION = ITEMS.register("manipulatemovement",
+    public static final RegistryObject<Item> MANIPULATE_EMOTION = ITEMS.register("manipulateemotion",
             () -> new ManipulateEmotion(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MANIPULATE_FONDNESS = ITEMS.register("manipulatefondness",
             () -> new ManipulateFondness(new Item.Properties().stacksTo(1)));

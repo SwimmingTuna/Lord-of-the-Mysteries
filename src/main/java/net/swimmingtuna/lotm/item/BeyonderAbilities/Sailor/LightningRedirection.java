@@ -66,6 +66,8 @@ public class LightningRedirection extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         lightningRedirection(player, pContext.getClickedPos());
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

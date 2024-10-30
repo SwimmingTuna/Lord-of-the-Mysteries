@@ -31,6 +31,8 @@ public class RainEyes extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         rainEyes(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

@@ -33,6 +33,8 @@ public class Tornado extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         tornado(player);
         return InteractionResult.SUCCESS;
     }

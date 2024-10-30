@@ -38,12 +38,25 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ProphesizeDemise extends Item {
-    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
+public class ProphesizeDemise extends SimpleAbilityItem {
 
     public ProphesizeDemise(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 1, 1000, 0);
     }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        int dir = (int) player.getAttribute(ModAttributes.DIR.get()).getValue();
+        addCooldown(player, stack.getItem(), 3000 / dir);
+        useSpirituality(player);
+        prophesizeDemise(interactionTarget);
+        return InteractionResult.SUCCESS;
+    }
+
+    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     @SuppressWarnings("deprecation")
     @Override
@@ -72,23 +85,6 @@ public class ProphesizeDemise extends Item {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
-        if (player.level().isClientSide()) {
-            return InteractionResult.PASS;
-        }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 1, 1000)) {
-            return InteractionResult.FAIL;
-        }
-        holder.useSpirituality(1000);
-        interactionTarget.addEffect(new MobEffectInstance(ModEffects.SPECTATORDEMISE.get(), 600, 1, false, false));
-        if (!player.isCreative()) {
-            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-            player.getCooldowns().addCooldown(this, (int) (3000 / dreamIntoReality.getValue()));
-        }
-        return InteractionResult.SUCCESS;
-    }
     public void prophesizeDemise(LivingEntity interactionTarget) {
         interactionTarget.addEffect(new MobEffectInstance(ModEffects.SPECTATORDEMISE.get(), 600, 1, false, false));
     }

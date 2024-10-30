@@ -10,10 +10,8 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
@@ -24,6 +22,7 @@ import net.minecraftforge.common.util.Lazy;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
@@ -32,14 +31,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class Frenzy extends Item {
+public class Frenzy extends SimpleAbilityItem {
 
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public Frenzy(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 7, 125, 300);
     }
-
     @SuppressWarnings("deprecation")
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
@@ -59,34 +57,23 @@ public class Frenzy extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Player player = context.getPlayer();
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return InteractionResult.FAIL;
-        }
-        if (holder.getSpirituality() < 125) {
-            player.displayClientMessage(Component.literal("You need 125 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return InteractionResult.FAIL;
-        }
-        if (player.level().isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
-
+    public InteractionResult useAbilityOnBlock(UseOnContext pContext) {
+        Player player = pContext.getPlayer();
         Level level = player.level();
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        BlockPos positionClicked = context.getClickedPos();
-        if (holder.getCurrentSequence() <= 7 && holder.useSpirituality(125)) {
-            applyPotionEffectToEntities(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
-            if (!player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(this, 300);
-            }
+        BlockPos targetPos = pContext.getClickedPos();
+        int dreamIntoReality = (int) player.getAttribute(ModAttributes.DIR.get()).getValue();
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
+        frenzy(player,level,targetPos,dreamIntoReality);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 
-    private void applyPotionEffectToEntities(Player player, Level level, BlockPos targetPos, int sequence, int dreamIntoRealityValue) {
+    private void frenzy(Player player, Level level, BlockPos targetPos, int dreamIntoRealityValue) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        int sequence = holder.getCurrentSequence();
         double radius = (15.0 - sequence) * dreamIntoRealityValue;
         float damage = (float) (18.0 - (sequence / 2));
         int duration = 250 - (sequence * 12) * dreamIntoRealityValue;

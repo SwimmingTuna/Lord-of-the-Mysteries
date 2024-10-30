@@ -34,14 +34,24 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class MindStorm extends Item {
-
-    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
+public class MindStorm extends SimpleAbilityItem {
 
     public MindStorm(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 3, 250, 200 );
     }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player);
+        mindStorm(player, interactionTarget);
+        return InteractionResult.SUCCESS;
+    }
+
+    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     @SuppressWarnings("deprecation")
     @Override
@@ -69,36 +79,6 @@ public class MindStorm extends Item {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
-        if (player.level().isClientSide()) {
-            return InteractionResult.PASS;
-        }
-
-        if (player.getCooldowns().isOnCooldown(this)) {
-            return InteractionResult.FAIL;
-        }
-
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 3, 250)) return InteractionResult.FAIL;
-        holder.useSpirituality(250);
-
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        int sequence = holder.getCurrentSequence();
-        int duration = 300 - (sequence * 25);
-        int damage = 30 - (sequence * 2);
-        if (dreamIntoReality.getValue() == 2) {
-            damage = 50 - (sequence * 2);
-        }
-        interactionTarget.addEffect(new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false));
-        interactionTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
-        interactionTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
-        interactionTarget.hurt(interactionTarget.damageSources().magic(), damage);
-        if (!player.isCreative()) {
-            player.getCooldowns().addCooldown(stack.getItem(), 200);
-        }
-        return InteractionResult.SUCCESS;
-    }
     public void mindStorm(Player player, LivingEntity interactionTarget) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());

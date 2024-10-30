@@ -24,6 +24,7 @@ import net.minecraftforge.common.util.Lazy;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
@@ -32,12 +33,23 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MindReading extends Item {
+public class MindReading extends SimpleAbilityItem {
 
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public MindReading(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 8, 20, 60 );
+    }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player);
+        mindRead(player, interactionTarget, stack);
+        return InteractionResult.SUCCESS;
     }
 
     @SuppressWarnings("deprecation")
@@ -64,70 +76,31 @@ public class MindReading extends Item {
         return mainHandStack.getItem() instanceof MindReading;
     }
 
-    @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
-        if (!player.level().isClientSide()) {
-            Style style = BeyonderUtil.getStyle(player);
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+    public static void mindRead(Player player, LivingEntity interactionTarget, ItemStack stack) {
+        if (interactionTarget instanceof Player playerInteractionTarget) {
             AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 20) {
-                player.displayClientMessage(Component.literal("You need 20 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 8 && !interactionTarget.level().isClientSide && BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(20)) {
-                if (interactionTarget instanceof Player playerInteractionTarget) {
-                    for (int i = 0; i < playerInteractionTarget.getInventory().getContainerSize(); i++) {
-                        ItemStack itemStack = playerInteractionTarget.getInventory().getItem(i);
-                        if (!itemStack.isEmpty()) {
-                            String playerName = interactionTarget.getName().getString();
-                            player.sendSystemMessage(Component.literal(playerName + "'s inventory is" + itemStack).withStyle(ChatFormatting.BOLD));
-                        }
-                        if (dreamIntoReality.getValue() == 2) {
-                            interactionTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1, false, false));
-                        }
-                    }
-                    if (!player.getAbilities().instabuild) {
-                        player.getCooldowns().addCooldown(this, 60);
-                    }
-                } else {
-                    player.sendSystemMessage(Component.literal("Interaction target isn't a player").withStyle(style));
+            for (int i = 0; i < playerInteractionTarget.getInventory().getContainerSize(); i++) {
+                ItemStack itemStack = playerInteractionTarget.getInventory().getItem(i);
+                if (!itemStack.isEmpty()) {
+                    String playerName = interactionTarget.getName().getString();
+                    player.sendSystemMessage(Component.literal(playerName + "'s inventory is" + itemStack).withStyle(ChatFormatting.BOLD));
+                }
+                if (dreamIntoReality.getValue() == 2) {
+                    interactionTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1, false, false));
                 }
             }
+        } else {
+            Style style = BeyonderUtil.getStyle(player);
+            player.sendSystemMessage(Component.literal("Interaction target isn't a player").withStyle(style));
         }
-        return InteractionResult.PASS;
     }
+
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal("Upon use, tells you the inventory of the target player\n" +
                 "Spirituality Used: 20\n" +
                 "Cooldown: 3 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
-    }
-    public void mindRead(Player player, LivingEntity interactionTarget) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 8 && !interactionTarget.level().isClientSide && BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(20)) {
-            if (interactionTarget instanceof Player playerInteractionTarget) {
-                for (int i = 0; i < playerInteractionTarget.getInventory().getContainerSize(); i++) {
-                    ItemStack itemStack = playerInteractionTarget.getInventory().getItem(i);
-                    if (!itemStack.isEmpty()) {
-                        String playerName = interactionTarget.getName().getString();
-                        player.sendSystemMessage(Component.literal(playerName + "'s inventory is" + itemStack).withStyle(ChatFormatting.BOLD));
-                    }
-                    if (dreamIntoReality.getValue() == 2) {
-                        interactionTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1, false, false));
-                    }
-                }
-                if (!player.getAbilities().instabuild) {
-                    player.getCooldowns().addCooldown(this, 60);
-                }
-            } else {
-                Style style = BeyonderUtil.getStyle(player);
-                player.sendSystemMessage(Component.literal("Interaction target isn't a player").withStyle(style));
-            }
-        }
     }
 }
 

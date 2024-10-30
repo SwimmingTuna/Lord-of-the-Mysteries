@@ -27,6 +27,8 @@ public class CalamityIncarnationTsunami extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         calamityIncarnationTsunami(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

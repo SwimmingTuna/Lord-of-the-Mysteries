@@ -6,7 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -34,26 +33,22 @@ import java.util.Set;
 public class MatterAccelerationSelf extends SimpleAbilityItem {
 
     public MatterAccelerationSelf(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 0, 0, 500); //cooldown fix for all items that rely on smth
+        super(properties, BeyonderClassInit.SAILOR, 0, 0, 300); //cooldown fix for all items that rely on smth
     }
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        return matterAccelerationSelf(player);
+        int matterAccelerationDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
+        if (!checkAll(player, BeyonderClassInit.SAILOR.get(), 0, matterAccelerationDistance * 10)) {
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player, matterAccelerationDistance * 10);
+        matterAccelerationSelf(player);
+        return InteractionResult.SUCCESS;
     }
 
-    public InteractionResult matterAccelerationSelf(Player player) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-
-        int matterAccelerationDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
-
-        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SAILOR.get(), 0, matterAccelerationDistance * 10)) return InteractionResult.FAIL;
-        holder.useSpirituality(matterAccelerationDistance * 10);
-
-        if (!player.isCreative()) {
-            player.getCooldowns().addCooldown(this, 300);
-        }
-
+    public void matterAccelerationSelf(Player player) {
         Level level = player.level();
         int blinkDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
         Vec3 lookVector = player.getLookAngle();
@@ -111,7 +106,6 @@ public class MatterAccelerationSelf extends SimpleAbilityItem {
         BlockHitResult blockHitResult = level.clip(new ClipContext(player.getEyePosition(), new Vec3(endPos.getX() + 0.5, endPos.getY(), endPos.getZ() + 0.5), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
         BlockPos teleportLocation = blockHitResult.getBlockPos().relative(blockHitResult.getDirection());
         player.teleportTo(teleportLocation.getX() + 0.5, teleportLocation.getY(), teleportLocation.getZ() + 0.5);
-        return InteractionResult.SUCCESS;
     }
 
 

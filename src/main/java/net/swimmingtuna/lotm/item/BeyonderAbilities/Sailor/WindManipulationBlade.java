@@ -30,6 +30,8 @@ public class WindManipulationBlade extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         windManipulationBlade(player);
         return InteractionResult.SUCCESS;
     }

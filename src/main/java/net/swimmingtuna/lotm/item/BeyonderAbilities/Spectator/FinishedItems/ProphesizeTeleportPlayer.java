@@ -4,6 +4,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -15,43 +16,37 @@ import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ProphesizeTeleportPlayer extends Item {
+public class ProphesizeTeleportPlayer extends SimpleAbilityItem {
 
     public ProphesizeTeleportPlayer(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 1, 750, 400);
     }
-
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!player.level().isClientSide()) {
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 750) {
-                player.displayClientMessage(Component.literal("You need 750 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
-        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 1 && holder.useSpirituality(750)) {
-            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-            teleportEntities(player, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
-            if (!player.getAbilities().instabuild)
-                player.getCooldowns().addCooldown(this, 400);
-        }
-        return super.use(level, player, hand);
+        addCooldown(player);
+        useSpirituality(player);
+        teleportEntities(player);
+        return InteractionResult.SUCCESS;
     }
 
-    private void teleportEntities(Player player, int sequence, int dir) {
+    private void teleportEntities(Player player) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        int sequence = holder.getCurrentSequence();
+        int dir = (int) player.getAttribute(ModAttributes.DIR.get()).getValue();
         double radius = (500 - sequence * 100) * dir;
         for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
             if (entity != player && !entity.level().isClientSide()) {
-                entity.getPersistentData().putInt("prophesizeTeleportationCounter", (int) (150 * Math.random()));
+                entity.getPersistentData().putInt("prophesizeTeleportationCounter", (int) (300 * Math.random()));
                 entity.getPersistentData().putInt("prophesizeTeleportX", (int) player.getX());
                 entity.getPersistentData().putInt("prophesizeTeleportY", (int) player.getY());
                 entity.getPersistentData().putInt("prophesizeTeleportZ", (int) player.getZ());

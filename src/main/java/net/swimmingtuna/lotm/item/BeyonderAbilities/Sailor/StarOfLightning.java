@@ -37,13 +37,20 @@ public class StarOfLightning extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         starOfLightning(player);
         return InteractionResult.SUCCESS;
     }
 
     private static void starOfLightning(Player player) {
         if (!player.level().isClientSide()) {
-            player.getPersistentData().putInt("sailorLightningStar", 40);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            if (holder.getCurrentSequence() == 0) {
+                player.getPersistentData().putInt("sailorLightningStar", 20);
+            } else {
+                player.getPersistentData().putInt("sailorLightningStar", 40);
+            }
         }
     }
 

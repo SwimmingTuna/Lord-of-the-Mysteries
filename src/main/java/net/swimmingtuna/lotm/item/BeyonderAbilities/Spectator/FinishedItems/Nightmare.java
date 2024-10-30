@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -25,6 +26,7 @@ import net.minecraftforge.common.util.Lazy;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
@@ -33,12 +35,26 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class Nightmare extends Item {
-    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
+public class Nightmare extends SimpleAbilityItem {
 
     public Nightmare(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 5, 100, 110 );
     }
+
+    @Override
+    public InteractionResult useAbilityOnBlock(UseOnContext pContext) {
+        Player player = pContext.getPlayer();
+
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player);
+        nightmare(player, pContext.getLevel(), pContext.getClickedPos());
+        return InteractionResult.SUCCESS;
+    }
+
+    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     @SuppressWarnings("deprecation")
     @Override
@@ -58,34 +74,12 @@ public class Nightmare extends Item {
         return attributeBuilder.build();
     }
 
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Player player = context.getPlayer();
-        if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 100) {
-                player.displayClientMessage(Component.literal("You need 100 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-        }
-        Level level = player.level();
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        BlockPos positionClicked = context.getClickedPos();
-        if (!context.getLevel().isClientSide) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 5 &&  BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(100)) {
-                nightmare(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
-                if (!player.getAbilities().instabuild) {
-                    player.getCooldowns().addCooldown(this, 110);
-                }
-            }
-        }
-        return InteractionResult.SUCCESS;
-    }
 
-    private void nightmare(Player player, Level level, BlockPos targetPos, int sequence, int dir) {
+    private void nightmare(Player player, Level level, BlockPos targetPos) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        int sequence = holder.getCurrentSequence();
+        int dir = (int) dreamIntoReality.getValue();
         double radius = 25.0 - sequence;
         float damagePlayer = ((float) 120.0 - (sequence * 10)) * dir;
         float damageMob = ((float) (50.0 - (sequence * 3)) / 2) * dir;
@@ -100,20 +94,25 @@ public class Nightmare extends Item {
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
                 if (livingEntity instanceof Player) {
                     if (nightmareAttribute.getValue() < 3) {
-                        nightmareAttribute.setBaseValue(nightmareAttribute.getValue() + 1);}
-                if (nightmareAttribute.getValue() == 3) {
-                    livingEntity.hurt(livingEntity.damageSources().magic(), damagePlayer);
-                    nightmareAttribute.setBaseValue(0);
-                }
+                        if (sequence <= 2) {
+                            nightmareAttribute.setBaseValue(nightmareAttribute.getValue() + 2);
+                        } else {
+                            nightmareAttribute.setBaseValue(nightmareAttribute.getValue() + 1);
+                        }
+                    }
+                    if (nightmareAttribute.getValue() == 3) {
+                        livingEntity.hurt(livingEntity.damageSources().magic(), damagePlayer);
+                        nightmareAttribute.setBaseValue(0);
+                    }
                     player.sendSystemMessage(Component.literal(playerName + "'s nightmare value is:" + (int) nightmareAttribute.getValue()).withStyle(BeyonderUtil.getStyle(player)));
 
-                }
-                else {
+                } else {
                     livingEntity.hurt(livingEntity.damageSources().magic(), damageMob);
                 }
             }
         });
     }
+
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal("Upon use, makes all players around the target enter a nightmare, plunging them into darkness. If this is used 3 times on a player within 30 seconds, they take immense damage. If it's used on a mob, they take less the damage without having to be hit multiple times.\n" +

@@ -34,6 +34,8 @@ public class EnableOrDisableLightning extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         enableOrDisableLightning(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

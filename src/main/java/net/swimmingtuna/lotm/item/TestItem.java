@@ -16,9 +16,10 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import org.jetbrains.annotations.NotNull;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class TestItem extends Item {
     public TestItem(Properties properties) {
         super(properties);
@@ -26,7 +27,7 @@ public class TestItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        useAbilities2(player);
+        player.setHealth(10.0f);
         if (!level.isClientSide) LOTM.LOGGER.info("USE");
         return super.use(level, player, hand);
     }
@@ -60,7 +61,6 @@ public class TestItem extends Item {
 
     public static void useAbilities2(Player player) {
         if (!player.level().isClientSide()) {
-            player.getPersistentData().putInt("calamityExplosion", 12);
         }
     }
 }

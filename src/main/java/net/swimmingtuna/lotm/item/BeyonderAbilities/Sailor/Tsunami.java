@@ -36,6 +36,8 @@ public class Tsunami extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         startTsunami(player);
         return InteractionResult.SUCCESS;
     }

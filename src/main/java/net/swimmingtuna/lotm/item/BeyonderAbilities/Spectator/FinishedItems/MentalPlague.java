@@ -10,19 +10,13 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.fml.common.Mod;
-import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.caps.BeyonderHolder;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
@@ -32,13 +26,30 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class MentalPlague extends Item {
-    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
+
+public class MentalPlague extends SimpleAbilityItem {
 
     public MentalPlague(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 4, 200, 0);
     }
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        useSpirituality(player);
+        mentalPlauge(interactionTarget);
+        addCooldown(player, this, 200 / (int) player.getAttribute(ModAttributes.DIR.get()).getValue());
+        return InteractionResult.SUCCESS;
+    }
+
+    public void mentalPlauge(LivingEntity interactionTarget) {
+        interactionTarget.addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(), 620, 1));
+    }
+
+    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
+
 
     @SuppressWarnings("deprecation")
     @Override
@@ -62,29 +73,7 @@ public class MentalPlague extends Item {
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal("Upon use on a living entity, plants a plague seed in the target, sprouting after 30 seconds and dealing massive damage to it and all entities around it, be careful as this can effect the user\n" +
                 "Spirituality Used: 200\n" +
-                "Cooldown: 5 seconds").withStyle(ChatFormatting.AQUA));
+                "Cooldown: 10 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
-    }
-
-    @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
-        if (player.level().isClientSide()) {
-            return InteractionResult.PASS;
-        }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 4, 200)) {
-            return InteractionResult.FAIL;
-        }
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        holder.useSpirituality(200);
-        interactionTarget.addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(), 620, 1));
-        if (!player.isCreative()) {
-            player.getCooldowns().addCooldown(stack.getItem(), (int) (100 / dreamIntoReality.getValue()));
-        }
-        return InteractionResult.SUCCESS;
-    }
-
-    public void mentalPlauge(LivingEntity interactionTarget) {
-        interactionTarget.addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(), 620, 1));
     }
 }

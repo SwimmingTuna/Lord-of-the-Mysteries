@@ -27,6 +27,8 @@ public class WaterSphere extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         waterSphere(player);
         return InteractionResult.SUCCESS;
     }

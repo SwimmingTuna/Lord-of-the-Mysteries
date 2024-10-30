@@ -33,6 +33,8 @@ public class LightningBranch extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         lightningBranch(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

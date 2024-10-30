@@ -30,6 +30,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
@@ -38,12 +39,12 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-public class DreamWeaving extends Item {
+public class DreamWeaving extends SimpleAbilityItem {
 
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public DreamWeaving(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 3, 250, 0);
     }
 
     @SuppressWarnings("deprecation")
@@ -66,41 +67,15 @@ public class DreamWeaving extends Item {
 
 
     @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
-        if (player.level().isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return InteractionResult.FAIL;
-        }
-        if (!holder.useSpirituality(250)) {
-            player.displayClientMessage(Component.literal("You need 250 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return InteractionResult.FAIL;
-        }
-        Level level = player.level();
-        ItemStack itemInHand = player.getItemInHand(usedHand);
-        double x = interactionTarget.getX();
-        double y = interactionTarget.getY();
-        double z = interactionTarget.getZ();
-        if (holder.getCurrentSequence() > 3) {
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
         AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        interactionTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 150, 1, false, false));
-        RandomSource random = player.getRandom();
-        int times = 20 - (holder.getCurrentSequence() * 3);
-        for (int i = 0; i < times; i++) {
-            int randomNumber = random.nextInt(10);
-            EntityType<? extends Mob> entityType = MOB_TYPES.get(randomNumber);
-            spawnMobsAroundTarget(entityType, interactionTarget, level, x, y, z, dreamIntoReality.getValue() == 2 ? 2 : 1);
-
-            if (!player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(this, (int) (160 / dreamIntoReality.getValue()));
-            }
-        }
-        return InteractionResult.PASS;
+        addCooldown(player, this, 160 / (int) dreamIntoReality.getValue());
+        useSpirituality(player);
+        dreamWeave(player, interactionTarget);
+        return InteractionResult.SUCCESS;
     }
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
@@ -144,10 +119,6 @@ public class DreamWeaving extends Item {
             int randomNumber = random.nextInt(10);
             EntityType<? extends Mob> entityType = MOB_TYPES.get(randomNumber);
             spawnMobsAroundTarget(entityType, interactionTarget, level, x, y, z, dreamIntoReality.getValue() == 2 ? 2 : 1);
-
-            if (!player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(this, (int) (160 / dreamIntoReality.getValue()));
-            }
         }
     }
     private static final List<EntityType<? extends Mob>> MOB_TYPES = List.of(

@@ -42,6 +42,8 @@ public class SonicBoom extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         sonicBoom(player);
         return InteractionResult.SUCCESS;
     }

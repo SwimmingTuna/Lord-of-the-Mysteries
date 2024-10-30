@@ -32,6 +32,8 @@ public class SailorLightningTravel extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         lightningTravel(player, level);
         return InteractionResult.SUCCESS;
     }

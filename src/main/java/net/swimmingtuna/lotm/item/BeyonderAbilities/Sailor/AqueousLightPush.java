@@ -29,6 +29,8 @@ public class AqueousLightPush extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         aqueousLightPush(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

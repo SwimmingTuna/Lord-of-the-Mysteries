@@ -31,6 +31,8 @@ public class Earthquake extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         earthquake(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

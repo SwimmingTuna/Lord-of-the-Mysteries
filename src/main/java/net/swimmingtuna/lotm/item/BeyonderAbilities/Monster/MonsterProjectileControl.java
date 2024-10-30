@@ -26,11 +26,11 @@ public class MonsterProjectileControl extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
-        changeBoolean(player);
+        enableOrDisableProjectileControl(player);
         return InteractionResult.SUCCESS;
     }
 
-    public static void changeBoolean(Player player) {
+    public static void enableOrDisableProjectileControl(Player player) {
         CompoundTag tag = player.getPersistentData();
         boolean monsterProjectileControl = tag.getBoolean("monsterProjectileControl");
         tag.putBoolean("monsterProjectileControl", !monsterProjectileControl);

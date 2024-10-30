@@ -25,9 +25,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Placate extends Item {
+public class Placate extends SimpleAbilityItem {
+
     public Placate(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 7, 125, 15);
     }
 
     @Override
@@ -63,31 +64,41 @@ public class Placate extends Item {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
-        if (!player.level().isClientSide()) {
-            if (player.getCooldowns().isOnCooldown(this)) {
-                return InteractionResult.FAIL;
-            }
-
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 7, 120)) {
-                return InteractionResult.FAIL;
-            }
-            if (holder.getCurrentSequence() <= 4 && holder.useSpirituality(250)) {
-                Placate.removeHarmfulEffects(interactionTarget);
-                if (!player.isCreative()) {
-                    player.getCooldowns().addCooldown(stack.getItem(), 120);
-                }
-                return InteractionResult.SUCCESS;
-            }
-            holder.useSpirituality(120);
-            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-
-            Placate.halfHarmfulEffects(interactionTarget);
-            player.getCooldowns().addCooldown(stack.getItem(), 120 / (int) dreamIntoReality.getValue());
-            return InteractionResult.SUCCESS;
-
+        if (!checkAll(player, BeyonderClassInit.SPECTATOR.get(), 7, 125)) {
+            return InteractionResult.FAIL;
         }
-        return super.interactLivingEntity(stack, player, interactionTarget, hand);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder.getCurrentSequence() >= 4) {
+            removeHarmfulEffects(interactionTarget);
+            addCooldown(player);
+            useSpirituality(player);
+            return InteractionResult.SUCCESS;
+        }
+        else {
+            halfHarmfulEffects(interactionTarget);
+            addCooldown(player);
+            useSpirituality(player);
+            return InteractionResult.SUCCESS;
+        }
+    }
+    @Override
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player, BeyonderClassInit.SPECTATOR.get(), 7, 125)) {
+            return InteractionResult.FAIL;
+        }
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (holder.getCurrentSequence() >= 4) {
+            removeHarmfulEffects(player);
+            addCooldown(player);
+            useSpirituality(player);
+            return InteractionResult.SUCCESS;
+        }
+        else {
+            halfHarmfulEffects(player);
+            addCooldown(player);
+            useSpirituality(player);
+            return InteractionResult.SUCCESS;
+        }
     }
 
     public static void removeHarmfulEffects(LivingEntity entity) {
@@ -127,7 +138,7 @@ public class Placate extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal(
-                "Upon use, reduces or removes the targeted living entity's harmful potion effects\n" +
+                "Upon use, reduces or removes the targeted living entity's harmful potion effects, if there is no target, uses it on yourself\n" +
                         "Spirituality Used: 125\n" +
                         "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);

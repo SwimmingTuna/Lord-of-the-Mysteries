@@ -35,7 +35,7 @@ public class SailorLightning extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public SailorLightning(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 5, 0, 30 );
+        super(properties, BeyonderClassInit.SAILOR, 5, 0, 30);
     }
 
 
@@ -73,33 +73,22 @@ public class SailorLightning extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        lightningDirection(player,level);
-        SimpleAbilityItem.addCooldown(player, this, 10 + holder.getCurrentSequence() * 5);
-        player.sendSystemMessage(Component.literal("useAbility"));
+        lightningDirection(player, level);
+        addCooldown(player, this, 10 + holder.getCurrentSequence());
+        useSpirituality(player, 200);
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
-        if (!checkAll(pPlayer, BeyonderClassInit.SAILOR.get(), 5, 200)) {
+    public InteractionResult interactLivingEntity(ItemStack pStack, Player player, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
+        if (!checkAll(player, BeyonderClassInit.SAILOR.get(), 5, 200)) {
             return InteractionResult.FAIL;
         }
-        LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-        lightningEntity.setSpeed(15.0f);
-        if (!pPlayer.getAbilities().instabuild) {
-            pPlayer.getCooldowns().addCooldown(this, 20 + (holder.getCurrentSequence() * 2));
-        }
-        holder.useSpirituality(100);
-        Vec3 lookVec = pPlayer.getLookAngle();
-        lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
-        lightningEntity.setMaxLength(30);
-        lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
-        lightningEntity.setTargetPos(pInteractionTarget.position());
-        lightningEntity.setOwner(pPlayer);
-        lightningEntity.setOwner(pPlayer);
-        pPlayer.level().addFreshEntity(lightningEntity);
-        return super.interactLivingEntity(pStack, pPlayer, pInteractionTarget, pUsedHand);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        addCooldown(player, this, 10 + (holder.getCurrentSequence() * 2));
+        useSpirituality(player, 200);
+        lightningTargetEntity(pInteractionTarget, player);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -110,14 +99,9 @@ public class SailorLightning extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         lightningblock(player, player.level(), context.getClickLocation());
-        SimpleAbilityItem.addCooldown(player, this, 15 + holder.getCurrentSequence() * 5);
+        addCooldown(player, this, 10 + holder.getCurrentSequence() * 2);
         return InteractionResult.SUCCESS;
     }
-
-
-
-
-
 
 
     private static void lightningDirection(Player player, Level level) {
@@ -171,6 +155,7 @@ public class SailorLightning extends SimpleAbilityItem {
             level.addFreshEntity(lightningEntity);
         }
     }
+
     public static void lightningHighPlayerMob(LivingEntity player, Level level) {
         if (!level.isClientSide()) {
             float speed = 10.0f;
@@ -183,5 +168,20 @@ public class SailorLightning extends SimpleAbilityItem {
             lightningEntity.teleportTo(player.getX() + ((Math.random() * 150) - 75), player.getY() + 60, player.getZ() + ((Math.random() * 150) - 75));
             level.addFreshEntity(lightningEntity);
         }
+    }
+
+    public static void lightningTargetEntity(LivingEntity targetEntity, Player pPlayer) {
+        LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        lightningEntity.setSpeed(15.0f);
+        holder.useSpirituality(100);
+        Vec3 lookVec = pPlayer.getLookAngle();
+        lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
+        lightningEntity.setMaxLength(30);
+        lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
+        lightningEntity.setTargetPos(targetEntity.position());
+        lightningEntity.setOwner(pPlayer);
+        lightningEntity.setOwner(pPlayer);
+        pPlayer.level().addFreshEntity(lightningEntity);
     }
 }

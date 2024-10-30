@@ -25,6 +25,8 @@ public class SpiritVision extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        activateSpiritVision(player);
         useSpirituality(player);
         return InteractionResult.SUCCESS;
     }

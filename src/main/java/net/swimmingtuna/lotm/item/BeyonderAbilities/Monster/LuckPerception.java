@@ -74,6 +74,8 @@ public class LuckPerception extends SimpleAbilityItem {
             if (!checkAll(player)) {
                 return InteractionResult.FAIL;
             }
+            addCooldown(player);
+            useSpirituality(player);
             holder.useSpirituality(200);
             player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s luck value is " + interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get())).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
             player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s misfortune value is " + interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get())).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));

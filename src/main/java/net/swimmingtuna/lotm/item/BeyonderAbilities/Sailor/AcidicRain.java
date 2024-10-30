@@ -33,6 +33,8 @@ public class AcidicRain extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         acidicRain(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

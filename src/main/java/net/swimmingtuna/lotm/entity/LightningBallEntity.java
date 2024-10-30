@@ -51,14 +51,18 @@ public class LightningBallEntity extends AbstractHurtingProjectile {
     @Override
     public void onHitBlock(BlockHitResult result) {
         if (!this.level().isClientSide()) {
+            if (this.tickCount >= 50) {
 
+            }
         }
     }
 
     @Override
     public void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide()) {
+            if (this.tickCount >= 50) {
 
+            }
         }
     }
     @Override

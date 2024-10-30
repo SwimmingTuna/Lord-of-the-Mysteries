@@ -27,7 +27,7 @@ public class WindManipulationFlight extends SimpleAbilityItem {
 
 
     public WindManipulationFlight(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 7, 0, 0);
+        super(properties, BeyonderClassInit.SAILOR, 7, 0, 10);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class WindManipulationFlight extends SimpleAbilityItem {
         CompoundTag tag = player.getPersistentData();
         boolean sailorFlight1 = tag.getBoolean("sailorFlight1");
         if (!player.isCreative() && !sailorFlight1) {
-            player.getCooldowns().addCooldown(this, 10);
+            addCooldown(player);
         }
         return InteractionResult.SUCCESS;
     }

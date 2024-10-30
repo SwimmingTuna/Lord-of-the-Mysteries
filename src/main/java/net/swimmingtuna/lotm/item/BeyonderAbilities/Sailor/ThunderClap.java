@@ -35,6 +35,8 @@ public class ThunderClap extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         thunderClap(player);
         return InteractionResult.SUCCESS;
     }

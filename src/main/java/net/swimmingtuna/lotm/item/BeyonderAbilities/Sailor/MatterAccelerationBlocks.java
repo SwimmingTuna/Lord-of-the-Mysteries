@@ -38,6 +38,8 @@ public class MatterAccelerationBlocks extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         matterAccelerationBlocks(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

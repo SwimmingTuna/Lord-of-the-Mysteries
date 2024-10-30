@@ -34,6 +34,8 @@ public class RagingBlows extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         ragingBlows(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

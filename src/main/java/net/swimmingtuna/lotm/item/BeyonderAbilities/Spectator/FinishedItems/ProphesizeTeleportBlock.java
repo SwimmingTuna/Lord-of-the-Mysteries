@@ -6,6 +6,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,6 +24,7 @@ import net.minecraftforge.common.util.Lazy;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
@@ -30,13 +32,25 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ProphesizeTeleportBlock extends Item {
-
-    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
+public class ProphesizeTeleportBlock extends SimpleAbilityItem {
 
     public ProphesizeTeleportBlock(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 1, 600, 300 );
     }
+
+    @Override
+    public InteractionResult useAbilityOnBlock(UseOnContext pContext) {
+        Player player = pContext.getPlayer();
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player);
+        prophesizeTeleportBlock(pContext);
+        return InteractionResult.SUCCESS;
+    }
+
+    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     @SuppressWarnings("deprecation")
     @Override
@@ -56,32 +70,6 @@ public class ProphesizeTeleportBlock extends Item {
         return attributeBuilder.build();
     }
 
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Player player = context.getPlayer();
-        if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 600) {
-                player.displayClientMessage(Component.literal("You need 600 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-        }
-        Level level = player.level();
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        BlockPos positionClicked = context.getClickedPos();
-        if (!context.getLevel().isClientSide) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 1 &&  BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(600)) {
-                teleportEntities(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
-                if (!player.getAbilities().instabuild) {
-                    player.getCooldowns().addCooldown(this, 300);
-                }
-            }
-        }
-        return InteractionResult.SUCCESS;
-    }
     public void prophesizeTeleportBlock(UseOnContext context) {
         Player player = context.getPlayer();
         Level level = player.level();
@@ -91,9 +79,6 @@ public class ProphesizeTeleportBlock extends Item {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 1 &&  BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(600)) {
                 teleportEntities(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
-                if (!player.getAbilities().instabuild) {
-                    player.getCooldowns().addCooldown(this, 300);
-                }
             }
         }
     }
@@ -103,7 +88,7 @@ public class ProphesizeTeleportBlock extends Item {
         double radius = (500 - sequence * 100) * dir;
         for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
             if (entity != player && !entity.level().isClientSide()) {
-                entity.getPersistentData().putInt("prophesizeTeleportationCounter", (int) (150 * Math.random()));
+                entity.getPersistentData().putInt("prophesizeTeleportationCounter", (int) (300 * Math.random()));
                 entity.getPersistentData().putInt("prophesizeTeleportX", (int) targetPos.getX());
                 entity.getPersistentData().putInt("prophesizeTeleportY", (int) targetPos.getY() + 1);
                 entity.getPersistentData().putInt("prophesizeTeleportZ", (int) targetPos.getZ());

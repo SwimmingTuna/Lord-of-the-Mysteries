@@ -26,11 +26,13 @@ public class MonsterDangerSense extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
-        changeBoolean(player);
+        addCooldown(player);
+        useSpirituality(player);
+        enableOrDisableDangerSense(player);
         return InteractionResult.SUCCESS;
     }
 
-    public static void changeBoolean(Player player) {
+    public static void enableOrDisableDangerSense(Player player) {
         CompoundTag tag = player.getPersistentData();
         boolean monsterDangerSense = tag.getBoolean("monsterDangerSense");
         tag.putBoolean("monsterDangerSense", !monsterDangerSense);

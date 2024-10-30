@@ -26,11 +26,13 @@ public class MonsterDisableEnableCalamities extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
-        changeBoolean(player);
+        addCooldown(player);
+        useSpirituality(player);
+        enableOrDisableCalamities(player);
         return InteractionResult.SUCCESS;
     }
 
-    public static void changeBoolean(Player player) {
+    public static void enableOrDisableCalamities(Player player) {
         CompoundTag tag = player.getPersistentData();
         boolean monsterCalamityAttraction = tag.getBoolean("monsterCalamityAttraction");
         tag.putBoolean("monsterCalamityAttraction", !monsterCalamityAttraction);

@@ -21,6 +21,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
@@ -29,34 +30,26 @@ import virtuoel.pehkui.api.ScaleTypes;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class DreamIntoReality extends Item {
+
+public class DreamIntoReality extends SimpleAbilityItem {
     private static final String CAN_FLY = "CanFly";
 
     public DreamIntoReality(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 2, 300, 300);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < 50) {
-                player.displayClientMessage(Component.literal("You need 300 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 2) {
-                toggleFlying(player);
-                boolean canFly = player.getPersistentData().getBoolean(CAN_FLY);
-                if (canFly && !player.getAbilities().instabuild) {
-                    player.getCooldowns().addCooldown(this, 300);
-                }
-            }
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
-        ItemStack itemStack = player.getItemInHand(hand);
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemStack);
+        if (player.getPersistentData().getBoolean(CAN_FLY)) {
+            addCooldown(player);
+        } else {
+            useSpirituality(player);
+        }
+        toggleFlying(player);
+        return InteractionResult.SUCCESS;
     }
 
     private void toggleFlying(Player player) {

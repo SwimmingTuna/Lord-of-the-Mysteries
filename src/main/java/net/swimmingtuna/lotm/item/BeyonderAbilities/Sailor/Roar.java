@@ -33,6 +33,8 @@ public class Roar extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         roar(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

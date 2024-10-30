@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
@@ -22,7 +22,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
-import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
@@ -53,42 +52,27 @@ public class PsycheStorm extends SimpleAbilityItem {
     }
 
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
-
         ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
         attributeBuilder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND));
-            attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 15, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
+        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 15, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
         attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 15, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
         return attributeBuilder.build();
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Player player = context.getPlayer();
+    public InteractionResult useAbilityOnBlock(UseOnContext pContext) {
+        Player player = pContext.getPlayer();
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!holder.currentClassMatches(BeyonderClassInit.MONSTER)) {
-            player.displayClientMessage(Component.literal("You are not of the Monster pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return InteractionResult.FAIL;
-        }
-        if (holder.getSpirituality() < 125) {
-            player.displayClientMessage(Component.literal("You need 125 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return InteractionResult.FAIL;
-        }
-        if (player.level().isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
-
-        Level level = player.level();
-        BlockPos positionClicked = context.getClickedPos();
-        if (holder.getCurrentSequence() <= 7 && holder.useSpirituality(125)) {
-            applyPotionEffectToEntities(player, level, positionClicked, holder.getCurrentSequence());
-            if (!player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(this, 450);
-            }
-        }
+        psycheStorm(player, pContext.getLevel(), pContext.getClickedPos(), holder.getCurrentSequence());
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 
-    private void applyPotionEffectToEntities(Player player, Level level, BlockPos targetPos, int sequence) {
+    private void psycheStorm(Player player, Level level, BlockPos targetPos, int sequence) {
         double radius = (15.0 - sequence);
         float damage = (float) (25.0 - (sequence / 2));
         int corruptionAddition = 30 - (sequence / 3);

@@ -35,6 +35,8 @@ public class WaterColumn extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         waterColumn(player);
         return InteractionResult.SUCCESS;
     }

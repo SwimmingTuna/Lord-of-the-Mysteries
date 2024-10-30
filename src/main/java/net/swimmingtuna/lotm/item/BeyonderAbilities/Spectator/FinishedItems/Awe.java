@@ -36,6 +36,8 @@ public class Awe extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        useSpirituality(player);
+        addCooldown(player);
         applyPotionEffectToEntities(player);
         return InteractionResult.SUCCESS;
     }

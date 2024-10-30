@@ -34,6 +34,8 @@ public class StormSeal extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         stormSeal(player);
         return InteractionResult.SUCCESS;
     }

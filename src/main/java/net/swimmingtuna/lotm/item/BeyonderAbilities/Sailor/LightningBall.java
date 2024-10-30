@@ -35,6 +35,8 @@ public class LightningBall extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         lightningBall(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 
@@ -48,6 +50,7 @@ public class LightningBall extends SimpleAbilityItem {
 
     public static void lightningBall(Player player) {
         if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             LightningBallEntity lightningBall = new LightningBallEntity(EntityInit.LIGHTNING_BALL.get(), player.level(), true);
             lightningBall.setSummoned(true);
             lightningBall.setBallXRot((float) ((Math.random() * 20) - 10));
@@ -55,7 +58,7 @@ public class LightningBall extends SimpleAbilityItem {
             lightningBall.setPos(player.getX(), player.getY() + 1.5, player.getZ());
             lightningBall.setOwner(player);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(lightningBall);
-            scaleData.setScale(10);
+            scaleData.setScale(10 + (10 - holder.getCurrentSequence() * 3));
             scaleData.markForSync(true);
             player.level().addFreshEntity(lightningBall);
         }

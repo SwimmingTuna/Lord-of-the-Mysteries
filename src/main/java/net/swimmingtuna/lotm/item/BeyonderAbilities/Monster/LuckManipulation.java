@@ -27,11 +27,13 @@ public class LuckManipulation extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
-        changeBoolean(player);
+        addCooldown(player);
+        useSpirituality(player);
+        luckManipulation(player);
         return InteractionResult.SUCCESS;
     }
 
-    public static void changeBoolean(Player player) {
+    public static void luckManipulation(Player player) {
 
     }
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {

@@ -34,6 +34,8 @@ public class LightningStorm extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         lightningStorm(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

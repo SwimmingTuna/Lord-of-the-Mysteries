@@ -26,6 +26,8 @@ public class SailorProjectileControl extends SimpleAbilityItem {
         if (!checkAll(player)){
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         projectileControl(player);
         return InteractionResult.SUCCESS;
     }

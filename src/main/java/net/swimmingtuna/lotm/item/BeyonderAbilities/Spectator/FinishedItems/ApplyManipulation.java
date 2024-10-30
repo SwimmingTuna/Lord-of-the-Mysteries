@@ -44,6 +44,8 @@ public class ApplyManipulation extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        useSpirituality(player);
+        addCooldown(player);
         applyManipulation(interactionTarget, player);
         return InteractionResult.SUCCESS;
     }

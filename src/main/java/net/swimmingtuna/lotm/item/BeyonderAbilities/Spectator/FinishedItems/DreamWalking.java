@@ -69,6 +69,9 @@ public class DreamWalking extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        addCooldown(player, this, 40 / (int) dreamIntoReality.getValue());
+        useSpirituality(player);
         dreamWalk(interactionTarget, player);
         return InteractionResult.SUCCESS;
     }
@@ -78,9 +81,5 @@ public class DreamWalking extends SimpleAbilityItem {
         double y = interactionTarget.getY();
         double z = interactionTarget.getZ();
         player.teleportTo(x, y, z);
-        if (!player.getAbilities().instabuild) {
-            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-            player.getCooldowns().addCooldown(ItemInit.DREAM_WALKING.get(), (int) (40 / dreamIntoReality.getValue()));
-        }
     }
 }

@@ -29,6 +29,8 @@ public class AqueousLightPull extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         aqueousLightPull(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

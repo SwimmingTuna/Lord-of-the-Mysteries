@@ -33,6 +33,8 @@ public class AqueousLightDrown extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         aqueousLightDrown(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

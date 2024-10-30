@@ -34,6 +34,8 @@ public class ExtremeColdness extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         extremeColdness(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

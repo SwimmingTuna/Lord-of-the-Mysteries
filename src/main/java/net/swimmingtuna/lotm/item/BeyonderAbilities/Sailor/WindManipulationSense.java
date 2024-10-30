@@ -28,6 +28,8 @@ public class WindManipulationSense extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         windManipulationSense(player);
         return InteractionResult.SUCCESS;
     }

@@ -35,6 +35,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -72,6 +73,7 @@ import net.swimmingtuna.lotm.events.custom_events.ModEventFactory;
 import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.init.SoundInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.LuckPerception;
@@ -2901,7 +2903,7 @@ public class ModEvents {
                 event.setCanceled(true);
             }
         }
-        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide() && player.getMainHandItem().getItem() instanceof ConsciousnessStroll) {
+        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide() && player.getMainHandItem().getItem() instanceof ConsciousnessStroll && holder.getCurrentSequence() <= 3 && !player.getCooldowns().isOnCooldown(ItemInit.CONSCIOUSNESS_STROLL.get())) {
             String message = event.getMessage().getString();
             for (ServerPlayer onlinePlayer : player.getServer().getPlayerList().getPlayers()) {
                 if (message.equalsIgnoreCase(onlinePlayer.getName().getString())) {
@@ -2921,6 +2923,7 @@ public class ModEvents {
                         playerMobEntity.getPersistentData().putInt("CSlifetime", 60);
                         playerMobEntity.setUsername(player.getName().getString());
                         player.level().addFreshEntity(playerMobEntity);
+                        player.getCooldowns().addCooldown(ItemInit.CONSCIOUSNESS_STROLL.get(), 400);
                         player.getPersistentData().putInt("consciousnessStrollActivatedX", (int) player.getX());
                         player.getPersistentData().putInt("consciousnessStrollActivatedY", (int) player.getY());
                         player.getPersistentData().putInt("consciousnessStrollActivatedZ", (int) player.getZ());
@@ -2932,7 +2935,7 @@ public class ModEvents {
                 }
             }
         }
-        if (player.getMainHandItem().getItem() instanceof EnvisionLife && !player.level().isClientSide()) {
+        if (player.getMainHandItem().getItem() instanceof EnvisionLife && !player.level().isClientSide() && !player.getCooldowns().isOnCooldown(ItemInit.ENVISION_LIFE.get())) {
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                 player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }

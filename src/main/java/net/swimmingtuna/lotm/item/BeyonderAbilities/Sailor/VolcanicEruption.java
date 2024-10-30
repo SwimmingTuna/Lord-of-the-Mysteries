@@ -36,6 +36,8 @@ public class VolcanicEruption extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         volcanicEruption(player);
         return InteractionResult.SUCCESS;
     }

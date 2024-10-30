@@ -33,6 +33,8 @@ public class Hurricane extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         hurricane(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

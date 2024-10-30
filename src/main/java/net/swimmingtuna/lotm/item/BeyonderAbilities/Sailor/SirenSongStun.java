@@ -36,6 +36,8 @@ public class SirenSongStun extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
+        useSpirituality(player);
         sirenSongStun(player,level);
         return InteractionResult.SUCCESS;
     }

@@ -34,6 +34,8 @@ public class LightningBallAbsorb extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         lightningBallAbsorb(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 
@@ -46,6 +48,7 @@ public class LightningBallAbsorb extends SimpleAbilityItem {
     }
     public static void lightningBallAbsorb(Player player) {
         if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             LightningBallEntity lightningBall = new LightningBallEntity(EntityInit.LIGHTNING_BALL.get(), player.level(), true);
             lightningBall.setSummoned(true);
             lightningBall.setBallXRot((float) ((Math.random() * 20) - 10));
@@ -54,7 +57,7 @@ public class LightningBallAbsorb extends SimpleAbilityItem {
             lightningBall.setOwner(player);
             lightningBall.setAbsorbed(true);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(lightningBall);
-            scaleData.setScale(10);
+            scaleData.setScale(10 + (10 - holder.getCurrentSequence() * 3));
             scaleData.markForSync(true);
             player.level().addFreshEntity(lightningBall);
         }

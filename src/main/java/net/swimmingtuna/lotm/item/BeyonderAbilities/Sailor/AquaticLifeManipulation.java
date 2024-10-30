@@ -33,6 +33,8 @@ public class AquaticLifeManipulation extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         aquaticLifeManipulation(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

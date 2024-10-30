@@ -35,6 +35,8 @@ public class MatterAccelerationEntities extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         matterAccelerationEntities(player);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 
