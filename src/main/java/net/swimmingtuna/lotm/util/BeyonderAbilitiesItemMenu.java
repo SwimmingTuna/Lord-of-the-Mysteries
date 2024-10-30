@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.util;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -8,8 +9,6 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
-import net.swimmingtuna.lotm.networking.packet.AddItemInInventoryC2S;
 
 public class BeyonderAbilitiesItemMenu extends AbstractContainerMenu {
     private final Container container;
@@ -45,7 +44,9 @@ public class BeyonderAbilitiesItemMenu extends AbstractContainerMenu {
             Slot slot = this.slots.get(slotId);
             if (slot != null && slot.hasItem()) {
                 ItemStack clickedItem = slot.getItem().copy();
-                LOTMNetworkHandler.sendToServer(new AddItemInInventoryC2S(clickedItem));
+                if (!player.level().isClientSide) {
+                    handleItemClick(clickedItem, (ServerPlayer) player);
+                }
                 return;
             }
         }
@@ -57,11 +58,24 @@ public class BeyonderAbilitiesItemMenu extends AbstractContainerMenu {
         Slot slot = this.slots.get(index);
 
         if (slot != null && slot.hasItem()) {
-            ItemStack clickedItem = slot.getItem();
-            LOTMNetworkHandler.sendToServer(new AddItemInInventoryC2S(clickedItem));
+            ItemStack clickedItem = slot.getItem().copy();
+            if (!player.level().isClientSide) {
+                handleItemClick(clickedItem, (ServerPlayer) player);
+            }
         }
 
         return ItemStack.EMPTY;
+    }
+
+    private void handleItemClick(ItemStack clickedItem, ServerPlayer player) {
+        if (player != null) {
+            // Find a suitable hotbar slot and set the item
+            int hotbarSlot = player.getInventory().getSuitableHotbarSlot();
+            player.getInventory().setItem(hotbarSlot, clickedItem);
+
+            // Optional: You might want to sync the inventory to the client
+            player.containerMenu.broadcastChanges();
+        }
     }
 
     @Override
