@@ -15,12 +15,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -29,11 +27,11 @@ import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.AcidicRain.spa
 import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.RagingBlows.spawnRagingBlowsParticles;
 import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SirenSongWeaken.spawnParticlesInSphere;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class BeyonderAbilityUser extends Item {
+public class BeyonderAbilityUser extends SimpleAbilityItem {
 
-    public BeyonderAbilityUser(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(properties);
+
+    public BeyonderAbilityUser(Properties properties) {
+        super(properties, BeyonderClassInit.SPECTATOR, 9, 0, 0);
     }
 
     @Override
@@ -121,10 +119,7 @@ public class BeyonderAbilityUser extends Item {
     }
 
 
-    @SubscribeEvent
-    public static void keyTimer(TickEvent.PlayerTickEvent event) {
 
-    }
 
     public static void clicked(Player player, InteractionHand hand) {
         if (player.level().isClientSide()) {

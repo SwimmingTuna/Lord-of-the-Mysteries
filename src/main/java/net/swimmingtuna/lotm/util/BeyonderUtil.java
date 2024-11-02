@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.util;
 
+import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
@@ -11,20 +12,29 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.phys.*;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
@@ -41,6 +51,7 @@ import net.swimmingtuna.lotm.networking.packet.LuckManipulationLeftClickC2S;
 import net.swimmingtuna.lotm.networking.packet.MatterAccelerationBlockC2S;
 import net.swimmingtuna.lotm.networking.packet.UpdateItemInHandC2S;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -250,30 +261,147 @@ public class BeyonderUtil {
         if (player.level().isClientSide()) {
             return;
         }
+
         CompoundTag persistentData = player.getPersistentData();
         if (!persistentData.contains(REGISTERED_ABILITIES_KEY, Tag.TAG_COMPOUND)) {
             player.sendSystemMessage(Component.literal("No registered abilities found."));
             return;
         }
+
         CompoundTag registeredAbilities = persistentData.getCompound(REGISTERED_ABILITIES_KEY);
         if (!registeredAbilities.contains(String.valueOf(abilityNumber), Tag.TAG_STRING)) {
             player.sendSystemMessage(Component.literal("Ability " + abilityNumber + " not found."));
             return;
         }
+
         ResourceLocation resourceLocation = new ResourceLocation(registeredAbilities.getString(String.valueOf(abilityNumber)));
         Item item = ForgeRegistries.ITEMS.getValue(resourceLocation);
         if (item == null) {
             player.sendSystemMessage(Component.literal("Item not found in registry for ability " + abilityNumber + " with resource location: " + resourceLocation));
             return;
         }
+
         if (!(item instanceof Ability ability)) {
             player.sendSystemMessage(Component.literal("Registered ability ").append(item.getDescription()).append(" for ability number " + abilityNumber + " is not an ability."));
             return;
         }
+
         if (player.getCooldowns().isOnCooldown(item)) {
             player.sendSystemMessage(Component.literal("Ability ").append(item.getDescription()).append(" is on cooldown!"));
             return;
         }
+
+        // Get item's reach values from its attribute modifiers
+        ItemStack itemStack = player.getItemInHand(hand);
+        Multimap<Attribute, AttributeModifier> attributes = itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND);
+
+        double entityReach = player.getAttributeValue(ForgeMod.ENTITY_REACH.get());
+        double blockReach = player.getAttributeValue(ForgeMod.BLOCK_REACH.get());
+
+        // Print base reach values
+        player.sendSystemMessage(Component.literal("Base Entity Reach: " + entityReach));
+        player.sendSystemMessage(Component.literal("Base Block Reach: " + blockReach));
+
+        // Add the item's reach modifiers
+        for (AttributeModifier modifier : attributes.get(ForgeMod.ENTITY_REACH.get())) {
+            player.sendSystemMessage(Component.literal("Entity Reach Modifier: " + modifier.getAmount() + " (Operation: " + modifier.getOperation() + ")"));
+            if (modifier.getOperation() == AttributeModifier.Operation.ADDITION) {
+                entityReach += modifier.getAmount();
+            } else if (modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_BASE) {
+                entityReach *= (1 + modifier.getAmount());
+            } else if (modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_TOTAL) {
+                entityReach *= (1 + modifier.getAmount());
+            }
+        }
+
+        for (AttributeModifier modifier : attributes.get(ForgeMod.BLOCK_REACH.get())) {
+            player.sendSystemMessage(Component.literal("Block Reach Modifier: " + modifier.getAmount() + " (Operation: " + modifier.getOperation() + ")"));
+            if (modifier.getOperation() == AttributeModifier.Operation.ADDITION) {
+                blockReach += modifier.getAmount();
+            } else if (modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_BASE) {
+                blockReach *= (1 + modifier.getAmount());
+            } else if (modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_TOTAL) {
+                blockReach *= (1 + modifier.getAmount());
+            }
+        }
+
+        // Print final reach values
+        player.sendSystemMessage(Component.literal("Final Entity Reach: " + entityReach));
+        player.sendSystemMessage(Component.literal("Final Block Reach: " + blockReach));
+
+        // Check if the ability has entity interaction method
+        boolean hasEntityInteraction = false;
+        try {
+            Method entityMethod = ability.getClass().getDeclaredMethod("useAbilityOnEntity",
+                    ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class);
+            hasEntityInteraction = !entityMethod.equals(Ability.class.getDeclaredMethod("useAbilityOnEntity",
+                    ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class));
+        } catch (NoSuchMethodException e) {
+            // Method doesn't exist, so no entity interaction
+        }
+
+        // Check if the ability has block interaction method
+        boolean hasBlockInteraction = false;
+        try {
+            Method blockMethod = ability.getClass().getDeclaredMethod("useAbilityOnBlock", UseOnContext.class);
+            hasBlockInteraction = !blockMethod.equals(Ability.class.getDeclaredMethod("useAbilityOnBlock", UseOnContext.class));
+        } catch (NoSuchMethodException e) {
+            // Method doesn't exist, so no block interaction
+        }
+
+        // Only perform entity raycast if the ability has entity interaction
+        if (hasEntityInteraction) {
+            Vec3 eyePosition = player.getEyePosition();
+            Vec3 lookVector = player.getLookAngle();
+            Vec3 reachVector = eyePosition.add(lookVector.x * entityReach, lookVector.y * entityReach, lookVector.z * entityReach);
+
+            AABB searchBox = player.getBoundingBox().inflate(entityReach);
+            EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(
+                    player.level(),
+                    player,
+                    eyePosition,
+                    reachVector,
+                    searchBox,
+                    entity -> !entity.isSpectator() && entity.isPickable(),
+                    0.0f
+            );
+
+            // Check if we hit an entity
+            if (entityHit != null && entityHit.getEntity() instanceof LivingEntity livingEntity) {
+                player.sendSystemMessage(Component.literal("Entity interaction at reach: " + entityReach));
+                InteractionResult result = ability.useAbilityOnEntity(player.getItemInHand(hand), player, livingEntity, hand);
+                if (result != InteractionResult.PASS) {
+                    return;
+                }
+            }
+        }
+
+        // Only perform block raycast if the ability has block interaction
+        if (hasBlockInteraction) {
+            Vec3 eyePosition = player.getEyePosition();
+            Vec3 lookVector = player.getLookAngle();
+            Vec3 reachVector = eyePosition.add(lookVector.x * blockReach, lookVector.y * blockReach, lookVector.z * blockReach);
+
+            BlockHitResult blockHit = player.level().clip(new ClipContext(
+                    eyePosition,
+                    reachVector,
+                    ClipContext.Block.OUTLINE,
+                    ClipContext.Fluid.NONE,
+                    player
+            ));
+
+            if (blockHit.getType() != HitResult.Type.MISS) {
+                player.sendSystemMessage(Component.literal("Block interaction at reach: " + blockReach));
+                UseOnContext context = new UseOnContext(player.level(), player, hand, player.getItemInHand(hand), blockHit);
+                InteractionResult result = ability.useAbilityOnBlock(context);
+                if (result != InteractionResult.PASS) {
+                    return;
+                }
+            }
+        }
+
+        // Use the general ability
+        player.sendSystemMessage(Component.literal("General ability use"));
         ability.useAbility(player.level(), player, hand);
     }
 

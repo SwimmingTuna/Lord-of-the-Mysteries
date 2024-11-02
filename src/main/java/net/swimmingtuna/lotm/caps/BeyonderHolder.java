@@ -62,7 +62,10 @@ public class BeyonderHolder extends PlayerCapability {
         this.spiritualityRegen = 1;
         this.player.setHealth(20);
         this.player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
-
+        CompoundTag persistentData = this.player.getPersistentData();
+        if (persistentData.contains(REGISTERED_ABILITIES_KEY)) {
+            persistentData.remove(REGISTERED_ABILITIES_KEY);
+        }
         updateTracking();
     }
 

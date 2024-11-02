@@ -1560,6 +1560,7 @@ public class ModEvents {
                 event.setCancellationResult(InteractionResult.SUCCESS);
             }
         }
+
     }
 
 
