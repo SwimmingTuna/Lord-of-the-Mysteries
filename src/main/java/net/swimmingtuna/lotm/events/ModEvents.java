@@ -541,6 +541,7 @@ public class ModEvents {
         //WIND MANIPULATION CUSHION
         int cushion = playerPersistentData.getInt("windManipulationCushion");
         if (cushion >= 1) {
+            WindManipulationCushion.summonWindCushionParticles(player);
             playerPersistentData.putInt("windManipulationCushion", cushion - 1);
             player.resetFallDistance();
         }
@@ -846,6 +847,7 @@ public class ModEvents {
             return;
         }
         player.getPersistentData().putInt("sailorAcidicRain", acidicRain + 1);
+        AcidicRain.spawnAcidicRainParticles(player);
         double radius1 = 50 - (sequence * 7);
         double radius2 = 10 - sequence;
 
@@ -1161,6 +1163,7 @@ public class ModEvents {
         int ragingBlowsRadius = (25 - (holder.getCurrentSequence() * 3));
         int damage = 20 - holder.getCurrentSequence() * 2;
         if (ragingBlows >= 1) {
+            RagingBlows.spawnRagingBlowsParticles(player);
             playerPersistentData.putInt("ragingBlows", ragingBlows + 1);
         }
         if (ragingBlows >= 6 && ragingBlows <= 96 && ragingBlows % 6 == 0) {
@@ -1395,6 +1398,7 @@ public class ModEvents {
         AttributeInstance attributeInstance4 = player.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
         int sailorLightningStar = playerPersistentData.getInt("sailorLightningStar");
         if (sailorLightningStar >= 2) {
+            StarOfLightning.summonLightningParticles(player);
             player.level().playSound(player, player.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 10, 1);
             attributeInstance4.setBaseValue(1.0f);
             playerPersistentData.putInt("sailorLightningStar", sailorLightningStar - 1);

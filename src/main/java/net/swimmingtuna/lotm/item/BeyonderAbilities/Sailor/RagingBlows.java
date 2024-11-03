@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -58,49 +59,41 @@ public class RagingBlows extends SimpleAbilityItem {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player player) {
-            double ragingBlows = player.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER1.get());
-            if (ragingBlows >= 1) {
-                spawnRagingBlowsParticles(player);
-            }
-        }
-        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
-    }
-
     public static void spawnRagingBlowsParticles(Player player) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        Vec3 playerPos = player.position();
-        Vec3 playerLookVector = player.getViewVector(1.0F);
-        int radius = (25 - (holder.getCurrentSequence() * 3));
-        CompoundTag persistentData = player.getPersistentData();
-        int particleCounter = persistentData.getInt("ragingBlowsParticleCounter");
+        if (player.level() instanceof ServerLevel serverLevel) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            Vec3 playerPos = player.position();
+            Vec3 playerLookVector = player.getViewVector(1.0F);
+            int radius = (25 - (holder.getCurrentSequence() * 3));
+            CompoundTag persistentData = player.getPersistentData();
+            int particleCounter = persistentData.getInt("ragingBlowsParticleCounter");
 
-        if (particleCounter < 7) {
-            double randomDistance = Math.random() * radius;
-            Vec3 randomOffset = playerLookVector.scale(randomDistance);
+            if (particleCounter < 7) {
+                double randomDistance = Math.random() * radius;
+                Vec3 randomOffset = playerLookVector.scale(randomDistance);
 
-            // Add random horizontal offset
-            double randomHorizontalOffset = Math.random() * Math.PI * 2; // Random angle between 0 and 2π
-            randomOffset = randomOffset.add(new Vec3(Math.cos(randomHorizontalOffset) * radius / 4, 0, Math.sin(randomHorizontalOffset) * radius / 4));
+                // Add random horizontal offset
+                double randomHorizontalOffset = Math.random() * Math.PI * 2; // Random angle between 0 and 2π
+                randomOffset = randomOffset.add(new Vec3(Math.cos(randomHorizontalOffset) * radius / 4, 0, Math.sin(randomHorizontalOffset) * radius / 4));
 
-            // Add random vertical offset
-            double randomVerticalOffset = Math.random() * Math.PI / 2 - Math.PI / 4; // Random angle between -π/4 and π/4
-            randomOffset = randomOffset.add(new Vec3(0, Math.sin(randomVerticalOffset) * radius / 4, 0));
+                // Add random vertical offset
+                double randomVerticalOffset = Math.random() * Math.PI / 2 - Math.PI / 4; // Random angle between -π/4 and π/4
+                randomOffset = randomOffset.add(new Vec3(0, Math.sin(randomVerticalOffset) * radius / 4, 0));
 
-            double randomX = playerPos.x + randomOffset.x;
-            double randomY = playerPos.y + randomOffset.y;
-            double randomZ = playerPos.z + randomOffset.z;
+                double randomX = playerPos.x + randomOffset.x;
+                double randomY = playerPos.y + randomOffset.y;
+                double randomZ = playerPos.z + randomOffset.z;
 
-            // Check if the random offset vector is in front of the player
-            if (playerLookVector.dot(randomOffset) > 0) {
-                player.level().addParticle(ParticleTypes.EXPLOSION, randomX, randomY, randomZ, 0, 0, 0);
+                // Check if the random offset vector is in front of the player
+                if (playerLookVector.dot(randomOffset) > 0) {
+                    serverLevel.sendParticles(ParticleTypes.EXPLOSION, randomX,randomY, randomZ, 0, 0,0,0,0);
+                }
+
+                particleCounter++;
+                persistentData.putInt("ragingBlowsParticleCounter", particleCounter);
+            } else {
+                persistentData.putInt("ragingBlowsParticleCounter", 0);
             }
-
-            particleCounter++;
-            persistentData.putInt("ragingBlowsParticleCounter", particleCounter);
-        } else {
-            persistentData.putInt("ragingBlowsParticleCounter", 0);
         }
     }
 }

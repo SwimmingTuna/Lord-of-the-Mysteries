@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -20,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 
 public class SirenSongWeaken extends SimpleAbilityItem {
 
@@ -37,16 +35,6 @@ public class SirenSongWeaken extends SimpleAbilityItem {
         useSpirituality(player);
         sirenSongWeaken(player, level);
         return InteractionResult.SUCCESS;
-    }
-
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player player) {
-            if (player.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).getValue() == 1) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                SirenSongStrengthen.spawnParticlesInSphere(player, 50 - (holder.getCurrentSequence() * 6));
-            }
-        }
-        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
 
     private static void sirenSongWeaken(Player player, Level level) {

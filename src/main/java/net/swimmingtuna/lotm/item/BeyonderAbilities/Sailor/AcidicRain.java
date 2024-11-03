@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -54,28 +53,16 @@ public class AcidicRain extends SimpleAbilityItem {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player player) {
-            double acidicRain = player.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER.get());
-            if (acidicRain >= 1) {
-                // Only spawn particles on the server side
-                if (!level.isClientSide && level instanceof ServerLevel serverLevel) {
-                    spawnAcidicRainParticles(serverLevel, player);
-                }
-            }
+    public static void spawnAcidicRainParticles(Player player) {
+        if (player.level() instanceof ServerLevel serverLevel) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int sequence = holder.getCurrentSequence();
+            double x = player.getX();
+            double y = player.getY() + 5;
+            double z = player.getZ();
+            int maxRadius = 50 - (sequence * 7);
+            int maxParticles = 250 - (sequence * 30);
+            BeyonderUtil.spawnParticlesInSphere(serverLevel, x, y, z, maxRadius, maxParticles, 0, -3, 0, ParticleInit.ACIDRAIN_PARTICLE.get());
         }
-        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
-
-    public static void spawnAcidicRainParticles(ServerLevel level, Player player) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        int sequence = holder.getCurrentSequence();
-        double x = player.getX();
-        double y = player.getY() + 5;
-        double z = player.getZ();
-        int maxRadius = 50 - (sequence * 7);
-        int maxParticles = 250 - (sequence * 30);
-        BeyonderUtil.spawnParticlesInSphere(level, x,y,z, maxRadius, maxParticles, 0,-3,0, ParticleInit.ACIDRAIN_PARTICLE.get());
-    }
-
 }

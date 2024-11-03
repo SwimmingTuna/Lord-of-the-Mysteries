@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -45,24 +46,14 @@ public class WindManipulationCushion extends SimpleAbilityItem {
     }
 
 
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player player) {
-            double cushionParticles = player.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER3.get());
-            if (cushionParticles == 1) {
-                double x = player.getX() - player.getLookAngle().x * 2;
-                double y = player.getY() + 1.5; // Slightly above the player's feet
-                double z = player.getZ() - player.getLookAngle().z * 2;
-
-                // Add 10 wind particles behind the player
-                for (int i = 0; i < 10; i++) {
-                    level.addParticle(ParticleTypes.CLOUD,
-                            x + (level.random.nextDouble() - 0.5),
-                            y + (level.random.nextDouble() - 0.5),
-                            z + (level.random.nextDouble() - 0.5),
-                            0, 0, 0);
-                }
+    public static void summonWindCushionParticles(Player player) {
+        if (player.level() instanceof ServerLevel serverLevel) {
+            double x = player.getX() - player.getLookAngle().x * 2;
+            double y = player.getY() + 1.5; // Slightly above the player's feet
+            double z = player.getZ() - player.getLookAngle().z * 2;
+            for (int i = 0; i < 10; i++) {
+                serverLevel.sendParticles(ParticleTypes.CLOUD, x + serverLevel.random.nextDouble() - 0.5, y + serverLevel.random.nextDouble() - 0.5, z + serverLevel.random.nextDouble() - 0.5,0,0,0,0,0);
             }
         }
-        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
 }

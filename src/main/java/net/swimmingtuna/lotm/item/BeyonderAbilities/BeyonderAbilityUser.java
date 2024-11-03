@@ -20,6 +20,7 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SirenSongStrengthen;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.apache.commons.lang3.StringUtils;
+
 import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.AcidicRain.spawnAcidicRainParticles;
 import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.RagingBlows.spawnRagingBlowsParticles;
 
@@ -44,68 +45,6 @@ public class BeyonderAbilityUser extends SimpleAbilityItem {
             }
         }
         return super.use(level, player, hand);
-    }
-
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player player) {
-
-            //Acidic Rain
-            double acidicRain = player.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER.get());
-            if (acidicRain >= 1) {
-                if (player.level() instanceof ServerLevel serverLevel) {
-                    spawnAcidicRainParticles(serverLevel, player);
-                }
-            }
-
-
-            //Siren Songs
-            if (player.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).getValue() == 1) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                SirenSongStrengthen.spawnParticlesInSphere(player, 50 - (holder.getCurrentSequence() * 6));
-            }
-
-
-            //Wind Manipulation Cushion
-            double cushionParticles = player.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER3.get());
-            if (cushionParticles == 1) {
-                double x = player.getX() - player.getLookAngle().x * 2;
-                double y = player.getY() + 1.5; // Slightly above the player's feet
-                double z = player.getZ() - player.getLookAngle().z * 2;
-
-                // Add 10 wind particles behind the player
-                for (int i = 0; i < 10; i++) {
-                    level.addParticle(ParticleTypes.CLOUD,
-                            x + (level.random.nextDouble() - 0.5),
-                            y + (level.random.nextDouble() - 0.5),
-                            z + (level.random.nextDouble() - 0.5),
-                            0, 0, 0);
-                }
-            }
-
-            //Raging Blows
-            double ragingBlows = player.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER1.get());
-            if (ragingBlows >= 1) {
-                spawnRagingBlowsParticles(player);
-            }
-
-            //Star of Lightning
-            AttributeInstance attributeInstance = player.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
-            if (attributeInstance != null && attributeInstance.getValue() == 1) {
-                for (int i = 0; i < 500; i++) {
-                    double offsetX = (Math.random() * 5) - 2.5;
-                    double offsetY = (Math.random() * 5) - 2.5;
-                    double offsetZ = (Math.random() * 5) - 2.5;
-                    if (Math.sqrt(offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ) <= 2.5) {
-                        level.addParticle(ParticleTypes.ELECTRIC_SPARK,
-                                player.getX() + offsetX,
-                                player.getY() + offsetY,
-                                player.getZ() + offsetZ,
-                                0.0, 0.0, 0.0);
-                    }
-                }
-            }
-        }
-        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
 
     public static void resetClicks(Player player) {

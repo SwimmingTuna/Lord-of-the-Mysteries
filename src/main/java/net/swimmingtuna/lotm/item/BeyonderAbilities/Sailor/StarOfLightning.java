@@ -3,8 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -53,25 +52,18 @@ public class StarOfLightning extends SimpleAbilityItem {
         }
     }
 
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player player) {
-            AttributeInstance attributeInstance = player.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
-            if (attributeInstance != null && attributeInstance.getValue() == 1) {
-                for (int i = 0; i < 500; i++) {
-                    double offsetX = (Math.random() * 5) - 2.5;
-                    double offsetY = (Math.random() * 5) - 2.5;
-                    double offsetZ = (Math.random() * 5) - 2.5;
-                    if (Math.sqrt(offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ) <= 2.5) {
-                        level.addParticle(ParticleTypes.ELECTRIC_SPARK,
-                                player.getX() + offsetX,
-                                player.getY() + offsetY,
-                                player.getZ() + offsetZ,
-                                0.0, 0.0, 0.0);
-                    }
+    public static void summonLightningParticles(Player player) {
+        if (player.level() instanceof ServerLevel serverLevel) {
+            for (int i = 0; i < 500; i++) {
+                double offsetX = (Math.random() * 5) - 2.5;
+                double offsetY = (Math.random() * 5) - 2.5;
+                double offsetZ = (Math.random() * 5) - 2.5;
+                if (Math.sqrt(offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ) <= 2.5) {
+                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, player.getX() + offsetX, player.getY() + offsetY, player.getZ() + offsetX, 0, 0, 0, 0, 1);
                 }
+
             }
         }
-        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
