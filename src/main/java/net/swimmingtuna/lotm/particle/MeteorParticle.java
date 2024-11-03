@@ -35,11 +35,6 @@ public class MeteorParticle extends TextureSheetParticle {
         return this.quadSize * 10;
     }
 
-    public static void addSizeParticle(ClientLevel level, Player entity, SpriteSet spriteSet, float size) {
-        MeteorParticle particle = new MeteorParticle(level, entity.getX(), entity.getY(), entity.getZ(), spriteSet, 0, 0, 0);
-        particle.scale(size);
-//        level.addParticle(particle, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-    }
 
 
     @Override

@@ -280,20 +280,16 @@ public class LightningEntity extends AbstractHurtingProjectile {
                 double offsetX = random.nextGaussian() * 1;
                 double offsetY = random.nextGaussian() * 1;
                 double offsetZ = random.nextGaussian() * 1;
-                level().addParticle(ParticleTypes.ELECTRIC_SPARK, checkArea.minX + offsetX, checkArea.minY + offsetY, checkArea.minZ + offsetZ, 0, 0, 0);
-                level().addParticle(ParticleTypes.ELECTRIC_SPARK, checkArea.maxX + offsetX, checkArea.maxY + offsetY, checkArea.maxZ + offsetZ, 0, 0, 0);
+                if (level() instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK,checkArea.minX + offsetX, checkArea.minY + offsetY, checkArea.minZ + offsetZ,0,0,0,0,0);
+                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK,checkArea.minX + offsetX, checkArea.minY + offsetY, checkArea.minZ + offsetZ,0,0,0,0,0);
+                }
             }
             if (hasExploded) break;
         }
 
         this.setPos(startPos.x, startPos.y, startPos.z);
         this.setBoundingBox(createBoundingBox(newPos));
-
-        for (Vec3 pos : this.positions) {
-            this.level().addParticle(ParticleInit.NULL_PARTICLE.get(),
-                    pos.x, pos.y, pos.z,
-                    0, 0, 0);
-        }
 
         if (this.tickCount > this.getMaxLength()) {
             this.discard();

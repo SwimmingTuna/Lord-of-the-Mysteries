@@ -10,6 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -149,7 +150,9 @@ public class RoarEntity extends AbstractHurtingProjectile {
                     double offsetX = distance * Math.cos(angle);
                     double offsetZ = distance * Math.sin(angle);
                     double offsetY = random.nextDouble() * radius * 2 - radius;
-                    this.level().addParticle(ParticleTypes.EXPLOSION, this.getX() + offsetX, this.getY() + offsetY, this.getZ() + offsetZ, 0.0, 0.0, 0.0);
+                    if (this.level() instanceof ServerLevel serverLevel) {
+                        serverLevel.sendParticles(ParticleTypes.EXPLOSION, this.getX() + offsetX, this.getY() + offsetY, this.getZ() + offsetZ, 0,0,0,0,0);
+                    }
                 }
             }
             float damage = 10.0F * scaleData.getScale();

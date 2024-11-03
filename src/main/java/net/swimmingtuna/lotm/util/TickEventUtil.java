@@ -1469,14 +1469,16 @@ public class TickEventUtil {
     public static void spawnParticlesInSphere(LivingEntity livingEntity, int radius) {
         Level level = livingEntity.level();
         Random random = new Random();
+        if (level instanceof ServerLevel serverLevel) {
 
-        for (int i = 0; i < 20; i++) { // Adjust the number of particles as needed
-            double x = livingEntity.getX() + (random.nextDouble() * 2 - 1) * radius;
-            double y = livingEntity.getY() + (random.nextDouble() * 2 - 1) * radius;
-            double z = livingEntity.getZ() + (random.nextDouble() * 2 - 1) * radius;
-            if (isInsideSphere(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), x, y, z, radius)) {
-                double noteValue = random.nextInt(25) / 24.0;
-                level.addParticle(ParticleTypes.NOTE, x, y, z, noteValue, 0, 0);
+            for (int i = 0; i < 20; i++) { // Adjust the number of particles as needed
+                double x = livingEntity.getX() + (random.nextDouble() * 2 - 1) * radius;
+                double y = livingEntity.getY() + (random.nextDouble() * 2 - 1) * radius;
+                double z = livingEntity.getZ() + (random.nextDouble() * 2 - 1) * radius;
+                if (isInsideSphere(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), x, y, z, radius)) {
+                    double noteValue = random.nextInt(25) / 24.0;
+                    serverLevel.sendParticles(ParticleTypes.NOTE, x, y, z,0, noteValue, 0, 0,0);
+                }
             }
         }
     }
