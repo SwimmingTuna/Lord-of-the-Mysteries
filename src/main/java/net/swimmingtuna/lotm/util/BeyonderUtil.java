@@ -646,7 +646,6 @@ public class BeyonderUtil {
             double dy = level.random.nextGaussian() * 2;
             double dz = level.random.nextGaussian() * maxRadius;
             double distance = Math.sqrt(dx * dx + dz * dz);
-
             if (distance < maxRadius) {
                 double density = 1.0 - (distance / maxRadius);
                 if (level.random.nextDouble() < density) {

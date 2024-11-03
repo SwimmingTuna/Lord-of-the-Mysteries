@@ -317,7 +317,7 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                 double x1 = this.getX() + ((Math.random() * getTornadoRadius()) - (double) getTornadoRadius() / 2);
                 double y1 = this.getY() + 200;
                 double z1 = this.getZ() + ((Math.random() * getTornadoRadius()) - (double) getTornadoRadius() / 2);
-                if (this.tickCount % 2 == 0) {
+                if (this.tickCount % 5 == 0) {
                 lightningEntity.teleportTo(x1, y1, z1);
                 this.level().addFreshEntity(lightningEntity);}
                 for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(getTornadoRadius() * 1.5))) {

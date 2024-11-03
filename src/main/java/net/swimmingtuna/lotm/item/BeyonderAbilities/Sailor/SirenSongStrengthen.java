@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -41,31 +42,26 @@ public class SirenSongStrengthen extends SimpleAbilityItem {
         CompoundTag tag = player.getPersistentData();
         if (tag.getInt("sirenSongStrengthen") == 0) {
             tag.putInt("sirenSongStrengthen", 400);
-            tag.putInt("ssParticleAttributeHelper", 400);
         }
         if (tag.getInt("sirenSongStrengthen") > 1 && tag.getInt("sirenSongStrengthen") < 400) {
             tag.putInt("sirenSongStrengthen", 0);
-            tag.putInt("ssParticleAttributeHelper", 1);
         }
         if (tag.getInt("sirenSongHarm") > 1) {
             tag.putInt("sirenSongHarm", 0);
             tag.putInt("sirenSongStrengthen", 400);
-            tag.putInt("ssParticleAttributeHelper", 400);
 
         }
         if (tag.getInt("sirenSongWeaken") > 1) {
             tag.putInt("sirenSongWeaken", 0);
             tag.putInt("sirenSongStrengthen", 400);
-            tag.putInt("ssParticleAttributeHelper", 400);
         }
         if (tag.getInt("sirenSongStun") > 1) {
             tag.putInt("sirenSongStun", 0);
             tag.putInt("sirenSongStrengthen", 400);
-            tag.putInt("ssParticleAttributeHelper", 400);
         }
     }
 
-    public static void spawnParticlesInSphere(Player player, int radius) {
+    public static void spawnParticlesInSphere(LivingEntity player, int radius) {
         Level level = player.level();
         Random random = new Random();
         if (level instanceof ServerLevel serverLevel) {

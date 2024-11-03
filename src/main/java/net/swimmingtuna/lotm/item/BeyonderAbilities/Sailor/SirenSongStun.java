@@ -39,27 +39,21 @@ public class SirenSongStun extends SimpleAbilityItem {
         CompoundTag tag = player.getPersistentData();
         if (tag.getInt("sirenSongStun") == 0) {
             tag.putInt("sirenSongStun", 400);
-            tag.putInt("ssParticleAttributeHelper", 400);
         }
         if (tag.getInt("sirenSongStun") > 1 && tag.getInt("sirenSongStun") < 400) {
             tag.putInt("sirenSongStun", 0);
-            tag.putInt("ssParticleAttributeHelper", 1);
         }
         if (tag.getInt("sirenSongHarm") > 1) {
             tag.putInt("sirenSongHarm", 0);
             tag.putInt("sirenSongStun", 400);
-            tag.putInt("ssParticleAttributeHelper", 400);
-
         }
         if (tag.getInt("sirenSongWeaken") > 1) {
             tag.putInt("sirenSongWeaken", 0);
             tag.putInt("sirenSongStun", 400);
-            tag.putInt("ssParticleAttributeHelper", 400);
         }
         if (tag.getInt("sirenSongStrengthen") > 1) {
             tag.putInt("sirenSongStrengthen", 0);
             tag.putInt("sirenSongStun", 400);
-            tag.putInt("ssParticleAttributeHelper", 400);
         }
     }
 

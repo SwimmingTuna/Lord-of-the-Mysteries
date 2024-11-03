@@ -40,9 +40,7 @@ import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.SoundInit;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.Earthquake;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.ExtremeColdness;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SailorLightning;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import virtuoel.pehkui.api.ScaleData;
@@ -98,7 +96,7 @@ public class TickEventUtil {
         tsunami(livingEntityPersistentData, playerMobEntity);
         waterSphereCheck(playerMobEntity, serverLevel);
         windManipulationFlight(playerMobEntity, livingEntityPersistentData);
-        sirenSongParticles(playerMobEntity, sequence);
+        sirenSongsParticles(playerMobEntity);
     }
 
     private static void lightningStorm(PlayerMobEntity player, CompoundTag playerPersistentData) {
@@ -323,10 +321,10 @@ public class TickEventUtil {
     private static void acidicRain(PlayerMobEntity player, int sequence) {
         //ACIDIC RAIN
         int acidicRain = player.getPersistentData().getInt("sailorAcidicRain");
-        AttributeInstance particleAttribute = player.getAttribute(ModAttributes.PARTICLE_HELPER.get());
-        if (acidicRain <= 0 || particleAttribute.getValue() != 1) {
+        if (acidicRain <= 0) {
             return;
         }
+        AcidicRain.spawnAcidicRainParticlesPM(player);
         player.getPersistentData().putInt("sailorAcidicRain", acidicRain + 1);
         double radius1 = 50 - (sequence * 7);
         double radius2 = 10 - sequence;
@@ -358,12 +356,6 @@ public class TickEventUtil {
             } else {
                 entity.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 2, false, false));
             }
-        }
-
-
-        if (acidicRain > 300) {
-            player.getPersistentData().putInt("sailorAcidicRain", 0);
-            particleAttribute.setBaseValue(0);
         }
     }
 
@@ -655,21 +647,18 @@ public class TickEventUtil {
         //WIND MANIPULATION CUSHION
         int cushion = playerPersistentData.getInt("windManipulationCushion");
         if (cushion >= 1) {
+            WindManipulationCushion.summonWindCushionParticles(player);
             playerPersistentData.putInt("windManipulationCushion", cushion - 1);
             player.resetFallDistance();
         }
-        if (cushion >= 80 && player.getDeltaMovement().y <= 0) {
-            AttributeInstance cushionParticles = player.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
-            cushionParticles.setBaseValue(1.0f);
+        if (cushion >= 20 && player.getDeltaMovement().y <= 0) {
             player.setDeltaMovement(player.getDeltaMovement().x(), player.getDeltaMovement().y() * 0.9, player.getDeltaMovement().z());
             player.hurtMarked = true;
         }
-        if (cushion == 79) {
+        if (cushion == 1) {
             player.setDeltaMovement(player.getLookAngle().scale(2.0f));
             player.hurtMarked = true;
             player.resetFallDistance();
-            AttributeInstance cushionParticles = player.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
-            cushionParticles.setBaseValue(0.0f);
         }
     }
 
@@ -747,6 +736,7 @@ public class TickEventUtil {
         int ragingBlowsRadius = (25 - (sequence * 3));
         int damage = 20 - sequence * 2;
         if (ragingBlows >= 1) {
+            RagingBlows.spawnRagingBlowsParticlesPM(player);
             playerPersistentData.putInt("ragingBlows", ragingBlows + 1);
         }
         if (ragingBlows >= 6 && ragingBlows <= 96 && ragingBlows % 6 == 0) {
@@ -771,22 +761,9 @@ public class TickEventUtil {
             }
         }
         if (ragingBlows >= 100) {
+            RagingBlows.spawnRagingBlowsParticlesPM(player);
             ragingBlows = 0;
             playerPersistentData.putInt("ragingBlows", 0);
-        }
-        int rbParticleHelper = playerPersistentData.getInt("rbParticleHelper");
-        AttributeInstance particleHelper = player.getAttribute(ModAttributes.PARTICLE_HELPER1.get());
-        if (particleHelper.getBaseValue() == 1) {
-            playerPersistentData.putInt("rbParticleHelper", rbParticleHelper + 1);
-        }
-        if (rbParticleHelper >= 100) {
-            playerPersistentData.putInt("rbParticleHelper", 0);
-            rbParticleHelper = 0;
-            particleHelper.setBaseValue(0);
-        }
-        if (particleHelper.getBaseValue() == 0) {
-            playerPersistentData.putInt("rbParticleHelper", 0);
-            rbParticleHelper = 0;
         }
     }
 
@@ -1345,15 +1322,13 @@ public class TickEventUtil {
 
     private static void starOfLightning(LivingEntity livingEntity, CompoundTag tag) {
         //STAR OF LIGHTNING
-        AttributeInstance attributeInstance4 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
         int sailorLightningStar = tag.getInt("sailorLightningStar");
         if (sailorLightningStar >= 2) {
-            attributeInstance4.setBaseValue(1.0f);
+            StarOfLightning.summonLightningParticles(livingEntity);
             tag.putInt("sailorLightningStar", sailorLightningStar - 1);
         }
         if (sailorLightningStar == 1) {
             tag.putInt("sailorLightningStar", 0);
-            attributeInstance4.setBaseValue(0);
             for (int i = 0; i < 500; i++) {
                 LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), livingEntity.level());
                 lightningEntity.setSpeed(50);
@@ -1369,25 +1344,17 @@ public class TickEventUtil {
         }
     }
 
-    private static void sirenSongParticles(LivingEntity livingEntity, int sequence) {
-        CompoundTag livingEntityPersistentData = livingEntity.getPersistentData();
-        int ssParticleAttributeHelper = livingEntityPersistentData.getInt("ssParticleAttributeHelper");
-        if (ssParticleAttributeHelper >= 1) {
-            livingEntityPersistentData.putInt("ssParticleAttributeHelper", ssParticleAttributeHelper - 1);
-            livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).setBaseValue(1);
-        }
-        if (ssParticleAttributeHelper < 1) {
-            livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).setBaseValue(0);
-        }
-
-        AttributeInstance particleAttribute2 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER2.get());
+    private static void sirenSongsParticles(PlayerMobEntity player) {
+        int sequence = player.getCurrentSequence();
+        CompoundTag playerPersistentData = player.getPersistentData();
         int harmCounter = 50 - (sequence * 6);
-        if (particleAttribute2.getBaseValue() == 1) {
-            spawnParticlesInSphere(livingEntity, harmCounter);
-        } else {
-            particleAttribute2.setBaseValue(0);
+        int sirenSongWeaken = playerPersistentData.getInt("sirenSongWeaken");
+        int sirenSongStrengthen = playerPersistentData.getInt("sirenSongStrengthen");
+        int sirenSongHarm = playerPersistentData.getInt("sirenSongHarm");
+        int sirenSongStun = playerPersistentData.getInt("sirenSongStun");
+        if (sirenSongStrengthen >= 1|| sirenSongWeaken >= 1 || sirenSongStun >= 1 || sirenSongHarm >= 1) {
+            SirenSongStrengthen.spawnParticlesInSphere(player, harmCounter);
         }
-
     }
 
     public static void summonTsunami(LivingEntity livingEntity) {

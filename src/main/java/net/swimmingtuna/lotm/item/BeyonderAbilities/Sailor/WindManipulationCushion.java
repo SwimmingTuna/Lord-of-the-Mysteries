@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -46,7 +47,7 @@ public class WindManipulationCushion extends SimpleAbilityItem {
     }
 
 
-    public static void summonWindCushionParticles(Player player) {
+    public static void summonWindCushionParticles(LivingEntity player) {
         if (player.level() instanceof ServerLevel serverLevel) {
             double x = player.getX() - player.getLookAngle().x * 2;
             double y = player.getY() + 1.5; // Slightly above the player's feet

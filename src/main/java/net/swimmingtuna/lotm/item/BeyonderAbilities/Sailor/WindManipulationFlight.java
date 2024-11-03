@@ -37,6 +37,7 @@ public class WindManipulationFlight extends SimpleAbilityItem {
         if (holder.getCurrentSequence() <= 4) {
             toggleFlying(player);
         } else {
+            useSpirituality(player,40);
             flightRegular(player);
         }
         CompoundTag tag = player.getPersistentData();
@@ -47,13 +48,13 @@ public class WindManipulationFlight extends SimpleAbilityItem {
         return InteractionResult.SUCCESS;
     }
 
-    private void flightRegular(Player player) {
+    public static void flightRegular(Player player) {
         CompoundTag tag = player.getPersistentData();
         tag.putInt("sailorFlight", 1);
         tag.putInt("sailorFlightDamageCancel", 1);
     }
 
-    private void startFlying(Player player) {
+    public static void startFlying(Player player) {
         player.getPersistentData().putBoolean("sailorFlight1", true);
         Abilities playerAbilities = player.getAbilities();
         if (!playerAbilities.instabuild) {
@@ -67,7 +68,7 @@ public class WindManipulationFlight extends SimpleAbilityItem {
         }
     }
 
-    private void toggleFlying(Player player) {
+    public static void toggleFlying(Player player) {
         boolean canFly = player.getPersistentData().getBoolean("sailorFlight1");
         if (canFly) {
             stopFlying(player);
@@ -76,7 +77,7 @@ public class WindManipulationFlight extends SimpleAbilityItem {
         }
     }
 
-    private void stopFlying(Player player) {
+    public static void stopFlying(Player player) {
         player.getPersistentData().putBoolean("sailorFlight1", false);
         Abilities playerAbilities = player.getAbilities();
         if (!player.isCreative() && !player.isSpectator()) {

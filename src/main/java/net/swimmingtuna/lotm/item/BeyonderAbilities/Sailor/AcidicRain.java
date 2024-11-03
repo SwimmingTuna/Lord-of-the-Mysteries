@@ -12,6 +12,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
@@ -41,8 +42,6 @@ public class AcidicRain extends SimpleAbilityItem {
 
     private static void acidicRain(Player player) {
         player.getPersistentData().putInt("sailorAcidicRain", 1);
-        AttributeInstance particleAttribute = player.getAttribute(ModAttributes.PARTICLE_HELPER.get());
-        particleAttribute.setBaseValue(1);
     }
 
     @Override
@@ -57,6 +56,17 @@ public class AcidicRain extends SimpleAbilityItem {
         if (player.level() instanceof ServerLevel serverLevel) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int sequence = holder.getCurrentSequence();
+            double x = player.getX();
+            double y = player.getY() + 5;
+            double z = player.getZ();
+            int maxRadius = 50 - (sequence * 7);
+            int maxParticles = 250 - (sequence * 30);
+            BeyonderUtil.spawnParticlesInSphere(serverLevel, x, y, z, maxRadius, maxParticles, 0, -3, 0, ParticleInit.ACIDRAIN_PARTICLE.get());
+        }
+    }
+    public static void spawnAcidicRainParticlesPM(PlayerMobEntity player) {
+        if (player.level() instanceof ServerLevel serverLevel) {
+            int sequence = player.getCurrentSequence();
             double x = player.getX();
             double y = player.getY() + 5;
             double z = player.getZ();

@@ -353,24 +353,9 @@ public class ModEvents {
             long endTime = System.nanoTime();
             times.put("sirenSongs", endTime - startTime);
         }
-        int ssParticleAttributeHelper = playerPersistentData.getInt("ssParticleAttributeHelper");
-        if (ssParticleAttributeHelper >= 1) {
-            playerPersistentData.putInt("ssParticleAttributeHelper", ssParticleAttributeHelper - 1);
-            player.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).setBaseValue(1);
+        {
+            sirenSongs(player);
         }
-        if (ssParticleAttributeHelper < 1) {
-            player.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).setBaseValue(0);
-        }
-
-        AttributeInstance particleAttribute2 = player.getAttribute(ModAttributes.PARTICLE_HELPER2.get());
-        int harmCounter = 50 - (sequence * 6);
-        if (particleAttribute2.getBaseValue() == 1) {
-            SirenSongStrengthen.spawnParticlesInSphere(player, harmCounter);
-        } else {
-            particleAttribute2.setBaseValue(0);
-        }
-
-
         {
             long startTime = System.nanoTime();
             starOfLightning(player, playerPersistentData);
@@ -546,8 +531,6 @@ public class ModEvents {
             player.resetFallDistance();
         }
         if (cushion >= 20 && player.getDeltaMovement().y <= 0) {
-            AttributeInstance cushionParticles = player.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
-            cushionParticles.setBaseValue(1.0f);
             player.setDeltaMovement(player.getDeltaMovement().x(), player.getDeltaMovement().y() * 0.7, player.getDeltaMovement().z());
             player.hurtMarked = true;
         }
@@ -555,8 +538,6 @@ public class ModEvents {
             player.setDeltaMovement(player.getLookAngle().scale(2.0f));
             player.hurtMarked = true;
             player.resetFallDistance();
-            AttributeInstance cushionParticles = player.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
-            cushionParticles.setBaseValue(0.0f);
         }
     }
 
@@ -842,8 +823,7 @@ public class ModEvents {
     private static void acidicRain(Player player, int sequence) {
         //ACIDIC RAIN
         int acidicRain = player.getPersistentData().getInt("sailorAcidicRain");
-        AttributeInstance particleAttribute = player.getAttribute(ModAttributes.PARTICLE_HELPER.get());
-        if (acidicRain <= 0 || particleAttribute.getValue() != 1) {
+        if (acidicRain <= 0) {
             return;
         }
         player.getPersistentData().putInt("sailorAcidicRain", acidicRain + 1);
@@ -883,7 +863,6 @@ public class ModEvents {
 
         if (acidicRain > 300) {
             player.getPersistentData().putInt("sailorAcidicRain", 0);
-            particleAttribute.setBaseValue(0);
         }
     }
 
@@ -1191,20 +1170,6 @@ public class ModEvents {
             ragingBlows = 0;
             playerPersistentData.putInt("ragingBlows", 0);
         }
-        int rbParticleHelper = playerPersistentData.getInt("rbParticleHelper");
-        AttributeInstance particleHelper = player.getAttribute(ModAttributes.PARTICLE_HELPER1.get());
-        if (particleHelper.getBaseValue() == 1) {
-            playerPersistentData.putInt("rbParticleHelper", rbParticleHelper + 1);
-        }
-        if (rbParticleHelper >= 100) {
-            playerPersistentData.putInt("rbParticleHelper", 0);
-            rbParticleHelper = 0;
-            particleHelper.setBaseValue(0);
-        }
-        if (particleHelper.getBaseValue() == 0) {
-            playerPersistentData.putInt("rbParticleHelper", 0);
-            rbParticleHelper = 0;
-        }
     }
 
     private static void rainEyes(Player player) {
@@ -1395,22 +1360,19 @@ public class ModEvents {
 
     private static void starOfLightning(Player player, CompoundTag playerPersistentData) {
         //STAR OF LIGHTNING
-        AttributeInstance attributeInstance4 = player.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
         int sailorLightningStar = playerPersistentData.getInt("sailorLightningStar");
         if (sailorLightningStar >= 2) {
             StarOfLightning.summonLightningParticles(player);
             player.level().playSound(player, player.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 10, 1);
-            attributeInstance4.setBaseValue(1.0f);
             playerPersistentData.putInt("sailorLightningStar", sailorLightningStar - 1);
         }
         if (sailorLightningStar == 1) {
             playerPersistentData.putInt("sailorLightningStar", 0);
-            attributeInstance4.setBaseValue(0);
             for (int i = 0; i < 500; i++) {
                 LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), player.level());
                 lightningEntity.setSpeed(50);
                 double sailorStarX = (Math.random() * 2 - 1);
-                double sailorStarY = (Math.random() * 2 - 1); // You might want different random values for y and z
+                double sailorStarY = (Math.random() * 2 - 1);
                 double sailorStarZ = (Math.random() * 2 - 1);
                 lightningEntity.setDeltaMovement(sailorStarX, sailorStarY, sailorStarZ);
                 lightningEntity.setMaxLength(10);
@@ -1511,8 +1473,7 @@ public class ModEvents {
             player.getPersistentData().putInt("sailorSphere", player.getPersistentData().getInt("sailorSphere") - 1);
         }
     }
-
-    private static void windManipulationFlight(Player player, CompoundTag playerPersistentData) {
+    private static void windManipulationFlight1(Player player, CompoundTag playerPersistentData) {
         //WIND MANIPULATION FLIGHT
         Vec3 lookVector = player.getLookAngle();
         if (!playerPersistentData.getBoolean("sailorFlight1")) {
@@ -1539,6 +1500,36 @@ public class ModEvents {
         }
         if (flight > 60) {
             playerPersistentData.putInt("sailorFlight", 0);
+        }
+    }
+    private static void windManipulationFlight(Player player, CompoundTag tag) {
+        Vec3 lookVector = player.getLookAngle();
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        if (tag.getBoolean("sailorFlight1")) {
+            if (holder.getSpirituality() >= 3) {
+                holder.useSpirituality(3);
+            } else {
+                WindManipulationFlight.stopFlying(player);
+            }
+        }
+        int flightCancel = tag.getInt("sailorFlightDamageCancel");
+        if (flightCancel >= 1) {
+            player.fallDistance = 0;
+            tag.putInt("sailorFlightDamageCancel", flightCancel + 1);
+            if (flightCancel >= 300) {
+                tag.putInt("sailorFlightDamageCancel", 0);
+            }
+        }
+        int flight = tag.getInt("sailorFlight");
+        if (flight >= 1) {
+            tag.putInt("sailorFlight", flight + 1);
+            if (flight <= 45 && flight % 15 == 0) {
+                player.setDeltaMovement(lookVector.x * 2, lookVector.y * 2, lookVector.z * 2);
+                player.hurtMarked = true;
+            }
+            if (flight > 45) {
+                tag.putInt("sailorFlight", 0);
+            }
         }
     }
 
@@ -2393,6 +2384,20 @@ public class ModEvents {
         return ItemStack.EMPTY;
     }
 
+    private static void sirenSongs(Player player) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        int sequence = holder.getCurrentSequence();
+        CompoundTag playerPersistentData = player.getPersistentData();
+        int harmCounter = 50 - (sequence * 6);
+        int sirenSongWeaken = playerPersistentData.getInt("sirenSongWeaken");
+        int sirenSongStrengthen = playerPersistentData.getInt("sirenSongStrengthen");
+        int sirenSongHarm = playerPersistentData.getInt("sirenSongHarm");
+        int sirenSongStun = playerPersistentData.getInt("sirenSongStun");
+        if (sirenSongStrengthen >= 1|| sirenSongWeaken >= 1 || sirenSongStun >= 1 || sirenSongHarm >= 1) {
+            SirenSongStrengthen.spawnParticlesInSphere(player, harmCounter);
+        }
+    }
+
     private static boolean poweredCreeper(DamageSource source) {
         return source.is(DamageTypeTags.IS_EXPLOSION) && source.getEntity() instanceof Creeper creeper && creeper.isPowered();
     }
@@ -2766,6 +2771,7 @@ public class ModEvents {
         double beyonderHealth = holder.getCurrentClass().maxHealth().get(sequence);
         player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(beyonderHealth);
     }
+
     @SubscribeEvent
     public static void onLivingJoinWorld(EntityJoinLevelEvent event) {
         Entity entity = event.getEntity();
