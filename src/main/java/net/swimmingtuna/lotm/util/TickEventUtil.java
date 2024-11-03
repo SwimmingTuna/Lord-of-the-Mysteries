@@ -50,7 +50,7 @@ import virtuoel.pehkui.api.ScaleTypes;
 
 import java.util.*;
 
-import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SirenSongHarm.isInsideSphere;
+import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SirenSongStrengthen.isInsideSphere;
 
 public class TickEventUtil {
 
@@ -1474,8 +1474,6 @@ public class TickEventUtil {
             double x = livingEntity.getX() + (random.nextDouble() * 2 - 1) * radius;
             double y = livingEntity.getY() + (random.nextDouble() * 2 - 1) * radius;
             double z = livingEntity.getZ() + (random.nextDouble() * 2 - 1) * radius;
-
-            // Check if the point is within the sphere
             if (isInsideSphere(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), x, y, z, radius)) {
                 double noteValue = random.nextInt(25) / 24.0;
                 level.addParticle(ParticleTypes.NOTE, x, y, z, noteValue, 0, 0);

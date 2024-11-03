@@ -13,6 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import org.jetbrains.annotations.NotNull;
 
 public class TestItem extends Item {
@@ -22,7 +24,7 @@ public class TestItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        player.setHealth(10.0f);
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (!level.isClientSide) LOTM.LOGGER.info("USE");
         return super.use(level, player, hand);
     }
@@ -38,7 +40,7 @@ public class TestItem extends Item {
     public @NotNull InteractionResult interactLivingEntity(ItemStack pStack, Player pPlayer, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
         if (!pPlayer.level().isClientSide) {
             LOTM.LOGGER.info("INTERACT LIVING ENTITY");
-            pPlayer.sendSystemMessage(Component.literal("Entity is " + pInteractionTarget));
+            pPlayer.sendSystemMessage(Component.literal("health is " + pInteractionTarget.getHealth()));
         }
         return InteractionResult.FAIL;
     }

@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +17,7 @@ import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -56,34 +58,24 @@ public class AcidicRain extends SimpleAbilityItem {
         if (entity instanceof Player player) {
             double acidicRain = player.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER.get());
             if (acidicRain >= 1) {
-                spawnAcidicRainParticles(player);
+                // Only spawn particles on the server side
+                if (!level.isClientSide && level instanceof ServerLevel serverLevel) {
+                    spawnAcidicRainParticles(serverLevel, player);
+                }
             }
         }
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
 
-
-    public static void spawnAcidicRainParticles(Player player) {
+    public static void spawnAcidicRainParticles(ServerLevel level, Player player) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
         double x = player.getX();
         double y = player.getY() + 5;
         double z = player.getZ();
         int maxRadius = 50 - (sequence * 7);
-        int maxParticles = 500 - (sequence * 60);
-
-        for (int i = 0; i < maxParticles; i++) {
-            double dx = player.level().random.nextGaussian() * maxRadius;
-            double dy = player.level().random.nextGaussian() * 2; // Adjust this value to control the vertical spread
-            double dz = player.level().random.nextGaussian() * maxRadius;
-            double distance = Math.sqrt(dx * dx + dz * dz);
-
-            if (distance < maxRadius) {
-                double density = 1.0 - (distance / maxRadius); // Calculate the density based on distance
-                if (player.level().random.nextDouble() < density) {
-                    player.level().addParticle(ParticleInit.ACIDRAIN_PARTICLE.get(), x + dx, y + dy, z + dz, 0, -3, 0);
-                }
-            }
-        }
+        int maxParticles = 250 - (sequence * 30);
+        BeyonderUtil.spawnParticlesInSphere(level, x,y,z, maxRadius, maxParticles, 0,-3,0, ParticleInit.ACIDRAIN_PARTICLE.get());
     }
+
 }

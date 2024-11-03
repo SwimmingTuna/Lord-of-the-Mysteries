@@ -70,9 +70,6 @@ public class StarOfLightning extends SimpleAbilityItem {
                     }
                 }
             }
-            if (!player.level().isClientSide()) {
-                player.level().playSound(player, player.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 10,1);
-            }
         }
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }

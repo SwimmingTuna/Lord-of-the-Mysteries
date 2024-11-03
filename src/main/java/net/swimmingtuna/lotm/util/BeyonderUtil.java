@@ -5,12 +5,15 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -40,6 +43,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Ability;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.LuckManipulation;
@@ -635,6 +639,21 @@ public class BeyonderUtil {
             } else if (heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.PROPHESIZE_DEMISE.get())));
                 heldItem.shrink(1);
+            }
+        }
+    }
+    public static void spawnParticlesInSphere(ServerLevel level, double x, double y, double z, int maxRadius, int maxParticles, float xSpeed, float ySpeed, float zSpeed, ParticleOptions particle) {
+        for (int i = 0; i < maxParticles; i++) {
+            double dx = level.random.nextGaussian() * maxRadius;
+            double dy = level.random.nextGaussian() * 2;
+            double dz = level.random.nextGaussian() * maxRadius;
+            double distance = Math.sqrt(dx * dx + dz * dz);
+
+            if (distance < maxRadius) {
+                double density = 1.0 - (distance / maxRadius);
+                if (level.random.nextDouble() < density) {
+                    level.sendParticles(particle, x + dx, y + dy, z + dz, 0, xSpeed, ySpeed, zSpeed,1);
+                }
             }
         }
     }

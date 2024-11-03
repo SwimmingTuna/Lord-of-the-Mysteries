@@ -3,8 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -12,20 +11,17 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SirenSongStrengthen;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.apache.commons.lang3.StringUtils;
-
 import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.AcidicRain.spawnAcidicRainParticles;
 import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.RagingBlows.spawnRagingBlowsParticles;
-import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SirenSongWeaken.spawnParticlesInSphere;
 
 public class BeyonderAbilityUser extends SimpleAbilityItem {
 
@@ -56,14 +52,16 @@ public class BeyonderAbilityUser extends SimpleAbilityItem {
             //Acidic Rain
             double acidicRain = player.getAttributeBaseValue(ModAttributes.PARTICLE_HELPER.get());
             if (acidicRain >= 1) {
-                spawnAcidicRainParticles(player);
+                if (player.level() instanceof ServerLevel serverLevel) {
+                    spawnAcidicRainParticles(serverLevel, player);
+                }
             }
 
 
             //Siren Songs
             if (player.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).getValue() == 1) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                spawnParticlesInSphere(player, 50 - (holder.getCurrentSequence() * 6));
+                SirenSongStrengthen.spawnParticlesInSphere(player, 50 - (holder.getCurrentSequence() * 6));
             }
 
 
@@ -106,19 +104,14 @@ public class BeyonderAbilityUser extends SimpleAbilityItem {
                     }
                 }
             }
-            if (!player.level().isClientSide()) {
-                player.level().playSound(player, player.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 10,1);
-            }
-
         }
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
+
     public static void resetClicks(Player player) {
         player.getPersistentData().putByteArray("keysClicked", new byte[5]);
         player.displayClientMessage(Component.empty(), true);
     }
-
-
 
 
     public static void clicked(Player player, InteractionHand hand) {
@@ -141,7 +134,9 @@ public class BeyonderAbilityUser extends SimpleAbilityItem {
         Component actionBarComponent = Component.literal(actionBarString).withStyle(ChatFormatting.BOLD);
         player.displayClientMessage(actionBarComponent, true);
 
-        if (keysClicked[4] == 0) return;
+        if (keysClicked[4] == 0) {
+            return;
+        }
 
         int abilityNumber = 0;
         for (int i = 0; i < keysClicked.length; i++) {

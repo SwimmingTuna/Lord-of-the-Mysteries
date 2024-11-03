@@ -220,7 +220,7 @@ public class TornadoEntity extends AbstractHurtingProjectile {
             Random random = new Random();
             List<Entity> entities = this.level().getEntities(this, boundingBox);
             for (Entity entity : entities) {
-                if (entity instanceof TornadoEntity || entity == this.getOwner()) {
+                if (entity instanceof TornadoEntity || entity == this.getOwner() || !(entity instanceof LivingEntity)) {
                     continue;
                 }
 

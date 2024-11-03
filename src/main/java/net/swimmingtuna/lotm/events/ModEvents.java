@@ -51,7 +51,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -72,12 +71,13 @@ import net.swimmingtuna.lotm.events.custom_events.ModEventFactory;
 import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
-import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.init.SoundInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.DreamIntoReality;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionBarrier;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.CorruptionAndLuckHandler;
@@ -86,10 +86,6 @@ import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
 import java.util.*;
-
-import static net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLife.spawnMob;
-import static net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocation.isThreeIntegers;
-import static net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionWeather.*;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
 public class ModEvents {
@@ -369,7 +365,7 @@ public class ModEvents {
         AttributeInstance particleAttribute2 = player.getAttribute(ModAttributes.PARTICLE_HELPER2.get());
         int harmCounter = 50 - (sequence * 6);
         if (particleAttribute2.getBaseValue() == 1) {
-            SirenSongHarm.spawnParticlesInSphere(player, harmCounter);
+            SirenSongStrengthen.spawnParticlesInSphere(player, harmCounter);
         } else {
             particleAttribute2.setBaseValue(0);
         }
@@ -930,7 +926,7 @@ public class ModEvents {
         }
     }
 
-    private static void earthquake (Player player, int sequence) {
+    private static void earthquake(Player player, int sequence) {
         int sailorEarthquake = player.getPersistentData().getInt("sailorEarthquake");
         if (sailorEarthquake >= 1) {
             if (sailorEarthquake % 20 == 0) {
@@ -1399,6 +1395,7 @@ public class ModEvents {
         AttributeInstance attributeInstance4 = player.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
         int sailorLightningStar = playerPersistentData.getInt("sailorLightningStar");
         if (sailorLightningStar >= 2) {
+            player.level().playSound(player, player.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 10, 1);
             attributeInstance4.setBaseValue(1.0f);
             playerPersistentData.putInt("sailorLightningStar", sailorLightningStar - 1);
         }
@@ -1434,15 +1431,15 @@ public class ModEvents {
         }
 
         //TSUNAMI SEAL
-        int tsunamiSeal = playerPersistentData.getInt("sailorTsunami");
+        int tsunamiSeal = playerPersistentData.getInt("sailorTsunamiSeal");
         if (tsunamiSeal >= 1) {
-            playerPersistentData.putInt("sailorTsunami", tsunamiSeal - 5);
+            playerPersistentData.putInt("sailorTsunamiSeal", tsunamiSeal - 5);
             TsunamiSeal.summonTsunami(player);
         } else {
-            playerPersistentData.remove("sailorTsunamiDirection");
-            playerPersistentData.remove("sailorTsunamiX");
-            playerPersistentData.remove("sailorTsunamiY");
-            playerPersistentData.remove("sailorTsunamiZ");
+            playerPersistentData.remove("sailorTsunamiSealDirection");
+            playerPersistentData.remove("sailorTsunamiSealX");
+            playerPersistentData.remove("sailorTsunamiSealY");
+            playerPersistentData.remove("sailorTsunamiSealZ");
         }
     }
 
@@ -1852,6 +1849,7 @@ public class ModEvents {
             //TSUNAMI SEAL
             int sealCounter = tag.getInt("sailorSeal");
             if (sealCounter >= 3) {
+                entity.fallDistance = 0;
                 int sealX = tag.getInt("sailorSealX");
                 int sealY = tag.getInt("sailorSealY");
                 int sealZ = tag.getInt("sailorSealZ");
@@ -2096,19 +2094,21 @@ public class ModEvents {
             }
         }
     }
+
     private static void monsterLuckPoisonAttacker(Player pPlayer) {
         if (pPlayer.tickCount % 100 == 0) {
             if (pPlayer.getPersistentData().getInt("luckAttackerPoisoned") >= 1) {
                 for (Player player : pPlayer.level().getEntitiesOfClass(Player.class, pPlayer.getBoundingBox().inflate(50))) {
                     if (player.getPersistentData().getInt("attackedMonster") >= 1) {
-                        player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(),60,1,false,false));
-                        player.addEffect(new MobEffectInstance(MobEffects.POISON,60,3,false,false));
+                        player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
+                        player.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 3, false, false));
                         pPlayer.getPersistentData().putInt("luckAttackerPoisoned", pPlayer.getPersistentData().getInt("luckAttackerPoisoned") - 1);
                     }
                 }
             }
         }
     }
+
     private static void monsterLuckIgnoreMobs(Player pPlayer) {
         if (pPlayer.tickCount % 40 == 0) {
             if (pPlayer.getPersistentData().getInt("luckIgnoreMobs") >= 1) {
@@ -2250,6 +2250,7 @@ public class ModEvents {
             }
         }
     }
+
 
     @SubscribeEvent
     public static void deathEvent(LivingDeathEvent event) {
@@ -2420,23 +2421,22 @@ public class ModEvents {
             double deltaY = Math.abs(projectile.getY() - player.getY());
             double deltaZ = Math.abs(projectile.getZ() - player.getZ());
             if (deltaX <= maxDistance || deltaY <= maxDistance || deltaZ <= maxDistance) {
-                drawParticleLine(level, trajectory);
+                if (player.level() instanceof ServerLevel serverLevel) {
+                    drawParticleLine(serverLevel, (ServerPlayer) player, trajectory);
+                }
             }
         }
     }
 
-    public static void drawParticleLine(Level level, List<Vec3> points) {
+    public static void drawParticleLine(ServerLevel level, ServerPlayer player, List<Vec3> points) {
         int particleInterval = 5; // Only spawn a particle every 5 points
         for (int i = 0; i < points.size() - 1; i += particleInterval) {
             Vec3 start = points.get(i);
             Vec3 end = i + particleInterval < points.size() ? points.get(i + particleInterval) : points.get(points.size() - 1);
-
             Vec3 direction = end.subtract(start).normalize();
             double distance = start.distanceTo(end);
-
-            // Spawn only one particle between each interval
             Vec3 particlePosition = start.add(direction.scale(distance / 2));
-            level.addParticle(DustParticleOptions.REDSTONE, particlePosition.x, particlePosition.y, particlePosition.z, 0, 0, 0);
+            level.sendParticles(player, DustParticleOptions.REDSTONE, true, particlePosition.x, particlePosition.y, particlePosition.z, 0, 0, 0, 0, 0);
         }
     }
 
@@ -2753,6 +2753,15 @@ public class ModEvents {
         }
     }
 
+
+    @SubscribeEvent
+    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        Player player = event.getEntity();
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        int sequence = holder.getCurrentSequence();
+        double beyonderHealth = holder.getCurrentClass().maxHealth().get(sequence);
+        player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(beyonderHealth);
+    }
     @SubscribeEvent
     public static void onLivingJoinWorld(EntityJoinLevelEvent event) {
         Entity entity = event.getEntity();

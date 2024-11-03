@@ -71,41 +71,6 @@ public class SirenSongHarm extends SimpleAbilityItem {
         }
     }
 
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-        if (entity instanceof Player player) {
-            if (player.getAttribute(ModAttributes.PARTICLE_HELPER2.get()).getValue() == 1) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                spawnParticlesInSphere(player, 50 - (holder.getCurrentSequence() * 6));
-            }
-        }
-        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
-    }
-
-    public static void spawnParticlesInSphere(Player player, int radius) {
-        Level level = player.level();
-        Random random = new Random();
-
-        for (int i = 0; i < 20; i++) { // Adjust the number of particles as needed
-            double x = player.getX() + (random.nextDouble() * 2 - 1) * radius;
-            double y = player.getY() + (random.nextDouble() * 2 - 1) * radius;
-            double z = player.getZ() + (random.nextDouble() * 2 - 1) * radius;
-
-            // Check if the point is within the sphere
-            if (isInsideSphere(player.getX(), player.getY(), player.getZ(), x, y, z, radius)) {
-                double noteValue = random.nextInt(25) / 24.0;
-                level.addParticle(ParticleTypes.NOTE, x, y, z, noteValue, 0, 0);
-            }
-        }
-    }
-    public static boolean isInsideSphere(double centerX, double centerY, double centerZ, double x, double y, double z, double radius) {
-        double distance = Math.sqrt(
-                Math.pow(x - centerX, 2) +
-                        Math.pow(y - centerY, 2) +
-                        Math.pow(z - centerZ, 2)
-        );
-        return distance <= radius;
-    }
-
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal("Upon use, start singing a song that causes harm to all entities around you\n" +

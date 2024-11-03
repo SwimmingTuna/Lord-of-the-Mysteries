@@ -41,7 +41,6 @@ public class ServerEvents {
         AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         Style style = BeyonderUtil.getStyle(player);
-        player.sendSystemMessage(Component.literal("you said " + event.getMessage()));
         if (!player.level().isClientSide() && player.getMainHandItem().getItem() instanceof EnvisionWeather) {
             if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                 player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
