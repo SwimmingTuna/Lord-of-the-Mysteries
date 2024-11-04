@@ -36,7 +36,7 @@ import java.util.List;
 public class Nightmare extends SimpleAbilityItem {
 
     public Nightmare(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 5, 100, 110 );
+        super(properties, BeyonderClassInit.SPECTATOR, 5, 100, 110,35,35 );
     }
 
     @Override

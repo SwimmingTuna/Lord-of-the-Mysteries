@@ -37,7 +37,7 @@ public class PsycheStorm extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public PsycheStorm(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 6, 100, 300);
+        super(properties, BeyonderClassInit.MONSTER, 6, 100, 300,15,15);
     }
 
 

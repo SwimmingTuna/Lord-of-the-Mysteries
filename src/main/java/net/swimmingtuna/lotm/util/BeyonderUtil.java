@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -33,6 +34,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.phys.*;
@@ -293,65 +295,27 @@ public class BeyonderUtil {
             return;
         }
 
-        // Get item's reach values from its attribute modifiers
-        ItemStack itemStack = player.getItemInHand(hand);
-        Multimap<Attribute, AttributeModifier> attributes = itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND);
+        double entityReach = ability.getEntityReach();
+        double blockReach = ability.getBlockReach();
 
-        double entityReach = player.getAttributeValue(ForgeMod.ENTITY_REACH.get());
-        double blockReach = player.getAttributeValue(ForgeMod.BLOCK_REACH.get());
+        player.sendSystemMessage(Component.literal("Entity Reach: " + entityReach));
+        player.sendSystemMessage(Component.literal("Block Reach: " + blockReach));
 
-        // Print base reach values
-        player.sendSystemMessage(Component.literal("Base Entity Reach: " + entityReach));
-        player.sendSystemMessage(Component.literal("Base Block Reach: " + blockReach));
-
-        // Add the item's reach modifiers
-        for (AttributeModifier modifier : attributes.get(ForgeMod.ENTITY_REACH.get())) {
-            player.sendSystemMessage(Component.literal("Entity Reach Modifier: " + modifier.getAmount() + " (Operation: " + modifier.getOperation() + ")"));
-            if (modifier.getOperation() == AttributeModifier.Operation.ADDITION) {
-                entityReach += modifier.getAmount();
-            } else if (modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_BASE) {
-                entityReach *= (1 + modifier.getAmount());
-            } else if (modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_TOTAL) {
-                entityReach *= (1 + modifier.getAmount());
-            }
-        }
-
-        for (AttributeModifier modifier : attributes.get(ForgeMod.BLOCK_REACH.get())) {
-            player.sendSystemMessage(Component.literal("Block Reach Modifier: " + modifier.getAmount() + " (Operation: " + modifier.getOperation() + ")"));
-            if (modifier.getOperation() == AttributeModifier.Operation.ADDITION) {
-                blockReach += modifier.getAmount();
-            } else if (modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_BASE) {
-                blockReach *= (1 + modifier.getAmount());
-            } else if (modifier.getOperation() == AttributeModifier.Operation.MULTIPLY_TOTAL) {
-                blockReach *= (1 + modifier.getAmount());
-            }
-        }
-
-        // Print final reach values
-        player.sendSystemMessage(Component.literal("Final Entity Reach: " + entityReach));
-        player.sendSystemMessage(Component.literal("Final Block Reach: " + blockReach));
-
-        // Check if the ability has entity interaction method
         boolean hasEntityInteraction = false;
         try {
             Method entityMethod = ability.getClass().getDeclaredMethod("useAbilityOnEntity",
                     ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class);
             hasEntityInteraction = !entityMethod.equals(Ability.class.getDeclaredMethod("useAbilityOnEntity",
                     ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class));
-        } catch (NoSuchMethodException e) {
-            // Method doesn't exist, so no entity interaction
+        } catch (NoSuchMethodException ignored) {
         }
 
-        // Check if the ability has block interaction method
         boolean hasBlockInteraction = false;
         try {
             Method blockMethod = ability.getClass().getDeclaredMethod("useAbilityOnBlock", UseOnContext.class);
             hasBlockInteraction = !blockMethod.equals(Ability.class.getDeclaredMethod("useAbilityOnBlock", UseOnContext.class));
-        } catch (NoSuchMethodException e) {
-            // Method doesn't exist, so no block interaction
+        } catch (NoSuchMethodException ignored) {
         }
-
-        // Only perform entity raycast if the ability has entity interaction
         if (hasEntityInteraction) {
             Vec3 eyePosition = player.getEyePosition();
             Vec3 lookVector = player.getLookAngle();
@@ -367,8 +331,6 @@ public class BeyonderUtil {
                     entity -> !entity.isSpectator() && entity.isPickable(),
                     0.0f
             );
-
-            // Check if we hit an entity
             if (entityHit != null && entityHit.getEntity() instanceof LivingEntity livingEntity) {
                 player.sendSystemMessage(Component.literal("Entity interaction at reach: " + entityReach));
                 InteractionResult result = ability.useAbilityOnEntity(player.getItemInHand(hand), player, livingEntity, hand);
@@ -377,8 +339,6 @@ public class BeyonderUtil {
                 }
             }
         }
-
-        // Only perform block raycast if the ability has block interaction
         if (hasBlockInteraction) {
             Vec3 eyePosition = player.getEyePosition();
             Vec3 lookVector = player.getLookAngle();
@@ -391,7 +351,6 @@ public class BeyonderUtil {
                     ClipContext.Fluid.NONE,
                     player
             ));
-
             if (blockHit.getType() != HitResult.Type.MISS) {
                 player.sendSystemMessage(Component.literal("Block interaction at reach: " + blockReach));
                 UseOnContext context = new UseOnContext(player.level(), player, hand, player.getItemInHand(hand), blockHit);
@@ -401,10 +360,9 @@ public class BeyonderUtil {
                 }
             }
         }
-
-        // Use the general ability
         player.sendSystemMessage(Component.literal("General ability use"));
         ability.useAbility(player.level(), player, hand);
+
     }
 
     public static Style getStyle(Player player) {

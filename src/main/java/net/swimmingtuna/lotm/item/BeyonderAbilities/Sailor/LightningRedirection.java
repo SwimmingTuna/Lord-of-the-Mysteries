@@ -47,7 +47,7 @@ public class LightningRedirection extends SimpleAbilityItem {
     }
 
     public LightningRedirection(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 1, 600, 100);
+        super(properties, BeyonderClassInit.SAILOR, 1, 600, 100,200,200);
     }
 
     @Override

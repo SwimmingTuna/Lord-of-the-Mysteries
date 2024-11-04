@@ -30,7 +30,7 @@ public class DreamWalking extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public DreamWalking(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 5, 40, 0);
+        super(properties, BeyonderClassInit.SPECTATOR, 5, 40, 0,300,300);
     }
     @SuppressWarnings("deprecation")
     @Override

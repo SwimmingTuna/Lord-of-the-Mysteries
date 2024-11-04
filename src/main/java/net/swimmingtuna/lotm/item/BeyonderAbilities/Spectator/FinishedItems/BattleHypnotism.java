@@ -34,7 +34,7 @@ import java.util.List;
 public class BattleHypnotism extends SimpleAbilityItem {
 
     public BattleHypnotism(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 6, 150, 300);
+        super(properties, BeyonderClassInit.SPECTATOR, 6, 150, 300,50,50);
     }
 
     @Override

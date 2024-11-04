@@ -35,7 +35,7 @@ public class MindReading extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public MindReading(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 8, 20, 60 );
+        super(properties, BeyonderClassInit.SPECTATOR, 8, 20, 60,12,12);
     }
 
     @Override

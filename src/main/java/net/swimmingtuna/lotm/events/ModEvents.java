@@ -149,7 +149,6 @@ public class ModEvents {
         AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
         assert corruption != null;
 
-
         Map<String, Long> times = new HashMap<>();
         {
             decrementMonsterAttackEvent(player);
@@ -2025,7 +2024,18 @@ public class ModEvents {
         if (player.level().isClientSide()) return;
 
         if (player.getMainHandItem().getItem() instanceof BeyonderAbilityUser) {
-            event.setCanceled(true);
+            event.setCanceled(true); // Cancel default attack interaction
+
+            // Add byte 'L' to keysClicked array
+            byte[] keysClicked = player.getPersistentData().getByteArray("keysClicked");
+            for (int i = 0; i < keysClicked.length; i++) {
+                if (keysClicked[i] == 0) { 
+                    keysClicked[i] = 1;
+                    player.getPersistentData().putByteArray("keysClicked", keysClicked);
+                    BeyonderAbilityUser.clicked(player, InteractionHand.MAIN_HAND);
+                    break;
+                }
+            }
         }
 
         //SAILOR PASSIVE

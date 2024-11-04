@@ -35,7 +35,7 @@ public class SailorLightning extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public SailorLightning(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 5, 0, 30);
+        super(properties, BeyonderClassInit.SAILOR, 5, 0, 30,150,150);
     }
 
 

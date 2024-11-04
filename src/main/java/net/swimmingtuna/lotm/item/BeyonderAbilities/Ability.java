@@ -21,4 +21,11 @@ public interface Ability {
     default InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
         return InteractionResult.PASS;
     }
+
+    default double getBlockReach() {
+        return 4.5;
+    }
+    default double getEntityReach() {
+        return 3.0f;
+    }
 }

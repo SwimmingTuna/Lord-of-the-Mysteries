@@ -19,24 +19,44 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Supplier;
-
 public abstract class SimpleAbilityItem extends Item implements Ability {
 
     protected final Supplier<? extends BeyonderClass> requiredClass;
     protected final int requiredSequence;
     protected final int requiredSpirituality;
     protected final int cooldown;
+    protected final double entityReach;
+    protected final double blockReach;
 
     protected SimpleAbilityItem(Properties properties, BeyonderClass requiredClass, int requiredSequence, int requiredSpirituality, int cooldown) {
-        this(properties, () -> requiredClass, requiredSequence, requiredSpirituality, cooldown);
+        this(properties, () -> requiredClass, requiredSequence, requiredSpirituality, cooldown, 3.0, 4.5);
     }
 
     protected SimpleAbilityItem(Properties properties, Supplier<? extends BeyonderClass> requiredClass, int requiredSequence, int requiredSpirituality, int cooldown) {
+        this(properties, requiredClass, requiredSequence, requiredSpirituality, cooldown, 3.0, 4.5);
+    }
+    protected SimpleAbilityItem(Properties properties, BeyonderClass requiredClass, int requiredSequence, int requiredSpirituality, int cooldown, double entityReach, double blockReach) {
+        this(properties, () -> requiredClass, requiredSequence, requiredSpirituality, cooldown, entityReach, blockReach);
+    }
+
+    protected SimpleAbilityItem(Properties properties, Supplier<? extends BeyonderClass> requiredClass, int requiredSequence, int requiredSpirituality, int cooldown, double entityReach, double blockReach) {
         super(properties);
         this.requiredClass = requiredClass;
         this.requiredSequence = requiredSequence;
         this.requiredSpirituality = requiredSpirituality;
         this.cooldown = cooldown;
+        this.entityReach = entityReach;
+        this.blockReach = blockReach;
+    }
+
+    @Override
+    public double getBlockReach() {
+        return blockReach;
+    }
+
+    @Override
+    public double getEntityReach() {
+        return entityReach;
     }
 
     @Override

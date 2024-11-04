@@ -31,7 +31,7 @@ public class ApplyManipulation extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public ApplyManipulation(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 4, 50, 10);
+        super(properties, BeyonderClassInit.SPECTATOR, 4, 50, 10,50,50);
     }
 
     @Override

@@ -33,7 +33,7 @@ import java.util.List;
 public class ProphesizeTeleportBlock extends SimpleAbilityItem {
 
     public ProphesizeTeleportBlock(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 1, 600, 300 );
+        super(properties, BeyonderClassInit.SPECTATOR, 1, 600, 300,200,200);
     }
 
     @Override

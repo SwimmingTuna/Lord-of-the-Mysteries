@@ -33,7 +33,7 @@ import java.util.List;
 public class PlagueStorm extends SimpleAbilityItem {
 
     public PlagueStorm(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 8, 400, 160);
+        super(properties, BeyonderClassInit.SPECTATOR, 8, 400, 160,80,80);
     }
 
     @Override

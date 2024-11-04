@@ -1,28 +1,18 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.swimmingtuna.lotm.caps.BeyonderHolder;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.minecraft.world.level.block.SoundType;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SirenSongStrengthen;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.apache.commons.lang3.StringUtils;
-
-import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.AcidicRain.spawnAcidicRainParticles;
-import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.RagingBlows.spawnRagingBlowsParticles;
 
 public class BeyonderAbilityUser extends SimpleAbilityItem {
 
@@ -54,6 +44,7 @@ public class BeyonderAbilityUser extends SimpleAbilityItem {
 
 
     public static void clicked(Player player, InteractionHand hand) {
+
         if (player.level().isClientSide()) {
             return;
         }
@@ -82,7 +73,6 @@ public class BeyonderAbilityUser extends SimpleAbilityItem {
             abilityNumber |= (keysClicked[i] - 1) << (4 - i);
         }
         ++abilityNumber;
-
         resetClicks(player);
         BeyonderUtil.useAbilityByNumber(player, abilityNumber, hand);
 
@@ -91,14 +81,23 @@ public class BeyonderAbilityUser extends SimpleAbilityItem {
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         byte[] keysClicked = player.getPersistentData().getByteArray("keysClicked");
+        if (!player.level().isClientSide()) {
+            if (!player.getCooldowns().isOnCooldown(this)) {
 
-        for (int i = 0; i < keysClicked.length; i++) {
-            if (keysClicked[i] == 0) {
-                keysClicked[i] = 2;
-                BeyonderAbilityUser.clicked(player, hand);
-                return InteractionResult.SUCCESS;
+                player.getCooldowns().addCooldown(this, 4);
+                player.sendSystemMessage(Component.literal("success"));
+                for (int i = 0; i < keysClicked.length; i++) {
+                    if (keysClicked[i] == 0) {
+                        keysClicked[i] = 2;
+                        BeyonderAbilityUser.clicked(player, hand);
+                        return InteractionResult.SUCCESS;
+                    }
+                }
+            } else {
+                return InteractionResult.FAIL;
             }
         }
         return InteractionResult.PASS;
     }
+
 }

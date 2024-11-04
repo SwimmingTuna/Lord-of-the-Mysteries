@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.ForgeMod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
@@ -24,7 +25,14 @@ public class TestItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        ItemStack offhandItem = player.getOffhandItem();
+
+        // Retrieve the block reach and entity reach attributes
+        double blockReach = player.getAttributeValue(ForgeMod.BLOCK_REACH.get());
+        double entityReach = player.getAttributeValue(ForgeMod.ENTITY_REACH.get());
+        player.sendSystemMessage(Component.literal("Offhand item reach:")
+                .append("\nBlock Reach: " + blockReach)
+                .append("\nEntity Reach: " + entityReach));
         if (!level.isClientSide) LOTM.LOGGER.info("USE");
         return super.use(level, player, hand);
     }
@@ -43,21 +51,5 @@ public class TestItem extends Item {
             pPlayer.sendSystemMessage(Component.literal("health is " + pInteractionTarget.getHealth()));
         }
         return InteractionResult.FAIL;
-    }
-
-
-    public static void useAbilities(Player player) {
-        if (!player.level().isClientSide()) {
-            LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, player.level());
-            lightningBolt.setDamage(15);
-            lightningBolt.teleportTo(player.getX(),player.getY(),player.getZ());
-            player.level().addFreshEntity(lightningBolt);
-            player.getPersistentData().putInt("luckMCLightningImmunity", 15);
-        }
-    }
-
-    public static void useAbilities2(Player player) {
-        if (!player.level().isClientSide()) {
-        }
     }
 }
