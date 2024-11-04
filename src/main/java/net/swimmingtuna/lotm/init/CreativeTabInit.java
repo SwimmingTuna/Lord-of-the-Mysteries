@@ -105,6 +105,7 @@ public class CreativeTabInit {
                         output.accept(ItemInit.PSYCHESTORM.get());
                         output.accept(ItemInit.SPIRITVISION.get());
                         output.accept(ItemInit.MONSTERCALAMITYATTRACTION.get());
+                        output.accept(ItemInit.LUCKGIFTING.get());
 
 
                     })

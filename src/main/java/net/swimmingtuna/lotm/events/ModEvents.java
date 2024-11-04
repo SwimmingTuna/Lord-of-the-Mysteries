@@ -73,6 +73,7 @@ import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.SoundInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.LuckGifting;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.DreamIntoReality;
@@ -1114,6 +1115,7 @@ public class ModEvents {
         if (player.isSpectator()) return;
         int matterAccelerationDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
         int blinkDistance = player.getPersistentData().getInt("BlinkDistance");
+        int luckGiftingAmount = player.getPersistentData().getInt("monsterLuckGifting");
         if (player.isShiftKeyDown() && player.getMainHandItem().getItem() instanceof MatterAccelerationSelf && holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
             matterAccelerationDistance += 50;
             player.getPersistentData().putInt("tyrantSelfAcceleration", matterAccelerationDistance);
@@ -1131,6 +1133,15 @@ public class ModEvents {
         if (blinkDistance > 201) {
             player.displayClientMessage(Component.literal("Blink Distance is 0").withStyle(style), true);
             player.getPersistentData().putInt("BlinkDistance", 0);
+        }
+        //LUCK GIFTING
+        if (player.isShiftKeyDown() && player.getMainHandItem().getItem() instanceof LuckGifting && holder.currentClassMatches(BeyonderClassInit.MONSTER)) {
+            player.getPersistentData().putInt("monsterLuckGifting", luckGiftingAmount + 1);
+            player.displayClientMessage(Component.literal("Luck Gifting Amount is " + luckGiftingAmount).withStyle(style), true);
+        }
+        if (luckGiftingAmount > 101) {
+            player.displayClientMessage(Component.literal("Luck Gifting Amount is 0").withStyle(style), true);
+            player.getPersistentData().putInt("monsterLuckGifting", 0);
         }
     }
 

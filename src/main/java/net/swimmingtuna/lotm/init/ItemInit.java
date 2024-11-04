@@ -32,6 +32,8 @@ public class ItemInit {
             () -> new MonsterProjectileControl(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LUCK_MANIPULATION = ITEMS.register("luckmanipulation",
             () -> new LuckManipulation(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LUCKGIFTING = ITEMS.register("luckgifting",
+            () -> new LuckGifting(new Item.Properties().stacksTo(1)));
 
 
     public static final RegistryObject<Item> TSUNAMI = ITEMS.register("tsunami",

@@ -76,15 +76,27 @@ public class MindReading extends SimpleAbilityItem {
     public static void mindRead(Player player, LivingEntity interactionTarget, ItemStack stack) {
         if (interactionTarget instanceof Player playerInteractionTarget) {
             AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            StringBuilder inventoryMessage = new StringBuilder();
+            boolean hasItems = false;
+
             for (int i = 0; i < playerInteractionTarget.getInventory().getContainerSize(); i++) {
                 ItemStack itemStack = playerInteractionTarget.getInventory().getItem(i);
                 if (!itemStack.isEmpty()) {
-                    String playerName = interactionTarget.getName().getString();
-                    player.sendSystemMessage(Component.literal(playerName + "'s inventory is" + itemStack).withStyle(ChatFormatting.BOLD));
+                    hasItems = true;
+                    inventoryMessage.append("\n- ").append(itemStack.getDisplayName().getString());
                 }
-                if (dreamIntoReality.getValue() == 2) {
-                    interactionTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1, false, false));
-                }
+            }
+
+            if (hasItems) {
+                String playerName = interactionTarget.getName().getString();
+                player.sendSystemMessage(Component.literal(playerName + "'s inventory contains:").withStyle(ChatFormatting.BOLD)
+                        .append(Component.literal(inventoryMessage.toString()).withStyle(ChatFormatting.AQUA)));
+            } else {
+                player.sendSystemMessage(Component.literal("The target player's inventory is empty.").withStyle(ChatFormatting.AQUA));
+            }
+
+            if (dreamIntoReality.getValue() == 2) {
+                interactionTarget.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1, false, false));
             }
         } else {
             Style style = BeyonderUtil.getStyle(player);

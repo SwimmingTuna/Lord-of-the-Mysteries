@@ -131,7 +131,7 @@ public class CorruptionAndLuckHandler {
                 }
                 if (player.tickCount % 317 == 0 && random.nextInt(150) <= lotmLuckValue) {
                     tag.putInt("luckHalveDamage", tag.getInt("luckHalveDamage") + 1);
-                    luck.setBaseValue(Math.max(0, lotmLuckValue - 7));
+                    luck.setBaseValue(Math.max(0, lotmLuckValue - 12));
                 }
                 if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && player.tickCount % 51 == 0 && random.nextInt(70) <= lotmLuckValue) {
                     tag.putInt("luckIgnoreMobs", luckIgnoreMobs + 1);
@@ -143,7 +143,7 @@ public class CorruptionAndLuckHandler {
                 }
                 if (player.tickCount % 503 == 0 && random.nextInt(225) <= lotmLuckValue && holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 5) {
                     tag.putInt("luckIgnoreDamage", ignoreDamage + 1);
-                    luck.setBaseValue(Math.max(0, lotmLuckValue - 13));
+                    luck.setBaseValue(Math.max(0, lotmLuckValue - 20));
                 }
             }
             if (holder.currentClassMatches(BeyonderClassInit.MONSTER)) {

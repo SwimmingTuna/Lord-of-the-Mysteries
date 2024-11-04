@@ -176,6 +176,7 @@ public class LOTM {
             event.accept(ItemInit.ENVISION_LOCATION_BLINK);
             event.accept(ItemInit.ENVISIONHEALTH);
             event.accept(ItemInit.LUCK_MANIPULATION);
+            event.accept(ItemInit.LUCKGIFTING);
             event.accept(ItemInit.MONSTERDANGERSENSE);
             event.accept(ItemInit.MONSTERPROJECTILECONTROL);
             event.accept(ItemInit.LUCKPERCEPTION);

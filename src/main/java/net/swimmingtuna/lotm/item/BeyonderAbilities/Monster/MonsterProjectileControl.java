@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MonsterProjectileControl extends SimpleAbilityItem {
     public MonsterProjectileControl(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 9, 0, 0);
+        super(properties, BeyonderClassInit.SAILOR, 8, 0, 0);
     }
 
     @Override

@@ -19,6 +19,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -252,6 +254,42 @@ public class BeyonderUtil {
                 abilityNames.add(ItemInit.TYRANNY.get());
             }
         }
+        if (holder.currentClassMatches(BeyonderClassInit.MONSTER)) {
+            if (sequence <= 9) {
+                abilityNames.add(ItemInit.SPIRITVISION.get());
+                abilityNames.add(ItemInit.MONSTERDANGERSENSE.get());
+            }
+            if (sequence <= 8) {
+                abilityNames.add(ItemInit.MONSTERPROJECTILECONTROL.get());
+
+            }
+            if (sequence <= 7) {
+                abilityNames.add(ItemInit.LUCKPERCEPTION.get());
+
+            }
+            if (sequence <= 6) {
+                abilityNames.add(ItemInit.PSYCHESTORM.get());
+            }
+            if (sequence <= 5) {
+                abilityNames.add(ItemInit.LUCK_MANIPULATION.get());
+                abilityNames.add(ItemInit.LUCKGIFTING.get());
+            }
+            if (sequence <= 4) {
+
+            }
+            if (sequence <= 3) {
+
+            }
+            if (sequence <= 2) {
+
+            }
+            if (sequence <= 1) {
+
+            }
+            if (sequence <= 0) {
+
+            }
+        }
         return abilityNames;
     }
 
@@ -284,28 +322,24 @@ public class BeyonderUtil {
             player.sendSystemMessage(Component.literal("Item not found in registry for ability " + abilityNumber + " with resource location: " + resourceLocation));
             return;
         }
-
+        String itemName = item.getDescription().getString();
         if (!(item instanceof Ability ability)) {
-            player.sendSystemMessage(Component.literal("Registered ability ").append(item.getDescription()).append(" for ability number " + abilityNumber + " is not an ability."));
+            player.sendSystemMessage(Component.literal("Registered ability ").append(itemName).append(" for ability number " + abilityNumber + " is not an ability."));
             return;
         }
 
         if (player.getCooldowns().isOnCooldown(item)) {
-            player.sendSystemMessage(Component.literal("Ability ").append(item.getDescription()).append(" is on cooldown!"));
+            player.sendSystemMessage(Component.literal("Ability ").append(itemName).append(" is on cooldown!"));
             return;
         }
-
         double entityReach = ability.getEntityReach();
         double blockReach = ability.getBlockReach();
 
-        player.sendSystemMessage(Component.literal("Entity Reach: " + entityReach));
-        player.sendSystemMessage(Component.literal("Block Reach: " + blockReach));
-
         boolean hasEntityInteraction = false;
         try {
-            Method entityMethod = ability.getClass().getDeclaredMethod("useAbilityOnEntity",
+            Method entityMethod = ability.getClass().getDeclaredMethod("interactLivingEntity",
                     ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class);
-            hasEntityInteraction = !entityMethod.equals(Ability.class.getDeclaredMethod("useAbilityOnEntity",
+            hasEntityInteraction = !entityMethod.equals(Ability.class.getDeclaredMethod("interactLivingEntity",
                     ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class));
         } catch (NoSuchMethodException ignored) {
         }
@@ -332,8 +366,9 @@ public class BeyonderUtil {
                     0.0f
             );
             if (entityHit != null && entityHit.getEntity() instanceof LivingEntity livingEntity) {
-                player.sendSystemMessage(Component.literal("Entity interaction at reach: " + entityReach));
-                InteractionResult result = ability.useAbilityOnEntity(player.getItemInHand(hand), player, livingEntity, hand);
+                InteractionResult result = ability.interactLivingEntity(player.getItemInHand(hand), player, livingEntity, hand);
+                player.displayClientMessage(Component.literal("Used: " + itemName).withStyle(getStyle(player)), true); // Display ability name
+
                 if (result != InteractionResult.PASS) {
                     return;
                 }
@@ -352,15 +387,15 @@ public class BeyonderUtil {
                     player
             ));
             if (blockHit.getType() != HitResult.Type.MISS) {
-                player.sendSystemMessage(Component.literal("Block interaction at reach: " + blockReach));
                 UseOnContext context = new UseOnContext(player.level(), player, hand, player.getItemInHand(hand), blockHit);
                 InteractionResult result = ability.useAbilityOnBlock(context);
+                player.displayClientMessage(Component.literal("Used: " + itemName).withStyle(getStyle(player)), true); // Display ability name
                 if (result != InteractionResult.PASS) {
                     return;
                 }
             }
         }
-        player.sendSystemMessage(Component.literal("General ability use"));
+        player.displayClientMessage(Component.literal("Used: " + itemName).withStyle(getStyle(player)), true); // Display ability name
         ability.useAbility(player.level(), player, hand);
 
     }
@@ -610,6 +645,17 @@ public class BeyonderUtil {
                     level.sendParticles(particle, x + dx, y + dy, z + dz, 0, xSpeed, ySpeed, zSpeed,1);
                 }
             }
+        }
+    }
+    public static void applyMobEffect(Player pPlayer, MobEffect mobEffect, int duration, int amplifier, boolean ambient, boolean visible) {
+        MobEffectInstance currentEffect = pPlayer.getEffect(mobEffect);
+        MobEffectInstance newEffect = new MobEffectInstance(mobEffect, duration, amplifier, ambient, visible);
+        if (currentEffect == null) {
+            pPlayer.addEffect(newEffect);
+        } else if (currentEffect.getAmplifier() < amplifier) {
+            pPlayer.addEffect(newEffect);
+        } else if (currentEffect.getAmplifier() == amplifier && duration >= currentEffect.getDuration()) {
+            pPlayer.addEffect(newEffect);
         }
     }
 }
