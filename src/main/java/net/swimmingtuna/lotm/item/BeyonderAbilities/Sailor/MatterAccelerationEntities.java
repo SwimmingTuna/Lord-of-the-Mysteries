@@ -46,13 +46,15 @@ public class MatterAccelerationEntities extends SimpleAbilityItem {
     }
 
     public static void matterAccelerationEntities(Player player) {
-        for (Entity entity : player.level().getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(300))) {
-            if (entity != player) {
-                if (entity instanceof LivingEntity || entity instanceof Projectile) {
-                    entity.setDeltaMovement(entity.getDeltaMovement().x() * 10, entity.getDeltaMovement().y() * 10, entity.getDeltaMovement().z());
-                    entity.hurtMarked = true;
-                    if (!(entity instanceof MeteorEntity) || !(entity instanceof TornadoEntity)) {
-                        entity.getPersistentData().putInt("matterAccelerationEntities", 10);
+        if (!player.level().isClientSide()) {
+            for (Entity entity : player.level().getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(300))) {
+                if (entity != player) {
+                    if (entity instanceof LivingEntity || entity instanceof Projectile) {
+                        entity.setDeltaMovement(entity.getDeltaMovement().x() * 10, entity.getDeltaMovement().y() * 10, entity.getDeltaMovement().z());
+                        entity.hurtMarked = true;
+                        if (!(entity instanceof MeteorEntity) || !(entity instanceof TornadoEntity)) {
+                            entity.getPersistentData().putInt("matterAccelerationEntities", 10);
+                        }
                     }
                 }
             }

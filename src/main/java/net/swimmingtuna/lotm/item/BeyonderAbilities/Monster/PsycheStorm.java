@@ -72,22 +72,24 @@ public class PsycheStorm extends SimpleAbilityItem {
     }
 
     private void psycheStorm(Player player, Level level, BlockPos targetPos, int sequence) {
-        double radius = (15.0 - sequence);
-        float damage = (float) (25.0 - (sequence / 2));
-        int corruptionAddition = 30 - (sequence / 3);
-        int duration = 200 - (sequence * 20);
-        AABB boundingBox = new AABB(targetPos).inflate(radius);
-        level.getEntitiesOfClass(LivingEntity.class, boundingBox, LivingEntity::isAlive).forEach(livingEntity -> {
-            if (livingEntity != player) {
-                if (livingEntity instanceof Player pPlayer) {
-                    AttributeInstance corruption = pPlayer.getAttribute(ModAttributes.CORRUPTION.get());
-                    double corruptionValue = corruption.getBaseValue();
-                    pPlayer.hurt(pPlayer.damageSources().magic(), damage);
-                    corruption.setBaseValue(corruptionValue + corruptionAddition);
-                    pPlayer.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration,1, false,false));
-                } else livingEntity.hurt(livingEntity.damageSources().magic(), damage);
-            }
-        });
+        if (!player.level().isClientSide()) {
+            double radius = (15.0 - sequence);
+            float damage = (float) (25.0 - (sequence / 2));
+            int corruptionAddition = 30 - (sequence / 3);
+            int duration = 200 - (sequence * 20);
+            AABB boundingBox = new AABB(targetPos).inflate(radius);
+            level.getEntitiesOfClass(LivingEntity.class, boundingBox, LivingEntity::isAlive).forEach(livingEntity -> {
+                if (livingEntity != player) {
+                    if (livingEntity instanceof Player pPlayer) {
+                        AttributeInstance corruption = pPlayer.getAttribute(ModAttributes.CORRUPTION.get());
+                        double corruptionValue = corruption.getBaseValue();
+                        pPlayer.hurt(pPlayer.damageSources().magic(), damage);
+                        corruption.setBaseValue(corruptionValue + corruptionAddition);
+                        pPlayer.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
+                    } else livingEntity.hurt(livingEntity.damageSources().magic(), damage);
+                }
+            });
+        }
     }
 
     @Override

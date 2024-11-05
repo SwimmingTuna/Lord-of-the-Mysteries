@@ -39,56 +39,58 @@ public class EnvisionLife extends SimpleAbilityItem {
 
 
     public static void spawnMob(Player player, String mobName) {
-        Level level = player.level();
-        double x = player.getX();
-        double y = player.getY();
-        double z = player.getZ();
+        if (!player.level().isClientSide()) {
+            Level level = player.level();
+            double x = player.getX();
+            double y = player.getY();
+            double z = player.getZ();
 
-        // Create resource location and check if it exists in registry
-        ResourceLocation resourceLocation = new ResourceLocation(mobName);
-        if (!ForgeRegistries.ENTITY_TYPES.containsKey(resourceLocation)) {
-            player.sendSystemMessage(Component.literal("Invalid mob name: " + mobName));
-            return;
-        }
+            // Create resource location and check if it exists in registry
+            ResourceLocation resourceLocation = new ResourceLocation(mobName);
+            if (!ForgeRegistries.ENTITY_TYPES.containsKey(resourceLocation)) {
+                player.sendSystemMessage(Component.literal("Invalid mob name: " + mobName));
+                return;
+            }
 
-        EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(resourceLocation);
+            EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(resourceLocation);
 
-        int waitMakeLifeCounter = player.getPersistentData().getInt("waitMakeLifeTimer");
-        if (waitMakeLifeCounter == 0) {
-            Entity entity = entityType.create(level);
-            if (entity != null && entity instanceof Mob mob) {
-                entity.setPos(x, y, z);
-                LivingEntity highestHealthTarget = null;
-                float maxHealth = Float.MIN_VALUE;
-                for (LivingEntity livingEntity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(150))) {
-                    if (livingEntity != player) {
-                        float currentHealth = livingEntity.getHealth();
-                        if (currentHealth > maxHealth) {
-                            maxHealth = currentHealth;
-                            highestHealthTarget = livingEntity;
+            int waitMakeLifeCounter = player.getPersistentData().getInt("waitMakeLifeTimer");
+            if (waitMakeLifeCounter == 0) {
+                Entity entity = entityType.create(level);
+                if (entity != null && entity instanceof Mob mob) {
+                    entity.setPos(x, y, z);
+                    LivingEntity highestHealthTarget = null;
+                    float maxHealth = Float.MIN_VALUE;
+                    for (LivingEntity livingEntity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(150))) {
+                        if (livingEntity != player) {
+                            float currentHealth = livingEntity.getHealth();
+                            if (currentHealth > maxHealth) {
+                                maxHealth = currentHealth;
+                                highestHealthTarget = livingEntity;
+                            }
                         }
                     }
-                }
-                if (highestHealthTarget != null) {
-                    ((Mob) entity).setTarget(highestHealthTarget);
-                }
+                    if (highestHealthTarget != null) {
+                        ((Mob) entity).setTarget(highestHealthTarget);
+                    }
 
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                if (holder.getSpirituality() >= mob.getMaxHealth() * 3) {
-                    holder.useSpirituality((int) (mob.getMaxHealth() * 3));
-                    level.addFreshEntity(entity);
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+                    if (holder.getSpirituality() >= mob.getMaxHealth() * 3) {
+                        holder.useSpirituality((int) (mob.getMaxHealth() * 3));
+                        level.addFreshEntity(entity);
 
-                    // Get the translated name of the entity
-                    String entityName = entity.getType().getDescription().getString();
-                    player.displayClientMessage(Component.literal("Envisioned a " + entityName + " into the world"), true);
-                } else {
-                    // Get the translated name for the error message too
-                    String entityName = entity.getType().getDescription().getString();
-                    player.sendSystemMessage(Component.literal("You need " + (mob.getMaxHealth() * 3 - holder.getSpirituality()) + " more spirituality in order to envision " + entityName));
+                        // Get the translated name of the entity
+                        String entityName = entity.getType().getDescription().getString();
+                        player.displayClientMessage(Component.literal("Envisioned a " + entityName + " into the world"), true);
+                    } else {
+                        // Get the translated name for the error message too
+                        String entityName = entity.getType().getDescription().getString();
+                        player.sendSystemMessage(Component.literal("You need " + (mob.getMaxHealth() * 3 - holder.getSpirituality()) + " more spirituality in order to envision " + entityName));
+                    }
                 }
+            } else {
+                player.sendSystemMessage(Component.literal("Ability on Cooldown for " + (400 - waitMakeLifeCounter) / 20 + " seconds"));
             }
-        } else {
-            player.sendSystemMessage(Component.literal("Ability on Cooldown for " + (400 - waitMakeLifeCounter) / 20 + " seconds"));
         }
     }
 

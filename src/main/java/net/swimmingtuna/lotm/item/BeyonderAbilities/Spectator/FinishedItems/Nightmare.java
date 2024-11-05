@@ -74,41 +74,43 @@ public class Nightmare extends SimpleAbilityItem {
 
 
     private void nightmare(Player player, Level level, BlockPos targetPos) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        int sequence = holder.getCurrentSequence();
-        int dir = (int) dreamIntoReality.getValue();
-        double radius = 25.0 - sequence;
-        float damagePlayer = ((float) 120.0 - (sequence * 10)) * dir;
-        float damageMob = ((float) (60.0 - (sequence * 3)) / 2) * dir;
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            int sequence = holder.getCurrentSequence();
+            int dir = (int) dreamIntoReality.getValue();
+            double radius = 25.0 - sequence;
+            float damagePlayer = ((float) 120.0 - (sequence * 10)) * dir;
+            float damageMob = ((float) (60.0 - (sequence * 3)) / 2) * dir;
 
-        int duration = 200 - (sequence * 20);
+            int duration = 200 - (sequence * 20);
 
-        AABB boundingBox = new AABB(targetPos).inflate(radius);
-        level.getEntitiesOfClass(LivingEntity.class, boundingBox, entity -> entity.isAlive()).forEach(livingEntity -> {
-            AttributeInstance nightmareAttribute = livingEntity.getAttribute(ModAttributes.NIGHTMARE.get());
-            String playerName = livingEntity.getDisplayName().getString();
-            if (livingEntity != player) {
-                livingEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
-                if (livingEntity instanceof Player) {
-                    if (nightmareAttribute.getValue() < 3) {
-                        if (sequence <= 2) {
-                            nightmareAttribute.setBaseValue(nightmareAttribute.getValue() + 2);
-                        } else {
-                            nightmareAttribute.setBaseValue(nightmareAttribute.getValue() + 1);
+            AABB boundingBox = new AABB(targetPos).inflate(radius);
+            level.getEntitiesOfClass(LivingEntity.class, boundingBox, entity -> entity.isAlive()).forEach(livingEntity -> {
+                AttributeInstance nightmareAttribute = livingEntity.getAttribute(ModAttributes.NIGHTMARE.get());
+                String playerName = livingEntity.getDisplayName().getString();
+                if (livingEntity != player) {
+                    livingEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, duration, 1, false, false));
+                    if (livingEntity instanceof Player) {
+                        if (nightmareAttribute.getValue() < 3) {
+                            if (sequence <= 2) {
+                                nightmareAttribute.setBaseValue(nightmareAttribute.getValue() + 2);
+                            } else {
+                                nightmareAttribute.setBaseValue(nightmareAttribute.getValue() + 1);
+                            }
                         }
-                    }
-                    if (nightmareAttribute.getValue() == 3) {
-                        livingEntity.hurt(livingEntity.damageSources().magic(), damagePlayer);
-                        nightmareAttribute.setBaseValue(0);
-                    }
-                    player.sendSystemMessage(Component.literal(playerName + "'s nightmare value is:" + (int) nightmareAttribute.getValue()).withStyle(BeyonderUtil.getStyle(player)));
+                        if (nightmareAttribute.getValue() == 3) {
+                            livingEntity.hurt(livingEntity.damageSources().magic(), damagePlayer);
+                            nightmareAttribute.setBaseValue(0);
+                        }
+                        player.sendSystemMessage(Component.literal(playerName + "'s nightmare value is:" + (int) nightmareAttribute.getValue()).withStyle(BeyonderUtil.getStyle(player)));
 
-                } else {
-                    livingEntity.hurt(livingEntity.damageSources().magic(), damageMob);
+                    } else {
+                        livingEntity.hurt(livingEntity.damageSources().magic(), damageMob);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override

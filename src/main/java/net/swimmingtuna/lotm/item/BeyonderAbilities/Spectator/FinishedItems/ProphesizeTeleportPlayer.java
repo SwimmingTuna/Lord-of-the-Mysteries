@@ -37,16 +37,18 @@ public class ProphesizeTeleportPlayer extends SimpleAbilityItem {
     }
 
     private void teleportEntities(Player player) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        int sequence = holder.getCurrentSequence();
-        int dir = (int) player.getAttribute(ModAttributes.DIR.get()).getValue();
-        double radius = (500 - sequence * 100) * dir;
-        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
-            if (entity != player && !entity.level().isClientSide()) {
-                entity.getPersistentData().putInt("prophesizeTeleportationCounter", (int) (300 * Math.random()));
-                entity.getPersistentData().putInt("prophesizeTeleportX", (int) player.getX());
-                entity.getPersistentData().putInt("prophesizeTeleportY", (int) player.getY());
-                entity.getPersistentData().putInt("prophesizeTeleportZ", (int) player.getZ());
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int sequence = holder.getCurrentSequence();
+            int dir = (int) player.getAttribute(ModAttributes.DIR.get()).getValue();
+            double radius = (500 - sequence * 100) * dir;
+            for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
+                if (entity != player && !entity.level().isClientSide()) {
+                    entity.getPersistentData().putInt("prophesizeTeleportationCounter", (int) (300 * Math.random()));
+                    entity.getPersistentData().putInt("prophesizeTeleportX", (int) player.getX());
+                    entity.getPersistentData().putInt("prophesizeTeleportY", (int) player.getY());
+                    entity.getPersistentData().putInt("prophesizeTeleportZ", (int) player.getZ());
+                }
             }
         }
     }

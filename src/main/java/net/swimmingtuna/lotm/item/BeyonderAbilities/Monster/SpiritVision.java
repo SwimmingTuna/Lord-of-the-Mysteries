@@ -32,7 +32,9 @@ public class SpiritVision extends SimpleAbilityItem {
     }
 
     private void activateSpiritVision(Player player) {
+        if (!player.level().isClientSide()) {
 
+        }
     }
 
     @Override

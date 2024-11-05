@@ -47,52 +47,59 @@ public class DreamIntoReality extends SimpleAbilityItem {
     }
 
     private void toggleFlying(Player player) {
-        boolean canFly = player.getPersistentData().getBoolean(CAN_FLY);
-        if (canFly) {
-            stopFlying(player);
-        } else {
-            startFlying(player);
+        if (!player.level().isClientSide()) {
+            boolean canFly = player.getPersistentData().getBoolean(CAN_FLY);
+            if (canFly) {
+                stopFlying(player);
+            } else {
+                startFlying(player);
+            }
         }
     }
 
     private void startFlying(Player player) {
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        if (dreamIntoReality.getValue() != 3) {
-            player.getPersistentData().putBoolean(CAN_FLY, true);
-            Abilities playerAbilities = player.getAbilities();
-            dreamIntoReality.setBaseValue(4);
-            if (!player.isCreative()) {
-                playerAbilities.mayfly = true;
-                playerAbilities.flying = true;
-                playerAbilities.setFlyingSpeed(0.1F);
-            }
-            ScaleData scaleData = ScaleTypes.BASE.getScaleData(player);
-            scaleData.setTargetScale(scaleData.getBaseScale() * 4);
-            scaleData.markForSync(true);
-            player.onUpdateAbilities();
-            if (player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+        if (!player.level().isClientSide()) {
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            if (dreamIntoReality.getValue() != 3) {
+                player.getPersistentData().putBoolean(CAN_FLY, true);
+                Abilities playerAbilities = player.getAbilities();
+                dreamIntoReality.setBaseValue(4);
+                if (!player.isCreative()) {
+                    playerAbilities.mayfly = true;
+                    playerAbilities.flying = true;
+                    playerAbilities.setFlyingSpeed(0.1F);
+                }
+                ScaleData scaleData = ScaleTypes.BASE.getScaleData(player);
+                scaleData.setTargetScale(scaleData.getBaseScale() * 4);
+                scaleData.markForSync(true);
+                player.onUpdateAbilities();
+                if (player instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+                }
             }
         }
     }
 
     public static void stopFlying(Player player) {
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        player.getPersistentData().putBoolean(CAN_FLY, false);
-        Abilities playerAbilities = player.getAbilities();
-        CompoundTag compoundTag = player.getPersistentData();
-        int mindscape = compoundTag.getInt("inMindscape");
-        if (!playerAbilities.instabuild || mindscape >= 1) {
-        playerAbilities.mayfly = false;
-        playerAbilities.flying = false;}
-        dreamIntoReality.setBaseValue(1);
-        playerAbilities.setFlyingSpeed(0.05F);
-        player.onUpdateAbilities();
-        ScaleData scaleData = ScaleTypes.BASE.getScaleData(player);
-        scaleData.setTargetScale(1);
-        scaleData.markForSync(true);
-        if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+        if (!player.level().isClientSide()) {
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            player.getPersistentData().putBoolean(CAN_FLY, false);
+            Abilities playerAbilities = player.getAbilities();
+            CompoundTag compoundTag = player.getPersistentData();
+            int mindscape = compoundTag.getInt("inMindscape");
+            if (!playerAbilities.instabuild || mindscape >= 1) {
+                playerAbilities.mayfly = false;
+                playerAbilities.flying = false;
+            }
+            dreamIntoReality.setBaseValue(1);
+            playerAbilities.setFlyingSpeed(0.05F);
+            player.onUpdateAbilities();
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(player);
+            scaleData.setTargetScale(1);
+            scaleData.markForSync(true);
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+            }
         }
     }
 

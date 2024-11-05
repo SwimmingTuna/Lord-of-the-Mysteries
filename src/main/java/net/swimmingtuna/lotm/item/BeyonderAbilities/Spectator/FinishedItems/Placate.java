@@ -70,35 +70,39 @@ public class Placate extends SimpleAbilityItem {
     }
 
     public static void removeHarmfulEffects(LivingEntity entity) {
-        List<MobEffect> effectsToRemove = new ArrayList<>();
-        for (MobEffectInstance effect : entity.getActiveEffects()) {
-            MobEffect type = effect.getEffect();
-            if (!type.isBeneficial()) {
-                effectsToRemove.add(type);
+        if (!entity.level().isClientSide()) {
+            List<MobEffect> effectsToRemove = new ArrayList<>();
+            for (MobEffectInstance effect : entity.getActiveEffects()) {
+                MobEffect type = effect.getEffect();
+                if (!type.isBeneficial()) {
+                    effectsToRemove.add(type);
+                }
             }
-        }
-        for (MobEffect effect : effectsToRemove) {
-            entity.removeEffect(effect);
+            for (MobEffect effect : effectsToRemove) {
+                entity.removeEffect(effect);
+            }
         }
     }
 
     public static void halfHarmfulEffects(LivingEntity entity) {
         // Collect harmful effects to modify later
-        List<MobEffectInstance> effectsToModify = new ArrayList<>();
-        for (MobEffectInstance effect : entity.getActiveEffects()) {
-            MobEffect type = effect.getEffect();
-            if (!type.isBeneficial()) {
-                effectsToModify.add(effect);
+        if (!entity.level().isClientSide()) {
+            List<MobEffectInstance> effectsToModify = new ArrayList<>();
+            for (MobEffectInstance effect : entity.getActiveEffects()) {
+                MobEffect type = effect.getEffect();
+                if (!type.isBeneficial()) {
+                    effectsToModify.add(effect);
+                }
             }
-        }
-        // Modify duration of each collected effect
-        for (MobEffectInstance effect : effectsToModify) {
-            MobEffect type = effect.getEffect();
-            int newDuration = (effect.getDuration() + 1) / 2;
+            // Modify duration of each collected effect
+            for (MobEffectInstance effect : effectsToModify) {
+                MobEffect type = effect.getEffect();
+                int newDuration = (effect.getDuration() + 1) / 2;
 
-            // Remove the current effect and re-add with new duration
-            entity.removeEffect(type);
-            entity.addEffect(new MobEffectInstance(type, newDuration, effect.getAmplifier(), effect.isAmbient(), effect.isVisible()));
+                // Remove the current effect and re-add with new duration
+                entity.removeEffect(type);
+                entity.addEffect(new MobEffectInstance(type, newDuration, effect.getAmplifier(), effect.isAmbient(), effect.isVisible()));
+            }
         }
     }
 

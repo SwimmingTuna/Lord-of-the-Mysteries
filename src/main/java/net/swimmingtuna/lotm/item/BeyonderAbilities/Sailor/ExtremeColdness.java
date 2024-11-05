@@ -37,9 +37,11 @@ public class ExtremeColdness extends SimpleAbilityItem {
     }
 
     public static void extremeColdness(Player player) {
-        player.getPersistentData().putInt("sailorExtremeColdness", 1);
-    }
+        if (!player.level().isClientSide()) {
 
+            player.getPersistentData().putInt("sailorExtremeColdness", 1);
+        }
+    }
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal("Upon use, lets out an area of below freezing temperatures that freezes everything in it's range\n" +

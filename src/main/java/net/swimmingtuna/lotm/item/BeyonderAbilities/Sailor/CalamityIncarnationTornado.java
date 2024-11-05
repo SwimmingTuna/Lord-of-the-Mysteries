@@ -35,7 +35,9 @@ public class CalamityIncarnationTornado extends SimpleAbilityItem {
 
 
     public static void calamityIncarnationTornado(Player player) {
-        player.getPersistentData().putInt("calamityIncarnationTornado", 300);
+        if (!player.level().isClientSide()) {
+            player.getPersistentData().putInt("calamityIncarnationTornado", 300);
+        }
     }
 
     @Override

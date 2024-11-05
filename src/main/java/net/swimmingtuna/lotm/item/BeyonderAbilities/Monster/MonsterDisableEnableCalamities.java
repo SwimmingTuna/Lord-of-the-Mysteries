@@ -33,10 +33,12 @@ public class MonsterDisableEnableCalamities extends SimpleAbilityItem {
     }
 
     public static void enableOrDisableCalamities(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean monsterCalamityAttraction = tag.getBoolean("monsterCalamityAttraction");
-        tag.putBoolean("monsterCalamityAttraction", !monsterCalamityAttraction);
-        player.displayClientMessage(Component.literal("Calamity Attraction Turned " + (monsterCalamityAttraction ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean monsterCalamityAttraction = tag.getBoolean("monsterCalamityAttraction");
+            tag.putBoolean("monsterCalamityAttraction", !monsterCalamityAttraction);
+            player.displayClientMessage(Component.literal("Calamity Attraction Turned " + (monsterCalamityAttraction ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+        }
     }
 
     @Override

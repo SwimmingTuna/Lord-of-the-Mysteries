@@ -50,11 +50,13 @@ public class ManipulateEmotion extends SimpleAbilityItem {
     }
 
     private static void manipulateEmotion(Player player, int sequence) {
-        float damage = 100 - (sequence * 10);
-        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(250))) {
-            if (entity != player && entity.hasEffect(ModEffects.MANIPULATION.get())) {
-                entity.hurt(entity.damageSources().magic(), damage);
-                entity.removeEffect(ModEffects.MANIPULATION.get());
+        if (!player.level().isClientSide()) {
+            float damage = 100 - (sequence * 10);
+            for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(250))) {
+                if (entity != player && entity.hasEffect(ModEffects.MANIPULATION.get())) {
+                    entity.hurt(entity.damageSources().magic(), damage);
+                    entity.removeEffect(ModEffects.MANIPULATION.get());
+                }
             }
         }
     }

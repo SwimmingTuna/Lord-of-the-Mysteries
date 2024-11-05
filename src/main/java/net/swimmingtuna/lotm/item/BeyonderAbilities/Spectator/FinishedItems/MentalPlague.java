@@ -45,7 +45,9 @@ public class MentalPlague extends SimpleAbilityItem {
     }
 
     public void mentalPlauge(LivingEntity interactionTarget) {
-        interactionTarget.addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(), 620, 1));
+        if (!interactionTarget.level().isClientSide()) {
+            interactionTarget.addEffect(new MobEffectInstance(ModEffects.MENTALPLAGUE.get(), 620, 1));
+        }
     }
 
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);

@@ -3,9 +3,11 @@ package net.swimmingtuna.lotm.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -239,5 +241,30 @@ public class MeteorEntity extends AbstractHurtingProjectile {
         ProjectileUtil.rotateTowardsMovement(this, 0.5f);
         this.xRotO = getXRot();
         this.yRotO = this.getYRot();
+        if (this.level() instanceof ServerLevel serverLevel) {
+            for (int i = 0; i < 5; i++) {
+                double offsetX = (Math.random() - 0.5) * 6; // Random offset within [-3, 3]
+                double offsetY = (Math.random() - 0.5) * 6; // Random offset within [-3, 3]
+                double offsetZ = (Math.random() - 0.5) * 6; // Random offset within [-3, 3]
+                serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE,
+                        this.getX() + offsetX,
+                        this.getY() + offsetY,
+                        this.getZ() + offsetZ,
+                        0, 0.0, 0.0,0,0);
+            }
+
+            // Spawn 20 fire particles randomly spread within a 10-block radius
+            for (int i = 0; i < 20; i++) {
+                double offsetX = (Math.random() - 0.5) * 20; // Random offset within [-10, 10]
+                double offsetY = (Math.random() - 0.5) * 20; // Random offset within [-10, 10]
+                double offsetZ = (Math.random() - 0.5) * 20; // Random offset within [-10, 10]
+                serverLevel.sendParticles(ParticleTypes.FLAME,
+                        this.getX() + offsetX,
+                        this.getY() + offsetY,
+                        this.getZ() + offsetZ,
+                        0, 0.0, 0.0, 0.0, 0);
+            }
+        }
+
     }
 }

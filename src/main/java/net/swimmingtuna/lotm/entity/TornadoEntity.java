@@ -276,8 +276,8 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                     if (state.isAir() || state.is(BlockTags.TALL_FLOWERS) || random.nextInt(5000) != 1) {
                         continue;
                     }
-                    // Spawn a falling block entity at the destroyed block's position
-                    FallingBlockEntity fallingBlock = FallingBlockEntity.fall(this.level(), blockPosition, state);
+                    if (this.tickCount % 5 == 0) {
+                        FallingBlockEntity fallingBlock = FallingBlockEntity.fall(this.level(), blockPosition, state);
                     fallingBlock.time = 1;
 
                     // Set random motion for the falling block
@@ -288,7 +288,9 @@ public class TornadoEntity extends AbstractHurtingProjectile {
 
                     // Remove the block from the world and add the falling block entity
                     this.level().setBlock(blockPosition, Blocks.AIR.defaultBlockState(), 3);
-                    this.level().addFreshEntity(fallingBlock);
+                        this.level().addFreshEntity(fallingBlock);
+                    }
+
                 }
             }
 

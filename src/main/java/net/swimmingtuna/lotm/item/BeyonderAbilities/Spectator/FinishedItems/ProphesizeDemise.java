@@ -36,7 +36,7 @@ import java.util.List;
 public class ProphesizeDemise extends SimpleAbilityItem {
 
     public ProphesizeDemise(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 1, 1000, 0,400,400);
+        super(properties, BeyonderClassInit.SPECTATOR, 1, 1000, 0, 400, 400);
     }
 
     @Override
@@ -81,7 +81,9 @@ public class ProphesizeDemise extends SimpleAbilityItem {
     }
 
     public void prophesizeDemise(LivingEntity interactionTarget) {
-        interactionTarget.addEffect(new MobEffectInstance(ModEffects.SPECTATORDEMISE.get(), 600, 1, false, false));
+        if (!interactionTarget.level().isClientSide()) {
+            interactionTarget.addEffect(new MobEffectInstance(ModEffects.SPECTATORDEMISE.get(), 600, 1, false, false));
+        }
     }
 
     @SubscribeEvent

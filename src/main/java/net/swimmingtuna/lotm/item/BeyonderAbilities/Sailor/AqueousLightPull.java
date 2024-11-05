@@ -35,10 +35,12 @@ public class AqueousLightPull extends SimpleAbilityItem {
     }
 
     public static void aqueousLightPull(Player player) {
-        Vec3 eyePosition = player.getEyePosition(1.0f);
-        Vec3 direction = player.getViewVector(1.0f);
-        Vec3 initialVelocity = direction.scale(2.0);
-        AqueousLightEntityPull.summonEntityWithSpeed(direction, initialVelocity, eyePosition, player.getX(), player.getY(), player.getZ(), player);
+        if (!player.level().isClientSide()) {
+            Vec3 eyePosition = player.getEyePosition(1.0f);
+            Vec3 direction = player.getViewVector(1.0f);
+            Vec3 initialVelocity = direction.scale(2.0);
+            AqueousLightEntityPull.summonEntityWithSpeed(direction, initialVelocity, eyePosition, player.getX(), player.getY(), player.getZ(), player);
+        }
     }
 
     @Override

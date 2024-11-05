@@ -37,13 +37,15 @@ public class Tsunami extends SimpleAbilityItem {
     }
 
     public static void startTsunami(Player player) {
-        player.getPersistentData().putInt("sailorTsunami", 600);
-        float yaw = player.getYRot();
-        String direction = getDirectionFromYaw(yaw);
-        player.getPersistentData().putString("sailorTsunamiDirection", direction);
-        player.getPersistentData().putInt("sailorTsunamiX", (int) player.getX());
-        player.getPersistentData().putInt("sailorTsunamiY", (int) player.getY());
-        player.getPersistentData().putInt("sailorTsunamiZ", (int) player.getZ());
+        if (!player.level().isClientSide()) {
+            player.getPersistentData().putInt("sailorTsunami", 600);
+            float yaw = player.getYRot();
+            String direction = getDirectionFromYaw(yaw);
+            player.getPersistentData().putString("sailorTsunamiDirection", direction);
+            player.getPersistentData().putInt("sailorTsunamiX", (int) player.getX());
+            player.getPersistentData().putInt("sailorTsunamiY", (int) player.getY());
+            player.getPersistentData().putInt("sailorTsunamiZ", (int) player.getZ());
+        }
     }
 
     public static String getDirectionFromYaw(float yaw) {

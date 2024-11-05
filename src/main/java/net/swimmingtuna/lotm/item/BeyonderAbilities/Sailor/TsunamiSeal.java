@@ -40,15 +40,16 @@ public class TsunamiSeal extends SimpleAbilityItem {
     }
 
     public static void startTsunami(Player player) {
-        player.getPersistentData().putInt("sailorTsunamiSeal", 600);
-        float yaw = player.getYRot();
-        String direction = getDirectionFromYaw(yaw);
-        player.getPersistentData().putString("sailorTsunamiSealDirection", direction);
-        player.getPersistentData().putInt("sailorTsunamiSealX", (int) player.getX());
-        player.getPersistentData().putInt("sailorTsunamiSealY", (int) player.getY());
-        player.getPersistentData().putInt("sailorTsunamiSealZ", (int) player.getZ());
+        if (!player.level().isClientSide()) {
+            player.getPersistentData().putInt("sailorTsunamiSeal", 600);
+            float yaw = player.getYRot();
+            String direction = getDirectionFromYaw(yaw);
+            player.getPersistentData().putString("sailorTsunamiSealDirection", direction);
+            player.getPersistentData().putInt("sailorTsunamiSealX", (int) player.getX());
+            player.getPersistentData().putInt("sailorTsunamiSealY", (int) player.getY());
+            player.getPersistentData().putInt("sailorTsunamiSealZ", (int) player.getZ());
+        }
     }
-
     public static String getDirectionFromYaw(float yaw) {
         if (yaw < 0) {
             yaw += 360;

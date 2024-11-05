@@ -33,10 +33,12 @@ public class MonsterDangerSense extends SimpleAbilityItem {
     }
 
     public static void enableOrDisableDangerSense(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean monsterDangerSense = tag.getBoolean("monsterDangerSense");
-        tag.putBoolean("monsterDangerSense", !monsterDangerSense);
-        player.displayClientMessage(Component.literal("Danger Sense Turned " + (monsterDangerSense ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean monsterDangerSense = tag.getBoolean("monsterDangerSense");
+            tag.putBoolean("monsterDangerSense", !monsterDangerSense);
+            player.displayClientMessage(Component.literal("Danger Sense Turned " + (monsterDangerSense ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+        }
     }
 
     @Override

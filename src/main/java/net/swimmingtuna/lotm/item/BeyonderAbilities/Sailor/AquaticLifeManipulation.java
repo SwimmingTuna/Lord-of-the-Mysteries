@@ -39,25 +39,27 @@ public class AquaticLifeManipulation extends SimpleAbilityItem {
     }
 
     public static void aquaticLifeManipulation(Player player) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        int sequence = holder.getCurrentSequence();
-        if (player.level().isClientSide()) {
-            return;
-        }
-        List<LivingEntity> aquaticEntities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(50), entity -> entity instanceof WaterAnimal);
-        if (aquaticEntities.isEmpty()) {
-            return;
-        }
-        LivingEntity nearestAquaticEntity = aquaticEntities.stream().min(Comparator.comparingDouble(player::distanceTo)).orElse(null);
-        List<Player> nearbyPlayers = nearestAquaticEntity.level().getEntitiesOfClass(Player.class, nearestAquaticEntity.getBoundingBox().inflate(200 - (sequence * 20)));
-        Player nearestPlayer = nearbyPlayers.stream().filter(nearbyPlayer -> nearbyPlayer != player).min(Comparator.comparingDouble(nearestAquaticEntity::distanceTo)).orElse(null);
-        if (nearestPlayer == null) {
-            return;
-        }
-        if (sequence >= 2) {
-            player.sendSystemMessage(Component.literal("Nearest Player is " + nearestPlayer.getName().getString() + ". Pathway is " + holder.getCurrentClass()).withStyle(BeyonderUtil.getStyle(player)));
-        } else {
-            player.sendSystemMessage(Component.literal("Nearest Player is " + nearestPlayer.getName().getString() + ". Pathway is " + holder.getCurrentClass().sequenceNames().get(holder.getCurrentSequence()) + " sequence " + holder.getCurrentSequence()).withStyle(BeyonderUtil.getStyle(player)));
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int sequence = holder.getCurrentSequence();
+            if (player.level().isClientSide()) {
+                return;
+            }
+            List<LivingEntity> aquaticEntities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(50), entity -> entity instanceof WaterAnimal);
+            if (aquaticEntities.isEmpty()) {
+                return;
+            }
+            LivingEntity nearestAquaticEntity = aquaticEntities.stream().min(Comparator.comparingDouble(player::distanceTo)).orElse(null);
+            List<Player> nearbyPlayers = nearestAquaticEntity.level().getEntitiesOfClass(Player.class, nearestAquaticEntity.getBoundingBox().inflate(200 - (sequence * 20)));
+            Player nearestPlayer = nearbyPlayers.stream().filter(nearbyPlayer -> nearbyPlayer != player).min(Comparator.comparingDouble(nearestAquaticEntity::distanceTo)).orElse(null);
+            if (nearestPlayer == null) {
+                return;
+            }
+            if (sequence >= 2) {
+                player.sendSystemMessage(Component.literal("Nearest Player is " + nearestPlayer.getName().getString() + ". Pathway is " + holder.getCurrentClass()).withStyle(BeyonderUtil.getStyle(player)));
+            } else {
+                player.sendSystemMessage(Component.literal("Nearest Player is " + nearestPlayer.getName().getString() + ". Pathway is " + holder.getCurrentClass().sequenceNames().get(holder.getCurrentSequence()) + " sequence " + holder.getCurrentSequence()).withStyle(BeyonderUtil.getStyle(player)));
+            }
         }
     }
 

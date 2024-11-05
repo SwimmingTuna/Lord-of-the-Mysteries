@@ -41,7 +41,9 @@ public class AcidicRain extends SimpleAbilityItem {
     }
 
     private static void acidicRain(Player player) {
-        player.getPersistentData().putInt("sailorAcidicRain", 1);
+        if (!player.level().isClientSide()) {
+            player.getPersistentData().putInt("sailorAcidicRain", 1);
+        }
     }
 
     @Override

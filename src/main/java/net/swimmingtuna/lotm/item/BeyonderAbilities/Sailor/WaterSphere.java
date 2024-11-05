@@ -32,7 +32,9 @@ public class WaterSphere extends SimpleAbilityItem {
     }
 
     private static void waterSphere(Player player) {
-        player.getPersistentData().putInt("sailorSphere", 200);
+        if (!player.level().isClientSide()) {
+            player.getPersistentData().putInt("sailorSphere", 200);
+        }
     }
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {

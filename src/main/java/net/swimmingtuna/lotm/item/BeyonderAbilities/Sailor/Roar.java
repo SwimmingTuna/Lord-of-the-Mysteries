@@ -38,13 +38,15 @@ public class Roar extends SimpleAbilityItem {
     }
 
     public static void roar(Player player) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        RoarEntity roarEntity = new RoarEntity(EntityInit.ROAR_ENTITY.get(), player.level());
-        roarEntity.teleportTo(player.getX(), player.getY(), player.getZ());
-        Vec3 lookVec = player.getLookAngle();
-        roarEntity.setDeltaMovement(lookVec.scale(10 - holder.getCurrentSequence()).x,lookVec.scale(10 - holder.getCurrentSequence()).y,lookVec.scale(10 - holder.getCurrentSequence()).z);
-        roarEntity.hurtMarked = true;
-        player.level().addFreshEntity(roarEntity);
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            RoarEntity roarEntity = new RoarEntity(EntityInit.ROAR_ENTITY.get(), player.level());
+            roarEntity.teleportTo(player.getX(), player.getY(), player.getZ());
+            Vec3 lookVec = player.getLookAngle();
+            roarEntity.setDeltaMovement(lookVec.scale(10 - holder.getCurrentSequence()).x, lookVec.scale(10 - holder.getCurrentSequence()).y, lookVec.scale(10 - holder.getCurrentSequence()).z);
+            roarEntity.hurtMarked = true;
+            player.level().addFreshEntity(roarEntity);
+        }
     }
 
     @Override

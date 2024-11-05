@@ -35,14 +35,15 @@ public class MeteorShower extends SimpleAbilityItem {
     }
 
     public static void meteorShower(Player player) {
-        MeteorEntity.summonMultipleMeteors(player);
-        MeteorEntity.summonMultipleMeteors(player);
-        MeteorEntity.summonMultipleMeteors(player);
-        MeteorEntity.summonMultipleMeteors(player);
-        MeteorEntity.summonMultipleMeteors(player);
-        MeteorEntity.summonMultipleMeteors(player);
-        MeteorEntity.summonMultipleMeteors(player);
-
+        if (!player.level().isClientSide()) {
+            MeteorEntity.summonMultipleMeteors(player);
+            MeteorEntity.summonMultipleMeteors(player);
+            MeteorEntity.summonMultipleMeteors(player);
+            MeteorEntity.summonMultipleMeteors(player);
+            MeteorEntity.summonMultipleMeteors(player);
+            MeteorEntity.summonMultipleMeteors(player);
+            MeteorEntity.summonMultipleMeteors(player);
+        }
     }
 
     @Override

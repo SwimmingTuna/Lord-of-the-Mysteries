@@ -35,12 +35,13 @@ public class WindManipulationSense extends SimpleAbilityItem {
     }
 
     public static void windManipulationSense(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean windManipulationSense = tag.getBoolean("windManipulationSense");
-        tag.putBoolean("windManipulationSense", !windManipulationSense);
-        player.displayClientMessage(Component.literal("Wind Sense Turned " + (windManipulationSense ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean windManipulationSense = tag.getBoolean("windManipulationSense");
+            tag.putBoolean("windManipulationSense", !windManipulationSense);
+            player.displayClientMessage(Component.literal("Wind Sense Turned " + (windManipulationSense ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+        }
     }
-
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         tooltipComponents.add(Component.literal("Upon use, controls the surrounding wind to extend your senses, alerting you of players around you and where they are"));

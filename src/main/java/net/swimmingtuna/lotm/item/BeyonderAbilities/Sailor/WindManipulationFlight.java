@@ -49,45 +49,53 @@ public class WindManipulationFlight extends SimpleAbilityItem {
     }
 
     public static void flightRegular(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        tag.putInt("sailorFlight", 1);
-        tag.putInt("sailorFlightDamageCancel", 1);
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            tag.putInt("sailorFlight", 1);
+            tag.putInt("sailorFlightDamageCancel", 1);
+        }
     }
 
     public static void startFlying(Player player) {
-        player.getPersistentData().putBoolean("sailorFlight1", true);
-        Abilities playerAbilities = player.getAbilities();
-        if (!playerAbilities.instabuild) {
-            playerAbilities.mayfly = true;
-            playerAbilities.flying = true;
-            playerAbilities.setFlyingSpeed(0.1F);
-        }
-        player.onUpdateAbilities();
-        if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+        if (!player.level().isClientSide()) {
+
+            player.getPersistentData().putBoolean("sailorFlight1", true);
+            Abilities playerAbilities = player.getAbilities();
+            if (!playerAbilities.instabuild) {
+                playerAbilities.mayfly = true;
+                playerAbilities.flying = true;
+                playerAbilities.setFlyingSpeed(0.1F);
+            }
+            player.onUpdateAbilities();
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+            }
         }
     }
-
     public static void toggleFlying(Player player) {
-        boolean canFly = player.getPersistentData().getBoolean("sailorFlight1");
-        if (canFly) {
-            stopFlying(player);
-        } else {
-            startFlying(player);
+        if (!player.level().isClientSide()) {
+            boolean canFly = player.getPersistentData().getBoolean("sailorFlight1");
+            if (canFly) {
+                stopFlying(player);
+            } else {
+                startFlying(player);
+            }
         }
     }
 
     public static void stopFlying(Player player) {
-        player.getPersistentData().putBoolean("sailorFlight1", false);
-        Abilities playerAbilities = player.getAbilities();
-        if (!player.isCreative() && !player.isSpectator()) {
-            playerAbilities.mayfly = false;
-            playerAbilities.flying = false;
-        }
-        playerAbilities.setFlyingSpeed(0.05F);
-        player.onUpdateAbilities();
-        if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+        if (!player.level().isClientSide()) {
+            player.getPersistentData().putBoolean("sailorFlight1", false);
+            Abilities playerAbilities = player.getAbilities();
+            if (!player.isCreative() && !player.isSpectator()) {
+                playerAbilities.mayfly = false;
+                playerAbilities.flying = false;
+            }
+            playerAbilities.setFlyingSpeed(0.05F);
+            player.onUpdateAbilities();
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(playerAbilities));
+            }
         }
     }
 

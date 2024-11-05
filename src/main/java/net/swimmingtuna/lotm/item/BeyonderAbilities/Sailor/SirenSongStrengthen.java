@@ -39,25 +39,27 @@ public class SirenSongStrengthen extends SimpleAbilityItem {
     }
 
     private static void sirenSongStrengthen(Player player, Level level) {
-        CompoundTag tag = player.getPersistentData();
-        if (tag.getInt("sirenSongStrengthen") == 0) {
-            tag.putInt("sirenSongStrengthen", 400);
-        }
-        if (tag.getInt("sirenSongStrengthen") > 1 && tag.getInt("sirenSongStrengthen") < 400) {
-            tag.putInt("sirenSongStrengthen", 0);
-        }
-        if (tag.getInt("sirenSongHarm") > 1) {
-            tag.putInt("sirenSongHarm", 0);
-            tag.putInt("sirenSongStrengthen", 400);
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            if (tag.getInt("sirenSongStrengthen") == 0) {
+                tag.putInt("sirenSongStrengthen", 400);
+            }
+            if (tag.getInt("sirenSongStrengthen") > 1 && tag.getInt("sirenSongStrengthen") < 400) {
+                tag.putInt("sirenSongStrengthen", 0);
+            }
+            if (tag.getInt("sirenSongHarm") > 1) {
+                tag.putInt("sirenSongHarm", 0);
+                tag.putInt("sirenSongStrengthen", 400);
 
-        }
-        if (tag.getInt("sirenSongWeaken") > 1) {
-            tag.putInt("sirenSongWeaken", 0);
-            tag.putInt("sirenSongStrengthen", 400);
-        }
-        if (tag.getInt("sirenSongStun") > 1) {
-            tag.putInt("sirenSongStun", 0);
-            tag.putInt("sirenSongStrengthen", 400);
+            }
+            if (tag.getInt("sirenSongWeaken") > 1) {
+                tag.putInt("sirenSongWeaken", 0);
+                tag.putInt("sirenSongStrengthen", 400);
+            }
+            if (tag.getInt("sirenSongStun") > 1) {
+                tag.putInt("sirenSongStun", 0);
+                tag.putInt("sirenSongStrengthen", 400);
+            }
         }
     }
 

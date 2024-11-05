@@ -33,10 +33,12 @@ public class SailorProjectileControl extends SimpleAbilityItem {
     }
 
     public static void projectileControl(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean sailorProjectileMovement = tag.getBoolean("sailorProjectileMovement");
-        tag.putBoolean("sailorProjectileMovement", !sailorProjectileMovement);
-        player.displayClientMessage(Component.literal("Projectile Movement Turned " + (sailorProjectileMovement ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean sailorProjectileMovement = tag.getBoolean("sailorProjectileMovement");
+            tag.putBoolean("sailorProjectileMovement", !sailorProjectileMovement);
+            player.displayClientMessage(Component.literal("Projectile Movement Turned " + (sailorProjectileMovement ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+        }
     }
 
     @Override

@@ -38,10 +38,12 @@ public class DragonBreath extends SimpleAbilityItem {
     }
 
     public static void dragonbreath(Player player) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        int sequence = (int) ((60 - holder.getCurrentSequence() * 4) * dreamIntoReality.getValue());
-        DragonBreathEntity.shootDragonBreath(player, sequence, player.getX(), player.getY(), player.getZ() );
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            int sequence = (int) ((60 - holder.getCurrentSequence() * 4) * dreamIntoReality.getValue());
+            DragonBreathEntity.shootDragonBreath(player, sequence, player.getX(), player.getY(), player.getZ());
+        }
     }
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {

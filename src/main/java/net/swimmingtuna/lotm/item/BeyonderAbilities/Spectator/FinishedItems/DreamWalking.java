@@ -71,9 +71,11 @@ public class DreamWalking extends SimpleAbilityItem {
     }
 
     public static void dreamWalk(LivingEntity interactionTarget, Player player) {
-        double x = interactionTarget.getX();
-        double y = interactionTarget.getY();
-        double z = interactionTarget.getZ();
-        player.teleportTo(x, y, z);
+        if (!player.level().isClientSide()) {
+            double x = interactionTarget.getX();
+            double y = interactionTarget.getY();
+            double z = interactionTarget.getZ();
+            player.teleportTo(x, y, z);
+        }
     }
 }

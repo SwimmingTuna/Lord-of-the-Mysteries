@@ -51,20 +51,22 @@ public class BattleHypnotism extends SimpleAbilityItem {
     }
 
     private void makesEntitiesAttackEachOther(Player player, Level level, BlockPos targetPos, int sequence, int dir) {
-        double radius = 20.0 - sequence * dir;
-        float damage = 15 - sequence;
-        int duration = 400 - (sequence * 10);
-        AABB boundingBox = new AABB(targetPos).inflate(radius);
-        level.getEntitiesOfClass(LivingEntity.class, boundingBox, LivingEntity::isAlive).forEach(livingEntity -> {
-            livingEntity.hurt(livingEntity.damageSources().magic(), damage);
-            if (livingEntity != player) {
-                if (livingEntity instanceof Player) {
-                    livingEntity.addEffect(new MobEffectInstance(ModEffects.BATTLEHYPNOTISM.get(), duration, (int) radius, false, false));
-                } else {
-                    livingEntity.addEffect(new MobEffectInstance(ModEffects.BATTLEHYPNOTISM.get(), duration, 0, false, false));
+        if (!player.level().isClientSide()) {
+            double radius = 20.0 - sequence * dir;
+            float damage = 15 - sequence;
+            int duration = 400 - (sequence * 10);
+            AABB boundingBox = new AABB(targetPos).inflate(radius);
+            level.getEntitiesOfClass(LivingEntity.class, boundingBox, LivingEntity::isAlive).forEach(livingEntity -> {
+                livingEntity.hurt(livingEntity.damageSources().magic(), damage);
+                if (livingEntity != player) {
+                    if (livingEntity instanceof Player) {
+                        livingEntity.addEffect(new MobEffectInstance(ModEffects.BATTLEHYPNOTISM.get(), duration, (int) radius, false, false));
+                    } else {
+                        livingEntity.addEffect(new MobEffectInstance(ModEffects.BATTLEHYPNOTISM.get(), duration, 0, false, false));
+                    }
                 }
-            }
-        });
+            });
+        }
     }
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {

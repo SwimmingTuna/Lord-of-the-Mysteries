@@ -37,7 +37,9 @@ public class WindManipulationCushion extends SimpleAbilityItem {
     }
 
     public static void windManipulationCushion(Player player) {
-        player.getPersistentData().putInt("windManipulationCushion", 20);
+        if (!player.level().isClientSide()) {
+            player.getPersistentData().putInt("windManipulationCushion", 20);
+        }
     }
 
     @Override

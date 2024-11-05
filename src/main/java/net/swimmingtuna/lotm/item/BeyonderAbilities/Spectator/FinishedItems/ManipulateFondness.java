@@ -50,15 +50,17 @@ public class ManipulateFondness extends SimpleAbilityItem {
     }
 
     private static void manipulateFondness(Player player) {
-        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(250))) {
-            if (entity != player && entity.hasEffect(ModEffects.MANIPULATION.get())) {
-                AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-                entity.addEffect(new MobEffectInstance(ModEffects.BATTLEHYPNOTISM.get(), (int) (600 * dreamIntoReality.getValue()), 1, false, false));
-                for (Mob mob : entity.level().getEntitiesOfClass(Mob.class, entity.getBoundingBox().inflate(50))) {
-                    mob.setTarget(entity);
-                    mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,200,1,false,false));
+        if (!player.level().isClientSide()) {
+            for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(250))) {
+                if (entity != player && entity.hasEffect(ModEffects.MANIPULATION.get())) {
+                    AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+                    entity.addEffect(new MobEffectInstance(ModEffects.BATTLEHYPNOTISM.get(), (int) (600 * dreamIntoReality.getValue()), 1, false, false));
+                    for (Mob mob : entity.level().getEntitiesOfClass(Mob.class, entity.getBoundingBox().inflate(50))) {
+                        mob.setTarget(entity);
+                        mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, 1, false, false));
+                    }
+                    entity.removeEffect(ModEffects.MANIPULATION.get());
                 }
-                entity.removeEffect(ModEffects.MANIPULATION.get());
             }
         }
     }

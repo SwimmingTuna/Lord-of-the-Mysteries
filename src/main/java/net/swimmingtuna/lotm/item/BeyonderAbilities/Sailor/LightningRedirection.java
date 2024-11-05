@@ -63,10 +63,12 @@ public class LightningRedirection extends SimpleAbilityItem {
     }
 
     private static void lightningRedirection(Player player, BlockPos pos) {
-        Level level = player.level();
-        for (Entity entity : level.getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
-            if (entity instanceof LightningEntity lightning) {
-                lightning.setTargetPos(pos.getCenter());
+        if (!player.level().isClientSide()) {
+            Level level = player.level();
+            for (Entity entity : level.getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
+                if (entity instanceof LightningEntity lightning) {
+                    lightning.setTargetPos(pos.getCenter());
+                }
             }
         }
     }

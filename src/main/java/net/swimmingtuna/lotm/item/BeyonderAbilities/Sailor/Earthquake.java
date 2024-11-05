@@ -34,7 +34,9 @@ public class Earthquake extends SimpleAbilityItem {
     }
 
     public static void earthquake(Player player) {
-        player.getPersistentData().putInt("sailorEarthquake", 200);
+        if (!player.level().isClientSide()) {
+            player.getPersistentData().putInt("sailorEarthquake", 200);
+        }
     }
 
     @Override

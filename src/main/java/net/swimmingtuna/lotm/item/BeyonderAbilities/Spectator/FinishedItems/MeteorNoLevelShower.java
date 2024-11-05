@@ -35,15 +35,17 @@ public class MeteorNoLevelShower extends SimpleAbilityItem {
     }
 
     public static void meteorNoLevelShower(Player player) {
-        MeteorNoLevelEntity.summonMultipleMeteors(player);
-        MeteorNoLevelEntity.summonMultipleMeteors(player);
-        MeteorNoLevelEntity.summonMultipleMeteors(player);
-        MeteorNoLevelEntity.summonMultipleMeteors(player);
-        MeteorNoLevelEntity.summonMultipleMeteors(player);
-        MeteorNoLevelEntity.summonMultipleMeteors(player);
-        MeteorNoLevelEntity.summonMultipleMeteors(player);
-        MeteorNoLevelEntity.summonMultipleMeteors(player);
-        MeteorNoLevelEntity.summonMultipleMeteors(player);
+        if (!player.level().isClientSide()) {
+            MeteorNoLevelEntity.summonMultipleMeteors(player);
+            MeteorNoLevelEntity.summonMultipleMeteors(player);
+            MeteorNoLevelEntity.summonMultipleMeteors(player);
+            MeteorNoLevelEntity.summonMultipleMeteors(player);
+            MeteorNoLevelEntity.summonMultipleMeteors(player);
+            MeteorNoLevelEntity.summonMultipleMeteors(player);
+            MeteorNoLevelEntity.summonMultipleMeteors(player);
+            MeteorNoLevelEntity.summonMultipleMeteors(player);
+            MeteorNoLevelEntity.summonMultipleMeteors(player);
+        }
     }
 
     @Override

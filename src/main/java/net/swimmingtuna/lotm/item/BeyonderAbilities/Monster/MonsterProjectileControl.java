@@ -31,10 +31,12 @@ public class MonsterProjectileControl extends SimpleAbilityItem {
     }
 
     public static void enableOrDisableProjectileControl(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean monsterProjectileControl = tag.getBoolean("monsterProjectileControl");
-        tag.putBoolean("monsterProjectileControl", !monsterProjectileControl);
-        player.displayClientMessage(Component.literal("Projectile Movement Turned " + (monsterProjectileControl ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean monsterProjectileControl = tag.getBoolean("monsterProjectileControl");
+            tag.putBoolean("monsterProjectileControl", !monsterProjectileControl);
+            player.displayClientMessage(Component.literal("Projectile Movement Turned " + (monsterProjectileControl ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+        }
     }
 
     @Override

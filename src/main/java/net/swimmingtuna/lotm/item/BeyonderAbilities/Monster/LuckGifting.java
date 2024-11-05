@@ -35,12 +35,14 @@ public class LuckGifting extends SimpleAbilityItem {
 
     @Override
     public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
         useSpirituality(player);
         addCooldown(player);
         giftLuck(interactionTarget, player);
+        }
         return InteractionResult.SUCCESS;
     }
 

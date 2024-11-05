@@ -73,9 +73,11 @@ public class ApplyManipulation extends SimpleAbilityItem {
 
 
     private static void applyManipulation(LivingEntity interactionTarget, Player player) {
-        if (!interactionTarget.hasEffect(ModEffects.MANIPULATION.get())) {
-            interactionTarget.addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false, false));
-            player.sendSystemMessage(Component.literal("Manipulating " + interactionTarget.getName().getString()).withStyle(BeyonderUtil.getStyle(player)));
+        if (!player.level().isClientSide()) {
+            if (!interactionTarget.hasEffect(ModEffects.MANIPULATION.get())) {
+                interactionTarget.addEffect(new MobEffectInstance(ModEffects.MANIPULATION.get(), 600, 1, false, false));
+                player.sendSystemMessage(Component.literal("Manipulating " + interactionTarget.getName().getString()).withStyle(BeyonderUtil.getStyle(player)));
+            }
         }
     }
 }

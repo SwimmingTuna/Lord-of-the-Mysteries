@@ -26,10 +26,8 @@ public class SpiritVisionC2S {
         context.enqueueWork(() -> {
             if (pPlayer.getPersistentData().getBoolean("spiritVision")) {
                 pPlayer.getPersistentData().putBoolean("spiritVision", false);
-                pPlayer.sendSystemMessage(Component.literal("is false"));
             } else if (!pPlayer.getPersistentData().getBoolean("spiritVision")) {
                 pPlayer.getPersistentData().putBoolean("spiritVision", true);
-                pPlayer.sendSystemMessage(Component.literal("is true"));
             }
         });
         return true;

@@ -70,13 +70,15 @@ public class ProphesizeTeleportBlock extends SimpleAbilityItem {
 
     public void prophesizeTeleportBlock(UseOnContext context) {
         Player player = context.getPlayer();
-        Level level = player.level();
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        BlockPos positionClicked = context.getClickedPos();
-        if (!context.getLevel().isClientSide) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 1 &&  BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(600)) {
-                teleportEntities(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
+        if (!player.level().isClientSide()) {
+            Level level = player.level();
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            BlockPos positionClicked = context.getClickedPos();
+            if (!context.getLevel().isClientSide) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+                if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 1 && BeyonderHolderAttacher.getHolderUnwrap(player).useSpirituality(600)) {
+                    teleportEntities(player, level, positionClicked, holder.getCurrentSequence(), (int) dreamIntoReality.getValue());
+                }
             }
         }
     }

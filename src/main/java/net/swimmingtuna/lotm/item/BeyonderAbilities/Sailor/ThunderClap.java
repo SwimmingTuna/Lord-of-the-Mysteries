@@ -41,14 +41,16 @@ public class ThunderClap extends SimpleAbilityItem {
     }
 
     private void thunderClap(Player player) {
-        player.level().playSound(null, player.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 30.0f, player.level().random.nextFloat() * 0.1F + 0.9F);
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        int sequence = holder.getCurrentSequence();
-        double radius = 300 - (sequence * 50);
-        int duration = 100 - (sequence * 20);
-        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
-            if (entity != player) {
-                entity.addEffect((new MobEffectInstance(ModEffects.STUN.get(), duration, 1, false, false)));
+        if (!player.level().isClientSide()) {
+            player.level().playSound(null, player.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 30.0f, player.level().random.nextFloat() * 0.1F + 0.9F);
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int sequence = holder.getCurrentSequence();
+            double radius = 300 - (sequence * 50);
+            int duration = 100 - (sequence * 20);
+            for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
+                if (entity != player) {
+                    entity.addEffect((new MobEffectInstance(ModEffects.STUN.get(), duration, 1, false, false)));
+                }
             }
         }
     }

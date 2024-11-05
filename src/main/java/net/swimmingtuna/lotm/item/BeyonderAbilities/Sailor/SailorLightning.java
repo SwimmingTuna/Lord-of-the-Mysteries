@@ -170,18 +170,20 @@ public class SailorLightning extends SimpleAbilityItem {
         }
     }
 
-    public static void lightningTargetEntity(LivingEntity targetEntity, Player pPlayer) {
-        LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), pPlayer.level());
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-        lightningEntity.setSpeed(15.0f);
-        holder.useSpirituality(100);
-        Vec3 lookVec = pPlayer.getLookAngle();
-        lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
-        lightningEntity.setMaxLength(30);
-        lightningEntity.teleportTo(pPlayer.getX(), pPlayer.getY(), pPlayer.getZ());
-        lightningEntity.setTargetPos(targetEntity.position());
-        lightningEntity.setOwner(pPlayer);
-        lightningEntity.setOwner(pPlayer);
-        pPlayer.level().addFreshEntity(lightningEntity);
+    public static void lightningTargetEntity(LivingEntity targetEntity, Player player) {
+        if (!player.level().isClientSide()) {
+            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), player.level());
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            lightningEntity.setSpeed(15.0f);
+            holder.useSpirituality(100);
+            Vec3 lookVec = player.getLookAngle();
+            lightningEntity.setDeltaMovement(lookVec.x, lookVec.y, lookVec.z);
+            lightningEntity.setMaxLength(30);
+            lightningEntity.teleportTo(player.getX(), player.getY(), player.getZ());
+            lightningEntity.setTargetPos(targetEntity.position());
+            lightningEntity.setOwner(player);
+            lightningEntity.setOwner(player);
+            player.level().addFreshEntity(lightningEntity);
+        }
     }
 }

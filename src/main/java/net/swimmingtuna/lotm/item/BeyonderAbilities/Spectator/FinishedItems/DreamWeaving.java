@@ -82,39 +82,45 @@ public class DreamWeaving extends SimpleAbilityItem {
     }
 
     private static void spawnMobsAroundTarget(EntityType<? extends Mob> mobEntityType, LivingEntity entity, Level level, double x, double y, double z, int numberOfMobs) {
-        for (int i = 0; i < numberOfMobs; i++) {
-            Mob mob = mobEntityType.create(level);
-            AttributeInstance maxHp = mob.getAttribute(Attributes.MAX_HEALTH);
-            spawnEntityInRadius(mob, level, x, y, z);
-            maxHp.setBaseValue(551);
-            mob.setTarget(entity);
+        if (!level.isClientSide()) {
+            for (int i = 0; i < numberOfMobs; i++) {
+                Mob mob = mobEntityType.create(level);
+                AttributeInstance maxHp = mob.getAttribute(Attributes.MAX_HEALTH);
+                spawnEntityInRadius(mob, level, x, y, z);
+                maxHp.setBaseValue(551);
+                mob.setTarget(entity);
+            }
         }
     }
 
 
     private static void spawnEntityInRadius(Mob entity, Level level, double x, double y, double z) {
-        Random random = new Random();
-        double angle = random.nextDouble() * 2 * Math.PI;
-        double xOffset = 10 * Math.cos(angle);
-        double zOffset = 10 * Math.sin(angle);
+        if (!level.isClientSide()) {
+            Random random = new Random();
+            double angle = random.nextDouble() * 2 * Math.PI;
+            double xOffset = 10 * Math.cos(angle);
+            double zOffset = 10 * Math.sin(angle);
 
-        entity.moveTo(x + xOffset, y +1, z + zOffset);
-        level.addFreshEntity(entity);
+            entity.moveTo(x + xOffset, y + 1, z + zOffset);
+            level.addFreshEntity(entity);
+        }
     }
     public void dreamWeave(Player player, LivingEntity interactionTarget) {
         Level level = player.level();
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        double x = interactionTarget.getX();
-        double y = interactionTarget.getY();
-        double z = interactionTarget.getZ();
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        interactionTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 150, 1, false, false));
-        RandomSource random = player.getRandom();
-        int times = 20 - (holder.getCurrentSequence() * 3);
-        for (int i = 0; i < times; i++) {
-            int randomNumber = random.nextInt(10);
-            EntityType<? extends Mob> entityType = MOB_TYPES.get(randomNumber);
-            spawnMobsAroundTarget(entityType, interactionTarget, level, x, y, z, dreamIntoReality.getValue() == 2 ? 2 : 1);
+        if (!level.isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            double x = interactionTarget.getX();
+            double y = interactionTarget.getY();
+            double z = interactionTarget.getZ();
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            interactionTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 150, 1, false, false));
+            RandomSource random = player.getRandom();
+            int times = 20 - (holder.getCurrentSequence() * 3);
+            for (int i = 0; i < times; i++) {
+                int randomNumber = random.nextInt(10);
+                EntityType<? extends Mob> entityType = MOB_TYPES.get(randomNumber);
+                spawnMobsAroundTarget(entityType, interactionTarget, level, x, y, z, dreamIntoReality.getValue() == 2 ? 2 : 1);
+            }
         }
     }
     private static final List<EntityType<? extends Mob>> MOB_TYPES = List.of(

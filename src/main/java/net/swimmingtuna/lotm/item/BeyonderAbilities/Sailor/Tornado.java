@@ -36,7 +36,8 @@ public class Tornado extends SimpleAbilityItem {
     }
 
     private static void tornado(Player pPlayer) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+        if (!pPlayer.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
         if (holder.getCurrentSequence() <= 4 && holder.getCurrentSequence() != 0) {
             TornadoEntity.summonTornado(pPlayer);
             holder.useSpirituality(500);
@@ -44,6 +45,7 @@ public class Tornado extends SimpleAbilityItem {
         if (holder.getCurrentSequence() <= 0) {
             TornadoEntity.summonTyrantTornado(pPlayer);
             holder.useSpirituality(1000);
+        }
         }
     }
     @Override

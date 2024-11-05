@@ -37,11 +37,13 @@ public class EnvisionHealth extends SimpleAbilityItem {
     }
 
     private void envisionHealth(Player player) {
-        AttributeInstance maxHP = player.getAttribute(Attributes.MAX_HEALTH);
-        double maxHealth = maxHP.getValue();
-        double health = player.getHealth();
-        double x = (health + ((maxHealth - health) * 0.66));
-        player.setHealth((float) x);
+        if (!player.level().isClientSide()) {
+            AttributeInstance maxHP = player.getAttribute(Attributes.MAX_HEALTH);
+            double maxHealth = maxHP.getValue();
+            double health = player.getHealth();
+            double x = (health + ((maxHealth - health) * 0.66));
+            player.setHealth((float) x);
+        }
     }
 
     @Override

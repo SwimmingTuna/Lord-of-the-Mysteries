@@ -41,17 +41,19 @@ public class Awe extends SimpleAbilityItem {
     }
 
     public static void applyPotionEffectToEntities(Player player) {
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        int sequence = holder.getCurrentSequence();
-        int dir = (int) dreamIntoReality.getValue();
-        double radius = (18.0 - sequence) * dir;
-        float damage = (float) ((27.0 - (sequence * 1.5)) * (Math.max(1, dir * 0.75)));
-        int duration = (190 - (sequence * 15));
-        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
-            if (entity != player) {
-                entity.addEffect((new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false)));
-                entity.hurt(entity.damageSources().magic(), damage);
+        if (!player.level().isClientSide()) {
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int sequence = holder.getCurrentSequence();
+            int dir = (int) dreamIntoReality.getValue();
+            double radius = (18.0 - sequence) * dir;
+            float damage = (float) ((27.0 - (sequence * 1.5)) * (Math.max(1, dir * 0.75)));
+            int duration = (190 - (sequence * 15));
+            for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
+                if (entity != player) {
+                    entity.addEffect((new MobEffectInstance(ModEffects.AWE.get(), duration, 1, false, false)));
+                    entity.hurt(entity.damageSources().magic(), damage);
+                }
             }
         }
     }

@@ -3,7 +3,9 @@ package net.swimmingtuna.lotm.events;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
@@ -44,6 +46,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -151,6 +154,7 @@ public class ModEvents {
         AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
         AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
         assert corruption != null;
+
 
         Map<String, Long> times = new HashMap<>();
         {
@@ -916,8 +920,8 @@ public class ModEvents {
     private static void earthquake(Player player, int sequence) {
         int sailorEarthquake = player.getPersistentData().getInt("sailorEarthquake");
         if (sailorEarthquake >= 1) {
+            int radius = 75 - (sequence * 6);
             if (sailorEarthquake % 20 == 0) {
-                int radius = 100 - (sequence * 10);
                 for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate((radius)))) {
                     if (entity != player) {
                         if (entity.onGround()) {
@@ -925,6 +929,8 @@ public class ModEvents {
                         }
                     }
                 }
+            }
+            if (sailorEarthquake % 2 == 0) {
                 AABB checkArea = player.getBoundingBox().inflate(radius);
                 Random random = new Random();
                 for (BlockPos blockPos : BlockPos.betweenClosed(
@@ -932,9 +938,19 @@ public class ModEvents {
                         new BlockPos((int) checkArea.maxX, (int) checkArea.maxY, (int) checkArea.maxZ))) {
 
                     if (!player.level().getBlockState(blockPos).isAir() && Earthquake.isOnSurface(player.level(), blockPos)) {
-                        if (random.nextInt(200) == 1) { // 50% chance to destroy a block
+                        if (random.nextInt(20) == 1) {
+                            BlockState blockState = player.level().getBlockState(blockPos); // Use the desired block type here
+                            if (player.level() instanceof ServerLevel serverLevel) {
+                                serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, blockState),
+                                        blockPos.getX(),
+                                        blockPos.getY() + 1,
+                                        blockPos.getZ(),
+                                        0, 0.0, 0.0, 0, 0);
+                            }
+                        }
+                        if (random.nextInt(4000) == 1) { // 50% chance to destroy a block
                             player.level().destroyBlock(blockPos, false);
-                        } else if (random.nextInt(500) == 2) { // 10% chance to spawn a stone entity
+                        } else if (random.nextInt(10000) == 2) { // 10% chance to spawn a stone entity
                             StoneEntity stoneEntity = new StoneEntity(player.level(), player);
                             ScaleData scaleData = ScaleTypes.BASE.getScaleData(stoneEntity);
                             stoneEntity.teleportTo(blockPos.getX(), blockPos.getY() + 3, blockPos.getZ());
@@ -2305,6 +2321,9 @@ public class ModEvents {
 
             if (entity instanceof Player player) {
 
+                byte[] keysClicked = new byte[5]; // Example size; match this to the intended array size
+                player.getPersistentData().putByteArray("keysClicked", keysClicked);
+
                 //RESET PARTICLE ATTRIBUTES
                 AttributeInstance particleAttributeInstance = player.getAttribute(ModAttributes.PARTICLE_HELPER.get());
                 AttributeInstance particleAttributeInstance1 = player.getAttribute(ModAttributes.PARTICLE_HELPER1.get());
@@ -2788,10 +2807,16 @@ public class ModEvents {
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         Player player = event.getEntity();
+        CompoundTag persistentData = player.getPersistentData();
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
         double beyonderHealth = holder.getCurrentClass().maxHealth().get(sequence);
         player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(beyonderHealth);
+        if (!persistentData.contains("keysClicked")) {
+            byte[] keysClicked = new byte[5]; // Use appropriate size
+            persistentData.putByteArray("keysClicked", keysClicked);
+        }
+
     }
 
     @SubscribeEvent

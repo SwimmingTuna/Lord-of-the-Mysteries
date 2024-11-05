@@ -33,9 +33,10 @@ public class Hurricane extends SimpleAbilityItem {
     }
 
     private static void hurricane(Player pPlayer) {
-        pPlayer.getPersistentData().putInt("sailorHurricane", 600);
+        if (!pPlayer.level().isClientSide()) {
+            pPlayer.getPersistentData().putInt("sailorHurricane", 600);
+        }
     }
-
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal("Upon use, summons a hurricane that shoots lightning in the sky around the player and generates tornadoes\n" +

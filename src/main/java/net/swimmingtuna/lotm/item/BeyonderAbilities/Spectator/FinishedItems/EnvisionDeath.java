@@ -38,14 +38,17 @@ public class EnvisionDeath extends SimpleAbilityItem {
     }
 
     private void envisionDeath(Player player, int dir) {
-        double radius = 300;
-        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
-            if (entity != player) {
-                int entityHealth = (int) entity.getHealth();
-                if (entityHealth <= 100 + (20 * dir)) {
-                    entity.hurt(entity.damageSources().magic(),100);
+        if (!player.level().isClientSide()) {
+            double radius = 300;
+            for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
+                if (entity != player) {
+                    int entityHealth = (int) entity.getHealth();
+                    if (entityHealth <= 100 + (20 * dir)) {
+                        entity.hurt(entity.damageSources().magic(), 100);
+                    }
                 }
-        }}
+            }
+        }
     }
 
     @Override

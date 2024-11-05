@@ -72,19 +72,21 @@ public class Frenzy extends SimpleAbilityItem {
     }
 
     private void frenzy(Player player, Level level, BlockPos targetPos, int dreamIntoRealityValue) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        int sequence = holder.getCurrentSequence();
-        double radius = (15.0 - sequence) * dreamIntoRealityValue;
-        float damage = (float) (30 - (sequence / 1.5));
-        int duration = 250 - (sequence * 12) * dreamIntoRealityValue;
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int sequence = holder.getCurrentSequence();
+            double radius = (15.0 - sequence) * dreamIntoRealityValue;
+            float damage = (float) (30 - (sequence / 1.5));
+            int duration = 250 - (sequence * 12) * dreamIntoRealityValue;
 
-        AABB boundingBox = new AABB(targetPos).inflate(radius);
-        level.getEntitiesOfClass(LivingEntity.class, boundingBox, LivingEntity::isAlive).forEach(livingEntity -> {
-            if (livingEntity != player) {
-                livingEntity.addEffect(new MobEffectInstance(ModEffects.FRENZY.get(), duration, 1, false, false));
-                livingEntity.hurt(livingEntity.damageSources().magic(), damage);
-            }
-        });
+            AABB boundingBox = new AABB(targetPos).inflate(radius);
+            level.getEntitiesOfClass(LivingEntity.class, boundingBox, LivingEntity::isAlive).forEach(livingEntity -> {
+                if (livingEntity != player) {
+                    livingEntity.addEffect(new MobEffectInstance(ModEffects.FRENZY.get(), duration, 1, false, false));
+                    livingEntity.hurt(livingEntity.damageSources().magic(), damage);
+                }
+            });
+        }
     }
 
     @Override

@@ -34,7 +34,9 @@ public class WindManipulationBlade extends SimpleAbilityItem {
     }
 
     public static void windManipulationBlade(Player player) {
-        WindBladeEntity.testShoot(player);
+        if (!player.level().isClientSide()) {
+            WindBladeEntity.testShoot(player);
+        }
     }
 
     @Override

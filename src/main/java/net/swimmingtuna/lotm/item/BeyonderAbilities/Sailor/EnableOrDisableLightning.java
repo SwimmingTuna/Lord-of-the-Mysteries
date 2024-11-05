@@ -35,10 +35,12 @@ public class EnableOrDisableLightning extends SimpleAbilityItem {
     }
 
     private void enableOrDisableLightning(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean lightning = tag.getBoolean("SailorLightning");
-        tag.putBoolean("SailorLightning", !lightning);
-        player.displayClientMessage(Component.literal("Lightning effect turned " + (lightning ? "off" : "on")).withStyle(ChatFormatting.DARK_BLUE).withStyle(ChatFormatting.BOLD), true);
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean lightning = tag.getBoolean("SailorLightning");
+            tag.putBoolean("SailorLightning", !lightning);
+            player.displayClientMessage(Component.literal("Lightning effect turned " + (lightning ? "off" : "on")).withStyle(ChatFormatting.DARK_BLUE).withStyle(ChatFormatting.BOLD), true);
+        }
     }
 
     @Override

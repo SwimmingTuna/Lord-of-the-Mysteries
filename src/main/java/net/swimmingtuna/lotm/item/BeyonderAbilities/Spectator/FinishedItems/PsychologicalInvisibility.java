@@ -39,37 +39,39 @@ public class PsychologicalInvisibility extends SimpleAbilityItem {
     }
 
     private static void storeAndReleaseArmor(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean armorStored = tag.getBoolean("armorStored");
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean armorStored = tag.getBoolean("armorStored");
 
-        if (!armorStored) {
-            for (EquipmentSlot slot : EquipmentSlot.values()) {
-                if (slot.getType() == EquipmentSlot.Type.ARMOR) {
-                    ItemStack armorPiece = player.getItemBySlot(slot);
-                    if (!armorPiece.isEmpty()) {
-                        ResourceLocation armorIdentifier = ForgeRegistries.ITEMS.getKey(armorPiece.getItem());
-                        if (armorIdentifier != null) {
-                            tag.putString(slot.getName() + "_armor", armorIdentifier.toString());
-                            player.setItemSlot(slot, ItemStack.EMPTY);
+            if (!armorStored) {
+                for (EquipmentSlot slot : EquipmentSlot.values()) {
+                    if (slot.getType() == EquipmentSlot.Type.ARMOR) {
+                        ItemStack armorPiece = player.getItemBySlot(slot);
+                        if (!armorPiece.isEmpty()) {
+                            ResourceLocation armorIdentifier = ForgeRegistries.ITEMS.getKey(armorPiece.getItem());
+                            if (armorIdentifier != null) {
+                                tag.putString(slot.getName() + "_armor", armorIdentifier.toString());
+                                player.setItemSlot(slot, ItemStack.EMPTY);
+                            }
                         }
                     }
                 }
-            }
-            player.displayClientMessage(Component.literal("Armor stored."), true);
-            tag.putBoolean("armorStored", true);
-        } else {
-            for (EquipmentSlot slot : EquipmentSlot.values()) {
-                if (slot.getType() == EquipmentSlot.Type.ARMOR) {
-                    String storedArmor = tag.getString(slot.getName() + "_armor");
-                    if (!storedArmor.isEmpty()) {
-                        ItemStack armorPiece = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(storedArmor)));
-                        player.setItemSlot(slot, armorPiece);
-                        tag.remove(slot.getName() + "_armor");
+                player.displayClientMessage(Component.literal("Armor stored."), true);
+                tag.putBoolean("armorStored", true);
+            } else {
+                for (EquipmentSlot slot : EquipmentSlot.values()) {
+                    if (slot.getType() == EquipmentSlot.Type.ARMOR) {
+                        String storedArmor = tag.getString(slot.getName() + "_armor");
+                        if (!storedArmor.isEmpty()) {
+                            ItemStack armorPiece = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(storedArmor)));
+                            player.setItemSlot(slot, armorPiece);
+                            tag.remove(slot.getName() + "_armor");
+                        }
                     }
                 }
+                player.displayClientMessage(Component.literal("Armor restored."), true);
+                tag.putBoolean("armorStored", false);
             }
-            player.displayClientMessage(Component.literal("Armor restored."), true);
-            tag.putBoolean("armorStored", false);
         }
     }
 

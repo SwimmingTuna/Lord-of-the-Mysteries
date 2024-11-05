@@ -55,6 +55,8 @@ public class LOTM {
     public static final String MOD_ID = "lotm";
     public static final Logger LOGGER = LogUtils.getLogger();
 
+
+
     public LOTM() {
         Set<String> classNames = new HashSet<>();
         List<ModFileScanData> modFileScanData = ModList.get().getAllScanData();
