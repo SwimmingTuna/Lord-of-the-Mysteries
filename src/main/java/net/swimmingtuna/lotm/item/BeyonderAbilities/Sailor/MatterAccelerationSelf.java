@@ -96,7 +96,7 @@ public class MatterAccelerationSelf extends SimpleAbilityItem {
             List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, boundingBox);
             for (LivingEntity entity : entities) {
                 if (entity != player) {
-                    entity.hurt(level.damageSources().magic(), 10.0f); // Adjust damage amount as needed
+                    entity.hurt(level.damageSources().lightningBolt(), 60.0f); // Adjust damage amount as needed
                 }
             }
         }

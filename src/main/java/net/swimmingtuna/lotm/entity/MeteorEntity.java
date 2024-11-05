@@ -87,7 +87,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
 
             for (Entity entity : entities) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.hurt(BeyonderUtil.genericSource(this), 25 * scale); // problem w/ damage sources
+                    livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale); // problem w/ damage sources
                 }
             }
             this.discard();
@@ -119,7 +119,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
                                 hitPos.offset((int) radius, (int) radius, (int) radius)));
                 for (Entity entity : entities) {
                     if (entity instanceof LivingEntity livingEntity) {
-                        livingEntity.hurt(BeyonderUtil.genericSource(this), 25 * scale);
+                        livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale);
                     }
                 }
             }

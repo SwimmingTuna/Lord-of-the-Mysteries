@@ -64,7 +64,7 @@ public class DreamIntoReality extends SimpleAbilityItem {
             if (!player.isCreative()) {
                 playerAbilities.mayfly = true;
                 playerAbilities.flying = true;
-                playerAbilities.setFlyingSpeed(0.2F);
+                playerAbilities.setFlyingSpeed(0.1F);
             }
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(player);
             scaleData.setTargetScale(scaleData.getBaseScale() * 4);
@@ -100,7 +100,7 @@ public class DreamIntoReality extends SimpleAbilityItem {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal("Upon use, turns your dreams into reality, making you a giant with strengthened abilities, quicker regeneration, and stronger melee hits\n" +
-                "Spirituality Used: 150 every second\n" +
+                "Spirituality Used: 40 every second\n" +
                 "Cooldown: 30 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }

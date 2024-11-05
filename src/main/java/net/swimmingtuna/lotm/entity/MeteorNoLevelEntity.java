@@ -65,7 +65,7 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
                                 hitPos.offset((int) radius, (int) radius, (int) radius)));
                 for (Entity entity : entities) {
                     if (entity instanceof LivingEntity livingEntity) {
-                        livingEntity.hurt(BeyonderUtil.genericSource(this), 25 * scale);
+                        livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale);
                     }
                 }
             }
@@ -91,7 +91,7 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
                             hitPos.offset((int) radius, (int) radius, (int) radius)));
             for (Entity entity : entities) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.hurt(BeyonderUtil.genericSource(this), 25 * scale); // Adjust damage as needed
+                    livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale); // Adjust damage as needed
                 }
             }
             this.discard();

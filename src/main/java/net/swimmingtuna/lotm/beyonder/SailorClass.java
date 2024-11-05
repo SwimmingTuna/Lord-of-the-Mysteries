@@ -70,7 +70,7 @@ public class SailorClass implements BeyonderClass {
         Abilities playerAbilites = player.getAbilities();
         boolean sailorFlight1 = tag.getBoolean("sailorFlight1");
         if (player.isInWater() || player.level().isRaining()) {
-            playerAbilites.setFlyingSpeed(0.2F);
+            playerAbilites.setFlyingSpeed(0.1F);
             player.onUpdateAbilities();
             if (player instanceof ServerPlayer serverPlayer) {
                 serverPlayer.connection.send(new ClientboundPlayerAbilitiesPacket(serverPlayer.getAbilities()));

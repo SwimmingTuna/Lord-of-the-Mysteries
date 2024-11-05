@@ -424,7 +424,7 @@ public class ModEvents {
         }
         if (playerPersistentData.getBoolean("armorStored")) {
             player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, 1, false, false));
-            if (player.tickCount % 20 == 0) {
+            if (player.tickCount % 10 == 0) {
                 holder.useSpirituality((int) holder.getMaxSpirituality() / 100);
             }
         }
@@ -573,7 +573,7 @@ public class ModEvents {
         }
         if (holder.getSpirituality() >= 15) {
             if (player.tickCount % 2 == 0) {
-            holder.useSpirituality(15);
+            holder.useSpirituality(20);
             }
         }
         if (holder.getSpirituality() <= 15) {
@@ -782,7 +782,7 @@ public class ModEvents {
             holder.setSpirituality(holder.getMaxSpirituality());
             if (!playerPersistentData.getBoolean("CAN_FLY")) {
                 dreamIntoReality.setBaseValue(3);
-                playerAbilities.setFlyingSpeed(0.15F);
+                playerAbilities.setFlyingSpeed(0.1F);
                 playerAbilities.mayfly = true;
                 player.onUpdateAbilities();
                 playerPersistentData.putInt("mindscapeAbilities", mindscapeAbilities - 1);
