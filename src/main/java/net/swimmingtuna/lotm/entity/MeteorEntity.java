@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -72,24 +73,14 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             float scale = scaleData.getScale();
             double radius = scale * 4;
-            for (BlockPos pos : BlockPos.betweenClosed(
-                    hitPos.offset((int) -radius, (int) -radius, (int) -radius),
-                    hitPos.offset((int) radius, (int) radius, (int) radius))) {
-                if (pos.distSqr(hitPos) <= radius * radius) {
-                    if (this.level().getBlockState(pos).getDestroySpeed(this.level(), pos) >= 0) {
-                        this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-                    }
+            if (this.getOwner() != null && this.getOwner().getPersistentData().getInt("inMindscape") >= 1) {
+                if (hitPos.getX() > this.getOwner().getX()) {
+                    return;
+                } else {
+                    this.explodeMeteorBlock(hitPos,radius,scale);
                 }
             }
-            List<Entity> entities = this.level().getEntities(this,
-                    new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
-                            hitPos.offset((int) radius, (int) radius, (int) radius)));
-
-            for (Entity entity : entities) {
-                if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale); // problem w/ damage sources
-                }
-            }
+                explodeMeteorBlock(hitPos, radius, scale);
             this.discard();
         }
     }
@@ -98,32 +89,21 @@ public class MeteorEntity extends AbstractHurtingProjectile {
     @Override
     public void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide()) {
-            this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
             Entity hitEntity = result.getEntity();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             float scale = scaleData.getScale();
-            if (hitEntity instanceof LivingEntity) {
-                BlockPos hitPos = hitEntity.blockPosition();
-                double radius = scale * 4;
-                for (BlockPos pos : BlockPos.betweenClosed(
-                        hitPos.offset((int) -radius, (int) -radius, (int) -radius),
-                        hitPos.offset((int) radius, (int) radius, (int) radius))) {
-                    if (pos.distSqr(hitPos) <= radius * radius) {
-                        if (this.level().getBlockState(pos).getDestroySpeed(this.level(), pos) >= 0) {
-                            this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-                        }
+            if (hitEntity instanceof LivingEntity livingEntity) {
+                if (this.getOwner() != null && this.getOwner().getPersistentData().getInt("inMindscape") >= 1) {
+                    if (hitEntity.getX() > this.getOwner().getX()) {
+                        return;
+                    } else {
+                        this.explodeMeteor(livingEntity, scale);
                     }
                 }
-                List<Entity> entities = this.level().getEntities(this,
-                        new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
-                                hitPos.offset((int) radius, (int) radius, (int) radius)));
-                for (Entity entity : entities) {
-                    if (entity instanceof LivingEntity livingEntity) {
-                        livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale);
-                    }
-                }
+                explodeMeteor(livingEntity, scale);
+                this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+                this.discard();
             }
-            this.discard();
         }
     }
 
@@ -207,6 +187,48 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             double speed = 3.0;
             meteorEntity.setDeltaMovement(directionToTarget.scale(speed));
             player.level().addFreshEntity(meteorEntity);
+        }
+    }
+
+    public void explodeMeteor(LivingEntity hitEntity, float scale) {
+        BlockPos hitPos = hitEntity.blockPosition();
+        double radius = scale * 4;
+        for (BlockPos pos : BlockPos.betweenClosed(
+                hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                hitPos.offset((int) radius, (int) radius, (int) radius))) {
+            if (pos.distSqr(hitPos) <= radius * radius) {
+                if (this.level().getBlockState(pos).getDestroySpeed(this.level(), pos) >= 0) {
+                    this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                }
+            }
+        }
+        List<Entity> entities = this.level().getEntities(this,
+                new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                        hitPos.offset((int) radius, (int) radius, (int) radius)));
+        for (Entity entity : entities) {
+            if (entity instanceof LivingEntity livingEntity) {
+                livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale);
+            }
+        }
+    }
+    public void explodeMeteorBlock(BlockPos hitPos, double radius, float scale) {
+        for (BlockPos pos : BlockPos.betweenClosed(
+                hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                hitPos.offset((int) radius, (int) radius, (int) radius))) {
+            if (pos.distSqr(hitPos) <= radius * radius) {
+                if (this.level().getBlockState(pos).getDestroySpeed(this.level(), pos) >= 0) {
+                    this.level().setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                }
+            }
+        }
+        List<Entity> entities = this.level().getEntities(this,
+                new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                        hitPos.offset((int) radius, (int) radius, (int) radius)));
+
+        for (Entity entity : entities) {
+            if (entity instanceof LivingEntity livingEntity) {
+                livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale); // problem w/ damage sources
+            }
         }
     }
 

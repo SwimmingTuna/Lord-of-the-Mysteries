@@ -146,9 +146,9 @@ public class ItemInit {
             () -> new ProphesizeDemise(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ENVISION_LIFE = ITEMS.register("envisionlife",
             () -> new EnvisionLife(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> METEOR_SHOWER = ITEMS.register("envisionnature",
+    public static final RegistryObject<Item> METEOR_SHOWER = ITEMS.register("meteorshower",
             () -> new MeteorShower(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> METEOR_NO_LEVEL_SHOWER = ITEMS.register("envisionnature1",
+    public static final RegistryObject<Item> METEOR_NO_LEVEL_SHOWER = ITEMS.register("meteorshowernoblockdestruction",
             () -> new MeteorNoLevelShower(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ENVISION_WEATHER = ITEMS.register("envisionweather",
             () -> new EnvisionWeather(new Item.Properties().stacksTo(1)));

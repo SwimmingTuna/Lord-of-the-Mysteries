@@ -2304,9 +2304,6 @@ public class ModEvents {
 
             if (entity instanceof Player player) {
 
-
-
-
                 //RESET PARTICLE ATTRIBUTES
                 AttributeInstance particleAttributeInstance = player.getAttribute(ModAttributes.PARTICLE_HELPER.get());
                 AttributeInstance particleAttributeInstance1 = player.getAttribute(ModAttributes.PARTICLE_HELPER1.get());

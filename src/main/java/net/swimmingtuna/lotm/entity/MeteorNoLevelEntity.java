@@ -57,19 +57,23 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
             Entity hitEntity = result.getEntity();
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             float scale = scaleData.getScale();
-            if (hitEntity instanceof LivingEntity) {
-                BlockPos hitPos = hitEntity.blockPosition();
-                double radius = scale * 4;
-                List<Entity> entities = this.level().getEntities(this,
-                        new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
-                                hitPos.offset((int) radius, (int) radius, (int) radius)));
-                for (Entity entity : entities) {
-                    if (entity instanceof LivingEntity livingEntity) {
-                        livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale);
-                    }
-                }
+            if (hitEntity instanceof LivingEntity pEntity) {
+                explodeMeteor(pEntity, scale);
             }
             this.discard();
+        }
+    }
+
+    public void explodeMeteor(LivingEntity hitEntity, float scale) {
+        BlockPos hitPos = hitEntity.blockPosition();
+        double radius = scale * 4;
+        List<Entity> entities = this.level().getEntities(this,
+                new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                        hitPos.offset((int) radius, (int) radius, (int) radius)));
+        for (Entity entity : entities) {
+            if (entity instanceof LivingEntity livingEntity) {
+                livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale);
+            }
         }
     }
 
