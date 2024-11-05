@@ -71,6 +71,7 @@ import net.swimmingtuna.lotm.events.custom_events.ModEventFactory;
 import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.init.GameRuleInit;
 import net.swimmingtuna.lotm.init.SoundInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.LuckGifting;
@@ -2881,6 +2882,11 @@ public class ModEvents {
                     return;
                 }
                 particle9.setBaseValue(0);
+                if (livingEntity instanceof PlayerMobEntity) {
+                    //if (GameRuleInit.getCustomRule(livingEntity.level().getGameRules())) {
+                    //    event.setCanceled(true);
+                    //}
+                }
             }
         }
     }

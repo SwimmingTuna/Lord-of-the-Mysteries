@@ -39,7 +39,10 @@ public class BlockInit {
                 .strength(15).noLootTable()));
 
     public static final RegistryObject<Block> CATHEDRAL_BLOCK = registerBlock("cathedral_block",
-            () -> new CathedralBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
+            () -> new CathedralBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)
+                    .destroyTime(100)
+                    .strength(100)
+                    .noLootTable()));
 
     public static final RegistryObject<Block> MINDSCAPE_BLOCK = registerBlock("mindscape_block",
             () -> new MindscapeBlock(BlockBehaviour.Properties.copy(Blocks.GLASS)

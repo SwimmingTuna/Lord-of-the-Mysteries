@@ -50,7 +50,7 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
         return false;
     }
 
-
+    @Override
     protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide()) {
             this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
@@ -58,6 +58,16 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             float scale = scaleData.getScale();
             if (hitEntity instanceof LivingEntity pEntity) {
+                if (this.getOwner() != null && this.getOwner().getPersistentData().getInt("inMindscape") >= 1) {
+                    if (hitEntity.getX() > this.getOwner().getX()) {
+                        return;
+                    } else {
+                        this.explodeMeteor(pEntity, scale);
+                        this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+
+                    }
+                }
+                this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
                 explodeMeteor(pEntity, scale);
             }
             this.discard();
@@ -86,22 +96,34 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
     protected void onHitBlock(BlockHitResult result) {
         if (!this.level().isClientSide()) {
             BlockPos hitPos = result.getBlockPos();
-            this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
             float scale = scaleData.getScale();
             double radius = scale * 4;
-            List<Entity> entities = this.level().getEntities(this,
-                    new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
-                            hitPos.offset((int) radius, (int) radius, (int) radius)));
-            for (Entity entity : entities) {
-                if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale); // Adjust damage as needed
+            if (this.getOwner() != null && this.getOwner().getPersistentData().getInt("inMindscape") >= 1) {
+                if (hitPos.getX() > this.getOwner().getX()) {
+                    return;
+                } else {
+                    this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+                    this.meteorExplodeBlock(radius,hitPos, scale);
                 }
             }
+            this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+            meteorExplodeBlock(radius,hitPos,scale);
             this.discard();
         }
     }
 
+
+    public void meteorExplodeBlock(double radius, BlockPos hitPos, float scale) {
+        List<Entity> entities = this.level().getEntities(this,
+                new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                        hitPos.offset((int) radius, (int) radius, (int) radius)));
+        for (Entity entity : entities) {
+            if (entity instanceof LivingEntity livingEntity) {
+                livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale); // Adjust damage as needed
+            }
+        }
+    }
     public boolean isPickable() {
         return false;
     }
