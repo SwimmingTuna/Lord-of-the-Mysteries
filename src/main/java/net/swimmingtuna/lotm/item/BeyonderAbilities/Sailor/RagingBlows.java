@@ -64,7 +64,7 @@ public class RagingBlows extends SimpleAbilityItem {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             Vec3 playerPos = player.position();
             Vec3 playerLookVector = player.getViewVector(1.0F);
-            int radius = (25 - (holder.getCurrentSequence() * 3));
+            int radius = (27 - (holder.getCurrentSequence() * 3));
             CompoundTag persistentData = player.getPersistentData();
             int particleCounter = persistentData.getInt("ragingBlowsParticleCounter");
 

@@ -1153,7 +1153,7 @@ public class ModEvents {
         //RAGING BLOWS
         boolean sailorLightning = playerPersistentData.getBoolean("SailorLightning");
         int ragingBlows = playerPersistentData.getInt("ragingBlows");
-        int ragingBlowsRadius = (25 - (holder.getCurrentSequence() * 3));
+        int ragingBlowsRadius = (27 - (holder.getCurrentSequence() * 3));
         int damage = 20 - holder.getCurrentSequence() * 2;
         if (ragingBlows >= 1) {
             RagingBlows.spawnRagingBlowsParticles(player);

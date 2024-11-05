@@ -247,12 +247,12 @@ public class SailorClass implements BeyonderClass {
     public Multimap<Integer, Item> getItems() {
         HashMultimap<Integer, Item> items = HashMultimap.create();
         items.put(8, ItemInit.RAGING_BLOWS.get());
+        items.put(8, ItemInit.SAILORPROJECTILECTONROL.get());
 
         items.put(7, ItemInit.ENABLE_OR_DISABLE_LIGHTNING.get());
         items.put(7, ItemInit.AQUEOUS_LIGHT_DROWN.get());
         items.put(7, ItemInit.AQUEOUS_LIGHT_PULL.get());
         items.put(7, ItemInit.AQUEOUS_LIGHT_PUSH.get());
-        items.put(4, ItemInit.SAILORPROJECTILECTONROL.get());
 
         items.put(6, ItemInit.WIND_MANIPULATION_BLADE.get());
         items.put(6, ItemInit.WIND_MANIPULATION_CUSHION.get());
