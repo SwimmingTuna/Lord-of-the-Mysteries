@@ -424,7 +424,9 @@ public class ModEvents {
         }
         if (playerPersistentData.getBoolean("armorStored")) {
             player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, 1, false, false));
-            holder.useSpirituality((int) holder.getMaxSpirituality() / 100);
+            if (player.tickCount % 20 == 0) {
+                holder.useSpirituality((int) holder.getMaxSpirituality() / 100);
+            }
         }
     }
 
@@ -570,7 +572,9 @@ public class ModEvents {
             return;
         }
         if (holder.getSpirituality() >= 15) {
+            if (player.tickCount % 2 == 0) {
             holder.useSpirituality(15);
+            }
         }
         if (holder.getSpirituality() <= 15) {
             DreamIntoReality.stopFlying(player);
@@ -1554,7 +1558,7 @@ public class ModEvents {
 
             // Execute custom interaction logic
             InteractionResult result = ((SimpleAbilityItem) itemStack.getItem())
-                    .interactLivingEntity(itemStack, player, targetEntity, event.getHand());
+                    .useAbilityOnEntity(itemStack, player, targetEntity, event.getHand());
 
             // Cancel the default interaction if your item interaction is successful
             if (result == InteractionResult.SUCCESS) {

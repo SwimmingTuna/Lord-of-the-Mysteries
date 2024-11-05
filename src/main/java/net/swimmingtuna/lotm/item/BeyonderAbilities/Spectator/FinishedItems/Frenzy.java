@@ -75,7 +75,7 @@ public class Frenzy extends SimpleAbilityItem {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
         double radius = (15.0 - sequence) * dreamIntoRealityValue;
-        float damage = (float) (18.0 - (sequence / 2));
+        float damage = (float) (30 - (sequence / 1.5));
         int duration = 250 - (sequence * 12) * dreamIntoRealityValue;
 
         AABB boundingBox = new AABB(targetPos).inflate(radius);

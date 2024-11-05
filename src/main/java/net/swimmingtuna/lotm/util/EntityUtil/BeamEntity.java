@@ -47,6 +47,7 @@ public abstract class BeamEntity extends LOTMProjectile {
 
     public @Nullable Direction side = null;
 
+    private static final EntityDataAccessor<Float> DAMAGE = SynchedEntityData.defineId(BeamEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_YAW = SynchedEntityData.defineId(BeamEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_PITCH = SynchedEntityData.defineId(BeamEntity.class, EntityDataSerializers.FLOAT);
 
@@ -77,7 +78,13 @@ public abstract class BeamEntity extends LOTMProjectile {
 
     protected abstract double getRange();
 
-    protected abstract float getDamage();
+    public float getDamage() {
+        return this.entityData.get(DAMAGE);
+    }
+
+    public void setDamage(float damage) {
+        this.entityData.set(DAMAGE, damage);
+    }
 
     protected abstract int getDuration();
 
@@ -202,14 +209,10 @@ public abstract class BeamEntity extends LOTMProjectile {
 
     private static final List<Block> EXCLUDED_BLOCKS = List.of(Blocks.BEDROCK, Blocks.OBSIDIAN);
 
-    private DamageSource magicDamageSource(BeamEntity beamEntity, LivingEntity owner, BeamEntity beamEntity1) {
-        return magicDamageSource(beamEntity, owner, beamEntity1);
-    }
-
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-
+        this.entityData.define(DAMAGE,20.0F);
         this.entityData.define(DATA_YAW, 0.0F);
         this.entityData.define(DATA_PITCH, 0.0F);
     }

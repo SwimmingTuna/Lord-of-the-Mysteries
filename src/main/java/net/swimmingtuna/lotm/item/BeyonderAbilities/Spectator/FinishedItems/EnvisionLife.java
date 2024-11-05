@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -57,9 +58,19 @@ public class EnvisionLife extends SimpleAbilityItem {
             Entity entity = entityType.create(level);
             if (entity != null && entity instanceof Mob mob) {
                 entity.setPos(x, y, z);
-                Player nearestPlayer = findNearestPlayer(level, x, y, z, 100, player);
-                if (nearestPlayer != null) {
-                    mob.setLastHurtByPlayer(nearestPlayer);
+                LivingEntity highestHealthTarget = null;
+                float maxHealth = Float.MIN_VALUE;
+                for (LivingEntity livingEntity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(150))) {
+                    if (livingEntity != player) {
+                        float currentHealth = livingEntity.getHealth();
+                        if (currentHealth > maxHealth) {
+                            maxHealth = currentHealth;
+                            highestHealthTarget = livingEntity;
+                        }
+                    }
+                }
+                if (highestHealthTarget != null) {
+                    ((Mob) entity).setTarget(highestHealthTarget);
                 }
 
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);

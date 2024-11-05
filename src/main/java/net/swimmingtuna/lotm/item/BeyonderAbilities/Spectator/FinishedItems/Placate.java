@@ -31,38 +31,7 @@ public class Placate extends SimpleAbilityItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (player.level().isClientSide()) {
-            return InteractionResultHolder.pass(player.getItemInHand(hand));
-        }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-            player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return InteractionResultHolder.fail(player.getItemInHand(hand));
-        }
-        if (holder.getSpirituality() < 75) {
-            player.displayClientMessage(Component.literal("You need 75 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            return InteractionResultHolder.fail(player.getItemInHand(hand));
-        }
-        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 7 && holder.getCurrentSequence() > 4 && holder.useSpirituality(75)) {
-            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-            halfHarmfulEffects(player);
-            if (!player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(this, 120 / (int) dreamIntoReality.getValue());
-            }
-        }
-        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && holder.getCurrentSequence() <= 4 && holder.useSpirituality(200)) {
-            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-            removeHarmfulEffects(player);
-            if (!player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(this, 240 / (int) dreamIntoReality.getValue());
-            }
-        }
-        return super.use(level, player, hand);
-    }
-
-    @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+    public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         if (!checkAll(player, BeyonderClassInit.SPECTATOR.get(), 7, 125)) {
             return InteractionResult.FAIL;
         }

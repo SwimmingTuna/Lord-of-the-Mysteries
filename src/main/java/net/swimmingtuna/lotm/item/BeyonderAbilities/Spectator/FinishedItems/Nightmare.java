@@ -80,7 +80,7 @@ public class Nightmare extends SimpleAbilityItem {
         int dir = (int) dreamIntoReality.getValue();
         double radius = 25.0 - sequence;
         float damagePlayer = ((float) 120.0 - (sequence * 10)) * dir;
-        float damageMob = ((float) (50.0 - (sequence * 3)) / 2) * dir;
+        float damageMob = ((float) (60.0 - (sequence * 3)) / 2) * dir;
 
         int duration = 200 - (sequence * 20);
 

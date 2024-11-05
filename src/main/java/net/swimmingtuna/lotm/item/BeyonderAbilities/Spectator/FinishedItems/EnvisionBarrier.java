@@ -41,7 +41,6 @@ public class EnvisionBarrier extends SimpleAbilityItem {
         if (!checkAll(player, BeyonderClassInit.SPECTATOR.get(), 0, 800 / dreamIntoReality)) {
             return InteractionResult.FAIL;
         }
-        addCooldown(player);
         useSpirituality(player, 800 / dreamIntoReality);
         generateBarrier(player, level, player.getOnPos());
         return InteractionResult.SUCCESS;
@@ -53,7 +52,7 @@ public class EnvisionBarrier extends SimpleAbilityItem {
                 "Hold Shift to Increase Barrier Radius\n" +
                 "Left Click for Envision Death\n" +
                 "Spirituality Used: 800\n" +
-                "Cooldown: 5 seconds ").withStyle(ChatFormatting.AQUA));
+                "Cooldown: None ").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

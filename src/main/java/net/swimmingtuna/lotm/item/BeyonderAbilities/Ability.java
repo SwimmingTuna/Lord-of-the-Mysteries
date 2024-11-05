@@ -19,7 +19,7 @@ public interface Ability {
     }
 
 
-    default InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
+    default InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
         return InteractionResult.PASS;
     }
 

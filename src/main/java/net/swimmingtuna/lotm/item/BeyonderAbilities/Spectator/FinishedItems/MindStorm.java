@@ -38,7 +38,7 @@ public class MindStorm extends SimpleAbilityItem {
     }
 
     @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+    public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
@@ -81,7 +81,7 @@ public class MindStorm extends SimpleAbilityItem {
         AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
         int sequence = holder.getCurrentSequence();
         int duration = 300 - (sequence * 25);
-        int damage = 30 - (sequence * 2);
+        int damage = 50 - (sequence * 3);
         if (dreamIntoReality.getValue() == 2) {
             damage = 50 - (sequence * 2);
         }

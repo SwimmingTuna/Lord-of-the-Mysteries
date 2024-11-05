@@ -82,7 +82,7 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     }
 
     @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
+    public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
         if (!player.level().isClientSide()) {
             return interactLivingEntity(stack, player, interactionTarget, usedHand);
         }

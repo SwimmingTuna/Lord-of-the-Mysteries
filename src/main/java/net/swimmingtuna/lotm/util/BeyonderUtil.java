@@ -337,10 +337,8 @@ public class BeyonderUtil {
 
         boolean hasEntityInteraction = false;
         try {
-            Method entityMethod = ability.getClass().getDeclaredMethod("interactLivingEntity",
-                    ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class);
-            hasEntityInteraction = !entityMethod.equals(Ability.class.getDeclaredMethod("interactLivingEntity",
-                    ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class));
+            Method entityMethod = ability.getClass().getDeclaredMethod("useAbilityOnEntity", ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class);
+            hasEntityInteraction = !entityMethod.equals(Ability.class.getDeclaredMethod("useAbilityOnEntity", ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class));
         } catch (NoSuchMethodException ignored) {
         }
 
@@ -366,7 +364,7 @@ public class BeyonderUtil {
                     0.0f
             );
             if (entityHit != null && entityHit.getEntity() instanceof LivingEntity livingEntity) {
-                InteractionResult result = ability.interactLivingEntity(player.getItemInHand(hand), player, livingEntity, hand);
+                InteractionResult result = ability.useAbilityOnEntity(player.getItemInHand(hand), player, livingEntity, hand);
                 player.displayClientMessage(Component.literal("Used: " + itemName).withStyle(getStyle(player)), true); // Display ability name
 
                 if (result != InteractionResult.PASS) {

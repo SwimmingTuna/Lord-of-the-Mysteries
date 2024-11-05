@@ -52,12 +52,12 @@ public class SpectatorClass implements BeyonderClass {
 
     @Override
     public void tick(Player player, int sequenceLevel) {
+        if (!player.level().isClientSide() && player.isCrouching()) {
+            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 20, -1, false, false));
+        }
         if (player.level().getGameTime() % 80 == 0) {
             if (sequenceLevel >= 0) {
                 player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 30 * 20, -1, false, false));
-                if (player.isCrouching()) {
-                    player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 60, -1, false, false));
-                }
             }
 
             if (sequenceLevel == 6) {

@@ -45,8 +45,8 @@ public class Awe extends SimpleAbilityItem {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
         int dir = (int) dreamIntoReality.getValue();
-        double radius = (15.0 - sequence) * dir;
-        float damage = (float) (12.0 - (sequence/2));
+        double radius = (18.0 - sequence) * dir;
+        float damage = (float) (25.0 - (sequence * 1.5));
         int duration = 250 - (sequence * 15);
         for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
             if (entity != player) {
