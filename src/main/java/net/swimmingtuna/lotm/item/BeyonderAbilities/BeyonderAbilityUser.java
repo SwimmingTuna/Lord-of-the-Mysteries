@@ -75,7 +75,6 @@ public class BeyonderAbilityUser extends SimpleAbilityItem {
         ++abilityNumber;
         resetClicks(player);
         BeyonderUtil.useAbilityByNumber(player, abilityNumber, hand);
-
     }
 
     @Override
@@ -83,9 +82,7 @@ public class BeyonderAbilityUser extends SimpleAbilityItem {
         byte[] keysClicked = player.getPersistentData().getByteArray("keysClicked");
         if (!player.level().isClientSide()) {
             if (!player.getCooldowns().isOnCooldown(this)) {
-
                 player.getCooldowns().addCooldown(this, 4);
-                player.sendSystemMessage(Component.literal("success"));
                 for (int i = 0; i < keysClicked.length; i++) {
                     if (keysClicked[i] == 0) {
                         keysClicked[i] = 2;

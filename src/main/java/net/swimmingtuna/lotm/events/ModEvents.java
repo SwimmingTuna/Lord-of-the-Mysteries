@@ -2305,17 +2305,6 @@ public class ModEvents {
             if (entity instanceof Player player) {
 
 
-                //REMOVE ALL TAGS
-                Set<String> preservedTags = Set.of("keysClicked" /*, other tags to preserve */);
-
-                Set<String> keysToRemove = tag.getAllKeys()
-                        .stream()
-                        .filter(key -> !preservedTags.contains(key))
-                        .collect(Collectors.toSet());
-
-                for (String key : keysToRemove) {
-                    tag.remove(key);
-                }
 
 
                 //RESET PARTICLE ATTRIBUTES
