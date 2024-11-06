@@ -162,7 +162,7 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
             // Set the meteor spawn position
             BlockPos meteorSpawnPos = new BlockPos(
                     (int) (player.getX() + randomX),
-                    (int) (player.getY() + 100),
+                    (int) (player.getY() + 200),
                     (int) (player.getZ() + randomZ)
             );
 

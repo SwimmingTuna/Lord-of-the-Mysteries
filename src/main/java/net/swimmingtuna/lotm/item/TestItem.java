@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.item;
 
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -25,14 +26,9 @@ public class TestItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack offhandItem = player.getOffhandItem();
-
-        // Retrieve the block reach and entity reach attributes
-        double blockReach = player.getAttributeValue(ForgeMod.BLOCK_REACH.get());
-        double entityReach = player.getAttributeValue(ForgeMod.ENTITY_REACH.get());
-        player.sendSystemMessage(Component.literal("Offhand item reach:")
-                .append("\nBlock Reach: " + blockReach)
-                .append("\nEntity Reach: " + entityReach));
+        if (!player.level().isClientSide()) {
+            player.level().addParticle(ParticleTypes.FLASH, player.getX(), player.getY(), player.getZ(), 0,0,0);
+        }
         if (!level.isClientSide) LOTM.LOGGER.info("USE");
         return super.use(level, player, hand);
     }
