@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -109,7 +110,11 @@ public class ServerEvents {
                         playerMobEntity.setOwner(player);
                         playerMobEntity.getPersistentData().putInt("CSlifetime", 60);
                         playerMobEntity.setUsername(player.getName().getString());
-                        player.level().addFreshEntity(playerMobEntity);
+                        for (Mob mob : player.level().getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(50))) {
+                            if (mob.getTarget() == player) {
+                                mob.setTarget(playerMobEntity);
+                            }
+                        }                        player.level().addFreshEntity(playerMobEntity);
                         player.getCooldowns().addCooldown(ItemInit.CONSCIOUSNESS_STROLL.get(), 400);
                         player.getPersistentData().putInt("consciousnessStrollActivatedX", (int) player.getX());
                         player.getPersistentData().putInt("consciousnessStrollActivatedY", (int) player.getY());

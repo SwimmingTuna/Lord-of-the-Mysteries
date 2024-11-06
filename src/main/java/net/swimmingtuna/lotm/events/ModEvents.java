@@ -2907,10 +2907,10 @@ public class ModEvents {
                     return;
                 }
                 particle9.setBaseValue(0);
-                if (livingEntity instanceof PlayerMobEntity) {
-                    //if (GameRuleInit.getCustomRule(livingEntity.level().getGameRules())) {
-                    //    event.setCanceled(true);
-                    //}
+                if (livingEntity instanceof PlayerMobEntity playerMobEntity) {
+                    if (!playerMobEntity.level().getLevelData().getGameRules().getBoolean(GameRuleInit.NPC_SHOULD_SPAWN)) {
+                        event.setCanceled(true);
+                    }
                 }
             }
         }

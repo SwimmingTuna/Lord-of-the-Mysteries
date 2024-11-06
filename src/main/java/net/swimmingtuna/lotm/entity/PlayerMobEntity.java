@@ -51,6 +51,7 @@ import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.client.Configs;
 import net.swimmingtuna.lotm.entity.EntityGoals.PlayerMobGoals;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.init.GameRuleInit;
 import net.swimmingtuna.lotm.init.SoundInit;
 import net.swimmingtuna.lotm.util.PlayerMobs.ItemManager;
 import net.swimmingtuna.lotm.util.PlayerMobs.NameManager;
@@ -247,9 +248,13 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
         if (!this.level().isClientSide()) {
             if (tag.getInt("CSlifetime") >= 1) {
                 tag.putInt("CSlifetime", tag.getInt("CSlifetime") - 1);
-            } else if (tag.getInt("CSlifetime") == 1) {
+            }
+            if (tag.getInt("CSlifetime") == 1) {
                 this.discard();
                 this.getOwner().setHealth(this.getHealth());
+            }
+            if (!this.level().getLevelData().getGameRules().getBoolean(GameRuleInit.NPC_SHOULD_SPAWN)) {
+                this.discard();
             }
         }
         super.tick();

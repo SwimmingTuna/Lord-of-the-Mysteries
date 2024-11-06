@@ -67,6 +67,7 @@ public class LOTM {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Configs.commonSpec);
         BlockEntityInit.BLOCK_ENTITIES.register(modEventBus);
         CreativeTabInit.register(modEventBus);
+        MinecraftForge.EVENT_BUS.register(new GameRuleInit());
 
         ItemInit.register(modEventBus);
         BlockInit.register(modEventBus);
