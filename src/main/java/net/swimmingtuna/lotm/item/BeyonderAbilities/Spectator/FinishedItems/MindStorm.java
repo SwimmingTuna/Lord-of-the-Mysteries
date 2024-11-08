@@ -34,7 +34,7 @@ import java.util.List;
 public class MindStorm extends SimpleAbilityItem {
 
     public MindStorm(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 3, 250, 200,60,60 );
+        super(properties, BeyonderClassInit.SPECTATOR, 4, 250, 200,60,60 );
     }
 
     @Override
