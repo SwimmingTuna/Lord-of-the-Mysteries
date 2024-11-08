@@ -150,7 +150,8 @@ public class ServerEvents {
                 } else if (holder.getSpirituality() < (int) (500 / dreamIntoReality.getValue())) {
                     player.displayClientMessage(Component.literal("You need " + (int) (500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
                 } else {
-                    String[] coordinates = message.split(" ");
+                    String[] coordinates = message.replace(",", " ").trim().split("\\s+");
+
                     if (coordinates.length == 3) {
                         int x = Integer.parseInt(coordinates[0]);
                         int y = Integer.parseInt(coordinates[1]);

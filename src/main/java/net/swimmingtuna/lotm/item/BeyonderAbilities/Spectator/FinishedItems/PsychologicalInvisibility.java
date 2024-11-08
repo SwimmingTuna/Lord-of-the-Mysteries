@@ -24,7 +24,7 @@ import java.util.List;
 public class PsychologicalInvisibility extends SimpleAbilityItem {
 
     public PsychologicalInvisibility(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 5, 0, 240);
+        super(properties, BeyonderClassInit.SPECTATOR, 6, 0, 240);
     }
 
     @Override

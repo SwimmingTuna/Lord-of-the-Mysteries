@@ -180,6 +180,7 @@ public class LOTM {
             event.accept(ItemInit.ENVISIONHEALTH);
             event.accept(ItemInit.LUCK_MANIPULATION);
             event.accept(ItemInit.LUCKGIFTING);
+            event.accept(ItemInit.MISFORTUNEBESTOWAL);
             event.accept(ItemInit.MONSTERDANGERSENSE);
             event.accept(ItemInit.MONSTERPROJECTILECONTROL);
             event.accept(ItemInit.LUCKPERCEPTION);

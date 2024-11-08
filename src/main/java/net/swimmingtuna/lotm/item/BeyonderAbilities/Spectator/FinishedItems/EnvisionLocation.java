@@ -28,7 +28,10 @@ public class EnvisionLocation extends SimpleAbilityItem {
     }
 
     public static boolean isThreeIntegers(String message) {
+        message = message.replace(",", " ").trim();
+        message = message.replaceAll("\\s+", " ");
         return message.matches("\\d+ \\d+ \\d+");
     }
+
 
 }

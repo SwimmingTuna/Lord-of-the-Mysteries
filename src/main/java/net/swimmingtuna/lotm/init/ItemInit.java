@@ -34,6 +34,8 @@ public class ItemInit {
             () -> new LuckManipulation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LUCKGIFTING = ITEMS.register("luckgifting",
             () -> new LuckGifting(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MISFORTUNEBESTOWAL = ITEMS.register("misfortunebestowal",
+            () -> new MisfortuneBestowal(new Item.Properties().stacksTo(1)));
 
 
     public static final RegistryObject<Item> TSUNAMI = ITEMS.register("tsunami",

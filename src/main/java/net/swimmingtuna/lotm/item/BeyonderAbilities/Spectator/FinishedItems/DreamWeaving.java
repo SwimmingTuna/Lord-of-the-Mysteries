@@ -68,7 +68,7 @@ public class DreamWeaving extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        addCooldown(player, this, 160 / (int) dreamIntoReality.getValue());
+        addCooldown(player, this, 500 / (int) dreamIntoReality.getValue());
         useSpirituality(player);
         dreamWeave(player, interactionTarget);
         return InteractionResult.SUCCESS;
@@ -77,7 +77,7 @@ public class DreamWeaving extends SimpleAbilityItem {
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal("Upon use on a living entity, brings their nightmares into reality, giving them darkness temporarily and summoning a random array of mobs around the target\n" +
                 "Spirituality Used: 250\n" +
-                "Cooldown: 8 seconds").withStyle(ChatFormatting.AQUA));
+                "Cooldown: 25 seconds").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

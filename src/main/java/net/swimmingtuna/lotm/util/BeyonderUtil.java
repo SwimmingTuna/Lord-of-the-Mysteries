@@ -273,6 +273,7 @@ public class BeyonderUtil {
             if (sequence <= 5) {
                 abilityNames.add(ItemInit.LUCK_MANIPULATION.get());
                 abilityNames.add(ItemInit.LUCKGIFTING.get());
+                abilityNames.add(ItemInit.MISFORTUNEBESTOWAL.get());
             }
             if (sequence <= 4) {
 

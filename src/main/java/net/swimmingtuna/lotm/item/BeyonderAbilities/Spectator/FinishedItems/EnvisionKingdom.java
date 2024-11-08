@@ -54,9 +54,9 @@ public class EnvisionKingdom extends SimpleAbilityItem {
             CompoundTag compoundTag = player.getPersistentData();
             compoundTag.putInt("mindscapeAbilities", 50);
             compoundTag.putInt("inMindscape", 1);
-            compoundTag.putInt("mindscapePlayerLocationX", x); //check if this works
-            compoundTag.putInt("mindscapePlayerLocationY", y);
-            compoundTag.putInt("mindscapePlayerLocationZ", z);
+            compoundTag.putInt("mindscapePlayerLocationX", x - 77); //check if this works
+            compoundTag.putInt("mindscapePlayerLocationY", y - 8);
+            compoundTag.putInt("mindscapePlayerLocationZ", z - 207);
         }
     }
 }

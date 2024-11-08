@@ -6,6 +6,7 @@ import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.client.AbilityOverlay;
 import net.swimmingtuna.lotm.client.SpiritualityBarOverlay;
 
 
@@ -15,7 +16,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onRegisterOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAbove(VanillaGuiOverlay.EXPERIENCE_BAR.id(), "spirituality_overlay", SpiritualityBarOverlay.INSTANCE);
-        //event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(), "lotmhealthbar_overlay", HealthBarOverlay.instance);
+        event.registerAboveAll("ability_overlay", AbilityOverlay.INSTANCE);
     }
 
 }

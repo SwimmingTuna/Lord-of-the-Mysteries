@@ -90,7 +90,6 @@ public class PlagueStorm extends SimpleAbilityItem {
                 } else {
                     entityInRange.hurt(entityInRange.damageSources().magic(), (float) ((40 - (holder.getCurrentSequence() * 6)) * dreamIntoReality.getValue()));
                 }
-                entityInRange.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 80, 1, false, false));
                 entityInRange.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 2, false, false));
                 entityInRange.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 1, false, false));
                 entityInRange.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 1, false, false));

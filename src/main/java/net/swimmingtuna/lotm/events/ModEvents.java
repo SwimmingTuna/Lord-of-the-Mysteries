@@ -815,13 +815,20 @@ public class ModEvents {
         int y = playerPersistentData.getInt("mindscapePlayerLocationY");
         int z = playerPersistentData.getInt("mindscapePlayerLocationZ");
         if (mindScape1 < 1) return;
-        if (mindScape1 == 6) {
-            player.teleportTo(player.getX() + 77, player.getY() + 8, player.getZ() + 206);
+        if (mindScape1 == 11) {
             for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(250))) {
                 if (entity != player) {
-                    entity.teleportTo(player.getX(), player.getY(), player.getZ() - 10);
+                    if (entity instanceof Player) {
+                        entity.teleportTo(player.getX(), player.getY() + 1, player.getZ() - 10);
+                    }
+                    else if (entity.getMaxHealth() >= 50) {
+                        entity.teleportTo(player.getX(), player.getY() + 1, player.getZ() - 10);
+                    }
                 }
             }
+        }
+        if (mindScape == 2 || mindScape == 4 || mindScape == 6	|| mindScape == 8 || mindScape == 10) {
+            player.teleportTo(player.getX(), player.getY() + 4.5, player.getZ());
         }
         StructureTemplate part = serverLevel.getStructureManager().getOrCreate(new ResourceLocation(LOTM.MOD_ID, "corpse_cathedral_" + (partIndex + 1)));
         BlockPos tagPos = new BlockPos(x, y + (partIndex * 2), z);
@@ -2116,7 +2123,6 @@ public class ModEvents {
 
     private static void applyEffectsAndDamage(LivingEntity entity) {
         entity.addEffect(new MobEffectInstance(MobEffects.POISON, 400, 2, false, false));
-        entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 400, 2, false, false));
         entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 400, 1, false, false));
         entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 400, 1, false, false));
         entity.hurt(entity.damageSources().magic(), 20);

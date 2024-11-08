@@ -17,7 +17,9 @@ public class BattleHypnotismEffect extends MobEffect {
         if (!livingEntity.level().isClientSide) {
             double radius = 5.0 + amplifier;
             for (Mob mob : livingEntity.level().getEntitiesOfClass(Mob.class, livingEntity.getBoundingBox().inflate(radius * 2))) {
-                mob.setTarget(livingEntity);
+                if (mob != livingEntity) {
+                    mob.setTarget(livingEntity);
+                }
             }
             if (!(livingEntity instanceof Player)) {
                 livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,1,2));
