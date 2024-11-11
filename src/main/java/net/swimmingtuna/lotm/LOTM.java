@@ -65,10 +65,9 @@ public class LOTM {
         BeyonderClassInit.BEYONDER_CLASS.register(modEventBus);
         BeyonderHolderAttacher.register();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Configs.commonSpec);
-        BlockEntityInit.BLOCK_ENTITIES.register(modEventBus);
+        BlockEntityInit.register(modEventBus);
         CreativeTabInit.register(modEventBus);
         MinecraftForge.EVENT_BUS.register(new GameRuleInit());
-
         ItemInit.register(modEventBus);
         BlockInit.register(modEventBus);
         ModEffects.register(modEventBus);
@@ -281,6 +280,7 @@ public class LOTM {
             event.accept(BlockInit.LOTM_LIGHT_BLUE_CARPET);
             event.accept(BlockInit.LOTM_CHAIN);
             event.accept(BlockInit.LOTM_LANTERN);
+            event.accept(BlockInit.POTION_CAULDRON);
 
             event.accept(BlockInit.LOTM_DARKOAK_SLAB);
             event.accept(BlockInit.LOTM_QUARTZ_SLAB);

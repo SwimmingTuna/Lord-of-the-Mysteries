@@ -40,6 +40,7 @@
 
 
 
+
   "sounds.lotm.siren_song_harm": "Siren Song Harm",
   "sounds.lotm.siren_song_harm_1": "Siren Song Harm 1",
   "sounds.lotm.siren_song_harm_2": "Siren Song Harm 2",
@@ -133,6 +134,8 @@
   "block.lotm.cathedral_block": "Cathedral Block",
   "block.lotm.mindscape_block": "Mindscape Block",
   "block.lotm.mindscape_outside": "Mindscape Outside",
+  "block.lotm.potion_cauldron": "Potion Cauldron",
+
 
   "item.lotm.windmanipulationflight": "Wind Manipulation: Flight",
   "item.lotm.enableordisablelightning": "Enable/Disable Lightning",

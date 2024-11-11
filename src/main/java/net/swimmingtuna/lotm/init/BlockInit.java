@@ -10,6 +10,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.blocks.PotionCauldron;
 import net.swimmingtuna.lotm.blocks.glass_pane.LOTMGlassPane;
 import net.swimmingtuna.lotm.blocks.glass_pane.LOTMStainedGlassPane;
 import net.swimmingtuna.lotm.blocks.spectator_blocks.*;
@@ -206,6 +207,8 @@ public class BlockInit {
             () -> lotmStainedGlassPane(DyeColor.RED));
     public static final RegistryObject<Block> VISIONARY_LIME_STAINED_GLASS_PANE = registerBlock("lotm_lime_stained_pane",
             () -> lotmStainedGlassPane(DyeColor.LIME));
+    public static final RegistryObject<Block> POTION_CAULDRON = registerBlock("potion_cauldron",
+            () -> new PotionCauldron(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE_BRICKS).noOcclusion()));
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {

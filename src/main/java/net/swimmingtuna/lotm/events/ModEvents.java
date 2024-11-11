@@ -91,7 +91,6 @@ import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
 public class ModEvents {
