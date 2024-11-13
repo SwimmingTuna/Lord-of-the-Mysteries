@@ -7,6 +7,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -17,18 +19,31 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.items.ItemStackHandler;
+import net.swimmingtuna.lotm.util.BeyonderRecipes;
 import net.swimmingtuna.lotm.util.TickableBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PotionCauldron extends HorizontalDirectionalBlock implements EntityBlock {
+    public static final BooleanProperty LIT = BooleanProperty.create("lit");
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     public PotionCauldron(Properties properties) {
         super(properties);
+        this.registerDefaultState(this.getStateDefinition().any().setValue(LIT, false));
+    }
+
+    private static final VoxelShape SHAPE = Block.box(1, 0, 1, 15, 15, 15);
+
+    @Override
+    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        return SHAPE;
     }
 
     @Nullable
@@ -39,87 +54,63 @@ public class PotionCauldron extends HorizontalDirectionalBlock implements Entity
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
         builder.add(FACING);
+        builder.add(LIT);
     }
 
     @Override
-    public InteractionResult use(@NotNull BlockState state, Level pLevel, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-        if (player.level().isClientSide()) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pos);
-            if (blockEntity instanceof PotionCauldronBlockEntity potionCauldronBlock) {
-                player.sendSystemMessage(Component.literal("Client ticks are " + potionCauldronBlock.getTickCounter()));
-            }
-        }
-        if (!player.level().isClientSide()) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pos);
-            if (blockEntity instanceof PotionCauldronBlockEntity potionCauldronBlock) {
-                player.sendSystemMessage(Component.literal("Server ticks are " + potionCauldronBlock.getTickCounter()));
-            }
-        }
-        if (!pLevel.isClientSide() && hand == InteractionHand.MAIN_HAND) {
+    public InteractionResult use(BlockState state, Level pLevel, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!pLevel.isClientSide() && hand == InteractionHand.MAIN_HAND && !player.level().isClientSide()) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pos);
             if (blockEntity instanceof PotionCauldronBlockEntity potionCauldronBlock) {
                 ItemStackHandler inventory = potionCauldronBlock.getInventory();
-                ItemStack stack = player.getItemInHand(hand);
-                if (player.isCrouching()) {
-                    boolean anyItemExtracted = false;
+                ItemStack itemInHand = player.getItemInHand(hand);
+                if (player.isShiftKeyDown()) {
                     for (int i = 0; i < inventory.getSlots(); i++) {
-                        ItemStack slotStack = inventory.getStackInSlot(i);
-                        if (!slotStack.isEmpty()) {
-                            ItemStack extracted = inventory.extractItem(i, inventory.getSlotLimit(i), false);
-                            ItemEntity entity = new ItemEntity(pLevel,
-                                    pos.getX() + 0.5D,
-                                    pos.getY() + 0.5D,
-                                    pos.getZ() + 0.5D,
-                                    extracted);
-                            pLevel.addFreshEntity(entity);
-                            anyItemExtracted = true;
+                        ItemStack stackInSlot = inventory.getStackInSlot(i);
+                        if (!stackInSlot.isEmpty()) {
+                            player.sendSystemMessage(Component.literal("Shift click check"));
+                            player.drop(stackInSlot.copy(), true);
+                            inventory.setStackInSlot(i, ItemStack.EMPTY);
                         }
                     }
-                    if (!anyItemExtracted) {
-                        player.sendSystemMessage(Component.literal("No items in cauldron!"));
+                }
+                if (!itemInHand.isEmpty()) {
+                    if (itemInHand.getItem() == Items.GLASS_BOTTLE) {
+                        player.sendSystemMessage(Component.literal("Glass bottle check"));
+                        BeyonderRecipes.checkForRecipes(inventory, potionCauldronBlock);
+                        itemInHand.shrink(1);
+                        player.addItem(inventory.getStackInSlot(0));
+                        inventory.setStackInSlot(0, ItemStack.EMPTY);
+                    } else {
+                        for (int i = 0; i < inventory.getSlots(); i++) {
+                            ItemStack stackInSlot = inventory.getStackInSlot(i);
+                            if (ItemStack.isSameItemSameTags(stackInSlot, itemInHand) && stackInSlot.getCount() < stackInSlot.getMaxStackSize()) {
+                                stackInSlot.grow(1);
+                                itemInHand.shrink(1);
+                                player.sendSystemMessage(Component.literal("Added existing item"));
+                                return InteractionResult.SUCCESS;
+                            }
+                        }
+                        for (int i = 0; i < inventory.getSlots(); i++) {
+                            if (inventory.getStackInSlot(i).isEmpty()) {
+                                ItemStack newStack = itemInHand.copy();
+                                newStack.setCount(1);
+                                inventory.setStackInSlot(i, newStack);
+                                player.sendSystemMessage(Component.literal("Added non-existent item"));
+                                itemInHand.shrink(1);
+                                return InteractionResult.SUCCESS;
+
+                            }
+                        }
                     }
                     return InteractionResult.SUCCESS;
                 }
-                if (stack.isEmpty()) {
-                    boolean extracted = false;
-                    for (int i = 0; i < inventory.getSlots(); i++) {
-                        if (!inventory.getStackInSlot(i).isEmpty()) {
-                            ItemStack extractedStack = inventory.extractItem(i, 1, false);
-                            player.setItemInHand(hand, extractedStack);
-                            extracted = true;
-                            break;
-                        }
-                    }
-                    if (!extracted) {
-                        player.sendSystemMessage(Component.literal("No items in cauldron!"));
-                    }
-                } else {
-                    boolean inserted = false;
-                    ItemStack toInsert = stack.copy();
-                    toInsert.setCount(1);
-                    for (int i = 0; i < inventory.getSlots(); i++) {
-                        ItemStack result = inventory.insertItem(i, toInsert, true);
-                        if (result.isEmpty()) {
-                            inventory.insertItem(i, toInsert, false);
-                            ItemStack remainder = stack.copy();
-                            remainder.shrink(1);
-                            player.setItemInHand(hand, remainder);
-                            inserted = true;
-                            break;
-                        }
-                    }
-
-                    if (!inserted) {
-                        player.sendSystemMessage(Component.literal("Cauldron is full!"));
-                    }
-                }
-                return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.sidedSuccess(pLevel.isClientSide());
     }
+
 
     @Override
     public void onRemove(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pNewState, boolean pIsMoving) {
@@ -130,11 +121,12 @@ public class PotionCauldron extends HorizontalDirectionalBlock implements Entity
                 for (int index = 0; index < inventory.getSlots(); index++) {
                     ItemStack stack = inventory.getStackInSlot(index);
                     if (!stack.isEmpty()) {
+                        ItemStack droppedStack = inventory.extractItem(index, stack.getCount(), false);
                         ItemEntity entity = new ItemEntity(pLevel,
                                 pPos.getX() + 0.5D,
                                 pPos.getY() + 0.5D,
                                 pPos.getZ() + 0.5D,
-                                stack);
+                                droppedStack);
                         pLevel.addFreshEntity(entity);
                     }
                 }

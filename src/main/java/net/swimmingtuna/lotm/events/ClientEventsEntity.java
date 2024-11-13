@@ -13,7 +13,6 @@ public class ClientEventsEntity {
     @SubscribeEvent
     public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(MeteorModel.METEOR_LOCATION, MeteorModel::createBodyLayer);
-        event.registerLayerDefinition(CircleEntityModel.CIRCLE_LOCATION, CircleEntityModel::createBodyLayer);
         event.registerLayerDefinition(MeteorNoLevelModel.METEOR_LOCATION, MeteorNoLevelModel::createBodyLayer);
         event.registerLayerDefinition(DragonBreathModel.LAYER, DragonBreathModel::createBodyLayer);
         event.registerLayerDefinition(WindBladeModel.WIND_BLADE_LOCATION, WindBladeModel::createBodyLayer);

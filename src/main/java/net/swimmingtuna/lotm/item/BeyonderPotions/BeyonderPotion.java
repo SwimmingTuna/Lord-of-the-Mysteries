@@ -37,6 +37,7 @@ public class BeyonderPotion extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (level.isClientSide) return InteractionResultHolder.pass(itemStack);
+        player.getPersistentData().putInt("failedPotion",1);
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         if (holder.getCurrentClass() != null && holder.getCurrentClass() != beyonderClassSupplier.get()) {
             return InteractionResultHolder.fail(itemStack);
@@ -67,5 +68,4 @@ public class BeyonderPotion extends Item {
 
         return super.use(level, player, hand);
     }
-
 }

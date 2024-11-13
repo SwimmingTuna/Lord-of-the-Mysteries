@@ -6,7 +6,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -15,12 +14,15 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.init.BlockEntityInit;
+import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
+import net.swimmingtuna.lotm.util.BeyonderRecipes;
 import net.swimmingtuna.lotm.util.TickableBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PotionCauldronBlockEntity extends BlockEntity implements TickableBlockEntity {
     private int tickCounter = 0;
+    private boolean lit = false;
 
     private final ItemStackHandler inventory = new ItemStackHandler(5) {
         @Override
@@ -42,6 +44,8 @@ public class PotionCauldronBlockEntity extends BlockEntity implements TickableBl
         CompoundTag modId = pTag.getCompound(LOTM.MOD_ID);
         this.inventory.deserializeNBT(modId.getCompound("Inventory"));
         this.tickCounter = modId.getInt("TickCounter");
+        this.lit = modId.getBoolean("HasPotion"); // Load recipe flag
+
     }
 
     @Override
@@ -50,6 +54,7 @@ public class PotionCauldronBlockEntity extends BlockEntity implements TickableBl
         var lotmModData = new CompoundTag();
         lotmModData.putInt("TickCounter", this.tickCounter);
         lotmModData.put("Inventory", this.inventory.serializeNBT());
+        lotmModData.putBoolean("HasPotion", this.lit);
         pTag.put(LOTM.MOD_ID, lotmModData);
     }
 
@@ -74,6 +79,53 @@ public class PotionCauldronBlockEntity extends BlockEntity implements TickableBl
         this.optional.invalidate();
     }
 
+    @Override
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+
+
+    @Override
+    public void tick() {
+        if (this.level == null || this.level.isClientSide()) {
+            return;
+        }
+
+        // Count non-empty slots
+        int nonEmptySlots = 0;
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            if (!inventory.getStackInSlot(i).isEmpty()) {
+                nonEmptySlots++;
+            }
+        }
+
+        // Update lit state if it's different
+        boolean shouldBeLit = nonEmptySlots >= 2;
+        if (this.lit != shouldBeLit) {
+            setHasPotion(shouldBeLit);
+        }
+
+        tickCounter++;
+        if (this.tickCounter % 20 == 0) {
+            System.out.println("Slot 0 is " + inventory.getStackInSlot(0));
+            System.out.println("Slot 1 is " + inventory.getStackInSlot(1));
+            System.out.println("Slot 2 is " + inventory.getStackInSlot(2));
+            System.out.println("Slot 3 is " + inventory.getStackInSlot(3));
+            System.out.println("Slot 4 is " + inventory.getStackInSlot(4));
+        }
+    }
+
+    public void setHasPotion(boolean value) {
+        this.lit = value;
+        this.setChanged();
+    }
+
+    public boolean getHasPotion() {
+        return this.lit;
+    }
+
+
     public ItemStackHandler getInventory() {
         return this.inventory;
     }
@@ -86,23 +138,10 @@ public class PotionCauldronBlockEntity extends BlockEntity implements TickableBl
         this.inventory.setStackInSlot(slot, stack);
     }
 
-    @Override
-    public void tick() {
-        if (this.level == null || this.level.isClientSide()) {
-            return;
+    public void clearInventory() {
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            inventory.setStackInSlot(i, ItemStack.EMPTY);
         }
-
-        this.tickCounter++;
-        setChanged();
-        this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
-    }
-
-    public int getTickCounter() {
-        return this.tickCounter;
-    }
-
-    @Override
-    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+        this.setChanged(); // Mark the block entity as changed
     }
 }
