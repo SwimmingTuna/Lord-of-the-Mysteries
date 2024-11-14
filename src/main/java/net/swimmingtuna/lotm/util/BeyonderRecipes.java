@@ -28,14 +28,6 @@ public class BeyonderRecipes {
         }
 
         // Check if the current inventory items match any recipe
-        for (Map.Entry<List<Item>, Item> entry : recipes.entrySet()) {
-            if (inventoryItems.containsAll(entry.getKey())) {
-                potionCauldronBlock.setItemInSlot(entry.getValue().getDefaultInstance(), 0);
-                return;
-            }
-        }
 
-        // Optional: Set a default item if no recipe matches
-        potionCauldronBlock.setItemInSlot(ItemInit.SPECTATOR_9_POTION.get().getDefaultInstance(), 0);
     }
 }

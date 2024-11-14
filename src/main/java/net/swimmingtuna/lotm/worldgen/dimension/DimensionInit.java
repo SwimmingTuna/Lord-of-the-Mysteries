@@ -21,15 +21,15 @@ import java.util.List;
 import java.util.OptionalLong;
 
 public class DimensionInit {
-    public static final ResourceKey<LevelStem> LOTM_DIMENSION_KEY = ResourceKey.create(Registries.LEVEL_STEM,
-            new ResourceLocation(LOTM.MOD_ID, "lotm_dimension"));
-    public static final ResourceKey<Level> LOTM_DIMENSION_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
-            new ResourceLocation(LOTM.MOD_ID, "lotm_dimension"));
-    public static final ResourceKey<DimensionType> LOTM_DIMENSION_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
-            new ResourceLocation(LOTM.MOD_ID, "lotm_dimension_type"));
+    public static final ResourceKey<LevelStem> SPIRIT_WORLD_KEY = ResourceKey.create(Registries.LEVEL_STEM,
+            new ResourceLocation(LOTM.MOD_ID, "spirit_world"));
+    public static final ResourceKey<Level> SPIRIT_WORLD_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
+            new ResourceLocation(LOTM.MOD_ID, "spirit_world"));
+    public static final ResourceKey<DimensionType> SPIRIT_WORLD_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
+            new ResourceLocation(LOTM.MOD_ID, "spirit_world_type"));
 
     public static void bootstrapType(BootstapContext<DimensionType> context) {
-        context.register(LOTM_DIMENSION_TYPE, new DimensionType(
+        context.register(SPIRIT_WORLD_TYPE, new DimensionType(
                 OptionalLong.of(12000), // fixedTime
                 false, // hasSkylight
                 false, // hasCeiling
@@ -70,8 +70,8 @@ public class DimensionInit {
                         ))),
                 noiseGenSettings.getOrThrow(NoiseGeneratorSettings.AMPLIFIED));
 
-        LevelStem stem = new LevelStem(dimTypes.getOrThrow(DimensionInit.LOTM_DIMENSION_TYPE), noiseBasedChunkGenerator);
+        LevelStem stem = new LevelStem(dimTypes.getOrThrow(DimensionInit.SPIRIT_WORLD_TYPE), noiseBasedChunkGenerator);
 
-        context.register(LOTM_DIMENSION_KEY, stem);
+        context.register(SPIRIT_WORLD_KEY, stem);
     }
 }
