@@ -68,6 +68,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.TEST.MirrorWorldChunkGenerator;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.Configs;
@@ -98,6 +99,23 @@ import static net.swimmingtuna.lotm.worldgen.dimension.DimensionInit.SPIRIT_WORL
 
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID)
 public class ModEvents {
+
+    @SubscribeEvent
+    public static void onLevelLoad(LevelEvent.Load event) {
+        if (event.getLevel().dimensionType().equals(SPIRIT_WORLD_LEVEL_KEY)) {
+            if (event.getLevel() instanceof ServerLevel spiritWorld) {
+                ServerLevel overworld = spiritWorld.getServer().getLevel(Level.OVERWORLD);
+                if (overworld != null && spiritWorld.getChunkSource().getGenerator() instanceof MirrorWorldChunkGenerator) {
+                    ChunkGenerator newGenerator = new MirrorWorldChunkGenerator(
+                            spiritWorld.getChunkSource().getGenerator().getBiomeSource(),
+                            overworld.dimension()
+                    );
+                    // Use reflection or other means to set the generator if needed
+                    // This part might need additional work depending on your setup
+                }
+            }
+        }
+    }
 
     @SubscribeEvent
     public static void onPlayerJoinWorld(PlayerEvent.PlayerLoggedInEvent event) {

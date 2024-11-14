@@ -70,9 +70,9 @@ public class TestItem extends Item {
                         if (overworldWorld != null) {
                             player.sendSystemMessage(Component.literal("Transporting to Overworld..."));
                             serverPlayer.teleportTo(overworldWorld,
-                                    player.getX() * 8.0, // Convert back to overworld coordinates
+                                    player.getX(), // Convert back to overworld coordinates
                                     player.getY(),
-                                    player.getZ() * 8.0,
+                                    player.getZ(),
                                     player.getYRot(),
                                     player.getXRot());
                         }

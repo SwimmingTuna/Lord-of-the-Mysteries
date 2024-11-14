@@ -30,21 +30,21 @@ public class DimensionInit {
 
     public static void bootstrapType(BootstapContext<DimensionType> context) {
         context.register(SPIRIT_WORLD_TYPE, new DimensionType(
-                OptionalLong.of(12000), // fixedTime
-                false, // hasSkylight
+                OptionalLong.empty(), // Don't fix time
+                true,  // hasSkylight
                 false, // hasCeiling
                 false, // ultraWarm
-                false, // natural
-                1.0, // coordinateScale
-                true, // bedWorks
-                false, // respawnAnchorWorks
-                0, // minY
-                256, // height
-                256, // logicalHeight
-                BlockTags.INFINIBURN_OVERWORLD, // infiniburn
-                BuiltinDimensionTypes.OVERWORLD_EFFECTS, // effectsLocation
-                1.0f, // ambientLight
-                new DimensionType.MonsterSettings(false, false, ConstantInt.of(0), 0)));
+                true,  // natural
+                1.0,   // coordinateScale
+                true,  // bedWorks
+                true,  // respawnAnchorWorks
+                -64,   // minY
+                384,   // height
+                384,   // logicalHeight
+                BlockTags.INFINIBURN_OVERWORLD,
+                BuiltinDimensionTypes.OVERWORLD_EFFECTS,
+                0.0f,  // ambientLight
+                new DimensionType.MonsterSettings(true, true, ConstantInt.of(0), 7)));
     }
 
     public static void bootstrapStem(BootstapContext<LevelStem> context) {

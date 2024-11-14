@@ -30,10 +30,10 @@ public class KeyClientEvents {
         public static void onFogDensityEvent(ViewportEvent.RenderFog event) {
             Player player = Minecraft.getInstance().player;
             if (player.level().dimension().equals(DimensionInit.SPIRIT_WORLD_LEVEL_KEY)) {
-                event.setFogShape(FogShape.SPHERE);
-                event.setFarPlaneDistance(10.0f);
-                event.setNearPlaneDistance(7.0f);
-                event.setCanceled(true);
+                //event.setFogShape(FogShape.SPHERE);
+                //event.setFarPlaneDistance(10.0f);
+                //event.setNearPlaneDistance(7.0f);
+                //event.setCanceled(true);
             }
         }
     }
