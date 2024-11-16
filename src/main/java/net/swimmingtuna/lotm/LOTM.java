@@ -177,8 +177,15 @@ public class LOTM {
             event.accept(ItemInit.ENVISION_LOCATION);
             event.accept(ItemInit.ENVISION_LOCATION_BLINK);
             event.accept(ItemInit.ENVISIONHEALTH);
+            event.accept(ItemInit.HORNBEAM_ESSENTIALS_OIL);
+            event.accept(ItemInit.DEEP_SEA_MARLINS_BLOOD);
+            event.accept(ItemInit.STRING_GRASS_POWDER);
+            event.accept(ItemInit.SPIRIT_EATER_STOMACH_POUCH);
+            event.accept(ItemInit.RED_CHESTNUT_FLOWER);
             event.accept(ItemInit.LUCK_MANIPULATION);
             event.accept(ItemInit.LUCKGIFTING);
+            event.accept(ItemInit.LUCKDEPRIVATION);
+            event.accept(ItemInit.LUCKFUTURETELLING);
             event.accept(ItemInit.MISFORTUNEBESTOWAL);
             event.accept(ItemInit.MONSTERDANGERSENSE);
             event.accept(ItemInit.MONSTERPROJECTILECONTROL);

@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -22,8 +23,12 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
+import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
+import net.swimmingtuna.lotm.networking.packet.SyncSequencePacketS2C;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
@@ -90,6 +95,8 @@ public class ProphesizeDemise extends SimpleAbilityItem {
     public static void handlePlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         Player player = event.getEntity();
         if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            LOTMNetworkHandler.sendToPlayer(new SyncSequencePacketS2C(holder.getCurrentSequence()), (ServerPlayer) player);
             CompoundTag persistentData = player.getPersistentData();
 
             if (persistentData.contains("DemiseCounter")) {
@@ -112,6 +119,8 @@ public class ProphesizeDemise extends SimpleAbilityItem {
         Player player = event.getEntity();
         if (!player.level().isClientSide()) {
             CompoundTag persistentData = player.getPersistentData();
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            LOTMNetworkHandler.sendToPlayer(new SyncSequencePacketS2C(holder.getCurrentSequence()), (ServerPlayer) player);
 
             // Check if the persistent data contains the "DemiseCounter" key
             if (persistentData.contains("DemiseCounter")) {

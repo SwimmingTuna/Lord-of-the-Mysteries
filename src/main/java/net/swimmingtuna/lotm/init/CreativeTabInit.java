@@ -106,8 +106,21 @@ public class CreativeTabInit {
                         output.accept(ItemInit.SPIRITVISION.get());
                         output.accept(ItemInit.MONSTERCALAMITYATTRACTION.get());
                         output.accept(ItemInit.LUCKGIFTING.get());
+                        output.accept(ItemInit.LUCKDEPRIVATION.get());
                         output.accept(ItemInit.MISFORTUNEBESTOWAL.get());
+                    })
+                    .build());
 
+    public static final RegistryObject<CreativeModeTab> INGREDIENTS_TAB = CREATIVE_MODE_TABS.register("ingredients_tab",
+            () -> CreativeModeTab.builder().icon(() -> new ItemStack(ItemInit.AWE.get()))
+                    .title(Component.translatable("creativetab.abilities_tab"))
+                    .icon(() -> new ItemStack(ItemInit.RED_CHESTNUT_FLOWER.get()))
+                    .displayItems((parameters, output) -> {
+                        output.accept(ItemInit.SPIRIT_EATER_STOMACH_POUCH.get());
+                        output.accept(ItemInit.DEEP_SEA_MARLINS_BLOOD.get());
+                        output.accept(ItemInit.HORNBEAM_ESSENTIALS_OIL.get());
+                        output.accept(ItemInit.STRING_GRASS_POWDER.get());
+                        output.accept(ItemInit.RED_CHESTNUT_FLOWER.get());
                     })
                     .build());
 

@@ -64,12 +64,21 @@ public class LOTMNetworkHandler {
                 .encoder(SpiritVisionC2S::toByte)
                 .consumerMainThread(SpiritVisionC2S::handle)
                 .add();
+        INSTANCE.messageBuilder(SpiritWorldTraversalC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(SpiritWorldTraversalC2S::new)
+                .encoder(SpiritWorldTraversalC2S::toByte)
+                .consumerMainThread(SpiritWorldTraversalC2S::handle)
+                .add();
         INSTANCE.messageBuilder(NonVisibleS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(NonVisibleS2C::decode)
                 .encoder(NonVisibleS2C::encode)
                 .consumerMainThread(NonVisibleS2C::handle)
                 .add();
-
+        INSTANCE.messageBuilder(SyncSequencePacketS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SyncSequencePacketS2C::new)
+                .encoder(SyncSequencePacketS2C::encode)
+                .consumerMainThread(SyncSequencePacketS2C::handle)
+                .add();
     }
 
 

@@ -14,6 +14,8 @@ public class ModAttributes {
 
     public static final RegistryObject<Attribute> SOUL_BODY = ATTRIBUTES.register("soul_body",
             ()-> new RangedAttribute("attribute.lotm.spirituality",100.0D,0.0D,10000000).setSyncable(true));
+    public static final RegistryObject<Attribute> SANITY = ATTRIBUTES.register("sanity",
+            ()-> new RangedAttribute("attribute.lotm.spirituality",100.0D,0.0D,100).setSyncable(true));
     public static final RegistryObject<Attribute> MISFORTUNE = ATTRIBUTES.register("misfortune",
             ()-> new RangedAttribute("attribute.lotm.spirituality",0.0D,0.0D,10000000).setSyncable(true));
     public static final RegistryObject<Attribute> NIGHTMARE = ATTRIBUTES.register("nightmare",

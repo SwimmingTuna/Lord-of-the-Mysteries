@@ -17,7 +17,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
@@ -27,11 +26,11 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MisfortuneBestowal extends SimpleAbilityItem {
+public class LuckDeprivation extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
-    public MisfortuneBestowal(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 5, 250,400 ,20,20);
+    public LuckDeprivation(Properties properties) {
+        super(properties, BeyonderClassInit.SPECTATOR, 4, 50, 10,20,20);
     }
 
     @Override
@@ -42,7 +41,7 @@ public class MisfortuneBestowal extends SimpleAbilityItem {
         }
         useSpirituality(player);
         addCooldown(player);
-        misfortuneBestowal(interactionTarget, player);
+        giftLuck(interactionTarget, player);
         }
         return InteractionResult.SUCCESS;
     }
@@ -74,14 +73,12 @@ public class MisfortuneBestowal extends SimpleAbilityItem {
     }
 
 
-    private static void misfortuneBestowal(LivingEntity interactionTarget, Player player) {
+    private static void giftLuck(LivingEntity interactionTarget, Player player) {
         if (!player.level().isClientSide()) {
-            int sequence = BeyonderHolderAttacher.getHolderUnwrap(player).getCurrentSequence();
-            AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-            AttributeInstance interactionMisfortune = interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get());
-            int misfortuneAddValue = 60 - (sequence * 7);
-            interactionMisfortune.setBaseValue(Math.min(200,interactionMisfortune.getValue() + misfortuneAddValue));
-            misfortune.setBaseValue(Math.min(0,(interactionMisfortune.getValue()) - ((double) misfortuneAddValue / 2)));
-        }
-    }
+            AttributeInstance playerLuck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
+            int luckGiftingAmount = player.getPersistentData().getInt("monsterLuckGifting");
+            AttributeInstance interactionTargetLuck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
+            playerLuck.setBaseValue(playerLuck.getBaseValue() - (luckGiftingAmount / 2));
+            interactionTargetLuck.setBaseValue(interactionTargetLuck.getBaseValue() + luckGiftingAmount);
+        }}
 }

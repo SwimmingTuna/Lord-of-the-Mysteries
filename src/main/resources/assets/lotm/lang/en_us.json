@@ -192,6 +192,8 @@
   "item.lotm.luckmanipulation": "Luck Manipulation",
   "item.lotm.luckgifting": "Luck Gifting",
   "item.lotm.misfortunebestowal": "Misfortune Bestowal",
+  "item.lotm.luckfuturetelling": "Luck Prophesize",
+
 
 
 
@@ -224,6 +226,8 @@
   "item.lotm.beyonder_reset_potion": "Beyonder Reset Potion",
 
   "key.category.lotm.mystery": "LOTM",
+  "key.lotm.spirit_traversal_key": "Spirit World Traversal",
+  "key.lotm.ability_check": "Ability Key",
   "key.lotm.spirituality_check": "Ability GUI",
   "effects.lotm.advancement9": "Advancement 9",
   "effects.lotm.advancement8": "Advancement 8",
@@ -260,5 +264,7 @@
   "lotm.beyonder.spectator2": "Discerner",
   "lotm.beyonder.spectator1": "Author",
   "lotm.beyonder.spectator0": "Visionary",
-  "creativetab.abilities_tab": "Beyonder Abilities"
+  "creativetab.abilities_tab": "Beyonder Abilities",
+  "creativetab.ingredients_tab": "Beyonder Ingredients"
+
 }

@@ -68,7 +68,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.TEST.MirrorWorldChunkGenerator;
+import net.swimmingtuna.lotm.worldgen.MirrorWorldChunkGenerator;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.Configs;
@@ -86,6 +86,7 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.DreamIntoReality;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionBarrier;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
+import net.swimmingtuna.lotm.util.ClientSequenceData;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.CorruptionAndLuckHandler;
@@ -169,6 +170,12 @@ public class ModEvents {
         int sequence = holder.getCurrentSequence();
         if (player.level().isClientSide() || event.phase != TickEvent.Phase.START) {
             return;
+        }
+
+        if (player.tickCount % 20 == 0) {
+            if (holder.getCurrentSequence() != 0 && ClientSequenceData.getCurrentSequence() == 0) {
+                ClientSequenceData.setCurrentSequence(-1);
+            }
         }
         AttributeInstance corruption = player.getAttribute(ModAttributes.CORRUPTION.get());
         AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());

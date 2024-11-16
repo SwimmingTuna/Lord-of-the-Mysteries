@@ -18,6 +18,11 @@ public class ItemInit {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, LOTM.MOD_ID);
 
+
+    //ABILITIES
+
+
+        //MONSTER
     public static final RegistryObject<Item> MONSTERDANGERSENSE = ITEMS.register("monsterdangersense",
             () -> new MonsterDangerSense(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MONSTERCALAMITYATTRACTION = ITEMS.register("monstercalamityattraction",
@@ -34,10 +39,14 @@ public class ItemInit {
             () -> new LuckManipulation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LUCKGIFTING = ITEMS.register("luckgifting",
             () -> new LuckGifting(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LUCKDEPRIVATION = ITEMS.register("luckdeprivation",
+            () -> new LuckDeprivation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MISFORTUNEBESTOWAL = ITEMS.register("misfortunebestowal",
             () -> new MisfortuneBestowal(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LUCKFUTURETELLING = ITEMS.register("luckfuturetelling",
+            () -> new LuckFutureTelling(new Item.Properties().stacksTo(1)));
 
-
+        //SAILOR
     public static final RegistryObject<Item> TSUNAMI = ITEMS.register("tsunami",
             () -> new Tsunami(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EARTHQUAKE = ITEMS.register("earthquake",
@@ -96,8 +105,40 @@ public class ItemInit {
             () -> new Hurricane(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> TORNADO = ITEMS.register("tornado",
             () -> new Tornado(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> RAGING_BLOWS = ITEMS.register("ragingblows",
+            () -> new RagingBlows(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> AQUEOUS_LIGHT_DROWN = ITEMS.register("aqueouslightdrown",
+            () -> new AqueousLightDrown(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> AQUEOUS_LIGHT_PUSH = ITEMS.register("aqueouslightpush",
+            () -> new AqueousLightPush(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> AQUEOUS_LIGHT_PULL = ITEMS.register("aqueouslightpull",
+            () -> new AqueousLightPull(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ENABLE_OR_DISABLE_LIGHTNING = ITEMS.register("enableordisablelightning",
+            () -> new EnableOrDisableLightning(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WIND_MANIPULATION_FLIGHT = ITEMS.register("windmanipulationflight",
+            () -> new WindManipulationFlight(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WIND_MANIPULATION_BLADE = ITEMS.register("windmanipulationblade",
+            () -> new WindManipulationBlade(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WIND_MANIPULATION_CUSHION = ITEMS.register("windmanipulationcushion",
+            () -> new WindManipulationCushion(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WIND_MANIPULATION_SENSE = ITEMS.register("windmanipulationsense",
+            () -> new WindManipulationSense(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ACIDIC_RAIN = ITEMS.register("acidicrain",
+            () -> new AcidicRain(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> AQUATIC_LIFE_MANIPULATION = ITEMS.register("aquaticlifemanipulation",
+            () -> new AquaticLifeManipulation(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> TSUNAMI_SEAL = ITEMS.register("tsunamiseal",
+            () -> new TsunamiSeal(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SIREN_SONG_HARM = ITEMS.register("siren_song_harm",
+            () -> new SirenSongHarm(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SIREN_SONG_STRENGTHEN = ITEMS.register("siren_song_strengthen",
+            () -> new SirenSongStrengthen(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SIREN_SONG_STUN = ITEMS.register("siren_song_stun",
+            () -> new SirenSongStun(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> SIREN_SONG_WEAKEN = ITEMS.register("siren_song_weaken",
+            () -> new SirenSongWeaken(new Item.Properties().stacksTo(1)));
 
-
+        //SPECTATOR
     public static final RegistryObject<Item> MIND_READING = ITEMS.register("mindreading",
             () -> new MindReading(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> AWE = ITEMS.register("awe",
@@ -169,10 +210,30 @@ public class ItemInit {
     public static final RegistryObject<Item> ENVISIONHEALTH = ITEMS.register("envisionhealth",
             () -> new EnvisionHealth(new Item.Properties().stacksTo(1)));
 
+
+    //INGREDIENTS
+    public static final RegistryObject<Item> SPIRIT_EATER_STOMACH_POUCH = ITEMS.register("spirit_eater_stomach_pouch",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> DEEP_SEA_MARLINS_BLOOD = ITEMS.register("deep_sea_marlins_blood",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> HORNBEAM_ESSENTIALS_OIL = ITEMS.register("hornbeam_essentials_oil",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> STRING_GRASS_POWDER = ITEMS.register("string_grass_powder",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> RED_CHESTNUT_FLOWER = ITEMS.register("red_chestnut_flower",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+
+
+
+    //UTIL
     public static final RegistryObject<Item> BEYONDER_ABILITY_USER = ITEMS.register("beyonderabilityuser",
             () -> new BeyonderAbilityUser(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ICONITEM = ITEMS.register("zqdsndnkawdnsalnkw",
             () -> new Item(new Item.Properties().stacksTo(1)));
+
+
+
+    //POTIONS
     public static final RegistryObject<Item> SPECTATOR_9_POTION = ITEMS.register("spectator_9_potion",
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SPECTATOR, 9));
     public static final RegistryObject<Item> SPECTATOR_8_POTION = ITEMS.register("spectator_8_potion",
@@ -215,38 +276,7 @@ public class ItemInit {
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
     public static final RegistryObject<Item> BEYONDER_RESET_POTION = ITEMS.register("beyonder_reset_potion",
             () -> new BeyonderResetPotion(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> RAGING_BLOWS = ITEMS.register("ragingblows",
-            () -> new RagingBlows(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> AQUEOUS_LIGHT_DROWN = ITEMS.register("aqueouslightdrown",
-            () -> new AqueousLightDrown(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> AQUEOUS_LIGHT_PUSH = ITEMS.register("aqueouslightpush",
-            () -> new AqueousLightPush(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> AQUEOUS_LIGHT_PULL = ITEMS.register("aqueouslightpull",
-            () -> new AqueousLightPull(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> ENABLE_OR_DISABLE_LIGHTNING = ITEMS.register("enableordisablelightning",
-            () -> new EnableOrDisableLightning(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> WIND_MANIPULATION_FLIGHT = ITEMS.register("windmanipulationflight",
-            () -> new WindManipulationFlight(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> WIND_MANIPULATION_BLADE = ITEMS.register("windmanipulationblade",
-            () -> new WindManipulationBlade(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> WIND_MANIPULATION_CUSHION = ITEMS.register("windmanipulationcushion",
-            () -> new WindManipulationCushion(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> WIND_MANIPULATION_SENSE = ITEMS.register("windmanipulationsense",
-            () -> new WindManipulationSense(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> ACIDIC_RAIN = ITEMS.register("acidicrain",
-            () -> new AcidicRain(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> AQUATIC_LIFE_MANIPULATION = ITEMS.register("aquaticlifemanipulation",
-            () -> new AquaticLifeManipulation(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> TSUNAMI_SEAL = ITEMS.register("tsunamiseal",
-            () -> new TsunamiSeal(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> SIREN_SONG_HARM = ITEMS.register("siren_song_harm",
-            () -> new SirenSongHarm(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> SIREN_SONG_STRENGTHEN = ITEMS.register("siren_song_strengthen",
-            () -> new SirenSongStrengthen(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> SIREN_SONG_STUN = ITEMS.register("siren_song_stun",
-            () -> new SirenSongStun(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> SIREN_SONG_WEAKEN = ITEMS.register("siren_song_weaken",
-            () -> new SirenSongWeaken(new Item.Properties().stacksTo(1)));
+
 
 
     public static void register(IEventBus eventBus) {

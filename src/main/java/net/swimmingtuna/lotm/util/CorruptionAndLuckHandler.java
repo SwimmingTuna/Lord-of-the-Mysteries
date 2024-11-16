@@ -117,8 +117,8 @@ public class CorruptionAndLuckHandler {
                 }
             }
             if (luck.getValue() >= 1) {
-                if (player.tickCount % 29 == 0 && random.nextInt(100) <= lotmLuckValue && player.getHealth() <= 15 && !player.hasEffect(MobEffects.REGENERATION) && regeneration == 0) {
-                    tag.putInt("luckRegeneration", 5);
+                if (player.tickCount % 29 == 0 && random.nextInt(100) <= lotmLuckValue && regeneration == 0) {
+                    tag.putInt("luckRegeneration", 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 5));
                 }
                 if (player.tickCount % 907 == 0 && random.nextInt(300) <= lotmLuckValue && player.onGround() && diamondsDropped == 0) {
@@ -653,9 +653,6 @@ public class CorruptionAndLuckHandler {
                 if (stone >= 2) {
                     tag.putInt("luckStone", stone - 1);
                 }
-                if (regeneration >= 2) {
-                    tag.putInt("luckRegeneration", regeneration - 1);
-                }
                 if (diamondsDropped >= 2) {
                     tag.putInt("luckDiamonds", diamondsDropped - 1);
                 }
@@ -800,13 +797,17 @@ public class CorruptionAndLuckHandler {
                         tag.putInt("luckStoneDamageImmunity", 5);
                     }
                 }
-                if (regeneration == 1) {
+                if (regeneration == 1 && player.getHealth() <= 15) {
                     if (player.hasEffect(MobEffects.REGENERATION)) {
                         if (player.getEffect(MobEffects.REGENERATION).getAmplifier() <= 4) {
                             tag.putInt("luckRegeneration", 0);
                             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 4, false, false));
                         }
-                    } else player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 4, false, false));
+                    }
+                    else {
+                        tag.putInt("luckRegeneration", 0);
+                        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 4, false, false));
+                    }
                 }
                 if (diamondsDropped == 1 && player.onGround()) {
                     player.addItem(Items.DIAMOND.getDefaultInstance());
