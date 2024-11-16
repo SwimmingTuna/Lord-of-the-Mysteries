@@ -10,6 +10,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.blocks.MonsterDomainBlock;
 import net.swimmingtuna.lotm.blocks.PotionCauldron;
 import net.swimmingtuna.lotm.blocks.glass_pane.LOTMGlassPane;
 import net.swimmingtuna.lotm.blocks.glass_pane.LOTMStainedGlassPane;
@@ -41,6 +42,11 @@ public class BlockInit {
 
     public static final RegistryObject<Block> CATHEDRAL_BLOCK = registerBlock("cathedral_block",
             () -> new CathedralBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)
+                    .destroyTime(100)
+                    .strength(100)
+                    .noLootTable()));
+    public static final RegistryObject<Block> MONSTER_DOMAIN_BLOCK = registerBlock("monster_domain_block",
+            () -> new MonsterDomainBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)
                     .destroyTime(100)
                     .strength(100)
                     .noLootTable()));

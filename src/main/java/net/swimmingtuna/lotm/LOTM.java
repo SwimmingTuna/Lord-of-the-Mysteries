@@ -239,6 +239,7 @@ public class LOTM {
             event.accept(BlockInit.LOTM_WHITE_STAINED_GLASS);
             event.accept(BlockInit.LOTM_BLUE_STAINED_GLASS);
             event.accept(BlockInit.CATHEDRAL_BLOCK);
+            event.accept(BlockInit.MONSTER_DOMAIN_BLOCK);
             event.accept(BlockInit.MINDSCAPE_BLOCK);
             event.accept(BlockInit.MINDSCAPE_OUTSIDE);
             event.accept(BlockInit.LOTM_BOOKSHELF);

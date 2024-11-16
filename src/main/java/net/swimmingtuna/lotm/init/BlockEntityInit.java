@@ -22,6 +22,10 @@ public class BlockEntityInit {
             BLOCK_ENTITIES.register("potion_cauldron_entity",
                     () -> BlockEntityType.Builder.of(PotionCauldronBlockEntity::new, BlockInit.POTION_CAULDRON.get())
                             .build(null));
+    public static final RegistryObject<BlockEntityType<PotionCauldronBlockEntity>> MONSTER_DOMAIN_BLOCK_ENTITY =
+            BLOCK_ENTITIES.register("monster_domain_entity",
+                    () -> BlockEntityType.Builder.of(PotionCauldronBlockEntity::new, BlockInit.MONSTER_DOMAIN_BLOCK.get())
+                            .build(null));
 
 
 

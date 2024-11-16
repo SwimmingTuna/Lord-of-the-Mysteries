@@ -136,6 +136,14 @@
   "block.lotm.mindscape_outside": "Mindscape Outside",
   "block.lotm.potion_cauldron": "Potion Cauldron",
 
+  "item.lotm.luckdenial": "Luck Denial",
+  "item.lotm.misfortunemanipulation": "Misfortune Domain",
+  "item.lotm.providencedomain": "Decayal Domain",
+  "item.lotm.misfortunedomain": "Providence Domain",
+  "item.lotm.luckchanneling": "Luck Channeling",
+  "item.lotm.choiceofcalamity": "Disable/Enable Calamities",
+
+
 
   "item.lotm.windmanipulationflight": "Wind Manipulation: Flight",
   "item.lotm.enableordisablelightning": "Enable/Disable Lightning",

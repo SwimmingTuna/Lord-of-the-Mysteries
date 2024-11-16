@@ -29,6 +29,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.Zombie;
@@ -1166,6 +1167,35 @@ public class ModEvents {
         }
     }
 
+    private static void luckDenial(LivingEntity livingEntity) {
+        CompoundTag tag = livingEntity.getPersistentData();
+        AttributeInstance luck = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
+        AttributeInstance misfortune = livingEntity.getAttribute(ModAttributes.MISFORTUNE.get());
+        double luckDenialTimer = tag.getDouble("luckDenialTimer");
+        double luckDenialLuck = tag.getDouble("luckDenialLuck");
+        double luckDenialMisfortune = tag.getDouble("luckDenialMisfortune");
+        double misfortuneAmount = misfortune.getBaseValue();
+        double luckAmount = luck.getBaseValue();
+        if (luckDenialTimer >= 1) {
+            tag.putDouble("luckDenialTimer", luckDenialTimer - 1);
+            if (luckAmount >= luckDenialLuck) {
+                luck.setBaseValue(luckAmount);
+            }
+            if (misfortuneAmount <= luckDenialMisfortune) {
+                misfortune.setBaseValue(luckDenialMisfortune);
+            }
+        }
+    }
+
+    private static void domainDrops(LivingDropsEvent event) {
+        if (event.getEntity().getPersistentData().getInt("inMonsterProvidenceDomain") >= 1) {
+            Random random = new Random();
+            if (random.nextInt(3) == 1) {
+                event.getDrops().add((ItemEntity) event.getEntity().captureDrops());
+            }
+        }
+    }
+
     private static void matterAccelerationSelf(Player player, BeyonderHolder holder, Style style) {
         //MATTER ACCELERATION SELF
         if (player.isSpectator()) return;
@@ -1445,6 +1475,16 @@ public class ModEvents {
                 lightningEntity.setOwner(player);
                 lightningEntity.teleportTo(player.getX(), player.getY(), player.getZ());
                 player.level().addFreshEntity(lightningEntity);
+            }
+        }
+    }
+
+    private static void domainDropsExperience(LivingExperienceDropEvent event) {
+        //MONSTER PROVIDENCE DOMAIN
+        if (!event.getEntity().level().isClientSide()) {
+            if (event.getEntity().getPersistentData().getInt("inMonsterProvidenceDomain") >= 1) {
+                int droppedExperience = event.getDroppedExperience();
+                event.setDroppedExperience((int) (droppedExperience * 1.5));
             }
         }
     }
@@ -2836,6 +2876,20 @@ public class ModEvents {
         }
     }
 
+
+    @SubscribeEvent
+    public static void onLivingDrops(LivingDropsEvent event) {
+        if (!event.getEntity().level().isClientSide()) {
+            domainDrops(event);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingDropExperience(LivingExperienceDropEvent event) {
+        if (!event.getEntity().level().isClientSide()) {
+            domainDropsExperience(event);
+        }
+    }
 
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
