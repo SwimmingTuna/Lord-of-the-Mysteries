@@ -27,6 +27,10 @@ public class ItemInit {
             () -> new MonsterDangerSense(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MONSTERCALAMITYATTRACTION = ITEMS.register("choiceofcalamity",
             () -> new MonsterDisableEnableCalamities(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PROVIDENCEDOMAIN = ITEMS.register("providencedomain",
+            () -> new DomainOfProvidence(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> DECAYDOMAIN = ITEMS.register("misfortunedomain",
+            () -> new DomainOfDecay(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LUCKPERCEPTION = ITEMS.register("luckperception",
             () -> new LuckPerception(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PSYCHESTORM = ITEMS.register("psychestorm",

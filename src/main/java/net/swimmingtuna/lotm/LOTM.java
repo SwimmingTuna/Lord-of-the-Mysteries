@@ -193,6 +193,8 @@ public class LOTM {
             event.accept(ItemInit.PSYCHESTORM);
             event.accept(ItemInit.SPIRITVISION);
             event.accept(ItemInit.MONSTERCALAMITYATTRACTION);
+            event.accept(ItemInit.PROVIDENCEDOMAIN);
+            event.accept(ItemInit.DECAYDOMAIN);
             event.accept(ItemInit.SPECTATOR_9_POTION);
             event.accept(ItemInit.SPECTATOR_8_POTION);
             event.accept(ItemInit.SPECTATOR_7_POTION);

@@ -69,7 +69,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.worldgen.MirrorWorldChunkGenerator;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.client.Configs;
@@ -81,17 +80,20 @@ import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.GameRuleInit;
 import net.swimmingtuna.lotm.init.SoundInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.DomainOfDecay;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.DomainOfProvidence;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.LuckGifting;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.DreamIntoReality;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionBarrier;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
-import net.swimmingtuna.lotm.util.ClientSequenceData;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
+import net.swimmingtuna.lotm.util.ClientSequenceData;
 import net.swimmingtuna.lotm.util.CorruptionAndLuckHandler;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
+import net.swimmingtuna.lotm.worldgen.MirrorWorldChunkGenerator;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
@@ -235,7 +237,7 @@ public class ModEvents {
             long endTime = System.nanoTime();
             times.put("psychologicalInvisibility", endTime - startTime);
         }
-
+            monsterDomainIntHandler(player);
         {
             long startTime = System.nanoTime();
             windManipulationSense(playerPersistentData, holder, player);
@@ -607,7 +609,7 @@ public class ModEvents {
         }
         if (holder.getSpirituality() >= 15) {
             if (player.tickCount % 2 == 0) {
-            holder.useSpirituality(20);
+                holder.useSpirituality(20);
             }
         }
         if (holder.getSpirituality() <= 15) {
@@ -848,14 +850,13 @@ public class ModEvents {
                 if (entity != player) {
                     if (entity instanceof Player) {
                         entity.teleportTo(player.getX(), player.getY() + 1, player.getZ() - 10);
-                    }
-                    else if (entity.getMaxHealth() >= 50) {
+                    } else if (entity.getMaxHealth() >= 50) {
                         entity.teleportTo(player.getX(), player.getY() + 1, player.getZ() - 10);
                     }
                 }
             }
         }
-        if (mindScape == 2 || mindScape == 4 || mindScape == 6	|| mindScape == 8 || mindScape == 10) {
+        if (mindScape == 2 || mindScape == 4 || mindScape == 6 || mindScape == 8 || mindScape == 10) {
             player.teleportTo(player.getX(), player.getY() + 4.5, player.getZ());
         }
         StructureTemplate part = serverLevel.getStructureManager().getOrCreate(new ResourceLocation(LOTM.MOD_ID, "corpse_cathedral_" + (partIndex + 1)));
@@ -1454,6 +1455,26 @@ public class ModEvents {
         }
     }
 
+    private static void monsterDomainIntHandler(Player player) {
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int sequence = holder.getCurrentSequence();
+            int maxRadius = 250 - (holder.getCurrentSequence() * 45);
+            int radius = tag.getInt("monsterDomainRadius");
+            if (player.tickCount % 500 == 0) {
+                tag.putInt("monsterDomainMaxRadius", maxRadius);
+            }
+            if (player.isShiftKeyDown() && (player.getMainHandItem().getItem() instanceof DomainOfDecay || player.getMainHandItem().getItem() instanceof DomainOfProvidence)) {
+                player.displayClientMessage(Component.literal("Current Domain Radius is " + radius).withStyle(BeyonderUtil.getStyle(player)),true);
+                tag.putInt("monsterDomainRadius", radius + 5);
+            } if (radius > maxRadius) {
+                player.displayClientMessage(Component.literal("Current Domain Radius is 0").withStyle(BeyonderUtil.getStyle(player)),true);
+                tag.putInt("monsterDomainRadius", 0);
+            }
+        }
+    }
+
     private static void starOfLightning(Player player, CompoundTag playerPersistentData) {
         //STAR OF LIGHTNING
         int sailorLightningStar = playerPersistentData.getInt("sailorLightningStar");
@@ -1579,6 +1600,7 @@ public class ModEvents {
             player.getPersistentData().putInt("sailorSphere", player.getPersistentData().getInt("sailorSphere") - 1);
         }
     }
+
     private static void windManipulationFlight1(Player player, CompoundTag playerPersistentData) {
         //WIND MANIPULATION FLIGHT
         Vec3 lookVector = player.getLookAngle();
@@ -1608,6 +1630,7 @@ public class ModEvents {
             playerPersistentData.putInt("sailorFlight", 0);
         }
     }
+
     private static void windManipulationFlight(Player player, CompoundTag tag) {
         Vec3 lookVector = player.getLookAngle();
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
@@ -2136,7 +2159,7 @@ public class ModEvents {
             // Add byte 'L' to keysClicked array
             byte[] keysClicked = player.getPersistentData().getByteArray("keysClicked");
             for (int i = 0; i < keysClicked.length; i++) {
-                if (keysClicked[i] == 0) { 
+                if (keysClicked[i] == 0) {
                     keysClicked[i] = 1;
                     player.getPersistentData().putByteArray("keysClicked", keysClicked);
                     BeyonderAbilityUser.clicked(player, InteractionHand.MAIN_HAND);
@@ -2507,7 +2530,7 @@ public class ModEvents {
         int sirenSongStrengthen = playerPersistentData.getInt("sirenSongStrengthen");
         int sirenSongHarm = playerPersistentData.getInt("sirenSongHarm");
         int sirenSongStun = playerPersistentData.getInt("sirenSongStun");
-        if (sirenSongStrengthen >= 1|| sirenSongWeaken >= 1 || sirenSongStun >= 1 || sirenSongHarm >= 1) {
+        if (sirenSongStrengthen >= 1 || sirenSongWeaken >= 1 || sirenSongStun >= 1 || sirenSongHarm >= 1) {
             SirenSongStrengthen.spawnParticlesInSphere(player, harmCounter);
         }
     }

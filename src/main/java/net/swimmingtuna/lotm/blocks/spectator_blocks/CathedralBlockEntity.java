@@ -34,6 +34,7 @@ public class CathedralBlockEntity extends BlockEntity implements TickableBlockEn
         if (this.level.isClientSide()) {
             return;
         }
+        System.out.println("ticks are " + ticks);
         ticks++;
         if (this.ticks % 20 == 0) {
             for (Player player : level.players()) {

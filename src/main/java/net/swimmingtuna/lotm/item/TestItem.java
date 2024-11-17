@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.blocks.MonsterDomainBlockEntity;
 import net.swimmingtuna.lotm.worldgen.dimension.DimensionInit;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,35 +51,8 @@ public class TestItem extends Item {
 
     public static void switchDimension(Player player) {
         if (!player.level().isClientSide()) {
-            if (player instanceof ServerPlayer serverPlayer) {
-                MinecraftServer server = serverPlayer.getServer();
-                if (server != null) {
-                    // Check current dimension
-                    if (player.level().dimension() == Level.OVERWORLD) {
-                        ServerLevel spiritWorld = server.getLevel(DimensionInit.SPIRIT_WORLD_LEVEL_KEY);
-                        if (spiritWorld != null) {
-                            player.sendSystemMessage(Component.literal("Transporting to SpiritWorld..."));
-                            serverPlayer.teleportTo(spiritWorld,
-                                    player.getX(),
-                                    player.getY(),
-                                    player.getZ(),
-                                    player.getYRot(),
-                                    player.getXRot());
-                        }
-                    } else if (player.level().dimension() == DimensionInit.SPIRIT_WORLD_LEVEL_KEY) {
-                        ServerLevel overworldWorld = server.getLevel(Level.OVERWORLD);
-                        if (overworldWorld != null) {
-                            player.sendSystemMessage(Component.literal("Transporting to Overworld..."));
-                            serverPlayer.teleportTo(overworldWorld,
-                                    player.getX(), // Convert back to overworld coordinates
-                                    player.getY(),
-                                    player.getZ(),
-                                    player.getYRot(),
-                                    player.getXRot());
-                        }
-                    }
-                }
-            }
+            player.sendSystemMessage(Component.literal("Domains owned are " + MonsterDomainBlockEntity.getDomainsOwnedBy(player.level(), player)));
+            System.out.println("UUID is " + player.getUUID());
         }
     }
 }

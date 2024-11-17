@@ -108,7 +108,6 @@ public class PotionCauldronBlockEntity extends BlockEntity implements MenuProvid
 
     @Override
     protected void saveAdditional(CompoundTag pTag) {
-
         pTag.put("inventory", itemHandler.serializeNBT());
         pTag.putInt("potion_cauldron.progress", progress);
         super.saveAdditional(pTag);
