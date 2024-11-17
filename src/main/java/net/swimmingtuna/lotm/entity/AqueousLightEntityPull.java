@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -80,17 +81,12 @@ public class AqueousLightEntityPull extends AbstractHurtingProjectile {
             return;
         }
         int damage = 15 - (holder.getCurrentSequence() * 2);
-        entity.hurt(BeyonderUtil.genericSource(this), damage);
+        entity.hurt(BeyonderUtil.getSource(this, DamageTypes.GENERIC), damage);
         if (holder.getCurrentSequence() > 7) {
             this.discard();
             return;
         }
-        double chanceOfDamage = (100.0 - (holder.getCurrentSequence() * 12.5)); // Decrease chance by 12.5% for each level below 9
-        if (Math.random() * 100 < chanceOfDamage && sailorLightning) {
-            LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, entity.level());
-            lightningBolt.moveTo(entity.getX(), entity.getY(), entity.getZ());
-            entity.level().addFreshEntity(lightningBolt);
-        }
+        AqueousLightEntity.spawnLigtningChance(entity, sailorLightning, holder);
         this.discard();
     }
 

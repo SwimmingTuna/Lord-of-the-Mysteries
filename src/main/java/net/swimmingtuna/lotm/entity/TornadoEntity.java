@@ -12,6 +12,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -229,11 +230,11 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                 double distance = Math.sqrt(dx * dx + dz * dz);
                 if (this.tickCount % 10 == 0) {
                     if (entity.getPersistentData().getInt("luckTornadoResistance") >= 1) {
-                        entity.hurt(BeyonderUtil.genericSource(this), 2);
+                        entity.hurt(BeyonderUtil.getSource(this, DamageTypes.GENERIC), 2);
                     } else if (entity.getPersistentData().getInt("luckTornadoImmunity") >= 1) {
                         continue;
                     } else
-                    entity.hurt(BeyonderUtil.genericSource(this), 5);
+                    entity.hurt(BeyonderUtil.getSource(this, DamageTypes.GENERIC), 5);
                 }
                 if (distance < tornadoRadius) {
                     double angle = Math.atan2(dz, dx) + Math.PI / 2; // Change angle to push outward

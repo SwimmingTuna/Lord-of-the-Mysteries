@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.swimmingtuna.lotm.util.TickableBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 public class MonsterDomainBlock extends HorizontalDirectionalBlock implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
@@ -26,11 +28,13 @@ public class MonsterDomainBlock extends HorizontalDirectionalBlock implements En
 
     @Nullable
     @Override
+    @ParametersAreNonnullByDefault
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new MonsterDomainBlockEntity(pos, state);
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(FACING);
@@ -38,6 +42,7 @@ public class MonsterDomainBlock extends HorizontalDirectionalBlock implements En
 
     @Nullable
     @Override
+    @ParametersAreNonnullByDefault
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
         return TickableBlockEntity.getTickerHelper(level);
     }

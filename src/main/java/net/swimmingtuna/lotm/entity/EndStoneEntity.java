@@ -7,6 +7,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -23,6 +24,7 @@ import net.swimmingtuna.lotm.util.BeyonderUtil;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
 
 public class EndStoneEntity extends AbstractArrow {
@@ -60,6 +62,7 @@ public class EndStoneEntity extends AbstractArrow {
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         if (compound.contains("xxRot")) {
@@ -71,6 +74,7 @@ public class EndStoneEntity extends AbstractArrow {
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putInt("xxRot", this.getEndstoneXRot());
@@ -83,6 +87,7 @@ public class EndStoneEntity extends AbstractArrow {
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide() && !getShouldntDamage()) {
             Vec3 hitPos = result.getLocation();
@@ -90,7 +95,7 @@ public class EndStoneEntity extends AbstractArrow {
             this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 5.0F, 5.0F);
             if (result.getEntity() instanceof LivingEntity entity) {
-                entity.hurt(BeyonderUtil.explosionSource(this), 10.0F * scaleData.getScale());
+                entity.hurt(BeyonderUtil.getSource(this, DamageTypes.EXPLOSION), 10.0F * scaleData.getScale());
             }
             this.discard();
         }

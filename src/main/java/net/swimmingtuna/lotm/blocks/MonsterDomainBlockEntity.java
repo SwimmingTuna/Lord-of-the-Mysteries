@@ -73,26 +73,8 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
         List<Player> players = level.getEntitiesOfClass(Player.class, affectedArea);
         List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, affectedArea);
 
-        if (!isBad) {
-            if (ticks % 10 == 0) {
-                for (LivingEntity entity : livingEntities) {
-                    if (entity instanceof Mob mob) {
-                        if (!mob.shouldDespawnInPeaceful()) {
-                            if (mob.hasEffect(MobEffects.POISON)) {
-                                mob.removeEffect(MobEffects.POISON);
-                            }
-                            if (mob.hasEffect(MobEffects.WITHER)) {
-                                mob.removeEffect(MobEffects.WITHER);
-                            }
-                            if (mob.hasEffect(MobEffects.HUNGER)) {
-                                mob.removeEffect(MobEffects.HUNGER);
-                            }
-                            BeyonderUtil.applyMobEffect(mob, MobEffects.REGENERATION, 100, 2 * multiplier, false, false);
-                        }
-                        mob.getPersistentData().putInt("inMonsterProvidenceDomain", 20);
-                    }
-                }
-            }
+        if (!getBad()) {
+            removeBadEffectAndAddRegenAndAddPersistence(livingEntities, multiplier);
 
 
             for (Player affectedPlayer : players) {
@@ -118,15 +100,7 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
                                 stack.setDamageValue(Math.max(0, stack.getDamageValue() - 1)); //configure this to make it scale with how small the radius is compared to max radius
                             }
                         }
-                        if (affectedPlayer.hasEffect(MobEffects.POISON)) {
-                            affectedPlayer.removeEffect(MobEffects.POISON);
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.WITHER)) {
-                            affectedPlayer.removeEffect(MobEffects.WITHER);
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.HUNGER)) {
-                            affectedPlayer.removeEffect(MobEffects.HUNGER);
-                        }
+                        removeBadEffect(affectedPlayer);
                         BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DAMAGE_BOOST, 100, multiplier, false, false);
                         BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DIG_SPEED, 100, multiplier, false, false);
                         BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.MOVEMENT_SPEED, 100, multiplier, false, false);
@@ -160,15 +134,7 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
                                 stack.setDamageValue(Math.max(0, stack.getDamageValue() - 4 * multiplier)); //configure this to make it scale with how small the radius is compared to max radius
                             }
                         }
-                        if (affectedPlayer.hasEffect(MobEffects.POISON)) {
-                            affectedPlayer.removeEffect(MobEffects.POISON);
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.WITHER)) {
-                            affectedPlayer.removeEffect(MobEffects.WITHER);
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.HUNGER)) {
-                            affectedPlayer.removeEffect(MobEffects.HUNGER);
-                        }
+                        removeBadEffect(affectedPlayer);
                         if (affectedPlayer.hasEffect(MobEffects.CONFUSION)) {
                             affectedPlayer.removeEffect(MobEffects.CONFUSION);
                         }
@@ -234,25 +200,7 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
                 }
             }
         } else {
-            if (ticks % 10 == 0) {
-                for (LivingEntity entity : livingEntities) {
-                    if (entity instanceof Mob mob) {
-                        if (!mob.shouldDespawnInPeaceful()) {
-                            if (mob.hasEffect(MobEffects.POISON)) {
-                                mob.removeEffect(MobEffects.POISON);
-                            }
-                            if (mob.hasEffect(MobEffects.WITHER)) {
-                                mob.removeEffect(MobEffects.WITHER);
-                            }
-                            if (mob.hasEffect(MobEffects.HUNGER)) {
-                                mob.removeEffect(MobEffects.HUNGER);
-                            }
-                            BeyonderUtil.applyMobEffect(mob, MobEffects.REGENERATION, 100, 2 * multiplier, false, false);
-                        }
-                        mob.getPersistentData().putInt("inMonsterProvidenceDomain", 20);
-                    }
-                }
-            }
+            removeBadEffectAndAddRegenAndAddPersistence(livingEntities, multiplier);
 
 
             for (Player affectedPlayer : players) {
@@ -368,13 +316,39 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
         }
     }
 
+    private void removeBadEffect(LivingEntity affectedPlayer) {
+        if (affectedPlayer.hasEffect(MobEffects.POISON)) {
+            affectedPlayer.removeEffect(MobEffects.POISON);
+        }
+        if (affectedPlayer.hasEffect(MobEffects.WITHER)) {
+            affectedPlayer.removeEffect(MobEffects.WITHER);
+        }
+        if (affectedPlayer.hasEffect(MobEffects.HUNGER)) {
+            affectedPlayer.removeEffect(MobEffects.HUNGER);
+        }
+    }
+
+    private void removeBadEffectAndAddRegenAndAddPersistence(List<LivingEntity> livingEntities, int multiplier) {
+        if (ticks % 10 == 0) {
+            for (LivingEntity entity : livingEntities) {
+                if (entity instanceof Mob mob) {
+                    if (!mob.shouldDespawnInPeaceful()) {
+                        removeBadEffect(mob);
+                        BeyonderUtil.applyMobEffect(mob, MobEffects.REGENERATION, 100, 2 * multiplier, false, false);
+                    }
+                    mob.getPersistentData().putInt("inMonsterProvidenceDomain", 20);
+                }
+            }
+        }
+    }
+
 
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("radius", radius);
         tag.putInt("ticks", ticks);
-        tag.putBoolean("isBad", isBad);
+        tag.putBoolean("isBad", getBad());
         if (ownerUUID != null) {
             tag.putUUID("ownerUUID", ownerUUID);
             System.out.println("Saving UUID: " + ownerUUID);
@@ -407,7 +381,7 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
         return this.radius;
     }
 
-    public boolean getBad(boolean isBad) {
+    public boolean getBad() {
         return this.isBad;
     }
 

@@ -26,6 +26,8 @@ import net.swimmingtuna.lotm.init.ItemInit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 public class PotionCauldronBlockEntity extends BlockEntity implements MenuProvider {
     private final ItemStackHandler itemHandler = new ItemStackHandler(6);
     private static final int OUTPUT_SLOT = 1;
@@ -102,6 +104,7 @@ public class PotionCauldronBlockEntity extends BlockEntity implements MenuProvid
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
         return null;
     }
@@ -114,6 +117,7 @@ public class PotionCauldronBlockEntity extends BlockEntity implements MenuProvid
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public void load(CompoundTag pTag) {
         super.load(pTag);
         itemHandler.deserializeNBT(pTag.getCompound("inventory"));

@@ -11,7 +11,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.util.BeyonderAbilitiesItemMenu;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class AbilitiesCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -24,11 +27,13 @@ public class AbilitiesCommand {
                     }
                     context.getSource().getPlayer().openMenu(new MenuProvider() {
                         @Override
+                        @NotNull
                         public Component getDisplayName() {
                             return Component.translatable("container.lotm.abilities");
                         }
 
-                        @Nullable
+                        @NotNull
+                        @ParametersAreNonnullByDefault
                         @Override
                         public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
                             return new BeyonderAbilitiesItemMenu(containerId, playerInventory, holder.getCurrentClass().getAbilityItemsContainer(holder.getCurrentSequence()));

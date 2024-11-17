@@ -46,7 +46,7 @@ public class ServerEvents {
                 player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             if (holder.getSpirituality() < (int) 500 / dreamIntoReality.getValue()) {
-                player.displayClientMessage(Component.literal("You need " + ((int) 500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
+                player.displayClientMessage(Component.literal("You need " + ( 500 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
             }
             String message = event.getMessage().getString().toLowerCase();
             if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && player.getMainHandItem().getItem() instanceof EnvisionWeather && holder.getCurrentSequence() == 0) {

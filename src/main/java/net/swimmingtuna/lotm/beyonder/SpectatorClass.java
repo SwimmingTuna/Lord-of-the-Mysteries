@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 
 import java.util.List;
 
@@ -105,14 +106,19 @@ public class SpectatorClass implements BeyonderClass {
     public Multimap<Integer, Item> getItems() {
         HashMultimap<Integer, Item> items = HashMultimap.create();
         items.put(9, ItemInit.BEYONDER_ABILITY_USER.get());
+
         items.put(8, ItemInit.MIND_READING.get());
+
         items.put(7, ItemInit.AWE.get());
         items.put(7, ItemInit.FRENZY.get());
         items.put(7, ItemInit.PLACATE.get());
+
         items.put(6, ItemInit.BATTLE_HYPNOTISM.get());
         items.put(6, ItemInit.PSYCHOLOGICAL_INVISIBILITY.get());
+
         items.put(5, ItemInit.DREAM_WALKING.get());
         items.put(5, ItemInit.NIGHTMARE.get());
+
         items.put(4, ItemInit.APPLY_MANIPULATION.get());
         items.put(4, ItemInit.MANIPULATE_EMOTION.get());
         items.put(4, ItemInit.MANIPULATE_FONDNESS.get());
@@ -120,16 +126,20 @@ public class SpectatorClass implements BeyonderClass {
         items.put(4, ItemInit.DRAGON_BREATH.get());
         items.put(4, ItemInit.MENTAL_PLAGUE.get());
         items.put(4, ItemInit.MIND_STORM.get());
+
         items.put(3, ItemInit.PLAGUE_STORM.get());
         items.put(3, ItemInit.CONSCIOUSNESS_STROLL.get());
         items.put(3, ItemInit.DREAM_WEAVING.get());
+
         items.put(2, ItemInit.DISCERN.get());
         items.put(2, ItemInit.DREAM_INTO_REALITY.get());
+
         items.put(1, ItemInit.PROPHESIZE_DEMISE.get());
         items.put(1, ItemInit.PROPHESIZE_TELEPORT_BLOCK.get());
         items.put(1, ItemInit.PROPHESIZE_TELEPORT_PLAYER.get());
         items.put(1, ItemInit.METEOR_SHOWER.get());
         items.put(1, ItemInit.METEOR_NO_LEVEL_SHOWER.get());
+
         items.put(0, ItemInit.ENVISION_BARRIER.get());
         items.put(0, ItemInit.ENVISION_LIFE.get());
         items.put(0, ItemInit.ENVISION_DEATH.get());
@@ -149,15 +159,7 @@ public class SpectatorClass implements BeyonderClass {
 
 
     public void applyMobEffect(Player pPlayer, MobEffect mobEffect, int duration, int amplifier, boolean ambient, boolean visible) {
-        MobEffectInstance currentEffect = pPlayer.getEffect(mobEffect);
-        MobEffectInstance newEffect = new MobEffectInstance(mobEffect, duration, amplifier, ambient, visible);
-        if (currentEffect == null) {
-            pPlayer.addEffect(newEffect);
-        } else if (currentEffect.getAmplifier() < amplifier) {
-            pPlayer.addEffect(newEffect);
-        } else if (currentEffect.getAmplifier() == amplifier && duration >= currentEffect.getDuration()) {
-            pPlayer.addEffect(newEffect);
-        }
+        BeyonderUtil.applyMobEffect(pPlayer, mobEffect, duration, amplifier, ambient, visible);
     }
 
 }

@@ -6,6 +6,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -100,7 +101,7 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
                 int currentLifeCount = this.entityData.get(DATA_LIFE_COUNT);
                 int decrease = (holder.getCurrentSequence() * 9) + 30;
                 currentLifeCount = currentLifeCount - decrease;
-                entity.hurt(BeyonderUtil.genericSource(this), (float) currentLifeCount / 20);
+                entity.hurt(BeyonderUtil.getSource(this, DamageTypes.GENERIC), (float) currentLifeCount / 20);
                 this.entityData.set(DATA_LIFE_COUNT, currentLifeCount - decrease);
                 if (currentLifeCount <= 0) {
                     this.discard();

@@ -10,6 +10,8 @@ import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.util.EntityUtil.BeamEntity;
 import net.swimmingtuna.lotm.util.RotationUtil;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 public class DragonBreathEntity extends BeamEntity {
 
     public static final double RANGE = 64.0D;
@@ -39,6 +41,7 @@ public class DragonBreathEntity extends BeamEntity {
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     protected boolean breaksBlocks() {
         return true;
     }

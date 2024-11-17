@@ -15,6 +15,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.swimmingtuna.lotm.util.TickableBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 public class CathedralBlock extends HorizontalDirectionalBlock implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 

@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -77,7 +78,7 @@ public class RoarEntity extends AbstractHurtingProjectile {
                 this.level().explode(this, this.getX(), this.getY(), this.getZ(), explosionRadius, Level.ExplosionInteraction.TNT);
             }
             if (entity instanceof LivingEntity livingEntity) {
-                livingEntity.hurt(BeyonderUtil.genericSource(this), (int) (20 * scaleData.getScale()));
+                livingEntity.hurt(BeyonderUtil.getSource(this, DamageTypes.GENERIC), (int) (20 * scaleData.getScale()));
                 float explosionRadius = 3 * scaleData.getScale();
                 this.level().explode(this, this.getX(), this.getY(), this.getZ(), explosionRadius, Level.ExplosionInteraction.TNT);
             }
@@ -159,7 +160,7 @@ public class RoarEntity extends AbstractHurtingProjectile {
             float explosionRadius = 3 * scaleData.getScale();
             for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(explosionRadius))) {
                 if (entity != this.getOwner()) {
-                    entity.hurt(BeyonderUtil.explosionSource(this), damage);
+                    entity.hurt(BeyonderUtil.getSource(this, DamageTypes.EXPLOSION), damage);
                 }
             }
 

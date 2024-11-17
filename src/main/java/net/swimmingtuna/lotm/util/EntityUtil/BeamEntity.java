@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -160,7 +161,7 @@ public abstract class BeamEntity extends LOTMProjectile {
                 for (Entity entity : entities) {
                     if (entity == owner) continue;
 
-                    entity.hurt(BeyonderUtil.lightningSource(this), this.getDamage());
+                    entity.hurt(BeyonderUtil.getSource(this, DamageTypes.LIGHTNING_BOLT), this.getDamage());
 
                     if (this.causesFire()) {
                         entity.setSecondsOnFire(5);

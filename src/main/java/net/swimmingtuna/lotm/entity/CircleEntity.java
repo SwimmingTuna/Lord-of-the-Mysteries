@@ -21,6 +21,8 @@ import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.networking.packet.NonVisibleS2C;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 public class CircleEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(CircleEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> AWE = SynchedEntityData.defineId(CircleEntity.class, EntityDataSerializers.BOOLEAN);
@@ -60,6 +62,7 @@ public class CircleEntity extends AbstractHurtingProjectile {
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide()) {
             if (result.getEntity() instanceof Player player) {
@@ -69,6 +72,7 @@ public class CircleEntity extends AbstractHurtingProjectile {
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     protected void onHitBlock(BlockHitResult result) {
 
     }

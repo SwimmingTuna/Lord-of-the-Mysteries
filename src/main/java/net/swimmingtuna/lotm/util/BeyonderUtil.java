@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -50,24 +51,13 @@ import net.swimmingtuna.lotm.networking.packet.LuckManipulationLeftClickC2S;
 import net.swimmingtuna.lotm.networking.packet.MatterAccelerationBlockC2S;
 import net.swimmingtuna.lotm.networking.packet.UpdateItemInHandC2S;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BeyonderUtil {
 
-    public static Projectile getProjectiles(Player player) {
-        if (player.level().isClientSide()) {
-            return null;
-        }
-        List<Projectile> projectiles = player.level().getEntitiesOfClass(Projectile.class, player.getBoundingBox().inflate(30));
-        for (Projectile projectile : projectiles) {
-            if (projectile.getOwner() == player && projectile.tickCount > 8 && projectile.tickCount < 50) {
-                return projectile;
-            }
-        }
-        return null;
-    }
     public static Projectile getLivingEntitiesProjectile(LivingEntity player) {
         if (player.level().isClientSide()) {
             return null;
@@ -81,28 +71,13 @@ public class BeyonderUtil {
         return null;
     }
 
-    public static DamageSource genericSource(Entity entity) {
-        Level level = entity.level();
-        Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.GENERIC);
-        return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
-    }
-
-    public static DamageSource explosionSource(Entity entity) {
-        Level level = entity.level();
-        Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.EXPLOSION);
-        return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
-    }
-
-    public static DamageSource fallSource(Entity entity) {
-        Level level = entity.level();
-        Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.FALL);
-        return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
-    }
-
-    public static DamageSource lightningSource(Entity entity) {
-        Level level = entity.level();
-        Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.LIGHTNING_BOLT);
-        return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
+    public static DamageSource getSource(Entity entity, ResourceKey<DamageType> damageType){
+        try(Level level = entity.level()){
+            Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType);
+            return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static StructurePlaceSettings getStructurePlaceSettings(BlockPos pos) {
@@ -403,9 +378,7 @@ public class BeyonderUtil {
     }
 
     public static void mentalDamage(Player source, Player hurtEntity, int damage) { //can make it so that with useOn, sets shiftKeyDown to true for player
-        BeyonderHolder sourceHolder = BeyonderHolderAttacher.getHolderUnwrap(source);
-        BeyonderHolder hurtHolder = BeyonderHolderAttacher.getHolderUnwrap(hurtEntity);
-        float x = Math.min(damage, damage * (hurtHolder.getMentalStrength() / sourceHolder.getMentalStrength()));
+        float x = mentalInt(source, hurtEntity, damage);
         hurtEntity.hurt(hurtEntity.damageSources().magic(), x);
     }
 

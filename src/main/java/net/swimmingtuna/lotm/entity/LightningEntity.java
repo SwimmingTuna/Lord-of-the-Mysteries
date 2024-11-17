@@ -9,6 +9,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -259,7 +260,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
                                             float damageFalloff = (float) (distance1 / radius);
                                             float damage = Math.max(minDamage, maxDamage * (1 - damageFalloff));
                                             damage -= (sequence * 2);
-                                            entity.hurt(BeyonderUtil.lightningSource(this), damage);
+                                            entity.hurt(BeyonderUtil.getSource(this, DamageTypes.LIGHTNING_BOLT), damage);
                                         }
                                     }
                                 }
@@ -267,7 +268,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
                                 level().explode(this, hitPos.x(), hitPos.y(), hitPos.z(), 10, false, Level.ExplosionInteraction.TNT);
                                 for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, new AABB(hitPos.x - 4, hitPos.y - 4, hitPos.z - 4, hitPos.x + 4, hitPos.y + 4, hitPos.z + 4))) {
                                     if (entity != this.getOwner() || entity != this.owner) {
-                                        entity.hurt(BeyonderUtil.lightningSource(this), 10);
+                                        entity.hurt(BeyonderUtil.getSource(this, DamageTypes.LIGHTNING_BOLT), 10);
                                     }
                                 }
                             }
@@ -371,10 +372,10 @@ public class LightningEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult result) {
+    protected void onHitEntity(@NotNull EntityHitResult result) {
         if (!this.level().isClientSide()) {
             if (result.getEntity() instanceof LivingEntity entity) {
-                entity.hurt(BeyonderUtil.lightningSource(this), 15);
+                entity.hurt(BeyonderUtil.getSource(this, DamageTypes.LIGHTNING_BOLT), 15);
                 this.discard();
             }
         }

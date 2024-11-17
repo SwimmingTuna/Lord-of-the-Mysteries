@@ -32,12 +32,8 @@ public class AbilityOverlay implements IGuiOverlay {
             String abilityName = entry.getValue();
             String displayText = combination + ": " + abilityName;
 
-            // Center the text by calculating its X position based on string width
-            int textX = START_X;
-            int textY = y;
-
             // Draw each ability's text at the specified position
-            guiGraphics.drawString(gui.getFont(), displayText, textX, textY, TEXT_COLOR, false);
+            guiGraphics.drawString(gui.getFont(), displayText, START_X, y, TEXT_COLOR, false);
             y += LINE_HEIGHT;
         }
     }

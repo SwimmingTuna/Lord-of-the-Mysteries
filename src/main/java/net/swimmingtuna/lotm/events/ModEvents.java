@@ -94,6 +94,7 @@ import net.swimmingtuna.lotm.util.ClientSequenceData;
 import net.swimmingtuna.lotm.util.CorruptionAndLuckHandler;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import net.swimmingtuna.lotm.worldgen.MirrorWorldChunkGenerator;
+import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
@@ -166,260 +167,100 @@ public class ModEvents {
     @SubscribeEvent
     public static void onPlayerTickServer(TickEvent.PlayerTickEvent event) {
         Player player = event.player;
+        if (!(player.level() instanceof ServerLevel serverLevel)) return;
+
+        if (player.level().isClientSide() || event.phase != TickEvent.Phase.START) return;
+
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         Style style = BeyonderUtil.getStyle(player);
         CompoundTag playerPersistentData = player.getPersistentData();
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!(player.level() instanceof ServerLevel serverLevel)) return;
         int sequence = holder.getCurrentSequence();
-        if (player.level().isClientSide() || event.phase != TickEvent.Phase.START) {
-            return;
-        }
 
+        handleClientSequenceDataSync(player, holder);
+        handleAttributes(player);
+
+        Map<String, Long> executionTimes = new HashMap<>();
+        executeTimedTasks(executionTimes, serverLevel, player, holder, playerPersistentData, style, sequence);
+        // System.out.println(executionTimes.entrySet().stream().max(Map.Entry.comparingByValue()));
+    }
+
+    private static void handleClientSequenceDataSync(Player player, BeyonderHolder holder) {
         if (player.tickCount % 20 == 0) {
             if (holder.getCurrentSequence() != 0 && ClientSequenceData.getCurrentSequence() == 0) {
                 ClientSequenceData.setCurrentSequence(-1);
             }
         }
+    }
+
+    private static void handleAttributes(Player player) {
         AttributeInstance corruption = player.getAttribute(ModAttributes.CORRUPTION.get());
         AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
         AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-        assert corruption != null;
-
-
-        Map<String, Long> times = new HashMap<>();
-        {
-            decrementMonsterAttackEvent(player);
+        if (corruption == null || luck == null || misfortune == null) {
+            throw new IllegalStateException("Required attributes are not initialized.");
         }
-        {
-            monsterLuckIgnoreMobs(player);
-        }
-        {
-            monsterLuckPoisonAttacker(player);
-        }
-        {
-            calamityExplosion(player);
-        }
-        {
-            long startTime = System.nanoTime();
-            calamityLightningStorm(player);
-            long endTime = System.nanoTime();
-            times.put("calamityLightningStorm", endTime - startTime);
-        }
-        {
-            long startTime = System.nanoTime();
-            calamityUndeadArmy(player);
-            long endTime = System.nanoTime();
-            times.put("calamityUndeadArmy", endTime - startTime);
-        }
-        {
-            long startTime = System.nanoTime();
-            CorruptionAndLuckHandler.corruptionAndLuckManagers(serverLevel, misfortune, corruption, player, luck, holder, sequence);
-            long endTime = System.nanoTime();
-            times.put("corruptionAndLuckManagers", endTime - startTime);
-        }
-        {
-            long startTime = System.nanoTime();
-            nightmare(player, playerPersistentData);
-            long endTime = System.nanoTime();
-            times.put("nightmare", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            calamityIncarnationTornado(playerPersistentData, player);
-            long endTime = System.nanoTime();
-            times.put("calamityIncarnationTornado", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            psychologicalInvisibility(player, playerPersistentData, holder);
-            long endTime = System.nanoTime();
-            times.put("psychologicalInvisibility", endTime - startTime);
-        }
-            monsterDomainIntHandler(player);
-        {
-            long startTime = System.nanoTime();
-            windManipulationSense(playerPersistentData, holder, player);
-            long endTime = System.nanoTime();
-            times.put("windManipulationSense", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            sailorLightningTravel(player);
-            long endTime = System.nanoTime();
-            times.put("sailorLightningTravel", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            windManipulationCushion(playerPersistentData, player);
-            long endTime = System.nanoTime();
-            times.put("windManipulationCushion", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            windManipulationGuide(playerPersistentData, holder, player);
-            long endTime = System.nanoTime();
-            times.put("windManipulationGuide", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            dreamIntoReality(player, holder);
-            long endTime = System.nanoTime();
-            times.put("dreamIntoReality", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            consciousnessStroll(playerPersistentData, player);
-            long endTime = System.nanoTime();
-            times.put("consciousnessStroll", endTime - startTime);
-        }
-        {
-            long startTime = System.nanoTime();
-            prophesizeTeleportation(playerPersistentData, player);
-            long endTime = System.nanoTime();
-            times.put("prophesizeTeleportationCounter", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            projectileEvent(player, holder);
-            long endTime = System.nanoTime();
-            times.put("projectileEvent", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            envisionBarrier(holder, player, style);
-            long endTime = System.nanoTime();
-            times.put("envisionBarrier", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            envisionLife(player);
-            long endTime = System.nanoTime();
-            times.put("envisionLife", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            manipulateMovement(player, serverLevel);
-            long endTime = System.nanoTime();
-            times.put("manipulateMovement", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            envisionKingdom(playerPersistentData, player, holder, serverLevel);
-            long endTime = System.nanoTime();
-            times.put("envisionKingdom", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            acidicRain(player, sequence);
-            long endTime = System.nanoTime();
-            times.put("acidicRain", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            calamityIncarnationTsunami(playerPersistentData, player, serverLevel);
-            long endTime = System.nanoTime();
-            times.put("calamityIncarnationTsunami", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            earthquake(player, sequence);
-            long endTime = System.nanoTime();
-            times.put("earthquake", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            extremeColdness(playerPersistentData, holder, player);
-            long endTime = System.nanoTime();
-            times.put("extremeColdness", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            hurricane(playerPersistentData, player);
-            long endTime = System.nanoTime();
-            times.put("hurricane", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            lightningStorm(player, playerPersistentData, style, holder);
-            long endTime = System.nanoTime();
-            times.put("lightningStorm", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            matterAccelerationSelf(player, holder, style);
-            long endTime = System.nanoTime();
-            times.put("matterAccelerationSelf", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            ragingBlows(playerPersistentData, holder, player);
-            long endTime = System.nanoTime();
-            times.put("ragingBlows", endTime - startTime);
-        }
-
-        {
-            long startTime = System.nanoTime();
-            rainEyes(player);
-            long endTime = System.nanoTime();
-            times.put("rainEyes", endTime - startTime);
-        }
-        {
-            long startTime = System.nanoTime();
-            sirenSongs(playerPersistentData, holder, player, sequence);
-            long endTime = System.nanoTime();
-            times.put("sirenSongs", endTime - startTime);
-        }
-        {
-            sirenSongs(player);
-        }
-        {
-            long startTime = System.nanoTime();
-            starOfLightning(player, playerPersistentData);
-            long endTime = System.nanoTime();
-            times.put("starOfLightning", endTime - startTime);
-        }
-        {
-            long startTime = System.nanoTime();
-            tsunami(playerPersistentData, player);
-            long endTime = System.nanoTime();
-            times.put("tsunami", endTime - startTime);
-        }
-        {
-            long startTime = System.nanoTime();
-            waterSphereCheck(player, serverLevel);
-            long endTime = System.nanoTime();
-            times.put("waterSphereCheck", endTime - startTime);
-        }
-        {
-            long startTime = System.nanoTime();
-            windManipulationFlight(player, playerPersistentData);
-            long endTime = System.nanoTime();
-            times.put("windManipulationFlight", endTime - startTime);
-        }
-
-//        System.out.println(times.entrySet().stream().max(Map.Entry.comparingByValue()));
     }
 
+    private static void executeTimedTasks(
+            Map<String, Long> times,
+            ServerLevel serverLevel,
+            Player player,
+            BeyonderHolder holder,
+            CompoundTag playerPersistentData,
+            Style style,
+            int sequence
+    ) {
+        runTimedTask(times, "decrementMonsterAttackEvent", () -> decrementMonsterAttackEvent(player));
+        runTimedTask(times, "monsterLuckIgnoreMobs", () -> monsterLuckIgnoreMobs(player));
+        runTimedTask(times, "monsterLuckPoisonAttacker", () -> monsterLuckPoisonAttacker(player));
+        runTimedTask(times, "calamityExplosion", () -> calamityExplosion(player));
+        runTimedTask(times, "calamityLightningStorm", () -> calamityLightningStorm(player));
+        runTimedTask(times, "calamityUndeadArmy", () -> calamityUndeadArmy(player));
+        runTimedTask(times, "corruptionAndLuckManagers", () -> CorruptionAndLuckHandler.corruptionAndLuckManagers(serverLevel,
+                player.getAttribute(ModAttributes.MISFORTUNE.get()),
+                player.getAttribute(ModAttributes.CORRUPTION.get()),
+                player,
+                player.getAttribute(ModAttributes.LOTM_LUCK.get()),
+                holder,
+                sequence));
+        runTimedTask(times, "nightmare", () -> nightmare(player, playerPersistentData));
+        runTimedTask(times, "calamityIncarnationTornado", () -> calamityIncarnationTornado(playerPersistentData, player));
+        runTimedTask(times, "psychologicalInvisibility", () -> psychologicalInvisibility(player, playerPersistentData, holder));
+        runTimedTask(times, "monsterDomainIntHandler", () -> monsterDomainIntHandler(player));
+        runTimedTask(times, "windManipulationSense", () -> windManipulationSense(playerPersistentData, holder, player));
+        runTimedTask(times, "sailorLightningTravel", () -> sailorLightningTravel(player));
+        runTimedTask(times, "windManipulationCushion", () -> windManipulationCushion(playerPersistentData, player));
+        runTimedTask(times, "windManipulationGuide", () -> windManipulationGuide(playerPersistentData, holder, player));
+        runTimedTask(times, "dreamIntoReality", () -> dreamIntoReality(player, holder));
+        runTimedTask(times, "consciousnessStroll", () -> consciousnessStroll(playerPersistentData, player));
+        runTimedTask(times, "prophesizeTeleportation", () -> prophesizeTeleportation(playerPersistentData, player));
+        runTimedTask(times, "projectileEvent", () -> projectileEvent(player, holder));
+        runTimedTask(times, "envisionBarrier", () -> envisionBarrier(holder, player, style));
+        runTimedTask(times, "envisionLife", () -> envisionLife(player));
+        runTimedTask(times, "manipulateMovement", () -> manipulateMovement(player, serverLevel));
+        runTimedTask(times, "envisionKingdom", () -> envisionKingdom(playerPersistentData, player, holder, serverLevel));
+        runTimedTask(times, "acidicRain", () -> acidicRain(player, sequence));
+        runTimedTask(times, "calamityIncarnationTsunami", () -> calamityIncarnationTsunami(playerPersistentData, player, serverLevel));
+        runTimedTask(times, "earthquake", () -> earthquake(player, sequence));
+        runTimedTask(times, "extremeColdness", () -> extremeColdness(playerPersistentData, holder, player));
+        runTimedTask(times, "hurricane", () -> hurricane(playerPersistentData, player));
+        runTimedTask(times, "lightningStorm", () -> lightningStorm(player, playerPersistentData, style, holder));
+        runTimedTask(times, "matterAccelerationSelf", () -> matterAccelerationSelf(player, holder, style));
+        runTimedTask(times, "ragingBlows", () -> ragingBlows(playerPersistentData, holder, player));
+        runTimedTask(times, "rainEyes", () -> rainEyes(player));
+        runTimedTask(times, "sirenSongs", () -> sirenSongs(playerPersistentData, holder, player, sequence));
+        runTimedTask(times, "starOfLightning", () -> starOfLightning(player, playerPersistentData));
+        runTimedTask(times, "tsunami", () -> tsunami(playerPersistentData, player));
+        runTimedTask(times, "waterSphereCheck", () -> waterSphereCheck(player, serverLevel));
+        runTimedTask(times, "windManipulationFlight", () -> windManipulationFlight(player, playerPersistentData));
+    }
+
+    private static void runTimedTask(Map<String, Long> times, String taskName, Runnable task) {
+        long startTime = System.nanoTime();
+        task.run(); //todo need to look if times correct -> not in another thread running or so
+        long endTime = System.nanoTime();
+        times.put(taskName, endTime - startTime);
+    }
 
     private static void nightmare(Player player, CompoundTag playerPersistentData) {
         //NIGHTMARE
@@ -482,27 +323,7 @@ public class ModEvents {
             Vec3 lookAngle = player.getLookAngle();
             double horizontalAngle = Math.atan2(directionToPlayer.x, directionToPlayer.z) - Math.atan2(lookAngle.x, lookAngle.z);
 
-            String horizontalDirection;
-            if (Math.abs(horizontalAngle) < Math.PI / 4) {
-                horizontalDirection = "in front of";
-            } else if (horizontalAngle < -Math.PI * 3 / 4 || horizontalAngle > Math.PI * 3 / 4) {
-                horizontalDirection = "behind";
-            } else if (horizontalAngle < 0) {
-                horizontalDirection = "to the right of";
-            } else {
-                horizontalDirection = "to the left of";
-            }
-
-            String verticalDirection;
-            if (directionToPlayer.y > 0.2) {
-                verticalDirection = "above";
-            } else if (directionToPlayer.y < -0.2) {
-                verticalDirection = "below";
-            } else {
-                verticalDirection = "at the same level as";
-            }
-
-            String message = otherPlayer.getName().getString() + " is " + horizontalDirection + " and " + verticalDirection + " you.";
+            String message = getString(otherPlayer, horizontalAngle, directionToPlayer);
             if (player.tickCount % 200 == 0) {
                 player.sendSystemMessage(Component.literal(message).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE));
             }
@@ -525,31 +346,35 @@ public class ModEvents {
             Vec3 lookAngle = player.getLookAngle();
             double horizontalAngle = Math.atan2(directionToPlayer.x, directionToPlayer.z) - Math.atan2(lookAngle.x, lookAngle.z);
 
-            String horizontalDirection;
-            if (Math.abs(horizontalAngle) < Math.PI / 4) {
-                horizontalDirection = "in front of";
-            } else if (horizontalAngle < -Math.PI * 3 / 4 || horizontalAngle > Math.PI * 3 / 4) {
-                horizontalDirection = "behind";
-            } else if (horizontalAngle < 0) {
-                horizontalDirection = "to the right of";
-            } else {
-                horizontalDirection = "to the left of";
-            }
-
-            String verticalDirection;
-            if (directionToPlayer.y > 0.2) {
-                verticalDirection = "above";
-            } else if (directionToPlayer.y < -0.2) {
-                verticalDirection = "below";
-            } else {
-                verticalDirection = "at the same level as";
-            }
-
-            String message = otherPlayer.getName().getString() + " is " + horizontalDirection + " and " + verticalDirection + " you.";
+            String message = getString(otherPlayer, horizontalAngle, directionToPlayer);
             if (player.tickCount % 200 == 0) {
                 player.sendSystemMessage(Component.literal(message).withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
             }
         }
+    }
+
+    private static @NotNull String getString(Player otherPlayer, double horizontalAngle, Vec3 directionToPlayer) {
+        String horizontalDirection;
+        if (Math.abs(horizontalAngle) < Math.PI / 4) {
+            horizontalDirection = "in front of";
+        } else if (horizontalAngle < -Math.PI * 3 / 4 || horizontalAngle > Math.PI * 3 / 4) {
+            horizontalDirection = "behind";
+        } else if (horizontalAngle < 0) {
+            horizontalDirection = "to the right of";
+        } else {
+            horizontalDirection = "to the left of";
+        }
+
+        String verticalDirection;
+        if (directionToPlayer.y > 0.2) {
+            verticalDirection = "above";
+        } else if (directionToPlayer.y < -0.2) {
+            verticalDirection = "below";
+        } else {
+            verticalDirection = "at the same level as";
+        }
+
+        return otherPlayer.getName().getString() + " is " + horizontalDirection + " and " + verticalDirection + " you.";
     }
 
     private static void sailorLightningTravel(Player player) {
@@ -665,7 +490,7 @@ public class ModEvents {
 
     private static void projectileEvent(Player player, BeyonderHolder holder) {
         //PROJECTILE EVENT
-        Projectile projectile = BeyonderUtil.getProjectiles(player);
+        Projectile projectile = BeyonderUtil.getLivingEntitiesProjectile(player);
         if (projectile == null) return;
         ProjectileEvent.ProjectileControlEvent projectileEvent = new ProjectileEvent.ProjectileControlEvent(projectile);
         ModEventFactory.onSailorShootProjectile(projectile);

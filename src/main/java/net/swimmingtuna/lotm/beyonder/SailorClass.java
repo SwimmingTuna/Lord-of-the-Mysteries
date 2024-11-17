@@ -17,6 +17,8 @@ import net.swimmingtuna.lotm.init.ItemInit;
 
 import java.util.List;
 
+import static net.swimmingtuna.lotm.util.BeyonderUtil.applyMobEffect;
+
 public class SailorClass implements BeyonderClass {
     private int dolhpinsGrace;
     private int speed;
@@ -112,11 +114,7 @@ public class SailorClass implements BeyonderClass {
             resistance = -1;
             haste = 0;
         }
-        if (sequenceLevel == 7) {
-            applyMobEffect(player,MobEffects.DOLPHINS_GRACE, 300, 1, false, false);
-            applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
-            applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 1, false, false);
-            applyMobEffect(player,MobEffects.DIG_SPEED, 300, 0, false, false);
+        if (sequenceLevel == 7 || sequenceLevel == 6){
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
             applyMobEffect(player,MobEffects.REGENERATION, 300, 0, false, false);
@@ -126,6 +124,12 @@ public class SailorClass implements BeyonderClass {
             speed = 1;
             strength = 1;
             resistance = 0;
+        }
+        if (sequenceLevel == 7) {
+            applyMobEffect(player,MobEffects.DOLPHINS_GRACE, 300, 1, false, false);
+            applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
+            applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 1, false, false);
+            applyMobEffect(player,MobEffects.DIG_SPEED, 300, 0, false, false);
             haste = 0;
         }
         if (sequenceLevel == 6) {
@@ -133,15 +137,6 @@ public class SailorClass implements BeyonderClass {
             applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 1, false, false);
             applyMobEffect(player,MobEffects.DIG_SPEED, 300, 1, false, false);
-            applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
-            applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
-            applyMobEffect(player,MobEffects.REGENERATION, 300, 0, false, false);
-            applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 0, false, false);
-            dolhpinsGrace = 1;
-            regeneration = 0;
-            speed = 1;
-            strength = 1;
-            resistance = 0;
             haste = 1;
         }
         if (sequenceLevel == 5) {
@@ -247,6 +242,7 @@ public class SailorClass implements BeyonderClass {
     public Multimap<Integer, Item> getItems() {
         HashMultimap<Integer, Item> items = HashMultimap.create();
         items.put(9, ItemInit.BEYONDER_ABILITY_USER.get());
+
         items.put(8, ItemInit.RAGING_BLOWS.get());
         items.put(8, ItemInit.SAILORPROJECTILECTONROL.get());
 
@@ -306,18 +302,4 @@ public class SailorClass implements BeyonderClass {
     public ChatFormatting getColorFormatting() {
         return ChatFormatting.BLUE;
     }
-
-
-    public void applyMobEffect(Player pPlayer, MobEffect mobEffect, int duration, int amplifier, boolean ambient, boolean visible) {
-        MobEffectInstance currentEffect = pPlayer.getEffect(mobEffect);
-        MobEffectInstance newEffect = new MobEffectInstance(mobEffect, duration, amplifier, ambient, visible);
-        if (currentEffect == null) {
-            pPlayer.addEffect(newEffect);
-        } else if (currentEffect.getAmplifier() < amplifier) {
-            pPlayer.addEffect(newEffect);
-        } else if (currentEffect.getAmplifier() == amplifier && duration >= currentEffect.getDuration()) {
-            pPlayer.addEffect(newEffect);
-        }
-    }
-
 }

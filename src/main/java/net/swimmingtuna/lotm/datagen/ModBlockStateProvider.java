@@ -21,7 +21,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
 
-
         //REGULAR BLOCKS
         blockWithItem(BlockInit.MINDSCAPE_BLOCK);
         blockWithItem(BlockInit.MINDSCAPE_OUTSIDE);

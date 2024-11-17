@@ -8,6 +8,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class VisionaryBB extends AbstractGlassBlock {
     public VisionaryBB(Properties properties) {
@@ -15,21 +18,26 @@ public class VisionaryBB extends AbstractGlassBlock {
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public boolean skipRendering(BlockState state, BlockState adjacentBlockState, Direction side) {
         return adjacentBlockState.is(this) || super.skipRendering(state, adjacentBlockState, side);
     }
 
     @Override
+    @ParametersAreNonnullByDefault
+    @NotNull
     public VoxelShape getVisualShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public float getShadeBrightness(BlockState state, BlockGetter blockGetter, BlockPos pos) {
         return 1.0F;
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public boolean propagatesSkylightDown(BlockState state, BlockGetter blockGetter, BlockPos pos) {
         return true;
     }
