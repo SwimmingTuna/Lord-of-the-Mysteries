@@ -41,10 +41,7 @@ import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Ability;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.DomainOfDecay;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.DomainOfProvidence;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.LuckManipulation;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.MonsterDomainTeleporation;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
@@ -518,6 +515,9 @@ public class BeyonderUtil {
             else if (heldItem.getItem() instanceof LuckManipulation) {
                 LOTMNetworkHandler.sendToServer(new LuckManipulationLeftClickC2S());
             }
+            else if (heldItem.getItem() instanceof MisfortuneManipulation) {
+                LOTMNetworkHandler.sendToServer(new MisfortuneManipulationLeftClickC2S());
+            }
         }
     }
 
@@ -629,6 +629,12 @@ public class BeyonderUtil {
             } else if (heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.PROPHESIZE_DEMISE.get())));
                 heldItem.shrink(1);
+            }
+            else if (heldItem.getItem() instanceof LuckManipulation) {
+                LOTMNetworkHandler.sendToServer(new LuckManipulationLeftClickC2S());
+            }
+            else if (heldItem.getItem() instanceof MisfortuneManipulation) {
+                LOTMNetworkHandler.sendToServer(new MisfortuneManipulationLeftClickC2S());
             }
         }
     }

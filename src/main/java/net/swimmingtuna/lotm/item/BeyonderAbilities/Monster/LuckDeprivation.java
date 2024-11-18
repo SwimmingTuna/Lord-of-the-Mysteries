@@ -30,7 +30,7 @@ public class LuckDeprivation extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public LuckDeprivation(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 4, 50, 10,20,20);
+        super(properties, BeyonderClassInit.MONSTER, 4, 50, 10,20,20);
     }
 
     @Override

@@ -191,6 +191,7 @@ public class LOTM {
             event.accept(ItemInit.MISFORTUNEBESTOWAL);
             event.accept(ItemInit.MONSTERDANGERSENSE);
             event.accept(ItemInit.LUCKCHANNELING);
+            event.accept(ItemInit.MISFORTUNEMANIPULATION);
             event.accept(ItemInit.MONSTERDOMAINTELEPORATION);
             event.accept(ItemInit.MONSTERPROJECTILECONTROL);
             event.accept(ItemInit.LUCKPERCEPTION);

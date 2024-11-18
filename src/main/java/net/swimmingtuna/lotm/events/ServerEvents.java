@@ -85,10 +85,17 @@ public class ServerEvents {
                     }
                 }
             }
-            if (player.getPersistentData().getInt("tyrantMentionedInChat") >= 1 && message.contains("yes") && holder.getSpirituality() >= 1200) {
-                holder.useSpirituality(1200);
-                player.getPersistentData().putInt("sailorLightningStorm1", 300);
-                event.setCanceled(true);
+            if (player.getPersistentData().getInt("tyrantMentionedInChat") >= 1 && message.toLowerCase().contains("yes")) {
+                if (holder.getSpirituality() >= 800) {
+                    holder.useSpirituality(800);
+                    player.getPersistentData().putInt("sailorLightningStorm1", 300);
+                    player.getPersistentData().putInt("sailorStormVecX1", (int) player.getX());
+                    player.getPersistentData().putInt("sailorStormVecY1", (int) player.getY());
+                    player.getPersistentData().putInt("sailorStormVecZ1", (int) player.getZ());
+                    event.setCanceled(true);
+                } else {
+                    player.sendSystemMessage(Component.literal("Not enough spirituality").withStyle(BeyonderUtil.getStyle(player)));
+                }
             }
         }
         if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide() && player.getMainHandItem().getItem() instanceof ConsciousnessStroll && holder.getCurrentSequence() <= 3 && !player.getCooldowns().isOnCooldown(ItemInit.CONSCIOUSNESS_STROLL.get())) {
@@ -114,7 +121,8 @@ public class ServerEvents {
                             if (mob.getTarget() == player) {
                                 mob.setTarget(playerMobEntity);
                             }
-                        }                        player.level().addFreshEntity(playerMobEntity);
+                        }
+                        player.level().addFreshEntity(playerMobEntity);
                         player.getCooldowns().addCooldown(ItemInit.CONSCIOUSNESS_STROLL.get(), 400);
                         player.getPersistentData().putInt("consciousnessStrollActivatedX", (int) player.getX());
                         player.getPersistentData().putInt("consciousnessStrollActivatedY", (int) player.getY());
@@ -183,7 +191,7 @@ public class ServerEvents {
                         player.teleportTo(x, y, z);
                         holder.useSpirituality(500);
                     }
-                }else {
+                } else {
                     event.getPlayer().displayClientMessage(Component.literal("Player:" + message + " not found").withStyle(BeyonderUtil.getStyle(player)), true);
                 }
                 event.setCanceled(true);

@@ -27,7 +27,7 @@ import java.util.List;
 
 public class LuckManipulation extends SimpleAbilityItem {
     public LuckManipulation(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 5, 150, 60);
+        super(properties, BeyonderClassInit.MONSTER, 5, 150, 60);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class LuckManipulation extends SimpleAbilityItem {
     }
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
         if (entity instanceof Player player) {
-            if (player.tickCount % 5 == 0 && !level.isClientSide()) {
+            if (player.tickCount % 2 == 0 && !level.isClientSide()) {
                 if (player.getMainHandItem().getItem() instanceof LuckManipulation) {
                     player.displayClientMessage(Component.literal("Current Luck Manipulation is: " + luckManipulationString(player)), true);
                 }
@@ -95,6 +95,7 @@ public class LuckManipulation extends SimpleAbilityItem {
         }
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
+
     public static String luckManipulationString(Player pPlayer) {
         CompoundTag tag = pPlayer.getPersistentData();
         int luckManipulation = tag.getInt("luckManipulationItem");

@@ -26,6 +26,8 @@ public class ItemInit {
         //MONSTER
     public static final RegistryObject<Item> MONSTERDANGERSENSE = ITEMS.register("monsterdangersense",
             () -> new MonsterDangerSense(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MISFORTUNEMANIPULATION = ITEMS.register("misfortunemanipulation",
+            () -> new MisfortuneManipulation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LUCKCHANNELING = ITEMS.register("luckchanneling",
             () -> new LuckChanneling(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MONSTERDOMAINTELEPORATION = ITEMS.register("monsterdomainteleportation",

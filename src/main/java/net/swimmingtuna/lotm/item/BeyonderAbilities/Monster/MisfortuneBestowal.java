@@ -31,7 +31,7 @@ public class MisfortuneBestowal extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public MisfortuneBestowal(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 5, 250,400 ,20,20);
+        super(properties, BeyonderClassInit.MONSTER, 5, 250,400 ,20,20);
     }
 
     @Override

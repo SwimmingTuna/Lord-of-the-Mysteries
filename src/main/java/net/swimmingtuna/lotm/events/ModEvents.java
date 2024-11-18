@@ -92,6 +92,8 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.DreamIntoReality;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionBarrier;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
+import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
+import net.swimmingtuna.lotm.networking.packet.SendParticleS2C;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ClientSequenceData;
@@ -162,9 +164,7 @@ public class ModEvents {
         CompoundTag playerPersistentData = player.getPersistentData();
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
-        if (player.level().isClientSide() && holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 8 && player.tickCount % 15 == 0) {
-            checkForProjectiles(player);
-        }
+
     }
 
     @SubscribeEvent
@@ -178,6 +178,9 @@ public class ModEvents {
         if (player.level().isClientSide() || event.phase != TickEvent.Phase.START) {
             return;
         }
+        if (!player.level().isClientSide() && holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 8 && player.tickCount % 5 == 0) {
+            checkForProjectiles(player);
+        }
 
         if (player.tickCount % 20 == 0) {
             if (holder.getCurrentSequence() != 0 && ClientSequenceData.getCurrentSequence() == 0) {
@@ -187,8 +190,8 @@ public class ModEvents {
         AttributeInstance corruption = player.getAttribute(ModAttributes.CORRUPTION.get());
         AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
         AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-        if (player.tickCount % 2 == 0) {
-            player.sendSystemMessage(Component.literal("Luck value is " + luck.getValue()));
+        if (player.tickCount % 20 == 0) {
+            //player.sendSystemMessage(Component.literal("Luck value is " + luck.getValue()));
         }
 
 
@@ -243,7 +246,7 @@ public class ModEvents {
             long endTime = System.nanoTime();
             times.put("psychologicalInvisibility", endTime - startTime);
         }
-            monsterDomainIntHandler(player);
+        monsterDomainIntHandler(player);
         {
             long startTime = System.nanoTime();
             windManipulationSense(playerPersistentData, holder, player);
@@ -1143,6 +1146,7 @@ public class ModEvents {
                 playerPersistentData.putInt("sailorLightningStorm1", sailorLightningStorm1 - 1);
             }
         }
+
         int sailorLightningStorm = playerPersistentData.getInt("sailorLightningStorm");
         int stormVec = playerPersistentData.getInt("sailorStormVec");
         double sailorStormVecX = playerPersistentData.getInt("sailorStormVecX");
@@ -1199,6 +1203,12 @@ public class ModEvents {
             Random random = new Random();
             if (random.nextInt(3) == 1) {
                 event.getDrops().add((ItemEntity) event.getEntity().captureDrops());
+            }
+        }
+        if (event.getEntity().getPersistentData().getInt("inMonsterDecayDomain") >= 1) {
+            Random random = new Random();
+            if (random.nextInt(4) == 1) {
+                event.getDrops().remove((ItemEntity) event.getEntity().captureDrops());
             }
         }
     }
@@ -1473,9 +1483,10 @@ public class ModEvents {
             }
             if (player.isShiftKeyDown() && (player.getMainHandItem().getItem() instanceof DomainOfDecay || player.getMainHandItem().getItem() instanceof DomainOfProvidence)) {
                 tag.putInt("monsterDomainRadius", radius + 5);
-                player.displayClientMessage(Component.literal("Current Domain Radius is " + radius).withStyle(BeyonderUtil.getStyle(player)),true);
-            } if (radius > maxRadius + 1) {
-                player.displayClientMessage(Component.literal("Current Domain Radius is 0").withStyle(BeyonderUtil.getStyle(player)),true);
+                player.displayClientMessage(Component.literal("Current Domain Radius is " + radius).withStyle(BeyonderUtil.getStyle(player)), true);
+            }
+            if (radius > maxRadius + 1) {
+                player.displayClientMessage(Component.literal("Current Domain Radius is 0").withStyle(BeyonderUtil.getStyle(player)), true);
                 tag.putInt("monsterDomainRadius", 0);
             }
         }
@@ -1691,21 +1702,23 @@ public class ModEvents {
     }
 
 
-    @SubscribeEvent
-    public static void stunEffect(LivingEntityUseItemEvent event) {
-        LivingEntity entity = event.getEntity();
-        if (!entity.level().isClientSide()) {
-            if (entity.hasEffect(ModEffects.STUN.get())) {
-                event.setCanceled(true);
-            }
-            if (entity instanceof Player player) {
-                CompoundTag tag = player.getPersistentData();
-                if (tag.getInt("luckIgnoreAbility") >= 1 && player.getMainHandItem().getItem() instanceof SimpleAbilityItem) {
-                    event.setCanceled(true);
-                    tag.putInt("luckIgnoreAbility", tag.getInt("luckIgnoreAbility") - 1);
-                    player.sendSystemMessage(Component.literal("How unlucky! You made a mistake using " + player.getMainHandItem().getDisplayName().getString() + " and it didn't work").withStyle(BeyonderUtil.getStyle(player)));
-                }
-            }
+    private static void livingLightningStorm(LivingEntity livingEntity) {
+        //MISFORTUNE MANIPULATION
+        CompoundTag tag = livingEntity.getPersistentData();
+        int sailorLightningStorm1 = tag.getInt("sailorLightningStorm1");
+        int x1 = livingEntity.getPersistentData().getInt("sailorStormVecX1");
+        int y1 = livingEntity.getPersistentData().getInt("sailorStormVecY1");
+        int z1 = livingEntity.getPersistentData().getInt("sailorStormVecZ1");
+        if (sailorLightningStorm1 >= 1) {
+            tag.putInt("sailorLightningStorm1", sailorLightningStorm1 - 1);
+            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), livingEntity.level());
+            lightningEntity.setSpeed(10.0f);
+            lightningEntity.setDeltaMovement((Math.random() * 0.4) - 0.2, -4, (Math.random() * 0.4) - 0.2);
+            lightningEntity.setMaxLength(30);
+            lightningEntity.setNoUp(true);
+            lightningEntity.teleportTo(x1 + ((Math.random() * 150) - (double) 150 / 2), y1 + 80, z1 + ((Math.random() * 150) - (double) 150 / 2));
+            lightningEntity.level().addFreshEntity(lightningEntity);
+            System.out.println("values are" + x1 + y1 + z1 + sailorLightningStorm1);
         }
     }
 
@@ -2077,6 +2090,9 @@ public class ModEvents {
                 tag.putInt("inStormSeal", tag.getInt("inStormSeal") - 1);
                 entity.teleportTo(x, y, z);
             }
+            if (!(entity instanceof Player)) {
+                livingLightningStorm(entity);
+            }
         }
     }
 
@@ -2414,6 +2430,7 @@ public class ModEvents {
                     }
                 }
             }
+            CorruptionAndLuckHandler.onPlayerDeath(event);
 
             //STORM SEAL
             if (tag.getInt("inStormSeal") >= 1) {
@@ -2448,11 +2465,11 @@ public class ModEvents {
             if (!pPlayer.level().isClientSide()) {
                 for (Projectile projectile : pPlayer.level().getEntitiesOfClass(Projectile.class, pPlayer.getBoundingBox().inflate(200))) {
                     if (projectile.getPersistentData().getInt("windDodgeProjectilesCounter") == 0) {
-                        if (projectile instanceof Arrow arrow && arrow.inGround) {
-                            continue;
+                        if (projectile instanceof Arrow arrow && arrow.tickCount >= 100) {
+                            return;
                         }
                         float scale = ScaleTypes.BASE.getScaleData(projectile).getScale();
-                        double maxDistance = 10 * scale;
+                        double maxDistance = 6 * scale;
                         double deltaX = Math.abs(projectile.getX() - pPlayer.getX());
                         double deltaY = Math.abs(projectile.getY() - pPlayer.getY());
                         double deltaZ = Math.abs(projectile.getZ() - pPlayer.getZ());
@@ -2560,7 +2577,7 @@ public class ModEvents {
     }
 
     public static void drawParticleLine(ServerLevel level, ServerPlayer player, List<Vec3> points) {
-        int particleInterval = 5; // Only spawn a particle every 5 points
+        int particleInterval = 2; // Only spawn a particle every 5 points
         for (int i = 0; i < points.size() - 1; i += particleInterval) {
             Vec3 start = points.get(i);
             Vec3 end = i + particleInterval < points.size() ? points.get(i + particleInterval) : points.get(points.size() - 1);
@@ -2590,7 +2607,7 @@ public class ModEvents {
 
             // Check if the block at the projectile's position is not air
             if (projectile instanceof Arrow arrow) {
-                if (arrow.inGround) {
+                if (arrow.tickCount >= 100) {
                     break;
                 }
             } else if (projectilePos.distanceTo(projectile.position()) > maxDistance) {
@@ -2927,6 +2944,7 @@ public class ModEvents {
             }
         }
     }
+
     @SubscribeEvent
     public static void addAttributes(EntityAttributeCreationEvent event) {
         event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.LOTM_LUCK.get()).build());
@@ -2937,4 +2955,49 @@ public class ModEvents {
         event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.NIGHTMARE.get()).build());
 
     }
+
+    @SubscribeEvent
+    public static void tickTest(TickEvent.PlayerTickEvent event) {
+        Player player = event.player;
+        if (player.level().isClientSide) return; // Ensure this runs only on the server side.
+
+        CompoundTag tag = player.getPersistentData();
+
+        // Define keys and their labels explicitly
+        String[][] luckValues = {
+                {"luckMeteor", "Meteor Luck"},
+                {"luckLightningLOTM", "Lightning (LOTM) Luck"},
+                {"luckParalysis", "Paralysis Luck"},
+                {"luckUnequipArmor", "Unequip Armor Luck"},
+                {"luckWarden", "Warden Spawn Luck"},
+                {"luckLightningMC", "Minecraft Lightning Luck"},
+                {"luckPoison", "Poison Luck"},
+                {"luckAttackerPoisoned", "Attacker Poisoned Luck"},
+                {"luckTornado", "Tornado Luck"},
+                {"luckStone", "Stone Luck"},
+                {"luckIgnoreMobs", "Ignore Mobs Luck"},
+                {"luckRegeneration", "Regeneration Luck"},
+                {"luckDiamonds", "Diamonds Dropped Luck"},
+                {"windMovingProjectilesCounter", "Wind Moving Projectiles Counter"},
+                {"luckLightningLOTMDamage", "Lightning LOTM Damage Luck"},
+                {"luckMeteorDamage", "Meteor Damage Luck"},
+                {"luckLightningMCDamage", "Minecraft Lightning Damage Luck"},
+                {"luckStoneDamage", "Stone Damage Luck"},
+                {"luckIgnoreAbility", "Ignore Ability Use Luck"},
+                {"luckDoubleDamage", "Double Damage Luck"},
+                {"luckIgnoreDamage", "Ignore Damage Luck"}
+        };
+
+        // Iterate through the defined keys and labels
+        for (String[] entry : luckValues) {
+            String key = entry[0];
+            String label = entry[1];
+
+            int value = tag.getInt(key);
+            if (value > 1) {
+                player.sendSystemMessage(Component.literal(label + ": " + value));
+            }
+        }
+    }
+
 }

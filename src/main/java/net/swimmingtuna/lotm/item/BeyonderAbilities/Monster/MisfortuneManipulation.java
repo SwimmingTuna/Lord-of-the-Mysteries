@@ -7,8 +7,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -16,34 +20,43 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.entity.LightningEntity;
+import net.swimmingtuna.lotm.entity.MeteorEntity;
+import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class MisfortuneManipulation extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public MisfortuneManipulation(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 5, 250,400 ,20,20);
+        super(properties, BeyonderClassInit.MONSTER, 4, 350, 200, 50, 50);
     }
 
     @Override
     public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         if (!player.level().isClientSide()) {
-        if (!checkAll(player)) {
-            return InteractionResult.FAIL;
-        }
-        useSpirituality(player);
-        addCooldown(player);
-        manipulateMisfortune(interactionTarget, player);
+            if (!checkAll(player)) {
+                return InteractionResult.FAIL;
+            }
+            useSpirituality(player);
+            addCooldown(player);
+            manipulateMisfortune(interactionTarget, player);
         }
         return InteractionResult.SUCCESS;
     }
@@ -74,41 +87,132 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-
     private static void manipulateMisfortune(LivingEntity interactionTarget, Player player) {
-        if (!player.level().isClientSide()) {
-            int sequence = BeyonderHolderAttacher.getHolderUnwrap(player).getCurrentSequence();
-            AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-            AttributeInstance interactionMisfortune = interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get());
-            int misfortuneAddValue = 60 - (sequence * 7);
-            interactionMisfortune.setBaseValue(Math.min(200,interactionMisfortune.getValue() + misfortuneAddValue));
-            misfortune.setBaseValue(Math.min(0,(interactionMisfortune.getValue()) - ((double) misfortuneAddValue / 2)));
+        if (!player.level().isClientSide() && !interactionTarget.level().isClientSide()) {
+            player.sendSystemMessage(Component.literal("item used"));
+            CompoundTag tag = interactionTarget.getPersistentData();
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int misfortuneManipulation = tag.getInt("misfortuneManipulationItem");
+            if (misfortuneManipulation == 1) {
+                int random = (int) ((Math.random() * 40) - 20);
+                if (holder.getCurrentSequence() > 2) {
+                    player.sendSystemMessage(Component.literal("Meteors Summoned"));
+                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
+                }
+                if (holder.getCurrentSequence() == 2 || holder.getCurrentSequence() == 1) {
+                    player.sendSystemMessage(Component.literal("Meteors Summoned Angel"));
+                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
+                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
+                }
+                if (holder.getCurrentSequence() == 0) {
+                    player.sendSystemMessage(Component.literal("Meteors Summoned Deity"));
+                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
+                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
+                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
+                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
+                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
+                }
+            }
+            if (misfortuneManipulation == 2) {
+                TornadoEntity tornadoEntity = new TornadoEntity(EntityInit.TORNADO_ENTITY.get(), player.level());
+                tornadoEntity.setTornadoLifecount(400 - (holder.getCurrentSequence() * 60));
+                tornadoEntity.setOwner(player);
+                tornadoEntity.setTornadoPickup(true);
+                tornadoEntity.setTornadoRadius(60 - (holder.getCurrentSequence() * 10));
+                tornadoEntity.setTornadoHeight(100 - (holder.getCurrentSequence() * 12));
+                player.level().addFreshEntity(tornadoEntity);
+
+            }
+            if (misfortuneManipulation == 3) {
+                interactionTarget.getPersistentData().putInt("sailorLightningStorm1", 200 - (holder.getCurrentSequence() * 25));
+                interactionTarget.getPersistentData().putInt("sailorStormVecX1", (int) interactionTarget.getX());
+                interactionTarget.getPersistentData().putInt("sailorStormVecY1", (int) interactionTarget.getY());
+                interactionTarget.getPersistentData().putInt("sailorStormVecZ1", (int) interactionTarget.getZ());
+            }
+            if (misfortuneManipulation == 4) {
+                LightningEntity lightning = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), interactionTarget.level());
+                lightning.setSpeed(5.0f);
+                lightning.setTargetEntity(interactionTarget);
+                lightning.setMaxLength(120);
+                lightning.setNewStartPos(new Vec3(interactionTarget.getX(), interactionTarget.getY() + 80, interactionTarget.getZ()));
+                lightning.setDeltaMovement(0, -3,0);
+                lightning.setNoUp(true);
+                player.level().addFreshEntity(lightning);
+            }
+            if (misfortuneManipulation == 5) {
+                for (Mob mob : interactionTarget.level().getEntitiesOfClass(Mob.class, interactionTarget.getBoundingBox().inflate(60 - (holder.getCurrentSequence() * 10)))) {
+                    if (mob.getTarget() != interactionTarget) {
+                        mob.setTarget(interactionTarget);
+                        mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, 2, false, false));
+                    }
+                }
+            }
+            if (misfortuneManipulation == 6) {
+                tag.putInt("luckDoubleDamage", tag.getInt("luckDoubleDamage") + 5 - holder.getCurrentSequence());
+            }
+            if (misfortuneManipulation == 7) {
+                    Random random = new Random();
+                    List<EquipmentSlot> armorSlots = Arrays.asList(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET);
+                    List<EquipmentSlot> equippedArmor = armorSlots.stream()
+                            .filter(slot -> !player.getItemBySlot(slot).isEmpty())
+                            .toList();
+                    if (!equippedArmor.isEmpty()) {
+                        EquipmentSlot randomArmorSlot = equippedArmor.get(random.nextInt(equippedArmor.size()));
+                        ItemStack armorPiece = player.getItemBySlot(randomArmorSlot);
+                        player.spawnAtLocation(armorPiece);
+                        player.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
+                    }
+            }
+            if (misfortuneManipulation == 8) {
+                tag.putInt("luckIgnoreAbility", tag.getInt("luckIgnoreAbility") + 1);
+            }
+            if (misfortuneManipulation == 9) {
+                BeyonderUtil.applyMobEffect(interactionTarget, MobEffects.POISON, 300 - (holder.getCurrentSequence() * 40), 4, true, true);
+            }
         }
+
+    }
+
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
+        if (entity instanceof Player player) {
+            if (player.tickCount % 2 == 0 && !level.isClientSide()) {
+                if (player.getMainHandItem().getItem() instanceof MisfortuneManipulation) {
+                    player.displayClientMessage(Component.literal("Current Misfortune Manipulation is: " + misfortuneManipulationString(player)), true);
+                }
+            }
+        }
+        super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
 
     public static String misfortuneManipulationString(Player pPlayer) {
         CompoundTag tag = pPlayer.getPersistentData();
-        int luckManipulation = tag.getInt("luckManipulationItem");
+        int luckManipulation = tag.getInt("misfortuneManipulationItem");
         if (luckManipulation == 1) {
-            return "Regeneration";
+            return "Meteor";
         }
         if (luckManipulation == 2) {
-            return "Diamonds";
+            return "Tornado";
         }
         if (luckManipulation == 3) {
-            return "Wind Moving Projectiles";
+            return "Lightning Storm";
         }
         if (luckManipulation == 4) {
-            return "Halve Next Damage";
+            return "Lightning Bolt";
         }
         if (luckManipulation == 5) {
-            return "Mobs will get Distracted from you";
+            return "Attract Mobs";
         }
         if (luckManipulation == 6) {
-            return "Players that hurt you recently will get poisoned and stunned";
+            return "Double next damage";
         }
         if (luckManipulation == 7) {
-            return "Ignore the next damage";
+            return "Unequip Armor";
+        }
+        if (luckManipulation == 8) {
+            return "Next Ability Use Failed";
+        }
+        if (luckManipulation == 9) {
+            return "Poison";
         }
         return null;
     }

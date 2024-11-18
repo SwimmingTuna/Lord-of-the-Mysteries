@@ -121,22 +121,13 @@ public class ProphesizeDemise extends SimpleAbilityItem {
             CompoundTag persistentData = player.getPersistentData();
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             LOTMNetworkHandler.sendToPlayer(new SyncSequencePacketS2C(holder.getCurrentSequence()), (ServerPlayer) player);
-
-            // Check if the persistent data contains the "DemiseCounter" key
             if (persistentData.contains("DemiseCounter")) {
-                // Retrieve the demise counter value from persistent data
                 int demiseCounter = persistentData.getInt("DemiseCounter");
-
-                // Check if the "EntityDemise" key doesn't exist or its value is 0
                 if (!persistentData.contains("EntityDemise") || persistentData.getInt("EntityDemise") == 0) {
-                    // Update the demise counter for the player
                     player.getPersistentData().putInt("EntityDemise", demiseCounter);
                 }
             } else {
-                // If the persistent data doesn't contain the "DemiseCounter" key,
-                // check if the "EntityDemise" key doesn't exist or its value is 0
                 if (!persistentData.contains("EntityDemise") || persistentData.getInt("EntityDemise") == 0) {
-                    // Initialize the demise counter to 0
                     player.getPersistentData().putInt("EntityDemise", 0);
                 }
             }

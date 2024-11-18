@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.LightningEntity;
@@ -74,46 +75,57 @@ public class CorruptionAndLuckHandler {
                 if (player.tickCount % 397 == 0 && random.nextInt(300) <= lotmMisfortuneValue && meteor == 0) {
                     tag.putInt("luckMeteor", 40);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 40));
+                    player.sendSystemMessage(Component.literal("Meteor Put"));
                 }
                 if (player.tickCount % 251 == 0 && random.nextInt(100) <= lotmMisfortuneValue && lotmLightning == 0) {
                     tag.putInt("luckLightningLOTM", 20);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 15));
+                    player.sendSystemMessage(Component.literal("LOTM Lightning Put"));
                 }
                 if (player.tickCount % 151 == 0 && random.nextInt(50) <= lotmMisfortuneValue && paralysis == 0) {
                     tag.putInt("luckParalysis", 15);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 5));
+                    player.sendSystemMessage(Component.literal("Paralysis Put"));
                 }
                 if (player.tickCount % 149 == 0 && random.nextInt(75) <= lotmMisfortuneValue && unequipArmor == 0) {
                     tag.putInt("unequipArmor", 20);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 10));
+                    player.sendSystemMessage(Component.literal("Armor Put"));
                 }
                 if (player.tickCount % 349 == 0 && random.nextInt(320) <= lotmMisfortuneValue && wardenSpawn == 0) {
                     tag.putInt("luckWarden", 30);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 30));
+                    player.sendSystemMessage(Component.literal("Warden Put"));
                 }
                 if (player.tickCount % 41 == 0 && random.nextInt(50) <= lotmMisfortuneValue && mcLightning == 0) {
                     tag.putInt("luckLightningMC", 15);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 15));
+                    player.sendSystemMessage(Component.literal("MCLightning Put"));
                 }
                 if (player.tickCount % 199 == 0 && random.nextInt(150) <= lotmMisfortuneValue && !player.hasEffect(MobEffects.POISON)) {
                     tag.putInt("luckPoison", 15);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 8));
+                    player.sendSystemMessage(Component.literal("Poison Put"));
                 }
                 if (player.tickCount % 307 == 0 && random.nextInt(300) <= lotmMisfortuneValue && tornadoInt == 0) {
                     tag.putInt("luckTornado", 25);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 25));
+                    player.sendSystemMessage(Component.literal("Tornado Put"));
                 }
                 if (player.tickCount % 127 == 0 && random.nextInt(100) <= lotmMisfortuneValue && stone == 0) {
                     tag.putInt("luckStone", 10);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 12));
+                    player.sendSystemMessage(Component.literal("Stone Put"));
                 }
                 if (player.tickCount % 701 == 0 && random.nextInt(250) <= lotmMisfortuneValue) {
                     tag.putInt("luckIgnoreAbility", ignoreAbilityUse + 1);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 15));
+                    player.sendSystemMessage(Component.literal("Ignore Put"));
                 }
                 if (player.tickCount % 263 == 0 && random.nextInt(150) <= lotmMisfortuneValue) {
                     tag.putInt("luckDoubleDamage", doubleDamage + 1);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 5));
+                    player.sendSystemMessage(Component.literal("Damage Put"));
                 }
             }
             if (luck.getValue() >= 1) {
@@ -871,6 +883,99 @@ public class CorruptionAndLuckHandler {
                 if (meteorDamage >= 1) {
                     tag.putInt("luckMeteorDamage", meteorDamage - 1);
                 }
+            }
+        }
+    }
+    public static void onPlayerDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            if (!player.level().isClientSide()) {
+                // Get the player's persistent data
+                CompoundTag tag = player.getPersistentData();
+
+                // Clear calamity-related tags
+                tag.remove("calamityMeteor");
+                tag.remove("calamityMeteorX");
+                tag.remove("calamityMeteorY");
+                tag.remove("calamityMeteorZ");
+                tag.remove("calamityLightningStorm");
+                tag.remove("calamityLightningStormX");
+                tag.remove("calamityLightningStormY");
+                tag.remove("calamityLightningStormZ");
+                tag.remove("calamityLightningBolt");
+                tag.remove("calamityLightningBoltX");
+                tag.remove("calamityLightningBoltY");
+                tag.remove("calamityLightningBoltZ");
+                tag.remove("calamityGroundTremor");
+                tag.remove("calamityGroundTremorX");
+                tag.remove("calamityGroundTremorY");
+                tag.remove("calamityGroundTremorZ");
+                tag.remove("calamityGaze");
+                tag.remove("calamityGazeX");
+                tag.remove("calamityGazeY");
+                tag.remove("calamityGazeZ");
+                tag.remove("calamityUndeadArmy");
+                tag.remove("calamityUndeadArmyX");
+                tag.remove("calamityUndeadArmyY");
+                tag.remove("calamityUndeadArmyZ");
+                tag.remove("calamityBabyZombie");
+                tag.remove("calamityBabyZombieX");
+                tag.remove("calamityBabyZombieY");
+                tag.remove("calamityBabyZombieZ");
+                tag.remove("calamityWindArmorRemoval");
+                tag.remove("calamityWindArmorRemovalX");
+                tag.remove("calamityWindArmorRemovalY");
+                tag.remove("calamityWindArmorRemovalZ");
+                tag.remove("calamityBreeze");
+                tag.remove("calamityBreezeX");
+                tag.remove("calamityBreezeY");
+                tag.remove("calamityBreezeZ");
+                tag.remove("calamityWave");
+                tag.remove("calamityWaveX");
+                tag.remove("calamityWaveY");
+                tag.remove("calamityWaveZ");
+                tag.remove("calamityExplosion");
+                tag.remove("calamityExplosionX");
+                tag.remove("calamityExplosionY");
+                tag.remove("calamityExplosionZ");
+                tag.remove("calamityTornado");
+                tag.remove("calamityTornadoX");
+                tag.remove("calamityTornadoY");
+                tag.remove("calamityTornadoZ");
+
+                // Clear luck-related tags
+                tag.remove("luckMeteor");
+                tag.remove("luckLightningLOTM");
+                tag.remove("luckParalysis");
+                tag.remove("luckUnequipArmor");
+                tag.remove("luckWarden");
+                tag.remove("luckLightningMC");
+                tag.remove("luckPoison");
+                tag.remove("luckAttackerPoisoned");
+                tag.remove("luckTornado");
+                tag.remove("luckStone");
+                tag.remove("luckIgnoreMobs");
+                tag.remove("luckRegeneration");
+                tag.remove("luckDiamonds");
+                tag.remove("windMovingProjectilesCounter");
+                tag.remove("luckLightningLOTMDamage");
+                tag.remove("luckMeteorDamage");
+                tag.remove("luckLightningMCDamage");
+                tag.remove("luckStoneDamage");
+                tag.remove("luckIgnoreAbility");
+                tag.remove("luckDoubleDamage");
+                tag.remove("luckIgnoreDamage");
+
+                // Clear additional immunity and resistance tags
+                tag.remove("luckStoneDamageImmunity");
+                tag.remove("luckTornadoResistance");
+                tag.remove("luckTornadoImmunity");
+                tag.remove("luckMCLightningImmunity");
+                tag.remove("calamityLOTMLightningImmunity");
+                tag.remove("calamityMeteorImmunity");
+                tag.remove("calamityLightningBoltMonsterResistance");
+                tag.remove("calamityLightningStormImmunity");
+                tag.remove("calamityLightningStormResistance");
             }
         }
     }

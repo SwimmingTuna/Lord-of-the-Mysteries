@@ -74,6 +74,11 @@ public class LOTMNetworkHandler {
                 .encoder(SpiritWorldTraversalC2S::toByte)
                 .consumerMainThread(SpiritWorldTraversalC2S::handle)
                 .add();
+        INSTANCE.messageBuilder(MisfortuneManipulationLeftClickC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(MisfortuneManipulationLeftClickC2S::new)
+                .encoder(MisfortuneManipulationLeftClickC2S::toByte)
+                .consumerMainThread(MisfortuneManipulationLeftClickC2S::handle)
+                .add();
         INSTANCE.messageBuilder(NonVisibleS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(NonVisibleS2C::decode)
                 .encoder(NonVisibleS2C::encode)
@@ -83,6 +88,11 @@ public class LOTMNetworkHandler {
                 .decoder(SyncSequencePacketS2C::new)
                 .encoder(SyncSequencePacketS2C::encode)
                 .consumerMainThread(SyncSequencePacketS2C::handle)
+                .add();
+        INSTANCE.messageBuilder(SendParticleS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SendParticleS2C::new)
+                .encoder(SendParticleS2C::encode)
+                .consumerMainThread(SendParticleS2C::handle)
                 .add();
     }
 

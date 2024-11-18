@@ -30,7 +30,7 @@ public class LuckGifting extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public LuckGifting(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 4, 50, 10,20,20);
+        super(properties, BeyonderClassInit.MONSTER, 4, 50, 10,20,20);
     }
 
     @Override
@@ -74,11 +74,12 @@ public class LuckGifting extends SimpleAbilityItem {
 
 
     private static void giftLuck(LivingEntity interactionTarget, Player player) {
-        if (!player.level().isClientSide()) {
+        if (!player.level().isClientSide() && interactionTarget instanceof Player) {
             AttributeInstance playerLuck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
             int luckGiftingAmount = player.getPersistentData().getInt("monsterLuckGifting");
             AttributeInstance interactionTargetLuck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
             playerLuck.setBaseValue(playerLuck.getBaseValue() - (luckGiftingAmount / 2));
             interactionTargetLuck.setBaseValue(interactionTargetLuck.getBaseValue() + luckGiftingAmount);
-        }}
+        }
+    }
 }

@@ -61,7 +61,89 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
         mob.getPersistentData().putInt("inMonsterProvidenceDomain", 20);
     }
 
-    private void isGoodPlayerAffect(Player  affectedPlayer, int multiplier) {
+    private void processBlocksGood(int multiplier) {
+        int blocksProcessed = 0;
+        while (blocksProcessed < 200 && currentX <= getRadius()) {
+            while (blocksProcessed < 200 && currentY <= getRadius()) {
+                while (blocksProcessed < 200 && currentZ <= getRadius()) {
+                    BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+                    mutablePos.set(worldPosition.getX() + currentX,
+                            worldPosition.getY() + currentY,
+                            worldPosition.getZ() + currentZ);
+                    BlockState targetBlock = level.getBlockState(mutablePos);
+                    boolean blockWasProcessed = false;
+                    if (!(targetBlock.getBlock() instanceof AirBlock)) {
+
+                        // Process dirt to grass conversion
+                        if (targetBlock.getBlock() == Blocks.DIRT && Earthquake.isOnSurface(level, mutablePos)) {
+                            if (level.random.nextInt(100) <= (multiplier) && level.random.nextInt() != 0) {
+                                level.setBlock(mutablePos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
+                            }
+                            blockWasProcessed = true;
+                        }
+
+                        // Process diamond ore generation
+                        if (mutablePos.getY() <= 15 && mutablePos.getY() >= 5) {
+                            if (targetBlock.getBlock() == Blocks.DEEPSLATE || targetBlock.getBlock() == Blocks.STONE) {
+                                if (level.random.nextInt(1000) <= (multiplier) && level.random.nextInt() != 0) {
+                                    level.setBlock(mutablePos, Blocks.DIAMOND_ORE.defaultBlockState(), 3);
+                                }
+                                blockWasProcessed = true;
+                            }
+                        }
+
+                        // Process first iron ore generation layer
+                        if (mutablePos.getY() <= 40 && mutablePos.getY() >= 10) {
+                            if (targetBlock.getBlock() == Blocks.DEEPSLATE || targetBlock.getBlock() == Blocks.STONE) {
+                                if (level.random.nextInt(300) <= (multiplier) && level.random.nextInt() != 0) {
+                                    level.setBlock(mutablePos, Blocks.IRON_ORE.defaultBlockState(), 3);
+                                }
+                                blockWasProcessed = true;
+                            }
+                        }
+
+                        // Process second iron ore generation layer
+                        if (mutablePos.getY() <= 25 && mutablePos.getY() >= 10) {
+                            if (targetBlock.getBlock() == Blocks.DEEPSLATE || targetBlock.getBlock() == Blocks.STONE) {
+                                if (level.random.nextInt(500) <= (multiplier) && level.random.nextInt() != 0) {
+                                    level.setBlock(mutablePos, Blocks.IRON_ORE.defaultBlockState(), 3);
+                                }
+                                blockWasProcessed = true;
+                            }
+                        }
+
+                        // Process crops
+                        if (targetBlock.getBlock() instanceof CropBlock cropBlock) {
+                            IntegerProperty ageProperty = cropBlock.getAgeProperty();
+                            int currentAge = targetBlock.getValue(ageProperty);
+                            if (currentAge < cropBlock.getMaxAge()) {
+                                level.setBlock(mutablePos, targetBlock.setValue(ageProperty, currentAge + multiplier), 3);
+                            }
+                            blockWasProcessed = true;
+                        }
+
+                        if (blockWasProcessed) {
+                            blocksProcessed++;
+                        }
+                    }
+                    currentZ++;
+                }
+                currentZ = -getRadius();  // Reset Z and increment Y
+                currentY++;
+            }
+            currentY = -30;  // Reset Y and increment X
+            currentX++;
+        }
+
+        // Reset everything when we've finished the area
+        if (currentX > getRadius()) {
+            currentX = -getRadius();
+            currentY = -30;
+            currentZ = -getRadius();
+        }
+    }
+
+    private void isGoodPlayerAffect(Player affectedPlayer, int multiplier) {
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(affectedPlayer);
         if (!(holder.getCurrentClass() == BeyonderClassInit.MONSTER.get() && holder.getCurrentSequence() <= 3)) {
             AttributeInstance luck = affectedPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
@@ -189,105 +271,25 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
             }
 
             if (ticks % 50 == 0) {
-                int blocksProcessed = 0;
-                while (blocksProcessed < 200 && currentX <= getRadius()) {
-                    while (blocksProcessed < 200 && currentY <= getRadius()) {
-                        while (blocksProcessed < 200 && currentZ <= getRadius()) {
-                            BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
-                            mutablePos.set(worldPosition.getX() + currentX,
-                                    worldPosition.getY() + currentY,
-                                    worldPosition.getZ() + currentZ);
-                            BlockState targetBlock = level.getBlockState(mutablePos);
-                            boolean blockWasProcessed = false;
-                            if (!(targetBlock.getBlock() instanceof AirBlock)) {
-
-                                // Process dirt to grass conversion
-                                if (targetBlock.getBlock() == Blocks.DIRT && Earthquake.isOnSurface(level, mutablePos)) {
-                                    if (level.random.nextInt(100) <= (multiplier) && level.random.nextInt() != 0) {
-                                        level.setBlock(mutablePos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
-                                    }
-                                    blockWasProcessed = true;
-                                }
-
-                                // Process diamond ore generation
-                                if (mutablePos.getY() <= 15 && mutablePos.getY() >= 5) {
-                                    if (targetBlock.getBlock() == Blocks.DEEPSLATE || targetBlock.getBlock() == Blocks.STONE) {
-                                        if (level.random.nextInt(1000) <= (multiplier) && level.random.nextInt() != 0) {
-                                            level.setBlock(mutablePos, Blocks.DIAMOND_ORE.defaultBlockState(), 3);
-                                        }
-                                        blockWasProcessed = true;
-                                    }
-                                }
-
-                                // Process first iron ore generation layer
-                                if (mutablePos.getY() <= 40 && mutablePos.getY() >= 10) {
-                                    if (targetBlock.getBlock() == Blocks.DEEPSLATE || targetBlock.getBlock() == Blocks.STONE) {
-                                        if (level.random.nextInt(300) <= (multiplier) && level.random.nextInt() != 0) {
-                                            level.setBlock(mutablePos, Blocks.IRON_ORE.defaultBlockState(), 3);
-                                        }
-                                        blockWasProcessed = true;
-                                    }
-                                }
-
-                                // Process second iron ore generation layer
-                                if (mutablePos.getY() <= 25 && mutablePos.getY() >= 10) {
-                                    if (targetBlock.getBlock() == Blocks.DEEPSLATE || targetBlock.getBlock() == Blocks.STONE) {
-                                        if (level.random.nextInt(500) <= (multiplier) && level.random.nextInt() != 0) {
-                                            level.setBlock(mutablePos, Blocks.IRON_ORE.defaultBlockState(), 3);
-                                        }
-                                        blockWasProcessed = true;
-                                    }
-                                }
-
-                                // Process crops
-                                if (targetBlock.getBlock() instanceof CropBlock cropBlock) {
-                                    IntegerProperty ageProperty = cropBlock.getAgeProperty();
-                                    int currentAge = targetBlock.getValue(ageProperty);
-                                    if (currentAge < cropBlock.getMaxAge()) {
-                                        level.setBlock(mutablePos, targetBlock.setValue(ageProperty, currentAge + multiplier), 3);
-                                    }
-                                    blockWasProcessed = true;
-                                }
-
-                                if (blockWasProcessed) {
-                                    blocksProcessed++;
-                                }
-                            }
-                            currentZ++;
-                        }
-                        currentZ = -getRadius();  // Reset Z and increment Y
-                        currentY++;
-                    }
-                    currentY = -30;  // Reset Y and increment X
-                    currentX++;
-                }
-
-                // Reset everything when we've finished the area
-                if (currentX > getRadius()) {
-                    currentX = -getRadius();
-                    currentY = -30;
-                    currentZ = -getRadius();
-                }
+                processBlocksGood(multiplier);
             }
-        }
-
-        else {
+        } else {
             if (ticks % 10 == 0) {
                 for (LivingEntity entity : livingEntities) {
                     if (entity instanceof Mob mob) {
-                        if (!mob.shouldDespawnInPeaceful()) {
-                            if (mob.hasEffect(MobEffects.POISON)) {
-                                mob.removeEffect(MobEffects.POISON);
-                            }
-                            if (mob.hasEffect(MobEffects.WITHER)) {
-                                mob.removeEffect(MobEffects.WITHER);
-                            }
-                            if (mob.hasEffect(MobEffects.HUNGER)) {
-                                mob.removeEffect(MobEffects.HUNGER);
-                            }
-                            BeyonderUtil.applyMobEffect(mob, MobEffects.REGENERATION, 100, 2 * multiplier, false, false);
+                        if (mob.hasEffect(MobEffects.REGENERATION)) {
+                            mob.removeEffect(MobEffects.REGENERATION);
                         }
-                        mob.getPersistentData().putInt("inMonsterProvidenceDomain", 20);
+                        if (mob.hasEffect(MobEffects.MOVEMENT_SPEED)) {
+                            mob.removeEffect(MobEffects.MOVEMENT_SPEED);
+                        }
+                        if (mob.hasEffect(MobEffects.DAMAGE_BOOST)) {
+                            mob.removeEffect(MobEffects.DAMAGE_BOOST);
+                        }
+                        BeyonderUtil.applyMobEffect(mob, MobEffects.POISON, 100, multiplier, false, false);
+                        if (!mob.shouldDespawnInPeaceful()) {
+                            mob.getPersistentData().putInt("inMonsterDecayDomain", 20);
+                        }
                     }
                 }
             }

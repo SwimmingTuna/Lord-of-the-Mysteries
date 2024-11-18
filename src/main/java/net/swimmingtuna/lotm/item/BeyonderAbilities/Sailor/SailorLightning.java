@@ -128,7 +128,6 @@ public class SailorLightning extends SimpleAbilityItem {
             float speed = 15.0f;
             if (!player.isCreative()) {
                 ItemStack itemStack = player.getUseItem();
-                // TODO: change to actual ability item, maybe make this method non static
                 player.getCooldowns().addCooldown(itemStack.getItem(), 10 + (holder.getCurrentSequence() * 2));
             }
             LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), level);
