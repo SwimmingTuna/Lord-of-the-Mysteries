@@ -12,6 +12,7 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderResetPotion;
+import net.swimmingtuna.lotm.item.OtherItems.LuckBottleItem;
 import net.swimmingtuna.lotm.item.TestItem;
 
 public class ItemInit {
@@ -25,6 +26,10 @@ public class ItemInit {
         //MONSTER
     public static final RegistryObject<Item> MONSTERDANGERSENSE = ITEMS.register("monsterdangersense",
             () -> new MonsterDangerSense(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LUCKCHANNELING = ITEMS.register("luckchanneling",
+            () -> new LuckChanneling(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MONSTERDOMAINTELEPORATION = ITEMS.register("monsterdomainteleportation",
+            () -> new MonsterDomainTeleporation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MONSTERCALAMITYATTRACTION = ITEMS.register("choiceofcalamity",
             () -> new MonsterDisableEnableCalamities(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PROVIDENCEDOMAIN = ITEMS.register("providencedomain",
@@ -280,6 +285,11 @@ public class ItemInit {
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
     public static final RegistryObject<Item> BEYONDER_RESET_POTION = ITEMS.register("beyonder_reset_potion",
             () -> new BeyonderResetPotion(new Item.Properties().stacksTo(1)));
+
+
+    //OTHER
+    public static final RegistryObject<Item> LUCKBOTTLEITEM = ITEMS.register("luckbottleitem",
+            () -> new LuckBottleItem(new Item.Properties().stacksTo(1)));
 
 
 

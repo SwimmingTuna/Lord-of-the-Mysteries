@@ -69,81 +69,88 @@ public class CorruptionAndLuckHandler {
             int ignoreDamage = tag.getInt("luckIgnoreDamage");
             Random random = new Random();
             double lotmLuckValue = luck.getValue();
-            double lotmMisfortunateValue = misfortune.getValue();
-            if (lotmMisfortunateValue >= 1) { //use different prime numbers for the tick count so misfortune is calculated at diff times
-                if (player.tickCount % 397 == 0 && random.nextInt(300) <= lotmMisfortunateValue && meteor == 0) {
+            double lotmMisfortuneValue = misfortune.getValue();
+            if (lotmMisfortuneValue >= 1) { //use different prime numbers for the tick count so misfortune is calculated at diff times
+                if (player.tickCount % 397 == 0 && random.nextInt(300) <= lotmMisfortuneValue && meteor == 0) {
                     tag.putInt("luckMeteor", 40);
-                    misfortune.setBaseValue(Math.max(0, lotmMisfortunateValue - 40));
+                    misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 40));
                 }
-                if (player.tickCount % 251 == 0 && random.nextInt(100) <= lotmMisfortunateValue && lotmLightning == 0) {
+                if (player.tickCount % 251 == 0 && random.nextInt(100) <= lotmMisfortuneValue && lotmLightning == 0) {
                     tag.putInt("luckLightningLOTM", 20);
-                    misfortune.setBaseValue(Math.max(0, lotmMisfortunateValue - 15));
+                    misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 15));
                 }
-                if (player.tickCount % 151 == 0 && random.nextInt(50) <= lotmMisfortunateValue && paralysis == 0) {
+                if (player.tickCount % 151 == 0 && random.nextInt(50) <= lotmMisfortuneValue && paralysis == 0) {
                     tag.putInt("luckParalysis", 15);
-                    misfortune.setBaseValue(Math.max(0, lotmMisfortunateValue - 5));
+                    misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 5));
                 }
-                if (player.tickCount % 149 == 0 && random.nextInt(75) <= lotmMisfortunateValue && unequipArmor == 0) {
+                if (player.tickCount % 149 == 0 && random.nextInt(75) <= lotmMisfortuneValue && unequipArmor == 0) {
                     tag.putInt("unequipArmor", 20);
-                    misfortune.setBaseValue(Math.max(0, lotmMisfortunateValue - 10));
+                    misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 10));
                 }
-                if (player.tickCount % 349 == 0 && random.nextInt(320) <= lotmMisfortunateValue && wardenSpawn == 0) {
+                if (player.tickCount % 349 == 0 && random.nextInt(320) <= lotmMisfortuneValue && wardenSpawn == 0) {
                     tag.putInt("luckWarden", 30);
-                    misfortune.setBaseValue(Math.max(0, lotmMisfortunateValue - 30));
+                    misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 30));
                 }
-                if (player.tickCount % 41 == 0 && random.nextInt(50) <= lotmMisfortunateValue && mcLightning == 0) {
+                if (player.tickCount % 41 == 0 && random.nextInt(50) <= lotmMisfortuneValue && mcLightning == 0) {
                     tag.putInt("luckLightningMC", 15);
-                    misfortune.setBaseValue(Math.max(0, lotmMisfortunateValue - 15));
+                    misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 15));
                 }
-                if (player.tickCount % 199 == 0 && random.nextInt(150) <= lotmMisfortunateValue && !player.hasEffect(MobEffects.POISON)) {
+                if (player.tickCount % 199 == 0 && random.nextInt(150) <= lotmMisfortuneValue && !player.hasEffect(MobEffects.POISON)) {
                     tag.putInt("luckPoison", 15);
-                    misfortune.setBaseValue(Math.max(0, lotmMisfortunateValue - 8));
+                    misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 8));
                 }
-                if (player.tickCount % 307 == 0 && random.nextInt(300) <= lotmMisfortunateValue && tornadoInt == 0) {
+                if (player.tickCount % 307 == 0 && random.nextInt(300) <= lotmMisfortuneValue && tornadoInt == 0) {
                     tag.putInt("luckTornado", 25);
-                    misfortune.setBaseValue(Math.max(0, lotmMisfortunateValue - 25));
+                    misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 25));
                 }
-                if (player.tickCount % 127 == 0 && random.nextInt(100) <= lotmMisfortunateValue && stone == 0) {
+                if (player.tickCount % 127 == 0 && random.nextInt(100) <= lotmMisfortuneValue && stone == 0) {
                     tag.putInt("luckStone", 10);
-                    misfortune.setBaseValue(Math.max(0, lotmMisfortunateValue - 12));
+                    misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 12));
                 }
-                if (player.tickCount % 701 == 0 && random.nextInt(250) <= lotmMisfortunateValue) {
+                if (player.tickCount % 701 == 0 && random.nextInt(250) <= lotmMisfortuneValue) {
                     tag.putInt("luckIgnoreAbility", ignoreAbilityUse + 1);
-                    misfortune.setBaseValue(Math.max(0, lotmMisfortunateValue - 15));
+                    misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 15));
                 }
-                if (player.tickCount % 263 == 0 && random.nextInt(150) <= lotmMisfortunateValue) {
+                if (player.tickCount % 263 == 0 && random.nextInt(150) <= lotmMisfortuneValue) {
                     tag.putInt("luckDoubleDamage", doubleDamage + 1);
-                    misfortune.setBaseValue(Math.max(0, lotmMisfortunateValue - 5));
+                    misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 5));
                 }
             }
             if (luck.getValue() >= 1) {
                 if (player.tickCount % 29 == 0 && random.nextInt(100) <= lotmLuckValue && regeneration == 0) {
                     tag.putInt("luckRegeneration", 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 5));
+                    player.sendSystemMessage(Component.literal("Regen" + regeneration));
                 }
                 if (player.tickCount % 907 == 0 && random.nextInt(300) <= lotmLuckValue && player.onGround() && diamondsDropped == 0) {
                     tag.putInt("luckDiamonds", 10);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 5));
+                    player.sendSystemMessage(Component.literal("Dia" + diamondsDropped));
                 }
-                if (player.tickCount % 11 == 0 && random.nextInt(100) <= lotmLuckValue) {
+                if (player.tickCount % 11 == 0 && random.nextInt(100) <= lotmLuckValue && windMovingProjectiles <= 25) {
                     tag.putInt("windMovingProjectilesCounter", windMovingProjectiles + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 10));
+                    player.sendSystemMessage(Component.literal("Projectiles" + windMovingProjectiles));
                 }
-                if (player.tickCount % 317 == 0 && random.nextInt(150) <= lotmLuckValue) {
+                if (player.tickCount % 317 == 0 && random.nextInt(150) <= lotmLuckValue && tag.getInt("luckHalveDamage") <= 15) {
                     tag.putInt("luckHalveDamage", tag.getInt("luckHalveDamage") + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 12));
+                    player.sendSystemMessage(Component.literal("HalveDamage" + tag.getInt("luckHalveDamage")));
                 }
-                if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && player.tickCount % 51 == 0 && random.nextInt(70) <= lotmLuckValue) {
+                if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && player.tickCount % 51 == 0 && random.nextInt(70) <= lotmLuckValue && luckIgnoreMobs <= 20) {
                     tag.putInt("luckIgnoreMobs", luckIgnoreMobs + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 3));
+                    player.sendSystemMessage(Component.literal("IgnoreMobs" + luckIgnoreMobs));
                 }
-                if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 5 && player.tickCount % 383 == 0 && random.nextInt(200) <= lotmLuckValue) {
+                if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 5 && attackerPoisoned <= 20 && player.tickCount % 383 == 0 && random.nextInt(200) <= lotmLuckValue) {
                     tag.putInt("luckAttackerPoisoned", attackerPoisoned + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 15));
+                    player.sendSystemMessage(Component.literal("AttackerPoisoned" + attackerPoisoned));
                 }
-                if (player.tickCount % 503 == 0 && random.nextInt(225) <= lotmLuckValue && holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 5) {
+                if (player.tickCount % 503 == 0 && random.nextInt(225) <= lotmLuckValue && ignoreDamage <= 15 && holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 5) {
                     tag.putInt("luckIgnoreDamage", ignoreDamage + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 20));
+                    player.sendSystemMessage(Component.literal("IgnoreDamage" + ignoreDamage));
                 }
             }
             if (holder.currentClassMatches(BeyonderClassInit.MONSTER)) {

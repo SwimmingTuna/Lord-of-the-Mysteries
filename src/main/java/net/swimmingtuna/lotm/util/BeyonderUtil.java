@@ -41,14 +41,14 @@ import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Ability;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.DomainOfDecay;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.DomainOfProvidence;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.LuckManipulation;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.MonsterDomainTeleporation;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
-import net.swimmingtuna.lotm.networking.packet.LeftClickC2S;
-import net.swimmingtuna.lotm.networking.packet.LuckManipulationLeftClickC2S;
-import net.swimmingtuna.lotm.networking.packet.MatterAccelerationBlockC2S;
-import net.swimmingtuna.lotm.networking.packet.UpdateItemInHandC2S;
+import net.swimmingtuna.lotm.networking.packet.*;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -421,6 +421,9 @@ public class BeyonderUtil {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty()) {
+            if (heldItem.getItem() instanceof MonsterDomainTeleporation) {
+                LOTMNetworkHandler.sendToServer(new MonsterLeftClickC2S());
+            }
             if (heldItem.getItem() instanceof BeyonderAbilityUser) {
                 LOTMNetworkHandler.sendToServer(new LeftClickC2S()); //DIFFERENT FOR LEFT CLICK BLOCK
 
@@ -514,7 +517,6 @@ public class BeyonderUtil {
             }
             else if (heldItem.getItem() instanceof LuckManipulation) {
                 LOTMNetworkHandler.sendToServer(new LuckManipulationLeftClickC2S());
-
             }
         }
     }
@@ -524,6 +526,9 @@ public class BeyonderUtil {
         ItemStack heldItem = pPlayer.getMainHandItem();
         int activeSlot = pPlayer.getInventory().selected;
         if (!heldItem.isEmpty()) {
+            if (heldItem.getItem() instanceof MonsterDomainTeleporation) {
+                LOTMNetworkHandler.sendToServer(new MonsterLeftClickC2S());
+            }
             if (heldItem.getItem() instanceof AqueousLightPush) {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.AQUEOUS_LIGHT_PULL.get())));
                 heldItem.shrink(1);

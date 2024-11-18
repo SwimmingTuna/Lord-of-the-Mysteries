@@ -39,6 +39,11 @@ public class LOTMNetworkHandler {
                 .encoder(LuckManipulationLeftClickC2S::toByte)
                 .consumerMainThread(LuckManipulationLeftClickC2S::handle)
                 .add();
+        INSTANCE.messageBuilder(MonsterLeftClickC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(MonsterLeftClickC2S::new)
+                .encoder(MonsterLeftClickC2S::toByte)
+                .consumerMainThread(MonsterLeftClickC2S::handle)
+                .add();
         INSTANCE.messageBuilder(AddItemInInventoryC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(AddItemInInventoryC2S::new)
                 .encoder(AddItemInInventoryC2S::toByte)

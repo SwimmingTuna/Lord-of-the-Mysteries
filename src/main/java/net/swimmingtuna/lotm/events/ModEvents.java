@@ -27,7 +27,9 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
@@ -57,6 +59,8 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -183,7 +187,9 @@ public class ModEvents {
         AttributeInstance corruption = player.getAttribute(ModAttributes.CORRUPTION.get());
         AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
         AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-        assert corruption != null;
+        if (player.tickCount % 2 == 0) {
+            player.sendSystemMessage(Component.literal("Luck value is " + luck.getValue()));
+        }
 
 
         Map<String, Long> times = new HashMap<>();
@@ -1466,9 +1472,9 @@ public class ModEvents {
                 tag.putInt("monsterDomainMaxRadius", maxRadius);
             }
             if (player.isShiftKeyDown() && (player.getMainHandItem().getItem() instanceof DomainOfDecay || player.getMainHandItem().getItem() instanceof DomainOfProvidence)) {
-                player.displayClientMessage(Component.literal("Current Domain Radius is " + radius).withStyle(BeyonderUtil.getStyle(player)),true);
                 tag.putInt("monsterDomainRadius", radius + 5);
-            } if (radius > maxRadius) {
+                player.displayClientMessage(Component.literal("Current Domain Radius is " + radius).withStyle(BeyonderUtil.getStyle(player)),true);
+            } if (radius > maxRadius + 1) {
                 player.displayClientMessage(Component.literal("Current Domain Radius is 0").withStyle(BeyonderUtil.getStyle(player)),true);
                 tag.putInt("monsterDomainRadius", 0);
             }
@@ -2232,10 +2238,11 @@ public class ModEvents {
     private static void monsterLuckPoisonAttacker(Player pPlayer) {
         if (pPlayer.tickCount % 100 == 0) {
             if (pPlayer.getPersistentData().getInt("luckAttackerPoisoned") >= 1) {
-                for (Player player : pPlayer.level().getEntitiesOfClass(Player.class, pPlayer.getBoundingBox().inflate(50))) {
-                    if (player.getPersistentData().getInt("attackedMonster") >= 1) {
-                        player.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
-                        player.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 3, false, false));
+                for (LivingEntity livingEntity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(50))) {
+                    if (livingEntity.getPersistentData().getInt("attackedMonster") >= 1) {
+                        livingEntity.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
+                        livingEntity.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 2, true, true));
+                        livingEntity.getPersistentData().putInt("attackedMonster", 0);
                         pPlayer.getPersistentData().putInt("luckAttackerPoisoned", pPlayer.getPersistentData().getInt("luckAttackerPoisoned") - 1);
                     }
                 }
@@ -2419,28 +2426,6 @@ public class ModEvents {
 
                 byte[] keysClicked = new byte[5]; // Example size; match this to the intended array size
                 player.getPersistentData().putByteArray("keysClicked", keysClicked);
-
-                //RESET PARTICLE ATTRIBUTES
-                AttributeInstance particleAttributeInstance = player.getAttribute(ModAttributes.PARTICLE_HELPER.get());
-                AttributeInstance particleAttributeInstance1 = player.getAttribute(ModAttributes.PARTICLE_HELPER1.get());
-                AttributeInstance particleAttributeInstance2 = player.getAttribute(ModAttributes.PARTICLE_HELPER2.get());
-                AttributeInstance particleAttributeInstance3 = player.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
-                AttributeInstance particleAttributeInstance4 = player.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
-                AttributeInstance particleAttributeInstance5 = player.getAttribute(ModAttributes.PARTICLE_HELPER5.get());
-                AttributeInstance particleAttributeInstance6 = player.getAttribute(ModAttributes.PARTICLE_HELPER6.get());
-                AttributeInstance particleAttributeInstance7 = player.getAttribute(ModAttributes.PARTICLE_HELPER7.get());
-                AttributeInstance particleAttributeInstance8 = player.getAttribute(ModAttributes.PARTICLE_HELPER8.get());
-                AttributeInstance particleAttributeInstance9 = player.getAttribute(ModAttributes.PARTICLE_HELPER9.get());
-                particleAttributeInstance.setBaseValue(0.0f);
-                particleAttributeInstance1.setBaseValue(0.0f);
-                particleAttributeInstance2.setBaseValue(0.0f);
-                particleAttributeInstance3.setBaseValue(0.0f);
-                particleAttributeInstance4.setBaseValue(0.0f);
-                particleAttributeInstance5.setBaseValue(0.0f);
-                particleAttributeInstance6.setBaseValue(0.0f);
-                particleAttributeInstance7.setBaseValue(0.0f);
-                particleAttributeInstance8.setBaseValue(0.0f);
-                particleAttributeInstance9.setBaseValue(0.0f);
 
             }
             if (entity instanceof Player && entity.getCommandSenderWorld().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
@@ -2934,89 +2919,6 @@ public class ModEvents {
         Entity entity = event.getEntity();
         if (entity instanceof LivingEntity livingEntity) {
             if (!livingEntity.level().isClientSide()) {
-                AttributeInstance luck = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
-                AttributeInstance misfortune = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
-                AttributeInstance particle = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER.get());
-                AttributeInstance particle1 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER1.get());
-                AttributeInstance particle2 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER2.get());
-                AttributeInstance particle3 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER3.get());
-                AttributeInstance particle4 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER4.get());
-                AttributeInstance particle5 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER5.get());
-                AttributeInstance particle6 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER6.get());
-                AttributeInstance particle7 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER7.get());
-                AttributeInstance particle8 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER8.get());
-                AttributeInstance particle9 = livingEntity.getAttribute(ModAttributes.PARTICLE_HELPER9.get());
-                AttributeInstance nightmare = livingEntity.getAttribute(ModAttributes.NIGHTMARE.get());
-                AttributeInstance armorinvis = livingEntity.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
-                AttributeInstance mobSpirituality = livingEntity.getAttribute(ModAttributes.MOB_SPIRITUALITY.get());
-                AttributeInstance dir = livingEntity.getAttribute(ModAttributes.DIR.get());
-                if (!(livingEntity instanceof Player)) {
-                    if (mobSpirituality == null) {
-                        return;
-                    }
-                    mobSpirituality.setBaseValue(0);
-                }
-                if (nightmare == null) {
-                    return;
-                }
-                nightmare.setBaseValue(0);
-                if (dir == null) {
-                    return;
-                }
-                dir.setBaseValue(1);
-                if (armorinvis == null) {
-                    return;
-                }
-                armorinvis.setBaseValue(0);
-                if (luck == null) {
-                    return;
-                }
-                luck.setBaseValue(0);
-                if (misfortune == null) {
-                    return;
-                }
-                misfortune.setBaseValue(0);
-
-                if (particle == null) {
-                    return;
-                }
-                particle.setBaseValue(0);
-                if (particle1 == null) {
-                    return;
-                }
-                particle1.setBaseValue(0);
-                if (particle2 == null) {
-                    return;
-                }
-                particle2.setBaseValue(0);
-                if (particle3 == null) {
-                    return;
-                }
-                particle3.setBaseValue(0);
-                if (particle4 == null) {
-                    return;
-                }
-                particle4.setBaseValue(0);
-                if (particle5 == null) {
-                    return;
-                }
-                particle5.setBaseValue(0);
-                if (particle6 == null) {
-                    return;
-                }
-                particle6.setBaseValue(0);
-                if (particle7 == null) {
-                    return;
-                }
-                particle7.setBaseValue(0);
-                if (particle8 == null) {
-                    return;
-                }
-                particle8.setBaseValue(0);
-                if (particle9 == null) {
-                    return;
-                }
-                particle9.setBaseValue(0);
                 if (livingEntity instanceof PlayerMobEntity playerMobEntity) {
                     if (!playerMobEntity.level().getLevelData().getGameRules().getBoolean(GameRuleInit.NPC_SHOULD_SPAWN)) {
                         event.setCanceled(true);
@@ -3025,5 +2927,14 @@ public class ModEvents {
             }
         }
     }
+    @SubscribeEvent
+    public static void addAttributes(EntityAttributeCreationEvent event) {
+        event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.LOTM_LUCK.get()).build());
+        event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.MISFORTUNE.get()).build());
+        event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.DIR.get()).build());
+        event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.CORRUPTION.get()).build());
+        event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.SANITY.get()).build());
+        event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.NIGHTMARE.get()).build());
 
+    }
 }

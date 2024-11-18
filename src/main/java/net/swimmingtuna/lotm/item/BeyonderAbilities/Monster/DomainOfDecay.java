@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.swimmingtuna.lotm.blocks.MonsterDomainBlockEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.BlockInit;
@@ -19,6 +20,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class DomainOfDecay extends SimpleAbilityItem {
+    public static final BooleanProperty LIT = BooleanProperty.create("lit");
 
     public DomainOfDecay(Properties properties) {
         super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
@@ -38,7 +40,7 @@ public class DomainOfDecay extends SimpleAbilityItem {
         if (!player.level().isClientSide()) {
             Level level = player.level();
             BlockPos pos = player.getOnPos();
-            level.setBlock(pos, BlockInit.MONSTER_DOMAIN_BLOCK.get().defaultBlockState(), 3);
+            level.setBlock(pos, BlockInit.MONSTER_DOMAIN_BLOCK.get().defaultBlockState().setValue(LIT, false), 3);
             if (level.getBlockEntity(pos) instanceof MonsterDomainBlockEntity domainEntity) {
                 domainEntity.setOwner(player);
                 int radius = player.getPersistentData().getInt("monsterDomainRadius");

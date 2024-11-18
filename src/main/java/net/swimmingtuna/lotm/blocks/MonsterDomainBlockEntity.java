@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ChunkMap;
@@ -16,10 +15,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.GrassBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -29,6 +25,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.BlockEntityInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.Earthquake;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.TickableBlockEntity;
@@ -42,9 +39,118 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
     private int radius;
     private boolean isBad;
     private UUID ownerUUID;
+    private int currentX = -getRadius();
+    private int currentY = -40;
+    private int currentZ = -getRadius();
 
     public MonsterDomainBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityInit.MONSTER_DOMAIN_BLOCK_ENTITY.get(), pos, state);
+    }
+
+    private static void removeMobEffects(Mob mob, int multiplier) {
+        if (mob.hasEffect(MobEffects.POISON)) {
+            mob.removeEffect(MobEffects.POISON);
+        }
+        if (mob.hasEffect(MobEffects.WITHER)) {
+            mob.removeEffect(MobEffects.WITHER);
+        }
+        if (mob.hasEffect(MobEffects.HUNGER)) {
+            mob.removeEffect(MobEffects.HUNGER);
+        }
+        BeyonderUtil.applyMobEffect(mob, MobEffects.REGENERATION, 100, 2 * multiplier, false, false);
+        mob.getPersistentData().putInt("inMonsterProvidenceDomain", 20);
+    }
+
+    private void isGoodPlayerAffect(Player  affectedPlayer, int multiplier) {
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(affectedPlayer);
+        if (!(holder.getCurrentClass() == BeyonderClassInit.MONSTER.get() && holder.getCurrentSequence() <= 3)) {
+            AttributeInstance luck = affectedPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
+            AttributeInstance misfortune = affectedPlayer.getAttribute(ModAttributes.MISFORTUNE.get());
+
+            if (ticks % 40 == 0) {
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.REGENERATION, 100, 2 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.SATURATION, 100, multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+            }
+            List<ItemStack> itemStacks = new ArrayList<>(affectedPlayer.getInventory().items);
+            itemStacks.addAll(affectedPlayer.getInventory().armor);
+            itemStacks.add(affectedPlayer.getInventory().offhand.get(0));
+            List<ItemStack> nonEmptyStacks = itemStacks.stream()
+                    .filter(stack -> !stack.isEmpty())
+                    .toList();
+            if (ticks % 10 == 0) {
+                affectedPlayer.giveExperiencePoints(8);
+                for (ItemStack stack : nonEmptyStacks) {
+                    if (stack.isDamageableItem()) {
+                        stack.setDamageValue(Math.max(0, stack.getDamageValue() - 1)); //configure this to make it scale with how small the radius is compared to max radius
+                    }
+                }
+                if (affectedPlayer.hasEffect(MobEffects.POISON)) {
+                    affectedPlayer.removeEffect(MobEffects.POISON);
+                }
+                if (affectedPlayer.hasEffect(MobEffects.WITHER)) {
+                    affectedPlayer.removeEffect(MobEffects.WITHER);
+                }
+                if (affectedPlayer.hasEffect(MobEffects.HUNGER)) {
+                    affectedPlayer.removeEffect(MobEffects.HUNGER);
+                }
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DAMAGE_BOOST, 100, multiplier, false, false);
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DIG_SPEED, 100, multiplier, false, false);
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.MOVEMENT_SPEED, 100, multiplier, false, false);
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.JUMP, 100, multiplier, false, false);
+
+                // Survival benefits
+                affectedPlayer.getFoodData().setFoodLevel(Math.min(20, affectedPlayer.getFoodData().getFoodLevel() + multiplier));
+            }
+            if (ticks % 200 == 0) {
+                luck.setBaseValue(Math.min(100, luck.getBaseValue() + multiplier));
+                misfortune.setBaseValue(Math.max(0, misfortune.getBaseValue() - multiplier));
+            }
+        } else {
+            AttributeInstance luck = affectedPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
+            AttributeInstance misfortune = affectedPlayer.getAttribute(ModAttributes.MISFORTUNE.get());
+
+            if (ticks % 40 == 0) {
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.REGENERATION, 100, 3 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.SATURATION, 100, 2 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+            }
+            List<ItemStack> itemStacks = new ArrayList<>(affectedPlayer.getInventory().items);
+            itemStacks.addAll(affectedPlayer.getInventory().armor);
+            itemStacks.add(affectedPlayer.getInventory().offhand.get(0));
+            List<ItemStack> nonEmptyStacks = itemStacks.stream()
+                    .filter(stack -> !stack.isEmpty())
+                    .toList();
+            if (ticks % 10 == 0) {
+                affectedPlayer.giveExperiencePoints(16 * multiplier);
+                for (ItemStack stack : nonEmptyStacks) {
+                    if (stack.isDamageableItem()) {
+                        stack.setDamageValue(Math.max(0, stack.getDamageValue() - 4 * multiplier)); //configure this to make it scale with how small the radius is compared to max radius
+                    }
+                }
+                if (affectedPlayer.hasEffect(MobEffects.POISON)) {
+                    affectedPlayer.removeEffect(MobEffects.POISON);
+                }
+                if (affectedPlayer.hasEffect(MobEffects.WITHER)) {
+                    affectedPlayer.removeEffect(MobEffects.WITHER);
+                }
+                if (affectedPlayer.hasEffect(MobEffects.HUNGER)) {
+                    affectedPlayer.removeEffect(MobEffects.HUNGER);
+                }
+                if (affectedPlayer.hasEffect(MobEffects.CONFUSION)) {
+                    affectedPlayer.removeEffect(MobEffects.CONFUSION);
+                }
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DAMAGE_BOOST, 100, 2 * multiplier, false, false);
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DIG_SPEED, 100, 2 * multiplier, false, false);
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.MOVEMENT_SPEED, 100, 2 * multiplier, false, false);
+                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.JUMP, 100, 2 * multiplier, false, false);
+
+                // Survival benefits
+                affectedPlayer.getFoodData().setFoodLevel(Math.min(20, affectedPlayer.getFoodData().getFoodLevel() + 4 * multiplier));
+            }
+            if (ticks % 200 == 0) {
+                luck.setBaseValue(Math.min(100, luck.getBaseValue() + multiplier));
+                misfortune.setBaseValue(Math.max(0, misfortune.getBaseValue() - multiplier));
+            }
+        }
     }
 
     @Override
@@ -52,188 +158,120 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
         if (this.level.isClientSide()) {
             return;
         }
+        if (this.level.dimension() != Level.NETHER) {
+            if (this.worldPosition.getY() != 100) {
+                this.worldPosition.offset(0, 100 - worldPosition.getY(), 0);
+            }
+        }
         ticks++;
-        AABB affectedArea = new AABB(
-                worldPosition.getX() - radius, worldPosition.getY() - radius, worldPosition.getZ() - radius,
-                worldPosition.getX() + radius, worldPosition.getY() + radius, worldPosition.getZ() + radius
-        );
-
+        AABB affectedArea = new AABB(worldPosition.getX() - radius, worldPosition.getY() - radius, worldPosition.getZ() - radius, worldPosition.getX() + radius, worldPosition.getY() + radius, worldPosition.getZ() + radius);
+        List<Player> players = level.getEntitiesOfClass(Player.class, affectedArea);
+        List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, affectedArea);
         int multiplier;
         Player player = level.getPlayerByUUID(ownerUUID);
         if (player != null) {
             int safeRadius = Math.max(1, getRadius()); // Ensure radius is at least 1
-            if (ticks % 20 == 0) {
-                System.out.println(getRadius());
-                System.out.println(safeRadius);
-            }
             BeyonderHolder beyonderHolder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int maxRadius = 250 - (beyonderHolder.getCurrentSequence() * 45);
             multiplier = Math.max(1, (maxRadius / safeRadius) / 2);
         } else multiplier = 1;
-        List<Player> players = level.getEntitiesOfClass(Player.class, affectedArea);
-        List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, affectedArea);
 
         if (!isBad) {
             if (ticks % 10 == 0) {
                 for (LivingEntity entity : livingEntities) {
                     if (entity instanceof Mob mob) {
-                        if (!mob.shouldDespawnInPeaceful()) {
-                            if (mob.hasEffect(MobEffects.POISON)) {
-                                mob.removeEffect(MobEffects.POISON);
-                            }
-                            if (mob.hasEffect(MobEffects.WITHER)) {
-                                mob.removeEffect(MobEffects.WITHER);
-                            }
-                            if (mob.hasEffect(MobEffects.HUNGER)) {
-                                mob.removeEffect(MobEffects.HUNGER);
-                            }
-                            BeyonderUtil.applyMobEffect(mob, MobEffects.REGENERATION, 100, 2 * multiplier, false, false);
-                        }
-                        mob.getPersistentData().putInt("inMonsterProvidenceDomain", 20);
+                        removeMobEffects(mob, multiplier);
                     }
                 }
             }
-
-
             for (Player affectedPlayer : players) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(affectedPlayer);
-                if (!(holder.getCurrentClass() == BeyonderClassInit.MONSTER.get() && holder.getCurrentSequence() <= 3)) {
-                    AttributeInstance luck = affectedPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
-                    AttributeInstance misfortune = affectedPlayer.getAttribute(ModAttributes.MISFORTUNE.get());
-
-                    if (ticks % 40 == 0) {
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.REGENERATION, 100, 2 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.SATURATION, 100, multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
-                    }
-                    List<ItemStack> itemStacks = new ArrayList<>(affectedPlayer.getInventory().items);
-                    itemStacks.addAll(affectedPlayer.getInventory().armor);
-                    itemStacks.add(affectedPlayer.getInventory().offhand.get(0));
-                    List<ItemStack> nonEmptyStacks = itemStacks.stream()
-                            .filter(stack -> !stack.isEmpty())
-                            .toList();
-                    if (ticks % 10 == 0) {
-                        affectedPlayer.giveExperiencePoints(8);
-                        for (ItemStack stack : nonEmptyStacks) {
-                            if (stack.isDamageableItem()) {
-                                stack.setDamageValue(Math.max(0, stack.getDamageValue() - 1)); //configure this to make it scale with how small the radius is compared to max radius
-                            }
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.POISON)) {
-                            affectedPlayer.removeEffect(MobEffects.POISON);
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.WITHER)) {
-                            affectedPlayer.removeEffect(MobEffects.WITHER);
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.HUNGER)) {
-                            affectedPlayer.removeEffect(MobEffects.HUNGER);
-                        }
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DAMAGE_BOOST, 100, multiplier, false, false);
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DIG_SPEED, 100, multiplier, false, false);
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.MOVEMENT_SPEED, 100, multiplier, false, false);
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.JUMP, 100, multiplier, false, false);
-
-                        // Survival benefits
-                        affectedPlayer.getFoodData().setFoodLevel(Math.min(20, affectedPlayer.getFoodData().getFoodLevel() + multiplier));
-                    }
-                    if (ticks % 200 == 0) {
-                        luck.setBaseValue(Math.min(100, luck.getBaseValue() + multiplier));
-                        misfortune.setBaseValue(Math.max(0, misfortune.getBaseValue() - multiplier));
-                    }
-                } else {
-                    AttributeInstance luck = affectedPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
-                    AttributeInstance misfortune = affectedPlayer.getAttribute(ModAttributes.MISFORTUNE.get());
-
-                    if (ticks % 40 == 0) {
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.REGENERATION, 100, 3 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.SATURATION, 100, 2 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
-                    }
-                    List<ItemStack> itemStacks = new ArrayList<>(affectedPlayer.getInventory().items);
-                    itemStacks.addAll(affectedPlayer.getInventory().armor);
-                    itemStacks.add(affectedPlayer.getInventory().offhand.get(0));
-                    List<ItemStack> nonEmptyStacks = itemStacks.stream()
-                            .filter(stack -> !stack.isEmpty())
-                            .toList();
-                    if (ticks % 10 == 0) {
-                        affectedPlayer.giveExperiencePoints(16 * multiplier);
-                        for (ItemStack stack : nonEmptyStacks) {
-                            if (stack.isDamageableItem()) {
-                                stack.setDamageValue(Math.max(0, stack.getDamageValue() - 4 * multiplier)); //configure this to make it scale with how small the radius is compared to max radius
-                            }
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.POISON)) {
-                            affectedPlayer.removeEffect(MobEffects.POISON);
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.WITHER)) {
-                            affectedPlayer.removeEffect(MobEffects.WITHER);
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.HUNGER)) {
-                            affectedPlayer.removeEffect(MobEffects.HUNGER);
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.CONFUSION)) {
-                            affectedPlayer.removeEffect(MobEffects.CONFUSION);
-                        }
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DAMAGE_BOOST, 100, 2 * multiplier, false, false);
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DIG_SPEED, 100, 2 * multiplier, false, false);
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.MOVEMENT_SPEED, 100, 2 * multiplier, false, false);
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.JUMP, 100, 2 * multiplier, false, false);
-
-                        // Survival benefits
-                        affectedPlayer.getFoodData().setFoodLevel(Math.min(20, affectedPlayer.getFoodData().getFoodLevel() + 4 * multiplier));
-                    }
-                    if (ticks % 200 == 0) {
-                        luck.setBaseValue(Math.min(100, luck.getBaseValue() + multiplier));
-                        misfortune.setBaseValue(Math.max(0, misfortune.getBaseValue() - multiplier));
-                    }
-                }
+                isGoodPlayerAffect(affectedPlayer, multiplier);
             }
 
-            if (ticks % 200 == 0) {
-                for (int x = -radius; x <= radius; x++) {
-                    for (int y = -30; y <= radius; y++) {
-                        for (int z = -radius; z <= radius; z++) {
-                            BlockPos targetPos = new BlockPos(worldPosition.getX() + x, Math.min(worldPosition.getY() + y, worldPosition.getY() - 30), worldPosition.getZ() + z);
-                            double distance = Math.sqrt(x * x + y * y + z * z);
-                            if (distance <= radius) {
-                                BlockState targetBlock = level.getBlockState(targetPos);
-                                if (targetBlock.getBlock() == Blocks.DIRT) {
+            if (ticks % 50 == 0) {
+                int blocksProcessed = 0;
+                while (blocksProcessed < 200 && currentX <= getRadius()) {
+                    while (blocksProcessed < 200 && currentY <= getRadius()) {
+                        while (blocksProcessed < 200 && currentZ <= getRadius()) {
+                            BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+                            mutablePos.set(worldPosition.getX() + currentX,
+                                    worldPosition.getY() + currentY,
+                                    worldPosition.getZ() + currentZ);
+                            BlockState targetBlock = level.getBlockState(mutablePos);
+                            boolean blockWasProcessed = false;
+                            if (!(targetBlock.getBlock() instanceof AirBlock)) {
+
+                                // Process dirt to grass conversion
+                                if (targetBlock.getBlock() == Blocks.DIRT && Earthquake.isOnSurface(level, mutablePos)) {
                                     if (level.random.nextInt(100) <= (multiplier) && level.random.nextInt() != 0) {
-                                        level.setBlock(targetPos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
+                                        level.setBlock(mutablePos, Blocks.GRASS_BLOCK.defaultBlockState(), 3);
                                     }
+                                    blockWasProcessed = true;
                                 }
-                                if (targetPos.getY() <= 15 && targetPos.getY() >= 5) {
+
+                                // Process diamond ore generation
+                                if (mutablePos.getY() <= 15 && mutablePos.getY() >= 5) {
                                     if (targetBlock.getBlock() == Blocks.DEEPSLATE || targetBlock.getBlock() == Blocks.STONE) {
                                         if (level.random.nextInt(1000) <= (multiplier) && level.random.nextInt() != 0) {
-                                            level.setBlock(targetPos, Blocks.DIAMOND_ORE.defaultBlockState(), 3);
+                                            level.setBlock(mutablePos, Blocks.DIAMOND_ORE.defaultBlockState(), 3);
                                         }
+                                        blockWasProcessed = true;
                                     }
                                 }
-                                if (targetPos.getY() <= 40 && targetPos.getY() >= 10) {
+
+                                // Process first iron ore generation layer
+                                if (mutablePos.getY() <= 40 && mutablePos.getY() >= 10) {
                                     if (targetBlock.getBlock() == Blocks.DEEPSLATE || targetBlock.getBlock() == Blocks.STONE) {
                                         if (level.random.nextInt(300) <= (multiplier) && level.random.nextInt() != 0) {
-                                            level.setBlock(targetPos, Blocks.IRON_ORE.defaultBlockState(), 3);
+                                            level.setBlock(mutablePos, Blocks.IRON_ORE.defaultBlockState(), 3);
                                         }
+                                        blockWasProcessed = true;
                                     }
                                 }
-                                if (targetPos.getY() <= 25 && targetPos.getY() >= 10) {
+
+                                // Process second iron ore generation layer
+                                if (mutablePos.getY() <= 25 && mutablePos.getY() >= 10) {
                                     if (targetBlock.getBlock() == Blocks.DEEPSLATE || targetBlock.getBlock() == Blocks.STONE) {
                                         if (level.random.nextInt(500) <= (multiplier) && level.random.nextInt() != 0) {
-                                            level.setBlock(targetPos, Blocks.IRON_ORE.defaultBlockState(), 3);
+                                            level.setBlock(mutablePos, Blocks.IRON_ORE.defaultBlockState(), 3);
                                         }
+                                        blockWasProcessed = true;
                                     }
                                 }
+
+                                // Process crops
                                 if (targetBlock.getBlock() instanceof CropBlock cropBlock) {
                                     IntegerProperty ageProperty = cropBlock.getAgeProperty();
                                     int currentAge = targetBlock.getValue(ageProperty);
                                     if (currentAge < cropBlock.getMaxAge()) {
-                                        level.setBlock(targetPos, targetBlock.setValue(ageProperty, currentAge + multiplier), 3);
+                                        level.setBlock(mutablePos, targetBlock.setValue(ageProperty, currentAge + multiplier), 3);
                                     }
+                                    blockWasProcessed = true;
+                                }
+
+                                if (blockWasProcessed) {
+                                    blocksProcessed++;
                                 }
                             }
+                            currentZ++;
                         }
+                        currentZ = -getRadius();  // Reset Z and increment Y
+                        currentY++;
                     }
+                    currentY = -30;  // Reset Y and increment X
+                    currentX++;
+                }
+
+                // Reset everything when we've finished the area
+                if (currentX > getRadius()) {
+                    currentX = -getRadius();
+                    currentY = -30;
+                    currentZ = -getRadius();
                 }
             }
-        } else {
+        }
+
+        else {
             if (ticks % 10 == 0) {
                 for (LivingEntity entity : livingEntities) {
                     if (entity instanceof Mob mob) {
@@ -300,70 +338,71 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
                 }
             }
 
-            if (ticks % 200 == 0) {
-                player.sendSystemMessage(Component.literal("Starting block scan..."));
-                int blocksScanned = 0;
-                int grassBlocksFound = 0;
-                int oresFound = 0;
-                int cropsFound = 0;
-
-                for (int x = -radius; x <= radius; x++) {
-                    for (int y = -30; y <= radius; y++) {
-                        for (int z = -radius; z <= radius; z++) {
+            if (ticks % 50 == 0) {
+                int blocksProcessed = 0;
+                while (blocksProcessed < 200 && currentX <= getRadius()) {
+                    while (blocksProcessed < 200 && currentY <= getRadius()) {
+                        while (blocksProcessed < 200 && currentZ <= getRadius()) {
                             BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
-                            mutablePos.set(worldPosition.getX() + x, worldPosition.getY() + y, worldPosition.getZ() + z);
-                            double distance = Math.sqrt(x * x + y * y + z * z);
+                            mutablePos.set(worldPosition.getX() + currentX,
+                                    worldPosition.getY() + currentY,
+                                    worldPosition.getZ() + currentZ);
+                            BlockState targetBlock = level.getBlockState(mutablePos);
 
-                            if (distance <= radius) {
-                                blocksScanned++;
-                                BlockState targetBlock = level.getBlockState(mutablePos);
-
-                                // Debug Grass Blocks
+                            boolean blockWasProcessed = false;
+                            if (!(targetBlock.getBlock() instanceof AirBlock)) {
+                                // Process grass blocks
                                 if (targetBlock.getBlock() instanceof GrassBlock) {
-                                    grassBlocksFound++;
                                     if (level.random.nextInt(100) <= 5 * multiplier) {
-                                        player.sendSystemMessage(Component.literal("Transforming grass block at: " + mutablePos));
                                         level.setBlock(mutablePos, Blocks.DIRT.defaultBlockState(), 3);
                                     }
+                                    blockWasProcessed = true;
                                 }
 
-                                // Debug Ores
+                                // Process ores
                                 TagKey<Block> ORE_TAG = BlockTags.create(new ResourceLocation("forge", "ores"));
                                 if (mutablePos.getY() <= -30 && mutablePos.getY() >= 40) {
                                     if (targetBlock.getBlock().builtInRegistryHolder().is(ORE_TAG)) {
-                                        oresFound++;
                                         if (level.random.nextInt(500) <= (multiplier) && level.random.nextInt() != 0) {
-                                            player.sendSystemMessage(Component.literal("Transforming ore at: " + mutablePos));
-                                            level.setBlock(mutablePos, Blocks.IRON_ORE.defaultBlockState(), 3);
+                                            level.setBlock(mutablePos, Blocks.COAL_ORE.defaultBlockState(), 3);
                                         }
+                                        blockWasProcessed = true;
                                     }
                                 }
 
-                                // Debug Crops
+                                // Process crops
                                 if (targetBlock.getBlock() instanceof CropBlock cropBlock) {
-                                    cropsFound++;
                                     IntegerProperty ageProperty = cropBlock.getAgeProperty();
                                     int currentAge = targetBlock.getValue(ageProperty);
                                     if (currentAge < cropBlock.getMaxAge()) {
-                                        player.sendSystemMessage(Component.literal("Modifying crop age at: " + mutablePos));
                                         level.setBlock(mutablePos, targetBlock.setValue(ageProperty, currentAge - multiplier), 3);
                                     }
                                     if (currentAge == 0) {
-                                        player.sendSystemMessage(Component.literal("Converting dead crop to dirt at: " + mutablePos));
                                         level.setBlock(mutablePos, Blocks.DIRT.defaultBlockState(), 3);
                                     }
+                                    blockWasProcessed = true;
+                                }
+
+                                if (blockWasProcessed) {
+                                    blocksProcessed++;
                                 }
                             }
+
+                            currentZ++;
                         }
+                        currentZ = -getRadius();  // Reset Z and increment Y
+                        currentY++;
                     }
+                    currentY = -30;  // Reset Y and increment X
+                    currentX++;
                 }
 
-                // Send summary after scan
-                player.sendSystemMessage(Component.literal("Scan complete! Summary:"));
-                player.sendSystemMessage(Component.literal("- Total blocks scanned: " + blocksScanned));
-                player.sendSystemMessage(Component.literal("- Grass blocks found: " + grassBlocksFound));
-                player.sendSystemMessage(Component.literal("- Ores found: " + oresFound));
-                player.sendSystemMessage(Component.literal("- Crops found: " + cropsFound));
+                // Reset everything when we've finished the area
+                if (currentX > getRadius()) {
+                    currentX = -getRadius();
+                    currentY = -30;
+                    currentZ = -getRadius();
+                }
             }
         }
     }
@@ -393,7 +432,11 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
         }
     }
 
-    // Method to set radius if you want to change it programmatically
+    @Override
+    public AABB getRenderBoundingBox() {
+        return new AABB(getBlockPos()).inflate(0.5);
+    }
+
     public void setRadius(int newRadius) {
         this.radius = newRadius;
         setChanged();
@@ -403,6 +446,7 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
         this.isBad = isBad;
         setChanged();
     }
+
     public int getRadius() {
         return this.radius;
     }

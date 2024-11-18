@@ -107,9 +107,11 @@ public class CreativeTabInit {
                         output.accept(ItemInit.MONSTERCALAMITYATTRACTION.get());
                         output.accept(ItemInit.PROVIDENCEDOMAIN.get());
                         output.accept(ItemInit.DECAYDOMAIN.get());
+                        output.accept(ItemInit.MONSTERDOMAINTELEPORATION.get());
                         output.accept(ItemInit.LUCKGIFTING.get());
                         output.accept(ItemInit.LUCKDEPRIVATION.get());
                         output.accept(ItemInit.MISFORTUNEBESTOWAL.get());
+                        output.accept(ItemInit.LUCKCHANNELING.get());
                     })
                     .build());
 

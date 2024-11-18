@@ -3,6 +3,8 @@ package net.swimmingtuna.lotm;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -188,6 +190,8 @@ public class LOTM {
             event.accept(ItemInit.LUCKFUTURETELLING);
             event.accept(ItemInit.MISFORTUNEBESTOWAL);
             event.accept(ItemInit.MONSTERDANGERSENSE);
+            event.accept(ItemInit.LUCKCHANNELING);
+            event.accept(ItemInit.MONSTERDOMAINTELEPORATION);
             event.accept(ItemInit.MONSTERPROJECTILECONTROL);
             event.accept(ItemInit.LUCKPERCEPTION);
             event.accept(ItemInit.PSYCHESTORM);
@@ -216,6 +220,7 @@ public class LOTM {
             event.accept(ItemInit.TYRANT_2_POTION);
             event.accept(ItemInit.TYRANT_1_POTION);
             event.accept(ItemInit.TYRANT_0_POTION);
+            event.accept(ItemInit.LUCKBOTTLEITEM);
             event.accept(ItemInit.RAGING_BLOWS);
             event.accept(ItemInit.AQUEOUS_LIGHT_DROWN);
             event.accept(ItemInit.ENABLE_OR_DISABLE_LIGHTNING);
@@ -305,6 +310,7 @@ public class LOTM {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            EntityRenderers.register(EntityInit.LUCK_BOTTLE_ENTITY.get(), ThrownItemRenderer::new);
             ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BARRIER_BLOCK.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_BLUE_STAINED_GLASS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_WHITE_STAINED_GLASS.get(), RenderType.cutout());
