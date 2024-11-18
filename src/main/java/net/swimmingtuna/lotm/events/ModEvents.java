@@ -191,7 +191,7 @@ public class ModEvents {
         AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
         AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
         if (player.tickCount % 20 == 0) {
-            //player.sendSystemMessage(Component.literal("Luck value is " + luck.getValue()));
+            player.sendSystemMessage(Component.literal("Misfortune value is: " + playerPersistentData.getInt("misfortuneManipulationItem")));
         }
 
 
@@ -2922,8 +2922,6 @@ public class ModEvents {
         CompoundTag persistentData = player.getPersistentData();
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
-        double beyonderHealth = holder.getCurrentClass().maxHealth().get(sequence);
-        player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(beyonderHealth);
         if (!persistentData.contains("keysClicked")) {
             byte[] keysClicked = new byte[5]; // Use appropriate size
             persistentData.putByteArray("keysClicked", keysClicked);
@@ -2955,49 +2953,4 @@ public class ModEvents {
         event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.NIGHTMARE.get()).build());
 
     }
-
-    @SubscribeEvent
-    public static void tickTest(TickEvent.PlayerTickEvent event) {
-        Player player = event.player;
-        if (player.level().isClientSide) return; // Ensure this runs only on the server side.
-
-        CompoundTag tag = player.getPersistentData();
-
-        // Define keys and their labels explicitly
-        String[][] luckValues = {
-                {"luckMeteor", "Meteor Luck"},
-                {"luckLightningLOTM", "Lightning (LOTM) Luck"},
-                {"luckParalysis", "Paralysis Luck"},
-                {"luckUnequipArmor", "Unequip Armor Luck"},
-                {"luckWarden", "Warden Spawn Luck"},
-                {"luckLightningMC", "Minecraft Lightning Luck"},
-                {"luckPoison", "Poison Luck"},
-                {"luckAttackerPoisoned", "Attacker Poisoned Luck"},
-                {"luckTornado", "Tornado Luck"},
-                {"luckStone", "Stone Luck"},
-                {"luckIgnoreMobs", "Ignore Mobs Luck"},
-                {"luckRegeneration", "Regeneration Luck"},
-                {"luckDiamonds", "Diamonds Dropped Luck"},
-                {"windMovingProjectilesCounter", "Wind Moving Projectiles Counter"},
-                {"luckLightningLOTMDamage", "Lightning LOTM Damage Luck"},
-                {"luckMeteorDamage", "Meteor Damage Luck"},
-                {"luckLightningMCDamage", "Minecraft Lightning Damage Luck"},
-                {"luckStoneDamage", "Stone Damage Luck"},
-                {"luckIgnoreAbility", "Ignore Ability Use Luck"},
-                {"luckDoubleDamage", "Double Damage Luck"},
-                {"luckIgnoreDamage", "Ignore Damage Luck"}
-        };
-
-        // Iterate through the defined keys and labels
-        for (String[] entry : luckValues) {
-            String key = entry[0];
-            String label = entry[1];
-
-            int value = tag.getInt(key);
-            if (value > 1) {
-                player.sendSystemMessage(Component.literal(label + ": " + value));
-            }
-        }
-    }
-
 }

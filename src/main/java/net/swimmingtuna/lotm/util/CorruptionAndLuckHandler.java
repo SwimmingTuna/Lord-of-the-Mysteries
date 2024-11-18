@@ -709,8 +709,9 @@ public class CorruptionAndLuckHandler {
                 if (lotmLightning == 1) {
                     LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), serverLevel);
                     lightningEntity.setSpeed(6.0f);
-                    lightningEntity.setTargetPos(player.getOnPos().getCenter());
+                    lightningEntity.setTargetEntity(player);
                     lightningEntity.setMaxLength(15);
+                    lightningEntity.setDeltaMovement(0,-3,0);
                     lightningEntity.teleportTo(player.getX() + (Math.random() * 60) - 30, player.getY() + 100, player.getZ() + (Math.random() * 60) - 30);
                     player.level().addFreshEntity(lightningEntity);
                     if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
@@ -796,6 +797,9 @@ public class CorruptionAndLuckHandler {
                     tornado.setTornadoLifecount(120);
                     tornado.setTornadoPickup(true);
                     tornado.setTornadoRandom(true);
+                    tornado.setTornadoHeight(50);
+                    tornado.setTornadoRadius(25);
+                    tornado.moveTo(player.getOnPos().getCenter());
                     if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
                         tag.putInt("luckTornadoResistance", 6);
                     } else if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
@@ -890,92 +894,89 @@ public class CorruptionAndLuckHandler {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
             if (!player.level().isClientSide()) {
-                // Get the player's persistent data
                 CompoundTag tag = player.getPersistentData();
+                tag.putInt("calamityMeteor", 0);
+                tag.putInt("calamityMeteorX", 0);
+                tag.putInt("calamityMeteorY", 0);
+                tag.putInt("calamityMeteorZ", 0);
+                tag.putInt("calamityLightningStorm", 0);
+                tag.putInt("calamityLightningStormX", 0);
+                tag.putInt("calamityLightningStormY", 0);
+                tag.putInt("calamityLightningStormZ", 0);
+                tag.putInt("calamityLightningBolt", 0);
+                tag.putInt("calamityLightningBoltX", 0);
+                tag.putInt("calamityLightningBoltY", 0);
+                tag.putInt("calamityLightningBoltZ", 0);
+                tag.putInt("calamityGroundTremor", 0);
+                tag.putInt("calamityGroundTremorX", 0);
+                tag.putInt("calamityGroundTremorY", 0);
+                tag.putInt("calamityGroundTremorZ", 0);
+                tag.putInt("calamityGaze", 0);
+                tag.putInt("calamityGazeX", 0);
+                tag.putInt("calamityGazeY", 0);
+                tag.putInt("calamityGazeZ", 0);
+                tag.putInt("calamityUndeadArmy", 0);
+                tag.putInt("calamityUndeadArmyX", 0);
+                tag.putInt("calamityUndeadArmyY", 0);
+                tag.putInt("calamityUndeadArmyZ", 0);
+                tag.putInt("calamityBabyZombie", 0);
+                tag.putInt("calamityBabyZombieX", 0);
+                tag.putInt("calamityBabyZombieY", 0);
+                tag.putInt("calamityBabyZombieZ", 0);
+                tag.putInt("calamityWindArmorRemoval", 0);
+                tag.putInt("calamityWindArmorRemovalX", 0);
+                tag.putInt("calamityWindArmorRemovalY", 0);
+                tag.putInt("calamityWindArmorRemovalZ", 0);
+                tag.putInt("calamityBreeze", 0);
+                tag.putInt("calamityBreezeX", 0);
+                tag.putInt("calamityBreezeY", 0);
+                tag.putInt("calamityBreezeZ", 0);
+                tag.putInt("calamityWave", 0);
+                tag.putInt("calamityWaveX", 0);
+                tag.putInt("calamityWaveY", 0);
+                tag.putInt("calamityWaveZ", 0);
+                tag.putInt("calamityExplosion", 0);
+                tag.putInt("calamityExplosionX", 0);
+                tag.putInt("calamityExplosionY", 0);
+                tag.putInt("calamityExplosionZ", 0);
+                tag.putInt("calamityTornado", 0);
+                tag.putInt("calamityTornadoX", 0);
+                tag.putInt("calamityTornadoY", 0);
+                tag.putInt("calamityTornadoZ", 0);
 
-                // Clear calamity-related tags
-                tag.remove("calamityMeteor");
-                tag.remove("calamityMeteorX");
-                tag.remove("calamityMeteorY");
-                tag.remove("calamityMeteorZ");
-                tag.remove("calamityLightningStorm");
-                tag.remove("calamityLightningStormX");
-                tag.remove("calamityLightningStormY");
-                tag.remove("calamityLightningStormZ");
-                tag.remove("calamityLightningBolt");
-                tag.remove("calamityLightningBoltX");
-                tag.remove("calamityLightningBoltY");
-                tag.remove("calamityLightningBoltZ");
-                tag.remove("calamityGroundTremor");
-                tag.remove("calamityGroundTremorX");
-                tag.remove("calamityGroundTremorY");
-                tag.remove("calamityGroundTremorZ");
-                tag.remove("calamityGaze");
-                tag.remove("calamityGazeX");
-                tag.remove("calamityGazeY");
-                tag.remove("calamityGazeZ");
-                tag.remove("calamityUndeadArmy");
-                tag.remove("calamityUndeadArmyX");
-                tag.remove("calamityUndeadArmyY");
-                tag.remove("calamityUndeadArmyZ");
-                tag.remove("calamityBabyZombie");
-                tag.remove("calamityBabyZombieX");
-                tag.remove("calamityBabyZombieY");
-                tag.remove("calamityBabyZombieZ");
-                tag.remove("calamityWindArmorRemoval");
-                tag.remove("calamityWindArmorRemovalX");
-                tag.remove("calamityWindArmorRemovalY");
-                tag.remove("calamityWindArmorRemovalZ");
-                tag.remove("calamityBreeze");
-                tag.remove("calamityBreezeX");
-                tag.remove("calamityBreezeY");
-                tag.remove("calamityBreezeZ");
-                tag.remove("calamityWave");
-                tag.remove("calamityWaveX");
-                tag.remove("calamityWaveY");
-                tag.remove("calamityWaveZ");
-                tag.remove("calamityExplosion");
-                tag.remove("calamityExplosionX");
-                tag.remove("calamityExplosionY");
-                tag.remove("calamityExplosionZ");
-                tag.remove("calamityTornado");
-                tag.remove("calamityTornadoX");
-                tag.remove("calamityTornadoY");
-                tag.remove("calamityTornadoZ");
+                // Set luck-related tags to 0
+                tag.putInt("luckMeteor", 0);
+                tag.putInt("luckLightningLOTM", 0);
+                tag.putInt("luckParalysis", 0);
+                tag.putInt("luckUnequipArmor", 0);
+                tag.putInt("luckWarden", 0);
+                tag.putInt("luckLightningMC", 0);
+                tag.putInt("luckPoison", 0);
+                tag.putInt("luckAttackerPoisoned", 0);
+                tag.putInt("luckTornado", 0);
+                tag.putInt("luckStone", 0);
+                tag.putInt("luckIgnoreMobs", 0);
+                tag.putInt("luckRegeneration", 0);
+                tag.putInt("luckDiamonds", 0);
+                tag.putInt("windMovingProjectilesCounter", 0);
+                tag.putInt("luckLightningLOTMDamage", 0);
+                tag.putInt("luckMeteorDamage", 0);
+                tag.putInt("luckLightningMCDamage", 0);
+                tag.putInt("luckStoneDamage", 0);
+                tag.putInt("luckIgnoreAbility", 0);
+                tag.putInt("luckDoubleDamage", 0);
+                tag.putInt("luckIgnoreDamage", 0);
 
-                // Clear luck-related tags
-                tag.remove("luckMeteor");
-                tag.remove("luckLightningLOTM");
-                tag.remove("luckParalysis");
-                tag.remove("luckUnequipArmor");
-                tag.remove("luckWarden");
-                tag.remove("luckLightningMC");
-                tag.remove("luckPoison");
-                tag.remove("luckAttackerPoisoned");
-                tag.remove("luckTornado");
-                tag.remove("luckStone");
-                tag.remove("luckIgnoreMobs");
-                tag.remove("luckRegeneration");
-                tag.remove("luckDiamonds");
-                tag.remove("windMovingProjectilesCounter");
-                tag.remove("luckLightningLOTMDamage");
-                tag.remove("luckMeteorDamage");
-                tag.remove("luckLightningMCDamage");
-                tag.remove("luckStoneDamage");
-                tag.remove("luckIgnoreAbility");
-                tag.remove("luckDoubleDamage");
-                tag.remove("luckIgnoreDamage");
-
-                // Clear additional immunity and resistance tags
-                tag.remove("luckStoneDamageImmunity");
-                tag.remove("luckTornadoResistance");
-                tag.remove("luckTornadoImmunity");
-                tag.remove("luckMCLightningImmunity");
-                tag.remove("calamityLOTMLightningImmunity");
-                tag.remove("calamityMeteorImmunity");
-                tag.remove("calamityLightningBoltMonsterResistance");
-                tag.remove("calamityLightningStormImmunity");
-                tag.remove("calamityLightningStormResistance");
+                // Set additional immunity and resistance tags to 0
+                tag.putInt("luckStoneDamageImmunity", 0);
+                tag.putInt("luckTornadoResistance", 0);
+                tag.putInt("luckTornadoImmunity", 0);
+                tag.putInt("luckMCLightningImmunity", 0);
+                tag.putInt("calamityLOTMLightningImmunity", 0);
+                tag.putInt("calamityMeteorImmunity", 0);
+                tag.putInt("calamityLightningBoltMonsterResistance", 0);
+                tag.putInt("calamityLightningStormImmunity", 0);
+                tag.putInt("calamityLightningStormResistance", 0);
             }
         }
     }
