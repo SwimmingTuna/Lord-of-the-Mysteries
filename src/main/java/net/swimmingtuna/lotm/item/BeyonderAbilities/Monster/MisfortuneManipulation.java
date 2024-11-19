@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -35,6 +36,8 @@ import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
+import virtuoel.pehkui.api.ScaleData;
+import virtuoel.pehkui.api.ScaleTypes;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -89,28 +92,29 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
 
     private static void manipulateMisfortune(LivingEntity interactionTarget, Player player) {
         if (!player.level().isClientSide() && !interactionTarget.level().isClientSide()) {
-            player.sendSystemMessage(Component.literal("item used"));
             CompoundTag tag = interactionTarget.getPersistentData();
+            CompoundTag playerTag = player.getPersistentData();
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            int misfortuneManipulation = tag.getInt("misfortuneManipulationItem");
+            int misfortuneManipulation = playerTag.getInt("misfortuneManipulationItem");
             if (misfortuneManipulation == 1) {
                 int random = (int) ((Math.random() * 40) - 20);
                 if (holder.getCurrentSequence() > 2) {
                     player.sendSystemMessage(Component.literal("Meteors Summoned"));
-                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
+                    summonMeteor(interactionTarget);
                 }
                 if (holder.getCurrentSequence() == 2 || holder.getCurrentSequence() == 1) {
                     player.sendSystemMessage(Component.literal("Meteors Summoned Angel"));
-                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
-                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
+                    summonMeteor(interactionTarget);
+                    summonMeteor(interactionTarget);
                 }
                 if (holder.getCurrentSequence() == 0) {
                     player.sendSystemMessage(Component.literal("Meteors Summoned Deity"));
-                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
-                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
-                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
-                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
-                    MeteorEntity.summonMeteorAtPosition(player, (int) interactionTarget.getX() + random, (int) (interactionTarget.getY() + 150), (int) interactionTarget.getZ() + random);
+                    summonMeteor(interactionTarget);
+                    summonMeteor(interactionTarget);
+                    summonMeteor(interactionTarget);
+                    summonMeteor(interactionTarget);
+                    summonMeteor(interactionTarget);
+
                 }
             }
             if (misfortuneManipulation == 2) {
@@ -118,10 +122,10 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
                 tornadoEntity.setTornadoLifecount(400 - (holder.getCurrentSequence() * 60));
                 tornadoEntity.setOwner(player);
                 tornadoEntity.setTornadoPickup(true);
-                tornadoEntity.setTornadoRadius(60 - (holder.getCurrentSequence() * 10));
-                tornadoEntity.setTornadoHeight(100 - (holder.getCurrentSequence() * 12));
+                tornadoEntity.setTornadoRadius(50 - (holder.getCurrentSequence() * 8));
+                tornadoEntity.setTornadoHeight(80 - (holder.getCurrentSequence() * 10));
+                tornadoEntity.teleportTo(interactionTarget.getX(), interactionTarget.getY(), interactionTarget.getZ());
                 player.level().addFreshEntity(tornadoEntity);
-
             }
             if (misfortuneManipulation == 3) {
                 interactionTarget.getPersistentData().putInt("sailorLightningStorm1", 200 - (holder.getCurrentSequence() * 25));
@@ -215,5 +219,25 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
             return "Poison";
         }
         return null;
+    }
+
+    private static void summonMeteor(LivingEntity entity) {
+        if (!entity.level().isClientSide()) {
+            int x = (int) entity.getX();
+            int y = (int) entity.getY();
+            int z = (int) entity.getZ();
+            Vec3 targetPos = new Vec3(x,y,z);
+            MeteorEntity meteor = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), entity.level());
+            meteor.teleportTo(x + (Math.random() * 100) - 50,y + 150 + (Math.random() * 100) - 50, z+ (Math.random() * 100) - 50);
+            meteor.noPhysics = true;
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteor);
+            scaleData.setScale(3);
+            scaleData.markForSync(true);
+            Vec3 randomizedTargetPos = targetPos.add((Math.random() * 20 - 10), (Math.random() * 20 - 10), (Math.random() * 20 - 10));
+            double speed = 4.0;
+            Vec3 directionToTarget = randomizedTargetPos.subtract(meteor.position()).normalize();
+            meteor.setDeltaMovement(directionToTarget.scale(speed));
+            entity.level().addFreshEntity(meteor);
+        }
     }
 }

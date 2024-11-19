@@ -27,7 +27,6 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -60,7 +59,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -92,8 +90,6 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.DreamIntoReality;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionBarrier;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
-import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
-import net.swimmingtuna.lotm.networking.packet.SendParticleS2C;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ClientSequenceData;
@@ -1704,21 +1700,28 @@ public class ModEvents {
 
     private static void livingLightningStorm(LivingEntity livingEntity) {
         //MISFORTUNE MANIPULATION
-        CompoundTag tag = livingEntity.getPersistentData();
-        int sailorLightningStorm1 = tag.getInt("sailorLightningStorm1");
-        int x1 = livingEntity.getPersistentData().getInt("sailorStormVecX1");
-        int y1 = livingEntity.getPersistentData().getInt("sailorStormVecY1");
-        int z1 = livingEntity.getPersistentData().getInt("sailorStormVecZ1");
-        if (sailorLightningStorm1 >= 1) {
-            tag.putInt("sailorLightningStorm1", sailorLightningStorm1 - 1);
-            LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), livingEntity.level());
-            lightningEntity.setSpeed(10.0f);
-            lightningEntity.setDeltaMovement((Math.random() * 0.4) - 0.2, -4, (Math.random() * 0.4) - 0.2);
-            lightningEntity.setMaxLength(30);
-            lightningEntity.setNoUp(true);
-            lightningEntity.teleportTo(x1 + ((Math.random() * 150) - (double) 150 / 2), y1 + 80, z1 + ((Math.random() * 150) - (double) 150 / 2));
-            lightningEntity.level().addFreshEntity(lightningEntity);
-            System.out.println("values are" + x1 + y1 + z1 + sailorLightningStorm1);
+        if (livingEntity.tickCount % 5 == 0) {
+            CompoundTag tag = livingEntity.getPersistentData();
+            int sailorLightningStorm1 = tag.getInt("sailorLightningStorm1");
+            int x1 = livingEntity.getPersistentData().getInt("sailorStormVecX1");
+            int y1 = livingEntity.getPersistentData().getInt("sailorStormVecY1");
+            int z1 = livingEntity.getPersistentData().getInt("sailorStormVecZ1");
+            if (sailorLightningStorm1 >= 1) {
+                Random random = new Random();
+                tag.putInt("sailorLightningStorm1", sailorLightningStorm1 - 1);
+                LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), livingEntity.level());
+                lightningEntity.setSpeed(7.0f);
+                lightningEntity.setDeltaMovement((Math.random() * 0.4) - 0.2, -3, (Math.random() * 0.4) - 0.2);
+                lightningEntity.setMaxLength(30);
+                lightningEntity.setNoUp(true);
+                if (random.nextInt(30) == 1) {
+                    lightningEntity.teleportTo(livingEntity.getX(), lightningEntity.getY() + 50, lightningEntity.getZ());
+                    lightningEntity.setTargetPos(livingEntity.getOnPos().getCenter());
+                } else {
+                    lightningEntity.teleportTo(x1 + ((Math.random() * 150) - (double) 150 / 2), y1 + 80, z1 + ((Math.random() * 150) - (double) 150 / 2));
+                }
+                lightningEntity.level().addFreshEntity(lightningEntity);
+            }
         }
     }
 

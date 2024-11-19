@@ -141,7 +141,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             // Set the meteor spawn position
             BlockPos meteorSpawnPos = new BlockPos(
                     (int) (player.getX() + randomX),
-                    (int) (player.getY() + 200),
+                    (int) (player.getY() + (Math.random() * 300) - 150),
                     (int) (player.getZ() + randomZ)
             );
 
@@ -185,7 +185,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             Vec3 randomizedTargetPos = new Vec3(x, y, z);
             Vec3 meteorPos = meteorEntity.position();
             Vec3 directionToTarget = randomizedTargetPos.subtract(meteorPos).normalize();
-            double speed = 3.0;
+            double speed = 5.0;
             meteorEntity.setDeltaMovement(directionToTarget.scale(speed));
             player.level().addFreshEntity(meteorEntity);
         }
