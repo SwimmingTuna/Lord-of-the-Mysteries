@@ -1,7 +1,6 @@
 package net.swimmingtuna.lotm.networking.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -26,10 +25,8 @@ public class SpiritVisionC2S {
         context.enqueueWork(() -> {
             if (pPlayer.getPersistentData().getBoolean("spiritVision")) {
                 pPlayer.getPersistentData().putBoolean("spiritVision", false);
-                pPlayer.sendSystemMessage(Component.literal("is false"));
             } else if (!pPlayer.getPersistentData().getBoolean("spiritVision")) {
                 pPlayer.getPersistentData().putBoolean("spiritVision", true);
-                pPlayer.sendSystemMessage(Component.literal("is true"));
             }
         });
         return true;

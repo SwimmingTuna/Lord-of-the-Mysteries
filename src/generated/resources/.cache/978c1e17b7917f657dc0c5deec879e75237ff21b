@@ -1,4 +1,4 @@
-// 1.20.1	2024-06-13T20:58:16.1362431	Block States: lotm
+// 1.20.1	2024-11-10T00:15:37.7443336	Block States: lotm
 350055123d026fcfab7b3feb23ddf9dd02995ad5 assets/lotm/blockstates/cathedral_block.json
 7af4e51b4a2cfb68be3574d1ca2733c9bc2a6651 assets/lotm/blockstates/lotm_darkoak_slab.json
 a05ad2921b235e5150e23515264dda158a737916 assets/lotm/blockstates/lotm_darkoak_stairs.json
@@ -8,6 +8,7 @@ d81716387535fe5a5af15a98df38ecee94c1305c assets/lotm/blockstates/lotm_quartz_sla
 57d1d996b499bfb568ef395c674153bd79f866e9 assets/lotm/blockstates/lotm_quartz_stairs.json
 96c4e3398dc43b305d7f523e768f7e1b5d4fad81 assets/lotm/blockstates/mindscape_block.json
 f6d2fa757fc43e02a502e8ed35cd7c38c10ffdb5 assets/lotm/blockstates/mindscape_outside.json
+006e8187401ea93334a99ee6515f9da20ef96cce assets/lotm/blockstates/potion_cauldron.json
 4d7c1ead7d5dfff055b9356cb301128a9ed08181 assets/lotm/blockstates/visionary_barrier_block.json
 3c2e7f3fc7277ead49777c0fcac321fa742bcdd2 assets/lotm/models/block/cathedral_block.json
 1c05770c77c54dcf252af1958608ce864a47b051 assets/lotm/models/block/lotm_darkoak_slab.json
@@ -32,4 +33,5 @@ e56401e727e28ab01077c7143a5de27d287fe9be assets/lotm/models/block/lotm_deepslate
 e1f5d6301ef77f39770cb8f0b98dfa650832d89e assets/lotm/models/item/cathedral_block.json
 33cc08fa953c4461b30fe1dc5889fe34039140c6 assets/lotm/models/item/mindscape_block.json
 dc4b2dbf4084d2898fed8785f66572b7ef957c71 assets/lotm/models/item/mindscape_outside.json
+9c49037e74f9b5be549fe93221430df019ff6c74 assets/lotm/models/item/potion_cauldron.json
 55385c393306fc560cdde1b99da1a4a6ab4aa8fc assets/lotm/models/item/visionary_barrier_block.json

@@ -4,52 +4,40 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.common.Mod;
-import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.caps.BeyonderHolder;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.entity.EndStoneEntity;
 import net.swimmingtuna.lotm.entity.NetherrackEntity;
 import net.swimmingtuna.lotm.entity.StoneEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
+import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class MatterAccelerationBlocks extends Item {
+public class MatterAccelerationBlocks extends SimpleAbilityItem {
 
-    public MatterAccelerationBlocks(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(properties);
+    public MatterAccelerationBlocks(Properties properties) {
+        super(properties, BeyonderClassInit.SAILOR, 0, 1500, 3000);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!player.level().isClientSide()) {
-
-            // If no block or entity is targeted, proceed with the original functionality
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            }
-            if (holder.getSpirituality() < 1500) {
-                player.displayClientMessage(Component.literal("You need 2000 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            }
-            if (holder.currentClassMatches(BeyonderClassInit.SAILOR) && holder.getCurrentSequence() <= 0 && holder.useSpirituality(2000)) {
-                useItem(player);
-                if (!player.getAbilities().instabuild)
-                    player.getCooldowns().addCooldown(this, 300);
-            }
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
-        return super.use(level, player, hand);
+        matterAccelerationBlocks(player);
+        addCooldown(player);
+        useSpirituality(player);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -60,7 +48,7 @@ public class MatterAccelerationBlocks extends Item {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    public static void useItem(Player player) {
+    public static void matterAccelerationBlocks(Player player) {
         if (!player.level().isClientSide()) {
             player.getPersistentData().putInt("matterAccelerationBlockTimer", 480);
             Level level = player.level();
@@ -177,5 +165,63 @@ public class MatterAccelerationBlocks extends Item {
 
     private static boolean isOnSurface(Level level, BlockPos pos) {
         return level.canSeeSky(pos.above()) || !level.getBlockState(pos.above()).isSolid();
+    }
+    public static void leftClick(Player player) {
+        int x = player.getPersistentData().getInt("matterAccelerationBlockTimer");
+        if (x >= 1) {
+            Vec3 lookDirection = player.getLookAngle().normalize().scale(20);
+            if (player.level().dimension() == Level.OVERWORLD) {
+                StoneEntity stoneEntity = player.level().getEntitiesOfClass(StoneEntity.class, player.getBoundingBox().inflate(10))
+                        .stream()
+                        .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(player)))
+                        .orElse(null);
+                if (stoneEntity != null) {
+                    stoneEntity.setDeltaMovement(lookDirection);
+                    stoneEntity.setSent(true);
+                    stoneEntity.setShouldntDamage(false);
+                    stoneEntity.setTickCount(440);
+                }
+                if (stoneEntity == null) {
+                    player.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
+                }
+            }
+            if (player.level().dimension() == Level.NETHER) {
+                NetherrackEntity netherrackEntity = player.level().getEntitiesOfClass(NetherrackEntity.class, player.getBoundingBox().inflate(10))
+                        .stream()
+                        .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(player)))
+                        .orElse(null);
+                if (netherrackEntity != null) {
+                    netherrackEntity.setDeltaMovement(lookDirection);
+                    netherrackEntity.setSent(true);
+                    netherrackEntity.setShouldDamage(true);
+                    netherrackEntity.setTickCount(440);
+                }
+                if (netherrackEntity == null) {
+                    player.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
+                }
+            }
+            if (player.level().dimension() == Level.END) {
+                EndStoneEntity endStoneEntity = player.level().getEntitiesOfClass(EndStoneEntity.class, player.getBoundingBox().inflate(10))
+                        .stream()
+                        .min(Comparator.comparingDouble(zombie -> zombie.distanceTo(player)))
+                        .orElse(null);
+                if (endStoneEntity != null) {
+                    endStoneEntity.setDeltaMovement(lookDirection);
+                    endStoneEntity.setSent(true);
+                    endStoneEntity.setShouldntDamage(false);
+                    endStoneEntity.setTickCount(440);
+                }
+                if (endStoneEntity == null) {
+                    player.getPersistentData().putInt("matterAccelerationBlockTimer", 0);
+                }
+            }
+        } else {
+            int activeSlot = player.getInventory().selected;
+            ItemStack heldItem = player.getMainHandItem();
+            if (!heldItem.isEmpty() && heldItem.getItem() instanceof MatterAccelerationBlocks) {
+                heldItem.shrink(1);
+                player.getInventory().setItem(activeSlot, new ItemStack(ItemInit.MATTER_ACCELERATION_ENTITIES.get()));
+            }
+        }
     }
 }

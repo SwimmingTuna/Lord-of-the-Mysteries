@@ -254,6 +254,15 @@ public class Configs {
         );
 
         public static final List<String> DEFAULT_NAMES = ImmutableList.of(
+                "VoidedMC85",
+                "1um1",
+                "Rosamie",
+                "VoidedMC85",
+                "SwimmingTuna",
+                "Shineelight",
+                "Pandarion05",
+                "Expired_Fanta",
+                "tristanomg7894",
                 "Gory_Moon",
                 "Darkosto",
                 "016Nojr",

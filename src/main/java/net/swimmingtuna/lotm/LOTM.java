@@ -3,6 +3,8 @@ package net.swimmingtuna.lotm;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -55,6 +57,8 @@ public class LOTM {
     public static final String MOD_ID = "lotm";
     public static final Logger LOGGER = LogUtils.getLogger();
 
+
+
     public LOTM() {
         Set<String> classNames = new HashSet<>();
         List<ModFileScanData> modFileScanData = ModList.get().getAllScanData();
@@ -63,8 +67,9 @@ public class LOTM {
         BeyonderClassInit.BEYONDER_CLASS.register(modEventBus);
         BeyonderHolderAttacher.register();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Configs.commonSpec);
-        BlockEntityInit.BLOCK_ENTITIES.register(modEventBus);
+        BlockEntityInit.register(modEventBus);
         CreativeTabInit.register(modEventBus);
+        MinecraftForge.EVENT_BUS.register(new GameRuleInit());
         ItemInit.register(modEventBus);
         BlockInit.register(modEventBus);
         ModEffects.register(modEventBus);
@@ -89,6 +94,7 @@ public class LOTM {
     private void serverAboutToStart(ServerAboutToStartEvent event) {
         NameManager.INSTANCE.init();
     }
+
 
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {
@@ -126,8 +132,6 @@ public class LOTM {
             event.accept(ItemInit.LIGHTNING_BRANCH);
             event.accept(ItemInit.EARTHQUAKE);
             event.accept(ItemInit.SAILORPROJECTILECTONROL);
-            event.accept(ItemInit.MONSTERDANGERSENSE);
-            event.accept(ItemInit.MONSTERPROJECTILECONTROL);
             event.accept(ItemInit.STAR_OF_LIGHTNING);
             event.accept(ItemInit.RAIN_EYES);
             event.accept(ItemInit.SONIC_BOOM);
@@ -175,6 +179,48 @@ public class LOTM {
             event.accept(ItemInit.ENVISION_LOCATION);
             event.accept(ItemInit.ENVISION_LOCATION_BLINK);
             event.accept(ItemInit.ENVISIONHEALTH);
+            event.accept(ItemInit.HORNBEAM_ESSENTIALS_OIL);
+            event.accept(ItemInit.DEEP_SEA_MARLINS_BLOOD);
+            event.accept(ItemInit.STRING_GRASS_POWDER);
+            event.accept(ItemInit.SPIRIT_EATER_STOMACH_POUCH);
+            event.accept(ItemInit.RED_CHESTNUT_FLOWER);
+            event.accept(ItemInit.LUCK_MANIPULATION);
+            event.accept(ItemInit.LUCKGIFTING);
+            event.accept(ItemInit.LUCKDEPRIVATION);
+            event.accept(ItemInit.LUCKFUTURETELLING);
+            event.accept(ItemInit.MISFORTUNEBESTOWAL);
+            event.accept(ItemInit.MONSTERDANGERSENSE);
+            event.accept(ItemInit.LUCKCHANNELING);
+            event.accept(ItemInit.MISFORTUNEMANIPULATION);
+            event.accept(ItemInit.MONSTERDOMAINTELEPORATION);
+            event.accept(ItemInit.MONSTERPROJECTILECONTROL);
+            event.accept(ItemInit.LUCKPERCEPTION);
+            event.accept(ItemInit.PSYCHESTORM);
+            event.accept(ItemInit.SPIRITVISION);
+            event.accept(ItemInit.MONSTERCALAMITYATTRACTION);
+            event.accept(ItemInit.PROVIDENCEDOMAIN);
+            event.accept(ItemInit.DECAYDOMAIN);
+            event.accept(ItemInit.CALAMITYINCARNATION);
+            event.accept(ItemInit.ENABLEDISABLERIPPLE);
+            event.accept(ItemInit.AURAOFCHAOS);
+            event.accept(ItemInit.MISFORTUNEREDIRECTION);
+            event.accept(ItemInit.FORTUNEAPPROPIATION);
+            event.accept(ItemInit.FALSEPROPHECY);
+            event.accept(ItemInit.MONSTERREBOOT);
+            event.accept(ItemInit.FATEREINCARNATION);
+            event.accept(ItemInit.CYCLEOFFATE);
+            event.accept(ItemInit.CHAOSAMPLIFICATION);
+            event.accept(ItemInit.FATEDCONNECTION);
+            event.accept(ItemInit.REALMOFFORTUNE);
+            event.accept(ItemInit.PROBABILITYBODY);
+            event.accept(ItemInit.WHISPEROFCORRUPTION);
+            event.accept(ItemInit.REALMOFPROBABILITY);
+            event.accept(ItemInit.LUCKDENIAL);
+            event.accept(ItemInit.PROBABILITYINCREASEDECREASE);
+            event.accept(ItemInit.PROBABILITYWIPE);
+            event.accept(ItemInit.PROBABILITYEFFECT);
+            event.accept(ItemInit.PROBABILITYMISFORTUNE);
+            event.accept(ItemInit.PROBABILITYFORTUNE);
             event.accept(ItemInit.SPECTATOR_9_POTION);
             event.accept(ItemInit.SPECTATOR_8_POTION);
             event.accept(ItemInit.SPECTATOR_7_POTION);
@@ -196,6 +242,7 @@ public class LOTM {
             event.accept(ItemInit.TYRANT_2_POTION);
             event.accept(ItemInit.TYRANT_1_POTION);
             event.accept(ItemInit.TYRANT_0_POTION);
+            event.accept(ItemInit.LUCKBOTTLEITEM);
             event.accept(ItemInit.RAGING_BLOWS);
             event.accept(ItemInit.AQUEOUS_LIGHT_DROWN);
             event.accept(ItemInit.ENABLE_OR_DISABLE_LIGHTNING);
@@ -221,6 +268,7 @@ public class LOTM {
             event.accept(BlockInit.LOTM_WHITE_STAINED_GLASS);
             event.accept(BlockInit.LOTM_BLUE_STAINED_GLASS);
             event.accept(BlockInit.CATHEDRAL_BLOCK);
+            event.accept(BlockInit.MONSTER_DOMAIN_BLOCK);
             event.accept(BlockInit.MINDSCAPE_BLOCK);
             event.accept(BlockInit.MINDSCAPE_OUTSIDE);
             event.accept(BlockInit.LOTM_BOOKSHELF);
@@ -269,6 +317,7 @@ public class LOTM {
             event.accept(BlockInit.LOTM_LIGHT_BLUE_CARPET);
             event.accept(BlockInit.LOTM_CHAIN);
             event.accept(BlockInit.LOTM_LANTERN);
+            event.accept(BlockInit.POTION_CAULDRON);
 
             event.accept(BlockInit.LOTM_DARKOAK_SLAB);
             event.accept(BlockInit.LOTM_QUARTZ_SLAB);
@@ -283,6 +332,7 @@ public class LOTM {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            EntityRenderers.register(EntityInit.LUCK_BOTTLE_ENTITY.get(), ThrownItemRenderer::new);
             ItemBlockRenderTypes.setRenderLayer(BlockInit.VISIONARY_BARRIER_BLOCK.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_BLUE_STAINED_GLASS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(BlockInit.LOTM_WHITE_STAINED_GLASS.get(), RenderType.cutout());

@@ -21,30 +21,30 @@ import java.util.List;
 import java.util.OptionalLong;
 
 public class DimensionInit {
-    public static final ResourceKey<LevelStem> LOTM_DIMENSION_KEY = ResourceKey.create(Registries.LEVEL_STEM,
-            new ResourceLocation(LOTM.MOD_ID, "lotm_dimension"));
-    public static final ResourceKey<Level> LOTM_DIMENSION_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
-            new ResourceLocation(LOTM.MOD_ID, "lotm_dimension"));
-    public static final ResourceKey<DimensionType> LOTM_DIMENSION_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
-            new ResourceLocation(LOTM.MOD_ID, "lotm_dimension_type"));
+    public static final ResourceKey<LevelStem> SPIRIT_WORLD_KEY = ResourceKey.create(Registries.LEVEL_STEM,
+            new ResourceLocation(LOTM.MOD_ID, "spirit_world"));
+    public static final ResourceKey<Level> SPIRIT_WORLD_LEVEL_KEY = ResourceKey.create(Registries.DIMENSION,
+            new ResourceLocation(LOTM.MOD_ID, "spirit_world"));
+    public static final ResourceKey<DimensionType> SPIRIT_WORLD_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
+            new ResourceLocation(LOTM.MOD_ID, "spirit_world_type"));
 
     public static void bootstrapType(BootstapContext<DimensionType> context) {
-        context.register(LOTM_DIMENSION_TYPE, new DimensionType(
-                OptionalLong.of(12000), // fixedTime
-                false, // hasSkylight
+        context.register(SPIRIT_WORLD_TYPE, new DimensionType(
+                OptionalLong.empty(), // Don't fix time
+                true,  // hasSkylight
                 false, // hasCeiling
                 false, // ultraWarm
-                false, // natural
-                1.0, // coordinateScale
-                true, // bedWorks
-                false, // respawnAnchorWorks
-                0, // minY
-                256, // height
-                256, // logicalHeight
-                BlockTags.INFINIBURN_OVERWORLD, // infiniburn
-                BuiltinDimensionTypes.OVERWORLD_EFFECTS, // effectsLocation
-                1.0f, // ambientLight
-                new DimensionType.MonsterSettings(false, false, ConstantInt.of(0), 0)));
+                true,  // natural
+                1.0,   // coordinateScale
+                true,  // bedWorks
+                true,  // respawnAnchorWorks
+                -64,   // minY
+                384,   // height
+                384,   // logicalHeight
+                BlockTags.INFINIBURN_OVERWORLD,
+                BuiltinDimensionTypes.OVERWORLD_EFFECTS,
+                0.0f,  // ambientLight
+                new DimensionType.MonsterSettings(true, true, ConstantInt.of(0), 7)));
     }
 
     public static void bootstrapStem(BootstapContext<LevelStem> context) {
@@ -70,8 +70,8 @@ public class DimensionInit {
                         ))),
                 noiseGenSettings.getOrThrow(NoiseGeneratorSettings.AMPLIFIED));
 
-        LevelStem stem = new LevelStem(dimTypes.getOrThrow(DimensionInit.LOTM_DIMENSION_TYPE), noiseBasedChunkGenerator);
+        LevelStem stem = new LevelStem(dimTypes.getOrThrow(DimensionInit.SPIRIT_WORLD_TYPE), noiseBasedChunkGenerator);
 
-        context.register(LOTM_DIMENSION_KEY, stem);
+        context.register(SPIRIT_WORLD_KEY, stem);
     }
 }

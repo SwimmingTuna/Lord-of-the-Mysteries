@@ -18,21 +18,25 @@ import java.util.List;
 
 public class MonsterProjectileControl extends SimpleAbilityItem {
     public MonsterProjectileControl(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 9, 0, 0);
+        super(properties, BeyonderClassInit.MONSTER, 8, 0, 0);
     }
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
-        changeBoolean(player);
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        enableOrDisableProjectileControl(player);
         return InteractionResult.SUCCESS;
     }
 
-    public static void changeBoolean(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean monsterProjectileControl = tag.getBoolean("monsterProjectileControl");
-        tag.putBoolean("monsterProjectileControl", !monsterProjectileControl);
-        player.displayClientMessage(Component.literal("Projectile Movement Turned " + (monsterProjectileControl ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+    public static void enableOrDisableProjectileControl(Player player) {
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean monsterProjectileControl = tag.getBoolean("monsterProjectileControl");
+            tag.putBoolean("monsterProjectileControl", !monsterProjectileControl);
+            player.displayClientMessage(Component.literal("Projectile Movement Turned " + (monsterProjectileControl ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+        }
     }
 
     @Override

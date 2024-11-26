@@ -5,7 +5,6 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class SonicBoomParticle extends TextureSheetParticle {
@@ -33,12 +32,6 @@ public class SonicBoomParticle extends TextureSheetParticle {
     @Override
     public float getQuadSize(float scaleFactor) {
         return this.quadSize * 10;
-    }
-
-    public static void addSizeParticle(ClientLevel level, Player entity, SpriteSet spriteSet, float size) {
-        SonicBoomParticle particle = new SonicBoomParticle(level, entity.getX(), entity.getY(), entity.getZ(), spriteSet, 0, 0, 0);
-        particle.scale(size);
-//        level.addParticle(particle, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
     }
 
 

@@ -23,6 +23,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ public class LightningEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> NO_UP = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SYNCHED_MOVEMENT = SynchedEntityData.defineId(LightningEntity.class, EntityDataSerializers.BOOLEAN);
 
+    private int interpolationSteps = 10;
+    private int currentStep = 0;
     private List<Vec3> positions = new ArrayList<>();
     private List<AABB> boundingBoxes = new ArrayList<>();
     private Random random = new Random();
@@ -256,7 +259,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
                                             float damageFalloff = (float) (distance1 / radius);
                                             float damage = Math.max(minDamage, maxDamage * (1 - damageFalloff));
                                             damage -= (sequence * 2);
-                                            entity.hurt(entity.damageSources().lightningBolt(), damage);
+                                            entity.hurt(BeyonderUtil.lightningSource(this), damage);
                                         }
                                     }
                                 }
@@ -264,7 +267,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
                                 level().explode(this, hitPos.x(), hitPos.y(), hitPos.z(), 10, false, Level.ExplosionInteraction.TNT);
                                 for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, new AABB(hitPos.x - 4, hitPos.y - 4, hitPos.z - 4, hitPos.x + 4, hitPos.y + 4, hitPos.z + 4))) {
                                     if (entity != this.getOwner() || entity != this.owner) {
-                                        entity.hurt(entity.damageSources().lightningBolt(), 10);
+                                        entity.hurt(BeyonderUtil.lightningSource(this), 10);
                                     }
                                 }
                             }
@@ -277,20 +280,16 @@ public class LightningEntity extends AbstractHurtingProjectile {
                 double offsetX = random.nextGaussian() * 1;
                 double offsetY = random.nextGaussian() * 1;
                 double offsetZ = random.nextGaussian() * 1;
-                level().addParticle(ParticleTypes.ELECTRIC_SPARK, checkArea.minX + offsetX, checkArea.minY + offsetY, checkArea.minZ + offsetZ, 0, 0, 0);
-                level().addParticle(ParticleTypes.ELECTRIC_SPARK, checkArea.maxX + offsetX, checkArea.maxY + offsetY, checkArea.maxZ + offsetZ, 0, 0, 0);
+                if (level() instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK,checkArea.minX + offsetX, checkArea.minY + offsetY, checkArea.minZ + offsetZ,0,0,0,0,0);
+                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK,checkArea.minX + offsetX, checkArea.minY + offsetY, checkArea.minZ + offsetZ,0,0,0,0,0);
+                }
             }
             if (hasExploded) break;
         }
 
         this.setPos(startPos.x, startPos.y, startPos.z);
         this.setBoundingBox(createBoundingBox(newPos));
-
-        for (Vec3 pos : this.positions) {
-            this.level().addParticle(ParticleInit.NULL_PARTICLE.get(),
-                    pos.x, pos.y, pos.z,
-                    0, 0, 0);
-        }
 
         if (this.tickCount > this.getMaxLength()) {
             this.discard();
@@ -375,7 +374,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
     protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide()) {
             if (result.getEntity() instanceof LivingEntity entity) {
-                entity.hurt(damageSources().fall(), 5);
+                entity.hurt(BeyonderUtil.lightningSource(this), 15);
                 this.discard();
             }
         }

@@ -25,8 +25,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -103,16 +106,30 @@ public class TornadoEntity extends AbstractHurtingProjectile {
             TornadoEntity tornado = new TornadoEntity(player.level(), player, 0, 0, 0);
             tornado.setTornadoHeight(100);
             tornado.setTornadoRadius(25);
+            tornado.setTornadoLifecount(150);
             tornado.setTornadoMov(player.getLookAngle().scale(0.5f).toVector3f());
+            player.level().addFreshEntity(tornado);
+        }
+    }
+    public static void summonTornadoRandom(LivingEntity player) {
+        if (!player.level().isClientSide()) {
+            int random = (int) ((Math.random() * 25) - 12);
+            TornadoEntity tornado = new TornadoEntity(player.level(), player, random, random, random);
+            tornado.setTornadoHeight(50);
+            tornado.setTornadoRandom(true);
+            tornado.setTornadoRadius(13);
+            tornado.setTornadoLifecount((int) (Math.random() * 300));
             player.level().addFreshEntity(tornado);
         }
     }
 
     public static void summonCalamityTornado(Player player) {
         if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int sequence = holder.getCurrentSequence();
             TornadoEntity tornado = new TornadoEntity(player.level(), player, 0, 0, 0);
-            tornado.setTornadoHeight(100);
-            tornado.setTornadoRadius(25);
+            tornado.setTornadoHeight(75 - (sequence * 10));
+            tornado.setTornadoRadius(25 - (sequence * 3));
             tornado.setTornadoLifecount(300);
             tornado.setTornadoPickup(true);
             player.level().addFreshEntity(tornado);
@@ -218,14 +235,20 @@ public class TornadoEntity extends AbstractHurtingProjectile {
             Random random = new Random();
             List<Entity> entities = this.level().getEntities(this, boundingBox);
             for (Entity entity : entities) {
-                if (entity instanceof TornadoEntity || entity == this.getOwner()) {
+                if (entity instanceof TornadoEntity || entity == this.getOwner() || !(entity instanceof LivingEntity)) {
                     continue;
                 }
+
                 double dx = entity.getX() - this.getX();
                 double dz = entity.getZ() - this.getZ();
                 double distance = Math.sqrt(dx * dx + dz * dz);
                 if (this.tickCount % 10 == 0) {
-                    entity.hurt(damageSources().fall(), 5);
+                    if (entity.getPersistentData().getInt("luckTornadoResistance") >= 1) {
+                        entity.hurt(BeyonderUtil.genericSource(this), 2);
+                    } else if (entity.getPersistentData().getInt("luckTornadoImmunity") >= 1) {
+                        continue;
+                    } else
+                    entity.hurt(BeyonderUtil.genericSource(this), 5);
                 }
                 if (distance < tornadoRadius) {
                     double angle = Math.atan2(dz, dx) + Math.PI / 2; // Change angle to push outward
@@ -249,8 +272,12 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                         outwardX /= outwardDistance;
                         outwardZ /= outwardDistance;
                     }
-
-                    entity.setDeltaMovement(
+                    if (entity.getPersistentData().getInt("luckTornadoResistance") >= 1) {
+                        entity.setDeltaMovement(outwardX/2,motionY/2, outwardZ/2);
+                    } else if (entity.getPersistentData().getInt("luckTornadoImmunity") >= 1) {
+                        continue;
+                    } else
+                        entity.setDeltaMovement(
                             outwardX,
                             motionY,
                             outwardZ
@@ -264,8 +291,8 @@ public class TornadoEntity extends AbstractHurtingProjectile {
                     if (state.isAir() || state.is(BlockTags.TALL_FLOWERS) || random.nextInt(5000) != 1) {
                         continue;
                     }
-                    // Spawn a falling block entity at the destroyed block's position
-                    FallingBlockEntity fallingBlock = FallingBlockEntity.fall(this.level(), blockPosition, state);
+                    if (this.tickCount % 5 == 0) {
+                        FallingBlockEntity fallingBlock = FallingBlockEntity.fall(this.level(), blockPosition, state);
                     fallingBlock.time = 1;
 
                     // Set random motion for the falling block
@@ -276,7 +303,9 @@ public class TornadoEntity extends AbstractHurtingProjectile {
 
                     // Remove the block from the world and add the falling block entity
                     this.level().setBlock(blockPosition, Blocks.AIR.defaultBlockState(), 3);
-                    this.level().addFreshEntity(fallingBlock);
+                        this.level().addFreshEntity(fallingBlock);
+                    }
+
                 }
             }
 
@@ -299,13 +328,13 @@ public class TornadoEntity extends AbstractHurtingProjectile {
             if (getTornadoLightning()) {
                 LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), this.level());
                 lightningEntity.setSpeed(20.0f);
-                lightningEntity.setDeltaMovement((Math.random() * 0.4) - 0.2, -4, (Math.random() * 0.4) - 0.2);
-                lightningEntity.setMaxLength(40);
+                lightningEntity.setDeltaMovement((Math.random() * 0.4) - 0.2, -1, (Math.random() * 0.4) - 0.2);
+                lightningEntity.setMaxLength(10);
                 lightningEntity.setNoUp(true);
                 double x1 = this.getX() + ((Math.random() * getTornadoRadius()) - (double) getTornadoRadius() / 2);
                 double y1 = this.getY() + 200;
                 double z1 = this.getZ() + ((Math.random() * getTornadoRadius()) - (double) getTornadoRadius() / 2);
-                if (this.tickCount % 2 == 0) {
+                if (this.tickCount % 5 == 0) {
                 lightningEntity.teleportTo(x1, y1, z1);
                 this.level().addFreshEntity(lightningEntity);}
                 for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(getTornadoRadius() * 1.5))) {

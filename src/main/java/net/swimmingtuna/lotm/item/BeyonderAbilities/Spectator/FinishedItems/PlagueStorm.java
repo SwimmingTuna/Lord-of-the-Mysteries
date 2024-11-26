@@ -14,14 +14,11 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.fml.common.Mod;
-import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
@@ -33,13 +30,25 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class PlagueStorm extends Item {
-    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
+public class PlagueStorm extends SimpleAbilityItem {
 
     public PlagueStorm(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 8, 400, 160,80,80);
     }
+
+    @Override
+    public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player);
+        plagueStorm(player, interactionTarget);
+        return InteractionResult.SUCCESS;
+    }
+
+    private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
+
 
     @SuppressWarnings("deprecation")
     @Override
@@ -67,36 +76,24 @@ public class PlagueStorm extends Item {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
-    @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
-        if (player.level().isClientSide()) {
-            return InteractionResult.PASS;
-        }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SPECTATOR.get(), 3, 400)) {
-            return InteractionResult.FAIL;
-        }
-        holder.useSpirituality(400);
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        interactionTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 80, 1, false, false));
-        for (LivingEntity entityInRange : interactionTarget.level().getEntitiesOfClass(LivingEntity.class, interactionTarget.getBoundingBox().inflate(30 * dreamIntoReality.getValue()))) {
-            if (entityInRange == player) {
-                continue;
+    public void plagueStorm(Player player, LivingEntity interactionTarget) {
+        if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+            interactionTarget.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 80, 1, false, false));
+            for (LivingEntity entityInRange : interactionTarget.level().getEntitiesOfClass(LivingEntity.class, interactionTarget.getBoundingBox().inflate(30 * dreamIntoReality.getValue()))) {
+                if (entityInRange == player) {
+                    continue;
+                }
+                if (entityInRange != interactionTarget) {
+                    entityInRange.hurt(entityInRange.damageSources().magic(), (float) ((20 - (holder.getCurrentSequence() * 3)) * dreamIntoReality.getValue()));
+                } else {
+                    entityInRange.hurt(entityInRange.damageSources().magic(), (float) ((40 - (holder.getCurrentSequence() * 6)) * dreamIntoReality.getValue()));
+                }
+                entityInRange.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 2, false, false));
+                entityInRange.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 1, false, false));
+                entityInRange.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 1, false, false));
             }
-            if (entityInRange != interactionTarget) {
-                entityInRange.hurt(entityInRange.damageSources().magic(), (float) ((20 - (holder.getCurrentSequence() * 3)) * dreamIntoReality.getValue()));
-            } else {
-                entityInRange.hurt(entityInRange.damageSources().magic(), (float) ((40 - (holder.getCurrentSequence() * 6)) * dreamIntoReality.getValue()));
-            }
-            entityInRange.addEffect(new MobEffectInstance(MobEffects.DARKNESS,80, 1, false, false));
-            entityInRange.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 2, false, false));
-            entityInRange.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 80, 1, false, false));
-            entityInRange.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 80, 1, false, false));
         }
-        if (!player.isCreative()) {
-            player.getCooldowns().addCooldown(stack.getItem(), 160);
-        }
-        return InteractionResult.SUCCESS;
     }
-
 }

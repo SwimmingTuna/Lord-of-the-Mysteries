@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.caps;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +17,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
+import net.swimmingtuna.lotm.networking.packet.SyncSequencePacketS2C;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.core.PlayerCapability;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.network.EntityCapabilityStatusPacket;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.network.SimpleEntityCapabilityStatusPacket;
@@ -60,7 +62,15 @@ public class BeyonderHolder extends PlayerCapability {
         this.spirituality = 100;
         this.maxSpirituality = 100;
         this.spiritualityRegen = 1;
+        this.player.setHealth(20);
+        this.player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
+        CompoundTag persistentData = this.player.getPersistentData();
+        if (persistentData.contains(REGISTERED_ABILITIES_KEY)) {
+            persistentData.remove(REGISTERED_ABILITIES_KEY);
+        }
         updateTracking();
+
+        LOTMNetworkHandler.sendToPlayer(new SyncSequencePacketS2C(this.currentSequence), (ServerPlayer) player);
     }
 
     public void setClassAndSequence(BeyonderClass newClass, int sequence) {
@@ -73,6 +83,9 @@ public class BeyonderHolder extends PlayerCapability {
         this.player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(this.currentClass.maxHealth().get(sequence));
         this.player.setHealth(this.player.getMaxHealth());
         updateTracking();
+
+        LOTMNetworkHandler.sendToPlayer(new SyncSequencePacketS2C(this.currentSequence), (ServerPlayer) player);
+
     }
 
     public double getMaxSpirituality() {
@@ -135,6 +148,8 @@ public class BeyonderHolder extends PlayerCapability {
         this.spiritualityRegen = this.currentClass.spiritualityRegen().get(currentSequence);
         this.spirituality = this.maxSpirituality;
         updateTracking();
+
+        LOTMNetworkHandler.sendToPlayer(new SyncSequencePacketS2C(this.currentSequence), (ServerPlayer) player);
     }
 
     public void incrementSequence() {

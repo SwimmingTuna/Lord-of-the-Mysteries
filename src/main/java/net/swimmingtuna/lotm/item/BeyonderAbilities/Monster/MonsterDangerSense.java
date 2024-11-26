@@ -18,21 +18,27 @@ import java.util.List;
 
 public class MonsterDangerSense extends SimpleAbilityItem {
     public MonsterDangerSense(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 9, 0, 0);
+        super(properties, BeyonderClassInit.MONSTER, 9, 0, 0);
     }
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
-        changeBoolean(player);
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player);
+        enableOrDisableDangerSense(player);
         return InteractionResult.SUCCESS;
     }
 
-    public static void changeBoolean(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean monsterDangerSense = tag.getBoolean("monsterDangerSense");
-        tag.putBoolean("monsterDangerSense", !monsterDangerSense);
-        player.displayClientMessage(Component.literal("Danger Sense Turned " + (monsterDangerSense ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+    public static void enableOrDisableDangerSense(Player player) {
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean monsterDangerSense = tag.getBoolean("monsterDangerSense");
+            tag.putBoolean("monsterDangerSense", !monsterDangerSense);
+            player.displayClientMessage(Component.literal("Danger Sense Turned " + (monsterDangerSense ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+        }
     }
 
     @Override

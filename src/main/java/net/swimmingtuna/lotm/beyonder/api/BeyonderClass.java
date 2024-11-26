@@ -26,7 +26,7 @@ public interface BeyonderClass {
     ChatFormatting getColorFormatting();
 
     default SimpleContainer getAbilityItemsContainer(int sequenceLevel) {
-        SimpleContainer container = new SimpleContainer(27);
+        SimpleContainer container = new SimpleContainer(45);
         for (int i = 9; i >= sequenceLevel; i--) {
             getItems().get(i)
                     .stream()

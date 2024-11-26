@@ -18,20 +18,23 @@ import java.util.List;
 public class SpiritVision extends SimpleAbilityItem {
 
     public SpiritVision(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 0, 3500, 2400);
+        super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
     }
-                                                                    //required class            required sequence   how much "mana"     how long the cooldown is in ticks (20 ticks = 1 second)
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
-        useSpirituality(player);
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
         addCooldown(player);
         activateSpiritVision(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 
     private void activateSpiritVision(Player player) {
+        if (!player.level().isClientSide()) {
 
+        }
     }
 
     @Override
@@ -41,5 +44,4 @@ public class SpiritVision extends SimpleAbilityItem {
         ).withStyle(/*ChatFormatting.BOLD, ChatFormatting.BLUE*/));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
-        //the description of the item, don't worry about this yet though
 }

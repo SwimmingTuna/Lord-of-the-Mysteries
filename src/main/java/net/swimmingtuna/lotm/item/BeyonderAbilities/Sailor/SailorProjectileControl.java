@@ -23,16 +23,22 @@ public class SailorProjectileControl extends SimpleAbilityItem {
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
-        changeBoolean(player);
+        if (!checkAll(player)){
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player);
+        projectileControl(player);
         return InteractionResult.SUCCESS;
     }
 
-    public static void changeBoolean(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean sailorProjectileMovement = tag.getBoolean("sailorProjectileMovement");
-        tag.putBoolean("sailorProjectileMovement", !sailorProjectileMovement);
-        player.displayClientMessage(Component.literal("Projectile Movement Turned " + (sailorProjectileMovement ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+    public static void projectileControl(Player player) {
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean sailorProjectileMovement = tag.getBoolean("sailorProjectileMovement");
+            tag.putBoolean("sailorProjectileMovement", !sailorProjectileMovement);
+            player.displayClientMessage(Component.literal("Projectile Movement Turned " + (sailorProjectileMovement ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+        }
     }
 
     @Override
