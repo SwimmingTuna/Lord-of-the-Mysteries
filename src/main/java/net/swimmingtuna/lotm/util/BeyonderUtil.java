@@ -268,19 +268,40 @@ public class BeyonderUtil {
                 abilityNames.add(ItemInit.LUCKFUTURETELLING.get());
             }
             if (sequence <= 4) {
-
+                abilityNames.add(ItemInit.DECAYDOMAIN.get());
+                abilityNames.add(ItemInit.PROVIDENCEDOMAIN.get());
+                abilityNames.add(ItemInit.LUCKCHANNELING.get());
+                abilityNames.add(ItemInit.LUCKDENIAL.get());
+                abilityNames.add(ItemInit.MISFORTUNEMANIPULATION.get());
+                abilityNames.add(ItemInit.MONSTERCALAMITYATTRACTION.get());
             }
             if (sequence <= 3) {
-
+                abilityNames.add(ItemInit.CALAMITYINCARNATION.get());
+                abilityNames.add(ItemInit.ENABLEDISABLERIPPLE.get());
+                abilityNames.add(ItemInit.AURAOFCHAOS.get());
+                abilityNames.add(ItemInit.MISFORTUNEREDIRECTION.get());
             }
             if (sequence <= 2) {
-
+                abilityNames.add(ItemInit.WHISPEROFCORRUPTION.get());
+                abilityNames.add(ItemInit.LUCKABSORPTION.get());
+                abilityNames.add(ItemInit.FALSEPROPHECY.get());
             }
             if (sequence <= 1) {
-
+                abilityNames.add(ItemInit.MONSTERREBOOT.get());
+                abilityNames.add(ItemInit.FATEREINCARNATION.get());
+                abilityNames.add(ItemInit.CYCLEOFFATE.get());
+                abilityNames.add(ItemInit.CHAOSAMPLIFICATION.get());
+                abilityNames.add(ItemInit.PROBABILITYBODY.get());
+                abilityNames.add(ItemInit.REALMOFFORTUNE.get());
+                abilityNames.add(ItemInit.FATEDCONNECTION.get());
             }
             if (sequence <= 0) {
-
+                abilityNames.add(ItemInit.REALMOFPROBABILITY.get());
+                abilityNames.add(ItemInit.PROBABILITYINCREASEDECREASE.get());
+                abilityNames.add(ItemInit.PROBABILITYFORTUNE.get());
+                abilityNames.add(ItemInit.PROBABILITYMISFORTUNE.get());
+                abilityNames.add(ItemInit.PROBABILITYWIPE.get());
+                abilityNames.add(ItemInit.PROBABILITYEFFECT.get());
             }
         }
         return abilityNames;
@@ -518,6 +539,9 @@ public class BeyonderUtil {
             else if (heldItem.getItem() instanceof MisfortuneManipulation) {
                 LOTMNetworkHandler.sendToServer(new MisfortuneManipulationLeftClickC2S());
             }
+            else if (heldItem.getItem() instanceof MonsterCalamityIncarnation) {
+                LOTMNetworkHandler.sendToServer(new MonsterCalamityIncarnationLeftClickC2S());
+            }
         }
     }
 
@@ -635,6 +659,9 @@ public class BeyonderUtil {
             }
             else if (heldItem.getItem() instanceof MisfortuneManipulation) {
                 LOTMNetworkHandler.sendToServer(new MisfortuneManipulationLeftClickC2S());
+            }
+            else if (heldItem.getItem() instanceof MonsterCalamityIncarnation) {
+                LOTMNetworkHandler.sendToServer(new MonsterCalamityIncarnationLeftClickC2S());
             }
         }
     }

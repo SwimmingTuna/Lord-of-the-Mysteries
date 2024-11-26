@@ -1,10 +1,13 @@
 package net.swimmingtuna.lotm.networking.packet;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +15,7 @@ import net.minecraftforge.network.NetworkEvent;
 import net.swimmingtuna.lotm.util.ClientSequenceData;
 
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 public class SendParticleS2C {
     private final ResourceLocation particleType;
@@ -70,9 +74,9 @@ public class SendParticleS2C {
     public static void handle(SendParticleS2C msg, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
-            Player player = context.getSender();
-            if (player != null && player.level() instanceof ServerLevel serverLevel) {
-                player.level().addParticle(msg.particleOptions, msg.x, msg.y,msg.z, msg.deltaX, msg.deltaY, msg.deltaZ);
+            ClientLevel level = Minecraft.getInstance().level;
+            if (level != null) {
+                level.addAlwaysVisibleParticle(msg.particleOptions, msg.x, msg.y, msg.z, msg.deltaX, msg.deltaY, msg.deltaZ);
             }
         });
         context.setPacketHandled(true);

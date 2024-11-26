@@ -26,6 +26,48 @@ public class ItemInit {
         //MONSTER
     public static final RegistryObject<Item> MONSTERDANGERSENSE = ITEMS.register("monsterdangersense",
             () -> new MonsterDangerSense(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> WHISPEROFCORRUPTION = ITEMS.register("whisperofcorruption",
+            () -> new WhisperOfCorruption(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> CALAMITYINCARNATION = ITEMS.register("calamityincarnation",
+            () -> new MonsterCalamityIncarnation(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ENABLEDISABLERIPPLE = ITEMS.register("enabledisableripple",
+            () -> new EnableDisableRipple(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> AURAOFCHAOS = ITEMS.register("auraofchaos",
+            () -> new AuraOfChaos(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MISFORTUNEREDIRECTION = ITEMS.register("misfortuneredirection",
+            () -> new MisfortuneRedirection(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LUCKABSORPTION = ITEMS.register("luckabsorption",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FALSEPROPHECY = ITEMS.register("falseprophecy",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MONSTERREBOOT = ITEMS.register("monsterreboot",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FATEREINCARNATION = ITEMS.register("fatereincarnation",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> CYCLEOFFATE = ITEMS.register("cycleoffate",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> CHAOSAMPLIFICATION = ITEMS.register("chaosamplification",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FATEDCONNECTION = ITEMS.register("fatedconnection",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> REALMOFFORTUNE = ITEMS.register("realmoffortune",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PROBABILITYBODY = ITEMS.register("probabilitybody",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> REALMOFPROBABILITY = ITEMS.register("realmofprobability",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PROBABILITYINCREASEDECREASE = ITEMS.register("probabilitityincreasedecrease",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PROBABILITYWIPE = ITEMS.register("probabilitywipe",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PROBABILITYEFFECT = ITEMS.register("probabilityeffect",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PROBABILITYMISFORTUNE = ITEMS.register("probabilitymisfortune",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PROBABILITYFORTUNE = ITEMS.register("probabilityfortune",
+            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> LUCKDENIAL = ITEMS.register("luckdenial",
+            () -> new LuckDenial(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MISFORTUNEMANIPULATION = ITEMS.register("misfortunemanipulation",
             () -> new MisfortuneManipulation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LUCKCHANNELING = ITEMS.register("luckchanneling",

@@ -107,6 +107,7 @@ public class RoarEntity extends AbstractHurtingProjectile {
     protected boolean shouldBurn() {
         return false;
     }
+
     @Override
     public void tick() {
         super.tick();

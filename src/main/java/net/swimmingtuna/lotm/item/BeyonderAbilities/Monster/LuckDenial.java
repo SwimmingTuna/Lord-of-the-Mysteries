@@ -82,9 +82,6 @@ public class LuckDenial extends SimpleAbilityItem {
             AttributeInstance luck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
             AttributeInstance misfortune = interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get());
             CompoundTag tag =  interactionTarget.getPersistentData();
-            double luckDenialTimer = tag.getDouble("luckDenialTimer");
-            double luckDenialLuck = tag.getDouble("luckDenialLuck");
-            double luckDenialMisfortune = tag.getDouble("luckDenialMisfortune");
             double misfortuneAmount = misfortune.getBaseValue();
             double luckAmount = luck.getBaseValue();
             if (holder.getCurrentSequence() <= 2) {

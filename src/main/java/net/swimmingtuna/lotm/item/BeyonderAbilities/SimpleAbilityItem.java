@@ -126,6 +126,9 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     protected void addCooldown(Player player) {
         addCooldown(player, this, this.cooldown);
     }
+    public int getCooldown() {
+        return this.cooldown;
+    }
 
     protected void baseHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
@@ -201,4 +204,5 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     protected boolean useSpirituality(Player player) {
         return useSpirituality(player, this.requiredSpirituality);
     }
+
 }

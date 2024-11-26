@@ -237,4 +237,15 @@ public class StoneEntity extends AbstractArrow {
     }
 
 
+    public static void summonStoneRandom(LivingEntity livingEntity) {
+        StoneEntity stoneEntity = new StoneEntity(EntityInit.STONE_ENTITY.get(), livingEntity.level());
+        int random = (int) ((Math.random() * 40) - 20);
+        stoneEntity.teleportTo(random,random,random);
+        stoneEntity.setDeltaMovement(0,-2,0);
+        stoneEntity.setStoneXRot(4);
+        stoneEntity.setStoneYRot(4);
+        stoneEntity.setShouldntDamage(false);
+        stoneEntity.setTickCount(80);
+        livingEntity.level().addFreshEntity(stoneEntity);
+    }
 }

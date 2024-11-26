@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.util;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -19,7 +20,9 @@ import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
@@ -65,7 +68,7 @@ public class CorruptionAndLuckHandler {
             int meteorDamage = tag.getInt("luckMeteorDamage");
             int MCLightingDamage = tag.getInt("luckLightningMCDamage");
             int stoneDamage = tag.getInt("luckStoneDamage");
-            int ignoreAbilityUse = tag.getInt("luckIgnoreAbility");
+            int cantUseAbility = tag.getInt("cantUseAbility");
             int doubleDamage = tag.getInt("luckDoubleDamage");
             int ignoreDamage = tag.getInt("luckIgnoreDamage");
             Random random = new Random();
@@ -75,94 +78,76 @@ public class CorruptionAndLuckHandler {
                 if (player.tickCount % 397 == 0 && random.nextInt(300) <= lotmMisfortuneValue && meteor == 0) {
                     tag.putInt("luckMeteor", 40);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 40));
-                    player.sendSystemMessage(Component.literal("Meteor Put"));
                 }
                 if (player.tickCount % 251 == 0 && random.nextInt(100) <= lotmMisfortuneValue && lotmLightning == 0) {
                     tag.putInt("luckLightningLOTM", 20);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 15));
-                    player.sendSystemMessage(Component.literal("LOTM Lightning Put"));
                 }
                 if (player.tickCount % 151 == 0 && random.nextInt(50) <= lotmMisfortuneValue && paralysis == 0) {
                     tag.putInt("luckParalysis", 15);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 5));
-                    player.sendSystemMessage(Component.literal("Paralysis Put"));
                 }
                 if (player.tickCount % 149 == 0 && random.nextInt(75) <= lotmMisfortuneValue && unequipArmor == 0) {
                     tag.putInt("unequipArmor", 20);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 10));
-                    player.sendSystemMessage(Component.literal("Armor Put"));
                 }
                 if (player.tickCount % 349 == 0 && random.nextInt(320) <= lotmMisfortuneValue && wardenSpawn == 0) {
                     tag.putInt("luckWarden", 30);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 30));
-                    player.sendSystemMessage(Component.literal("Warden Put"));
                 }
-                if (player.tickCount % 41 == 0 && random.nextInt(50) <= lotmMisfortuneValue && mcLightning == 0) {
-                    tag.putInt("luckLightningMC", 15);
+                if (player.tickCount % 41 == 0 && random.nextInt(50) <= lotmMisfortuneValue) {
+                    tag.putInt("luckLightningMC", mcLightning + 1);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 15));
-                    player.sendSystemMessage(Component.literal("MCLightning Put"));
                 }
                 if (player.tickCount % 199 == 0 && random.nextInt(150) <= lotmMisfortuneValue && !player.hasEffect(MobEffects.POISON)) {
                     tag.putInt("luckPoison", 15);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 8));
-                    player.sendSystemMessage(Component.literal("Poison Put"));
                 }
                 if (player.tickCount % 307 == 0 && random.nextInt(300) <= lotmMisfortuneValue && tornadoInt == 0) {
                     tag.putInt("luckTornado", 25);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 25));
-                    player.sendSystemMessage(Component.literal("Tornado Put"));
                 }
                 if (player.tickCount % 127 == 0 && random.nextInt(100) <= lotmMisfortuneValue && stone == 0) {
                     tag.putInt("luckStone", 10);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 12));
-                    player.sendSystemMessage(Component.literal("Stone Put"));
                 }
                 if (player.tickCount % 701 == 0 && random.nextInt(250) <= lotmMisfortuneValue) {
-                    tag.putInt("luckIgnoreAbility", ignoreAbilityUse + 1);
+                    tag.putInt("cantUseAbility", cantUseAbility + 1);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 15));
-                    player.sendSystemMessage(Component.literal("Ignore Put"));
                 }
                 if (player.tickCount % 263 == 0 && random.nextInt(150) <= lotmMisfortuneValue) {
                     tag.putInt("luckDoubleDamage", doubleDamage + 1);
                     misfortune.setBaseValue(Math.max(0, lotmMisfortuneValue - 5));
-                    player.sendSystemMessage(Component.literal("Damage Put"));
                 }
             }
             if (luck.getValue() >= 1) {
                 if (player.tickCount % 29 == 0 && random.nextInt(100) <= lotmLuckValue && regeneration == 0) {
                     tag.putInt("luckRegeneration", 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 5));
-                    player.sendSystemMessage(Component.literal("Regen" + regeneration));
                 }
-                if (player.tickCount % 907 == 0 && random.nextInt(300) <= lotmLuckValue && player.onGround() && diamondsDropped == 0) {
-                    tag.putInt("luckDiamonds", 10);
+                if (player.tickCount % 907 == 0 && random.nextInt(300) <= lotmLuckValue && player.onGround()) {
+                    tag.putInt("luckDiamonds", diamondsDropped + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 5));
-                    player.sendSystemMessage(Component.literal("Dia" + diamondsDropped));
                 }
                 if (player.tickCount % 11 == 0 && random.nextInt(100) <= lotmLuckValue && windMovingProjectiles <= 25) {
                     tag.putInt("windMovingProjectilesCounter", windMovingProjectiles + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 10));
-                    player.sendSystemMessage(Component.literal("Projectiles" + windMovingProjectiles));
                 }
                 if (player.tickCount % 317 == 0 && random.nextInt(150) <= lotmLuckValue && tag.getInt("luckHalveDamage") <= 15) {
                     tag.putInt("luckHalveDamage", tag.getInt("luckHalveDamage") + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 12));
-                    player.sendSystemMessage(Component.literal("HalveDamage" + tag.getInt("luckHalveDamage")));
                 }
                 if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && player.tickCount % 51 == 0 && random.nextInt(70) <= lotmLuckValue && luckIgnoreMobs <= 20) {
                     tag.putInt("luckIgnoreMobs", luckIgnoreMobs + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 3));
-                    player.sendSystemMessage(Component.literal("IgnoreMobs" + luckIgnoreMobs));
                 }
                 if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 5 && attackerPoisoned <= 20 && player.tickCount % 383 == 0 && random.nextInt(200) <= lotmLuckValue) {
                     tag.putInt("luckAttackerPoisoned", attackerPoisoned + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 15));
-                    player.sendSystemMessage(Component.literal("AttackerPoisoned" + attackerPoisoned));
                 }
                 if (player.tickCount % 503 == 0 && random.nextInt(225) <= lotmLuckValue && ignoreDamage <= 15 && holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 5) {
                     tag.putInt("luckIgnoreDamage", ignoreDamage + 1);
                     luck.setBaseValue(Math.max(0, lotmLuckValue - 20));
-                    player.sendSystemMessage(Component.literal("IgnoreDamage" + ignoreDamage));
                 }
             }
             if (holder.currentClassMatches(BeyonderClassInit.MONSTER)) {
@@ -772,8 +757,8 @@ public class CorruptionAndLuckHandler {
                     } else player.level().addFreshEntity(warden);
                     tag.putInt("luckWarden", 0);
                 }
-                if (mcLightning == 1 && player.getHealth() <= 5) {
-                    tag.putInt("luckLightningMC", 0);
+                if (mcLightning >= 1 && player.getHealth() <= 5) {
+                    tag.putInt("luckLightningMC", mcLightning - 1);
                     LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, player.level());
                     lightningBolt.teleportTo(player.getX(), player.getY(), player.getZ());
                     lightningBolt.setDamage(10.0f);
@@ -832,7 +817,7 @@ public class CorruptionAndLuckHandler {
                         player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 4, false, false));
                     }
                 }
-                if (diamondsDropped == 1 && player.onGround()) {
+                if (diamondsDropped >= 1 && player.onGround()) {
                     player.addItem(Items.DIAMOND.getDefaultInstance());
                     player.addItem(Items.DIAMOND.getDefaultInstance());
                     player.addItem(Items.DIAMOND.getDefaultInstance());
@@ -977,6 +962,67 @@ public class CorruptionAndLuckHandler {
                 tag.putInt("calamityLightningBoltMonsterResistance", 0);
                 tag.putInt("calamityLightningStormImmunity", 0);
                 tag.putInt("calamityLightningStormResistance", 0);
+            }
+        }
+    }
+    public static void onChaosWalkerCombat(LivingEntity livingEntity) {
+        if (!livingEntity.level().isClientSide()) {
+            if (livingEntity instanceof Player pPlayer) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                int sequence = holder.getCurrentSequence();
+                CompoundTag tag = pPlayer.getPersistentData();
+                if (pPlayer.getHealth() <= pPlayer.getMaxHealth() * 0.75 && pPlayer.tickCount % 500 == 0 && tag.getInt("chaosWalkerCombat") == 0) {
+                    tag.putInt("chaosWalkerCombat", 200);
+                    pPlayer.sendSystemMessage(Component.literal("Started"));
+                    Random random = new Random();
+                    int radius = 200 - (holder.getCurrentSequence() * 35);
+                    tag.putInt("chaosWalkerSafeX", random.nextInt(radius * 2) - radius);
+                    tag.putInt("chaosWalkerSafeZ", random.nextInt(radius * 2) - radius);
+                    tag.putInt("chaosWalkerRadius", radius);
+                }
+                int counter = tag.getInt("chaosWalkerCombat");
+                if (counter > 0) {
+                    pPlayer.sendSystemMessage(Component.literal("counter is " + counter));
+                    tag.putInt("chaosWalkerCombat", counter - 1);
+                    if (counter == 1) {
+                        int radius = tag.getInt("chaosWalkerRadius");
+                        BlockPos playerPos = pPlayer.blockPosition();
+                        int safeZoneX = tag.getInt("chaosWalkerSafeX");
+                        int safeZoneZ = tag.getInt("chaosWalkerSafeZ");
+
+                        for (int x = -radius; x <= radius; x++) {
+                            for (int z = -radius; z <= radius; z++) {
+                                double distance = Math.sqrt(x * x + z * z);
+                                if (distance > radius) continue;
+                                int relativeX = x - safeZoneX;
+                                int relativeZ = z - safeZoneZ;
+                                if (Math.abs(relativeX) <= 5 && Math.abs(relativeZ) <= 5) continue;
+                                BlockPos strikePos = playerPos.offset(x, 0, z);
+                                BlockPos highestBlock = pPlayer.level().getHeightmapPos(Heightmap.Types.WORLD_SURFACE, strikePos);
+                                LightningBolt lightningBolt = EntityType.LIGHTNING_BOLT.create(pPlayer.level());
+                                if (lightningBolt != null) {
+                                    lightningBolt.moveTo(Vec3.atBottomCenterOf(highestBlock));
+                                    pPlayer.level().addFreshEntity(lightningBolt);
+                                }
+                            }
+                        }
+                    }
+                    if (counter < 200 && counter > 0) {
+                        int safeZoneX = tag.getInt("chaosWalkerSafeX");
+                        int safeZoneZ = tag.getInt("chaosWalkerSafeZ");
+                        pPlayer.sendSystemMessage(Component.literal("particles being spawned at" + safeZoneX + safeZoneZ));
+                        for (int i = -5; i <= 5; i++) {
+                            BlockPos topEdge = pPlayer.blockPosition().offset(safeZoneX + i, 0, safeZoneZ - 5);
+                            BlockPos bottomEdge = pPlayer.blockPosition().offset(safeZoneX + i, 0, safeZoneZ + 5);
+                            BlockPos leftEdge = pPlayer.blockPosition().offset(safeZoneX - 5, 0, safeZoneZ + i);
+                            BlockPos rightEdge = pPlayer.blockPosition().offset(safeZoneX + 5, 0, safeZoneZ + i);
+                            pPlayer.level().addParticle(DustParticleOptions.REDSTONE, topEdge.getX() + 0.5, topEdge.getY() + 1, topEdge.getZ() + 0.5, 0, 0.5, 0);
+                            pPlayer.level().addParticle(DustParticleOptions.REDSTONE, bottomEdge.getX() + 0.5, bottomEdge.getY() + 1, bottomEdge.getZ() + 0.5, 0, 0.5, 0);
+                            pPlayer.level().addParticle(DustParticleOptions.REDSTONE, leftEdge.getX() + 0.5, leftEdge.getY() + 1, leftEdge.getZ() + 0.5, 0, 0.5, 0);
+                            pPlayer.level().addParticle(DustParticleOptions.REDSTONE, rightEdge.getX() + 0.5, rightEdge.getY() + 1, rightEdge.getZ() + 0.5, 0, 0.5, 0);
+                        }
+                    }
+                }
             }
         }
     }

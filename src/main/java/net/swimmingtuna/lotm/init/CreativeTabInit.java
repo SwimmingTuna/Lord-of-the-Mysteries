@@ -113,6 +113,27 @@ public class CreativeTabInit {
                         event.accept(ItemInit.MISFORTUNEBESTOWAL.get());
                         event.accept(ItemInit.LUCKCHANNELING.get());
                         event.accept(ItemInit.MISFORTUNEMANIPULATION.get());
+                        event.accept(ItemInit.CALAMITYINCARNATION.get());
+                        event.accept(ItemInit.ENABLEDISABLERIPPLE.get());
+                        event.accept(ItemInit.AURAOFCHAOS.get());
+                        event.accept(ItemInit.LUCKDENIAL.get());
+                        event.accept(ItemInit.MISFORTUNEREDIRECTION.get());
+                        event.accept(ItemInit.LUCKABSORPTION.get());
+                        event.accept(ItemInit.FALSEPROPHECY.get());
+                        event.accept(ItemInit.MONSTERREBOOT.get());
+                        event.accept(ItemInit.FATEREINCARNATION.get());
+                        event.accept(ItemInit.CYCLEOFFATE.get());
+                        event.accept(ItemInit.CHAOSAMPLIFICATION.get());
+                        event.accept(ItemInit.FATEDCONNECTION.get());
+                        event.accept(ItemInit.REALMOFFORTUNE.get());
+                        event.accept(ItemInit.PROBABILITYBODY.get());
+                        event.accept(ItemInit.REALMOFPROBABILITY.get());
+                        event.accept(ItemInit.PROBABILITYINCREASEDECREASE.get());
+                        event.accept(ItemInit.PROBABILITYWIPE.get());
+                        event.accept(ItemInit.PROBABILITYEFFECT.get());
+                        event.accept(ItemInit.PROBABILITYMISFORTUNE.get());
+                        event.accept(ItemInit.PROBABILITYFORTUNE.get());
+                        event.accept(ItemInit.WHISPEROFCORRUPTION.get());
                     })
                     .build());
 

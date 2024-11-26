@@ -114,7 +114,6 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
                     summonMeteor(interactionTarget);
                     summonMeteor(interactionTarget);
                     summonMeteor(interactionTarget);
-
                 }
             }
             if (misfortuneManipulation == 2) {
@@ -218,10 +217,10 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
         if (luckManipulation == 9) {
             return "Poison";
         }
-        return null;
+        return "None";
     }
 
-    private static void summonMeteor(LivingEntity entity) {
+    public static void summonMeteor(LivingEntity entity) {
         if (!entity.level().isClientSide()) {
             int x = (int) entity.getX();
             int y = (int) entity.getY();

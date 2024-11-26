@@ -50,17 +50,12 @@ public class Roar extends SimpleAbilityItem {
             player.level().addFreshEntity(roarEntity);
             Vec3 startPos = player.getEyePosition();
             Vec3 endPos = startPos.add(lookVec.scale(10));
-
-            // Get blocks in a cone shape in front of the player
             BlockPos.betweenClosed(new BlockPos((int) Math.min(startPos.x, endPos.x) - 2, (int) Math.min(startPos.y, endPos.y) - 2, (int) Math.min(startPos.z, endPos.z) - 2), new BlockPos((int) Math.max(startPos.x, endPos.x) + 2, (int) Math.max(startPos.y, endPos.y) + 2, (int) Math.max(startPos.z, endPos.z) + 2)).
                     forEach(pos -> {
-                        if (isInCone(startPos, lookVec, new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), 0.5) &&
-                                startPos.distanceTo(new Vec3(pos.getX(), pos.getY(), pos.getZ())) <= 10) {
-
+                        if (isInCone(startPos, lookVec, new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), 0.5) && startPos.distanceTo(new Vec3(pos.getX(), pos.getY(), pos.getZ())) <= 10) {
                             BlockState state = player.level().getBlockState(pos);
-                            // Don't destroy bedrock or other indestructible blocks
                             if (!state.isAir() && state.getDestroySpeed(player.level(), pos) >= 0) {
-                                player.level().destroyBlock(pos, true); // true drops items
+                                player.level().destroyBlock(pos, false);
                             }
                         }
                     });
@@ -70,14 +65,9 @@ public class Roar extends SimpleAbilityItem {
     private static boolean isInCone(Vec3 origin, Vec3 direction, Vec3 point, double radius) {
         Vec3 toPoint = point.subtract(origin);
         double distance = toPoint.length();
-
         if (distance <= 0) return true;
-
-        // Calculate angle between direction vector and point vector
         double angle = Math.acos(toPoint.dot(direction) / (distance * direction.length()));
-        // Convert radius to angle at the given distance
         double maxAngle = Math.atan(radius / distance);
-
         return angle <= maxAngle;
     }
 

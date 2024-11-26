@@ -4,6 +4,7 @@ package net.swimmingtuna.lotm.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -81,7 +82,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
                     this.explodeMeteorBlock(hitPos,radius,scale);
                 }
             }
-                explodeMeteorBlock(hitPos, radius, scale);
+            explodeMeteorBlock(hitPos, radius, scale);
             this.discard();
         }
     }
@@ -151,7 +152,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             meteorEntity.noPhysics = true;
 
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            int scalecheck = 10 - holder.getCurrentSequence() * 4;
+            int scalecheck = 10 - holder.getCurrentSequence() * 2;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
             scaleData.setScale(scalecheck);
             scaleData.markForSync(true);
@@ -187,6 +188,20 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             Vec3 directionToTarget = randomizedTargetPos.subtract(meteorPos).normalize();
             double speed = 5.0;
             meteorEntity.setDeltaMovement(directionToTarget.scale(speed));
+            player.level().addFreshEntity(meteorEntity);
+        }
+    }
+
+    public static void summonMeteorAtPositionWithScale(LivingEntity player, double x, double y, double z, double targetX, double targetY, double targetZ, int scale) {
+        if (!player.level().isClientSide()) {
+            BlockPos meteorSpawnPos = new BlockPos((int) x, (int) (y + 150), (int) z);
+            MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), player.level());
+            meteorEntity.teleportTo(meteorSpawnPos.getX(), meteorSpawnPos.getY(), meteorSpawnPos.getZ());
+            meteorEntity.noPhysics = true;
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
+            scaleData.setScale(scale);
+            scaleData.markForSync(true);
+            meteorEntity.setDeltaMovement((targetX - meteorSpawnPos.getX()) / 20.0, Math.max(-2.5, (targetY - meteorSpawnPos.getY()) / 20.0), (targetZ - meteorSpawnPos.getZ()) / 20.0);
             player.level().addFreshEntity(meteorEntity);
         }
     }
@@ -263,7 +278,22 @@ public class MeteorEntity extends AbstractHurtingProjectile {
                         this.getZ() + offsetZ,
                         0, 0.0, 0.0, 0.0, 0);
             }
+            if (this.getOwner() != null && this.getOwner() instanceof LivingEntity livingEntity) {
+                CompoundTag tag = this.getOwner().getPersistentData();
+                float scale = ScaleTypes.BASE.getScaleData(this).getScale();
+                Vec3 lookVec = livingEntity.getLookAngle();
+                if (tag.getInt("calamityIncarnationInMeteor") >= 1 && !livingEntity.onGround()) {
+                    this.teleportTo(livingEntity.getX(), livingEntity.getY() + 3 * scale, livingEntity.getZ());
+                    this.setDeltaMovement(lookVec.x, -1, lookVec.z);
+                    this.hurtMarked = true;
+                }
+                if (livingEntity.onGround()) {
+                    tag.putInt("calamityIncarnationInMeteor", 1);
+                }
+            }
+            if (this.tickCount >= 400) {
+                this.discard();
+            }
         }
-
     }
 }

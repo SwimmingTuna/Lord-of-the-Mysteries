@@ -77,6 +77,9 @@ public class EntityInit {
     public static final RegistryObject<EntityType<LightningEntity>> LIGHTNING_ENTITY =
             ENTITIES.register("lightning_entity", () -> EntityType.Builder.<LightningEntity>of(LightningEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build("lightning_entity"));
+    public static final RegistryObject<EntityType<WhisperOfCorruptionEntity>> WHISPERS_OF_CORRUPTION_ENTITY =
+            ENTITIES.register("whisperofcorruption", () -> EntityType.Builder.<WhisperOfCorruptionEntity>of(WhisperOfCorruptionEntity::new, MobCategory.MISC)
+                    .sized(1.0f,1.0f).build("whisperofcorruption"));
     public static final RegistryObject<EntityType<LuckBottleEntity>> LUCK_BOTTLE_ENTITY =
             ENTITIES.register("luck_bottle_entity", () -> EntityType.Builder.<LuckBottleEntity>of(LuckBottleEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build("luck_bottle_entity"));

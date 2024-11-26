@@ -25,6 +25,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
@@ -109,12 +111,25 @@ public class TornadoEntity extends AbstractHurtingProjectile {
             player.level().addFreshEntity(tornado);
         }
     }
+    public static void summonTornadoRandom(LivingEntity player) {
+        if (!player.level().isClientSide()) {
+            int random = (int) ((Math.random() * 25) - 12);
+            TornadoEntity tornado = new TornadoEntity(player.level(), player, random, random, random);
+            tornado.setTornadoHeight(50);
+            tornado.setTornadoRandom(true);
+            tornado.setTornadoRadius(13);
+            tornado.setTornadoLifecount((int) (Math.random() * 300));
+            player.level().addFreshEntity(tornado);
+        }
+    }
 
     public static void summonCalamityTornado(Player player) {
         if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int sequence = holder.getCurrentSequence();
             TornadoEntity tornado = new TornadoEntity(player.level(), player, 0, 0, 0);
-            tornado.setTornadoHeight(100);
-            tornado.setTornadoRadius(25);
+            tornado.setTornadoHeight(75 - (sequence * 10));
+            tornado.setTornadoRadius(25 - (sequence * 3));
             tornado.setTornadoLifecount(300);
             tornado.setTornadoPickup(true);
             player.level().addFreshEntity(tornado);

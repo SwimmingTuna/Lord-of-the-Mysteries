@@ -120,7 +120,7 @@ public class LuckManipulation extends SimpleAbilityItem {
         if (luckManipulation == 7) {
             return "Ignore the next damage";
         }
-        return null;
+        return "None";
     }
 
     @Override
