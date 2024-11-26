@@ -36,10 +36,10 @@ public class ItemInit {
             () -> new AuraOfChaos(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MISFORTUNEREDIRECTION = ITEMS.register("misfortuneredirection",
             () -> new MisfortuneRedirection(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> LUCKABSORPTION = ITEMS.register("luckabsorption",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FORTUNEAPPROPIATION = ITEMS.register("fortuneappropiation",
+            () -> new FortuneAppropiation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FALSEPROPHECY = ITEMS.register("falseprophecy",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new FalseProphecy(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MONSTERREBOOT = ITEMS.register("monsterreboot",
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FATEREINCARNATION = ITEMS.register("fatereincarnation",

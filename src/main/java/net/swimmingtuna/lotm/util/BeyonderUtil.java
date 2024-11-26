@@ -35,8 +35,10 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Ability;
@@ -46,6 +48,7 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.networking.packet.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -81,6 +84,11 @@ public class BeyonderUtil {
     public static DamageSource genericSource(Entity entity) {
         Level level = entity.level();
         Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.GENERIC);
+        return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
+    }
+    public static DamageSource magicSource(Entity entity) {
+        Level level = entity.level();
+        Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC);
         return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
     }
 
@@ -283,7 +291,7 @@ public class BeyonderUtil {
             }
             if (sequence <= 2) {
                 abilityNames.add(ItemInit.WHISPEROFCORRUPTION.get());
-                abilityNames.add(ItemInit.LUCKABSORPTION.get());
+                abilityNames.add(ItemInit.FORTUNEAPPROPIATION.get());
                 abilityNames.add(ItemInit.FALSEPROPHECY.get());
             }
             if (sequence <= 1) {
@@ -542,6 +550,9 @@ public class BeyonderUtil {
             else if (heldItem.getItem() instanceof MonsterCalamityIncarnation) {
                 LOTMNetworkHandler.sendToServer(new MonsterCalamityIncarnationLeftClickC2S());
             }
+            else if (heldItem.getItem() instanceof FalseProphecy) {
+                LOTMNetworkHandler.sendToServer(new FalseProphecyLeftClickC2S());
+            }
         }
     }
 
@@ -663,6 +674,9 @@ public class BeyonderUtil {
             else if (heldItem.getItem() instanceof MonsterCalamityIncarnation) {
                 LOTMNetworkHandler.sendToServer(new MonsterCalamityIncarnationLeftClickC2S());
             }
+            else if (heldItem.getItem() instanceof FalseProphecy) {
+                LOTMNetworkHandler.sendToServer(new FalseProphecyLeftClickC2S());
+            }
         }
     }
     public static void spawnParticlesInSphere(ServerLevel level, double x, double y, double z, int maxRadius, int maxParticles, float xSpeed, float ySpeed, float zSpeed, ParticleOptions particle) {
@@ -689,5 +703,26 @@ public class BeyonderUtil {
         } else if (currentEffect.getAmplifier() == amplifier && duration >= currentEffect.getDuration()) {
             pPlayer.addEffect(newEffect);
         }
+    }
+    public static boolean isBeyonderCapable(LivingEntity living) {
+        return living instanceof Player || living instanceof PlayerMobEntity;
+    }
+    public static @Nullable BeyonderClass getPathway(LivingEntity living) {
+        if (living instanceof Player player) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            return holder.getCurrentClass();
+        } else if (living instanceof PlayerMobEntity playerMobEntity) {
+            return (BeyonderClass) playerMobEntity.getCurrentPathway();
+        }
+        return null;
+    }
+    public static int getSequence(LivingEntity living) {
+        if (living instanceof Player player) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            return holder.getCurrentSequence();
+        } else if (living instanceof PlayerMobEntity playerMobEntity) {
+            return playerMobEntity.getCurrentSequence();
+        }
+        return -1;
     }
 }

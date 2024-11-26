@@ -209,6 +209,9 @@ public class ModEvents {
 
         Map<String, Long> times = new HashMap<>();
         {
+            Reincarnation.monsterReincarnationChecker(player);
+        }
+        {
             decrementMonsterAttackEvent(player);
         }
         {
@@ -1751,7 +1754,7 @@ public class ModEvents {
         CompoundTag tag = entity.getPersistentData();
         Level level = entity.level();
         if (!entity.level().isClientSide) {
-
+            FalseProphecy.falseProphecyTick(entity);
             AuraOfChaos.auraOfChaos(event);
             WhisperOfCorruptionEntity.decrementWhisper(tag);
 
@@ -2599,8 +2602,38 @@ public class ModEvents {
                         }
                     }
                 }
+                if (attacker.getPersistentData().getInt("beneficialFalseProphecyAttack") >= 1) {
+                    attacker.getPersistentData().putInt("beneficialDamageDoubled", 5);
+                    attacker.getPersistentData().putInt("beneficialFalseProphecyAttack", 0);
+                }
+                if (attacker.getPersistentData().getInt("beneficialDamageDoubled") >= 1) {
+                    attacker.getPersistentData().putInt("beneficialDamageDoubled",attacker.getPersistentData().getInt("beneficialDamageDoubled") - 1);
+                    event.setCanceled(true);
+                    attacked.hurt(BeyonderUtil.magicSource(attacker), event.getAmount() * 2);
+                }
+                if (attacker.getPersistentData().getInt("harmfulFalseProphecyAttack") >= 1) {
+                    attacker.getPersistentData().putInt("luckDoubleDamage", attacker.getPersistentData().getInt("luckDoubleDamage") + 5);
+                    attacker.getPersistentData().putInt("harmfulFalseProphecyAttack", 0);
+                }
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void livingJumpEvent(LivingEvent.LivingJumpEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (!entity.level().isClientSide()) {
+            CompoundTag tag = entity.getPersistentData();
+            int falseProphecyBeneficial = tag.getInt("beneficialFalseProphecyJump");
+            int falseProphecyHarmful = tag.getInt("harmfulFalseProphecyJump");
+            if (falseProphecyBeneficial >= 1) {
+                tag.putInt("falseProphecyJumpBeneficial", tag.getInt("falseProphecyJumpBeneficial") + 1);
+            }
+            if (falseProphecyHarmful >= 1) {
+                tag.putInt("falseProphecyJumpHarmful", tag.getInt("falseProphecyJumpHarmful") + 1);
+            }
+        }
+
     }
 
 

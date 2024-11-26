@@ -118,7 +118,7 @@ public class CreativeTabInit {
                         event.accept(ItemInit.AURAOFCHAOS.get());
                         event.accept(ItemInit.LUCKDENIAL.get());
                         event.accept(ItemInit.MISFORTUNEREDIRECTION.get());
-                        event.accept(ItemInit.LUCKABSORPTION.get());
+                        event.accept(ItemInit.FORTUNEAPPROPIATION.get());
                         event.accept(ItemInit.FALSEPROPHECY.get());
                         event.accept(ItemInit.MONSTERREBOOT.get());
                         event.accept(ItemInit.FATEREINCARNATION.get());

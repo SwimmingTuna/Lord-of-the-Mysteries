@@ -204,7 +204,7 @@ public class LOTM {
             event.accept(ItemInit.ENABLEDISABLERIPPLE);
             event.accept(ItemInit.AURAOFCHAOS);
             event.accept(ItemInit.MISFORTUNEREDIRECTION);
-            event.accept(ItemInit.LUCKABSORPTION);
+            event.accept(ItemInit.FORTUNEAPPROPIATION);
             event.accept(ItemInit.FALSEPROPHECY);
             event.accept(ItemInit.MONSTERREBOOT);
             event.accept(ItemInit.FATEREINCARNATION);

@@ -160,7 +160,7 @@ public class PlayerMobEntity extends Monster implements RangedAttackMob, Crossbo
         getEntityData().define(NAME, "");
         getEntityData().define(IS_CHILD, false);
         getEntityData().define(IS_CHARGING_CROSSBOW, false);
-        getEntityData().define(SEQUENCE, 10);
+        getEntityData().define(SEQUENCE, -1);
 
     }
 
