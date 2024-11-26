@@ -34,7 +34,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.*;
-import net.swimmingtuna.lotm.events.ModEvents;
+import net.swimmingtuna.lotm.events.ability_events.ModEvents;
 import net.swimmingtuna.lotm.events.custom_events.ModEventFactory;
 import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
@@ -53,7 +53,6 @@ import static net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.SirenSongStren
 public class TickEventUtil {
 
     public static void tickEventUtil(PlayerMobEntity playerMobEntity) {
-        Map<String, Long> times = new HashMap<>();
         CompoundTag livingEntityPersistentData = playerMobEntity.getPersistentData();
         ServerLevel serverLevel = (ServerLevel) playerMobEntity.level();
         AttributeInstance corruption = playerMobEntity.getAttribute(ModAttributes.CORRUPTION.get());
@@ -821,7 +820,7 @@ public class TickEventUtil {
         }
     }
 
-    private static void calamityUndeadArmy(PlayerMobEntity pPlayer) {
+    protected static void calamityUndeadArmy(PlayerMobEntity pPlayer) {
         CompoundTag tag = pPlayer.getPersistentData();
         int x = tag.getInt("calamityUndeadArmyX");
         int y = tag.getInt("calamityUndeadArmyY");

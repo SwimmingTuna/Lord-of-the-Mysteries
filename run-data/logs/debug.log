@@ -552,8 +552,8 @@ java.lang.IllegalAccessException: class io.netty.util.internal.PlatformDependent
 [10Nov2024 00:23:41.175] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.swimmingtuna.lotm.events.ClientEventsEntity to MOD
 [10Nov2024 00:23:41.179] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.swimmingtuna.lotm.events.KeyClientEvents$ClientForgeEvents to FORGE
 [10Nov2024 00:23:41.185] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.swimmingtuna.lotm.events.KeyClientEvents$ClientModBusEvents to MOD
-[10Nov2024 00:23:41.194] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.swimmingtuna.lotm.events.ModEvents$SpawnHandler to FORGE
-[10Nov2024 00:23:41.214] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.swimmingtuna.lotm.events.ModEvents to FORGE
+[10Nov2024 00:23:41.194] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.swimmingtuna.lotm.events.ability_events.ModEvents$SpawnHandler to FORGE
+[10Nov2024 00:23:41.214] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.swimmingtuna.lotm.events.ability_events.ModEvents to FORGE
 [10Nov2024 00:23:41.249] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.swimmingtuna.lotm.events.ServerEvents to FORGE
 [10Nov2024 00:23:41.254] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.ProphesizeDemise to FORGE
 [10Nov2024 00:23:41.263] [modloading-worker-0/DEBUG] [net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber/LOADING]: Auto-subscribing net.swimmingtuna.lotm.LOTM$ClientModEvents to MOD
