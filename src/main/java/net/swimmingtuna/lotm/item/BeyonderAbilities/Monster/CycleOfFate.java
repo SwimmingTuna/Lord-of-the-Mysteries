@@ -38,7 +38,7 @@ public class CycleOfFate extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public CycleOfFate(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 9, 100, 10, 35, 35);
+        super(properties, BeyonderClassInit.MONSTER, 1, 1000, 10, 35, 35);
     }
 
     @Override
@@ -188,7 +188,8 @@ public class CycleOfFate extends SimpleAbilityItem {
                 }
             }
 
-            if (tag.getInt("monsterCycleOfFateUser") >= 1 && entity instanceof Player pPlayer && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).getSpirituality() >= 1) {
+            if (tag.getInt("monsterCycleOfFateUser") >= 1 && entity instanceof Player pPlayer && BeyonderHolderAttacher.getHolderUnwrap(pPlayer).getSpirituality() >= 1000) {
+                BeyonderHolderAttacher.getHolderUnwrap(pPlayer).useSpirituality(1000);
                 int userX = tag.getInt("monsterCycleOfFateUserX");
                 int userY = tag.getInt("monsterCycleOfFateUserY");
                 int userZ = tag.getInt("monsterCycleOfFateUserZ");

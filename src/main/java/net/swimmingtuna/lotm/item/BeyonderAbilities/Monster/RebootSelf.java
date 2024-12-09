@@ -28,7 +28,7 @@ import java.util.List;
 public class RebootSelf extends SimpleAbilityItem {
 
     public RebootSelf(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
+        super(properties, BeyonderClassInit.MONSTER, 1, 2000, 1200);
     }
 
     @Override
@@ -38,7 +38,9 @@ public class RebootSelf extends SimpleAbilityItem {
         }
         addCooldown(player);
         activateSpiritVision(player);
-        useSpirituality(player);
+        if (player.isShiftKeyDown()) {
+            useSpirituality(player);
+        }
         return InteractionResult.SUCCESS;
     }
 

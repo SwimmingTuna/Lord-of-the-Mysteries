@@ -61,13 +61,14 @@ public class ApplyManipulation extends SimpleAbilityItem {
         attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 50, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
         return attributeBuilder.build();
     }
-
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use on a living entity, gives you the ability to manipulate them for 30 seconds\n" +
-                "Left Click for Manipulate Emotion\n" +
-                "Spirituality Used: 50\n" +
-                "Cooldown: None").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use on a living entity, gives you the ability to manipulate them for 30 seconds"));
+        tooltipComponents.add(Component.literal("Left Click for Manipulate Emotion"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("50").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

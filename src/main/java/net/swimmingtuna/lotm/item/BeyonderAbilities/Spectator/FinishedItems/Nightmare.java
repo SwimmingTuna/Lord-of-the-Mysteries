@@ -115,9 +115,11 @@ public class Nightmare extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, makes all players around the target enter a nightmare, plunging them into darkness. If this is used 3 times on a player within 30 seconds, they take immense damage. If it's used on a mob, they take less the damage without having to be hit multiple times.\n" +
-                "Spirituality Used: 100\n" +
-                "Cooldown: 5.5 seconds").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use, makes all entities around the clicked block enter a nightmare, plunging them into darkness. If a player is hit by this three times in 30 seconds, they take immense damage. If a mob is hit, they take damage immediately, but less."));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("1500").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("45 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

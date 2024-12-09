@@ -22,7 +22,7 @@ import java.util.List;
 public class EnvisionKingdom extends SimpleAbilityItem {
 
     public EnvisionKingdom(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 0, 0, 900);
+        super(properties, BeyonderClassInit.SPECTATOR, 0, 0, 2400);
     }
 
     @Override
@@ -38,11 +38,15 @@ public class EnvisionKingdom extends SimpleAbilityItem {
         return InteractionResult.SUCCESS;
     }
 
+
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, summons your Divine Kingdom, the Corpse Cathedral\n" +
-                "Spirituality Used: 6000\n" +
-                "Cooldown: 5 minutes ").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use, envision your divine kingdom, the Corpse Cathedral. In here, all your abilities will be strengthened and your spirituality will be infinitely replenished."));
+        tooltipComponents.add(Component.literal("Left Click for Envision Barrier"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("6000").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("2 Minutes").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

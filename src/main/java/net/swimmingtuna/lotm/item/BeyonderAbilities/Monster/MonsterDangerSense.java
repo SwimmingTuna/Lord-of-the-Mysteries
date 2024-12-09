@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MonsterDangerSense extends SimpleAbilityItem {
     public MonsterDangerSense(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 9, 0, 0);
+        super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
     }
 
     @Override

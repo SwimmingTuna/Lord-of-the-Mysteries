@@ -45,11 +45,12 @@ public class EnvisionLocationBlink extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, teleport in front of you\n" +
-                "Shift to Increase Blink Distance\n" +
-                "Left Click for Envision Weather\n" +
-                "Spirituality Used: 4 for every block traveled\n" +
-                "Cooldown: 1 second").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Use in order to envision your location in the direction you're looking"));
+        tooltipComponents.add(Component.literal("Left Click for Envision Kingdom"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("Blinked Distance * 4").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("1 Second").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

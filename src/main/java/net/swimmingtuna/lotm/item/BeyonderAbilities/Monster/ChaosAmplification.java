@@ -21,7 +21,7 @@ import java.util.List;
 public class ChaosAmplification extends SimpleAbilityItem {
 
     public ChaosAmplification(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
+        super(properties, BeyonderClassInit.MONSTER, 1, 2000, 1200);
     }
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
@@ -29,7 +29,7 @@ public class ChaosAmplification extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         addCooldown(player);
-        activateSpiritVision(player);
+        changeChaosAmplification(player);
         useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
@@ -46,7 +46,7 @@ public class ChaosAmplification extends SimpleAbilityItem {
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
 
-    private void activateSpiritVision(Player player) {
+    private void changeChaosAmplification(Player player) {
         int value = player.getPersistentData().getInt("calamityEnhancementItemValue");
         if (!player.level().isClientSide() && player.level() instanceof ServerLevel serverLevel) {
             CalamityEnhancementData data = CalamityEnhancementData.getInstance(serverLevel);

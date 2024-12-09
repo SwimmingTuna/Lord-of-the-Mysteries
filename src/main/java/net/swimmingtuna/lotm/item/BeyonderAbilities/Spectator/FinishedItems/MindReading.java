@@ -108,9 +108,11 @@ public class MindReading extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, tells you the inventory of the target player\n" +
-                "Spirituality Used: 20\n" +
-                "Cooldown: 3 seconds").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use on a player, tells you all the item's in a player's inventory"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("20").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("3 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

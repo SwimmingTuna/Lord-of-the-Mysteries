@@ -271,7 +271,47 @@ public class MonsterClass implements BeyonderClass {
     @Override
     public Multimap<Integer, Item> getItems() {
         HashMultimap<Integer, Item> items = HashMultimap.create();
-        items.put(0, ItemInit.PLACATE.get());
+        items.put(9, ItemInit.SPIRITVISION.get());
+        items.put(9, ItemInit.MONSTERDANGERSENSE.get());
+        items.put(8, ItemInit.MONSTERPROJECTILECONTROL.get());
+        items.put(7, ItemInit.LUCKPERCEPTION.get());
+        items.put(6, ItemInit.PSYCHESTORM.get());
+        items.put(5, ItemInit.LUCK_MANIPULATION.get());
+        items.put(5, ItemInit.LUCKDEPRIVATION.get());
+        items.put(5, ItemInit.LUCKGIFTING.get());
+        items.put(5, ItemInit.MISFORTUNEBESTOWAL.get());
+        items.put(5, ItemInit.LUCKFUTURETELLING.get());
+        items.put(4, ItemInit.DECAYDOMAIN.get());
+        items.put(4, ItemInit.PROVIDENCEDOMAIN.get());
+        items.put(4, ItemInit.LUCKCHANNELING.get());
+        items.put(4, ItemInit.LUCKDENIAL.get());
+        items.put(4, ItemInit.MISFORTUNEMANIPULATION.get());
+        items.put(4, ItemInit.MONSTERCALAMITYATTRACTION.get());
+        items.put(3, ItemInit.CALAMITYINCARNATION.get());
+        items.put(3, ItemInit.ENABLEDISABLERIPPLE.get());
+        items.put(3, ItemInit.AURAOFCHAOS.get());
+        items.put(3, ItemInit.CHAOSWALKERCOMBAT.get());
+        items.put(3, ItemInit.MISFORTUNEREDIRECTION.get());
+        items.put(3, ItemInit.MONSTERDOMAINTELEPORATION.get());
+        items.put(2, ItemInit.WHISPEROFCORRUPTION.get());
+        items.put(2, ItemInit.FORTUNEAPPROPIATION.get());
+        items.put(2, ItemInit.FALSEPROPHECY.get());
+        items.put(2, ItemInit.MISFORTUNEIMPLOSION.get());
+        items.put(1, ItemInit.MONSTERREBOOT.get());
+        items.put(1, ItemInit.FATEREINCARNATION.get());
+        items.put(1, ItemInit.CYCLEOFFATE.get());
+        items.put(1, ItemInit.CHAOSAMPLIFICATION.get());
+        items.put(1, ItemInit.FATEDCONNECTION.get());
+        items.put(1, ItemInit.REBOOTSELF.get());
+        items.put(0, ItemInit.PROBABILITYMISFORTUNE.get());
+        items.put(0, ItemInit.PROBABILITYFORTUNE.get());
+        items.put(0, ItemInit.PROBABILITYFORTUNEINCREASE.get());
+        items.put(0, ItemInit.PROBABILITYMISFORTUNEINCREASE.get());
+        items.put(0, ItemInit.PROBABILITYWIPE.get());
+        items.put(0, ItemInit.PROBABILITYEFFECT.get());
+        items.put(0, ItemInit.PROBABILITYINFINITEFORTUNE.get());
+        items.put(0, ItemInit.PROBABILITYINFINITEMISFORTUNE.get());
+
         return items;
     }
 

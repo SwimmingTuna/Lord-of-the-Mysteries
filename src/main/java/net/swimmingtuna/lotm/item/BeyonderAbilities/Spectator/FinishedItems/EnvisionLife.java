@@ -27,13 +27,16 @@ public class EnvisionLife extends SimpleAbilityItem {
     public EnvisionLife(Properties properties) {
         super(properties, BeyonderClassInit.SPECTATOR, 0, 0, 0);
     }
+
+
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("While holding this item, type in a mob and that mob will be spawned, targeting the nearest player within 100 blocks\n" +
-                "In the case of Modded Mobs, type in the Mod ID followed by the mob name, e.g. (lotm:black_panther\n" +
-                "Spirituality Used: 1500\n" +
-                "Left Click for Envision Location\n" +
-                "Cooldown: 0 seconds").withStyle(ChatFormatting.AQUA));
+    public void appendHoverText(@NotNull ItemStack stack, @javax.annotation.Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("While holding this item, type in a mob's name (for example, minecraft:cow) in order to envision it into the world."));
+        tooltipComponents.add(Component.literal("Left Click for Envision Weather"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("Envisioned Mob's Max Health * 3").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

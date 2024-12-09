@@ -31,7 +31,7 @@ import java.util.Random;
 public class MisfortuneImplosion extends SimpleAbilityItem {
 
     public MisfortuneImplosion(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 2, 75, 240);
+        super(properties, BeyonderClassInit.SPECTATOR, 2, 1000, 200);
     }
 
     @Override

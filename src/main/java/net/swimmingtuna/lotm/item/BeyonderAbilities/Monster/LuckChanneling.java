@@ -29,7 +29,7 @@ import java.util.List;
 public class LuckChanneling extends SimpleAbilityItem {
 
     public LuckChanneling(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 4, 300, 20);
+        super(properties, BeyonderClassInit.MONSTER, 4, 150, 100);
     }
 
     @Override

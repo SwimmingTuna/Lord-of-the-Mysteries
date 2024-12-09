@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MonsterDisableEnableCalamities extends SimpleAbilityItem {
     public MonsterDisableEnableCalamities(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 4, 0, 10);
+        super(properties, BeyonderClassInit.MONSTER, 4, 0, 20);
     }
 
     @Override

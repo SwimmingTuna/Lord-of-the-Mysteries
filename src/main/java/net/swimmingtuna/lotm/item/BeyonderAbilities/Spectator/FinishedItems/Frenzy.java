@@ -5,11 +5,13 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -70,6 +72,17 @@ public class Frenzy extends SimpleAbilityItem {
         useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
+    @Override
+    public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
+        addCooldown(player);
+        useSpirituality(player);
+        frenzy(player, player.level(), BlockPos.containing(interactionTarget.position()), (int) dreamIntoReality.getValue());
+        return InteractionResult.SUCCESS;
+    }
 
     private void frenzy(Player player, Level level, BlockPos targetPos, int dreamIntoRealityValue) {
         if (!player.level().isClientSide()) {
@@ -91,9 +104,11 @@ public class Frenzy extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, makes all living entities around the targeted block lose control of their movement\n" +
-                "Spirituality Used: 125\n" +
-                "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use on a block or entity, make all entities in the area take damage and go into a frenzy where they move randomly."));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("125").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("15 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

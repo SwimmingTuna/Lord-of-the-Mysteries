@@ -46,13 +46,14 @@ public class ManipulateMovement extends SimpleAbilityItem {
         return InteractionResult.SUCCESS;
     }
 
-
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, all living entities 150 blocks around you move to the location you clicked on\n" +
-                "Left Click for Apply Manipulation\n" +
-                "Spirituality Used: 200\n" +
-                "Cooldown: 30 seconds").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use, all living entities 150 blocks around you that are manipulated have their thoughts manipulated to move towards the clicked location"));
+        tooltipComponents.add(Component.literal("Left Click for Manipulate Fondness"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("200").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("30 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

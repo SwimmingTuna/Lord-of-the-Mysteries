@@ -18,7 +18,7 @@ import java.util.List;
 
 public class ChaosWalkerDisableEnable extends SimpleAbilityItem {
     public ChaosWalkerDisableEnable(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 9, 0, 0);
+        super(properties, BeyonderClassInit.MONSTER, 3, 0, 20);
     }
 
     @Override

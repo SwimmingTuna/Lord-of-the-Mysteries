@@ -103,13 +103,14 @@ public class Placate extends SimpleAbilityItem {
         }
     }
 
-
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal(
-                "Upon use, reduces or removes the targeted living entity's harmful potion effects, if there is no target, uses it on yourself\n" +
-                        "Spirituality Used: 125\n" +
-                        "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use on an entity, placate them, removing or halving their harmful potion effects, depending on your sequence. "));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("250").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("10 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
+
 }

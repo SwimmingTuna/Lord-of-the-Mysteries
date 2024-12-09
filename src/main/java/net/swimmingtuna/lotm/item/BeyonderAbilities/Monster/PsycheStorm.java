@@ -38,7 +38,7 @@ public class PsycheStorm extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public PsycheStorm(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 6, 100, 300,15,15);
+        super(properties, BeyonderClassInit.MONSTER, 6, 100, 300,25,25);
     }
 
 
@@ -54,8 +54,8 @@ public class PsycheStorm extends SimpleAbilityItem {
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
         ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
         attributeBuilder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND));
-        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 15, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
-        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 15, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
+        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 25, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
+        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 25, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
         return attributeBuilder.build();
     }
 
@@ -65,6 +65,7 @@ public class PsycheStorm extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
         psycheStorm(player, pContext.getLevel(), pContext.getClickedPos());
         useSpirituality(player);
         return InteractionResult.SUCCESS;

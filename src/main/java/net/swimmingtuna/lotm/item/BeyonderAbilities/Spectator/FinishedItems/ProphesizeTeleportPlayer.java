@@ -23,7 +23,7 @@ import java.util.List;
 public class ProphesizeTeleportPlayer extends SimpleAbilityItem {
 
     public ProphesizeTeleportPlayer(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 1, 750, 400);
+        super(properties, BeyonderClassInit.SPECTATOR, 1, 750, 2400);
     }
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
@@ -52,12 +52,14 @@ public class ProphesizeTeleportPlayer extends SimpleAbilityItem {
             }
         }
     }
-
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, makes all living entities around the user teleport to the user\n" +
-                "Spirituality Used: 750\n" +
-                "Cooldown: 20 seconds").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use, prophesize that all entities nearby will teleport to the player, making it occur to all affected entities within a minute"));
+        tooltipComponents.add(Component.literal("Left Click for Prophesize Demise"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("750").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("2 Minutes").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

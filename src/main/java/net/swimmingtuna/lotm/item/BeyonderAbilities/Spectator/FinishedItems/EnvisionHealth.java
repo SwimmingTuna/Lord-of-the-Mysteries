@@ -22,7 +22,7 @@ import java.util.List;
 public class EnvisionHealth extends SimpleAbilityItem {
 
     public EnvisionHealth(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 0, 0, 2400);
+        super(properties, BeyonderClassInit.SPECTATOR, 0, 0, 1200);
     }
 
     @Override
@@ -31,6 +31,7 @@ public class EnvisionHealth extends SimpleAbilityItem {
         if (!checkAll(player, BeyonderClassInit.SPECTATOR.get(), 0, 3500 / dreamIntoReality)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
         useSpirituality(player, 3500 / dreamIntoReality);
         envisionHealth(player);
         return InteractionResult.SUCCESS;
@@ -48,10 +49,12 @@ public class EnvisionHealth extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, heals to full health\n" +
-                "Left Click for Envision Health\n" +
-                "Spirituality Used: 4000\n" +
-                "Cooldown: 2 minutes seconds").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use, envision a chunk of your missing health"));
+        tooltipComponents.add(Component.literal("Left Click for Envision Life"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("3500").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("1 Minute").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

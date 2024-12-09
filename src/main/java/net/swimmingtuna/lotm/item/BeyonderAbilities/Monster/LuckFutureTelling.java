@@ -31,7 +31,7 @@ public class LuckFutureTelling extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public LuckFutureTelling(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 5, 150, 60,80,80);
+        super(properties, BeyonderClassInit.MONSTER, 5, 50, 60,80,80);
     }
 
 
@@ -48,8 +48,8 @@ public class LuckFutureTelling extends SimpleAbilityItem {
 
         ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
         attributeBuilder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND));
-        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 40, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
-        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 40, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
+        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 80, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
+        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 80, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
         return attributeBuilder.build();
     }
 
@@ -64,17 +64,12 @@ public class LuckFutureTelling extends SimpleAbilityItem {
     @Override
     public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!checkAll(player)) {
                 return InteractionResult.FAIL;
             }
             addCooldown(player);
             useSpirituality(player);
-            holder.useSpirituality(200);
             luckFutureTell(player, interactionTarget);
-            if (!player.isCreative()) {
-                player.getCooldowns().addCooldown(stack.getItem(), 50);
-            }
         }
         return InteractionResult.SUCCESS;
     }
@@ -82,16 +77,12 @@ public class LuckFutureTelling extends SimpleAbilityItem {
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
         if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!checkAll(player)) {
                 return InteractionResult.FAIL;
             }
             useSpirituality(player);
-            holder.useSpirituality(200);
             luckFutureTellPlayer(player);
-            if (!player.isCreative()) {
-                player.getCooldowns().addCooldown(this, 60);
-            }
+            addCooldown(player);
         }
         return InteractionResult.SUCCESS;
     }

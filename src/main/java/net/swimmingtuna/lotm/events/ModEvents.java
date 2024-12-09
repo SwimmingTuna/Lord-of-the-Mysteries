@@ -2310,6 +2310,7 @@ public class ModEvents {
             Level level = player.level();
             int enhancement = CalamityEnhancementData.getInstance((ServerLevel) player.level()).getCalamityEnhancement();
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            holder.useSpirituality(200);
             for (LivingEntity livingEntity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(150 - (holder.getCurrentSequence()) * 20))) {
                 Random random = new Random();
                 if (livingEntity != player) {
@@ -3613,7 +3614,6 @@ public class ModEvents {
                 CompoundTag tag = pPlayer.getPersistentData();
                 int occursion = tag.getInt("chaosWalkerCalamityOccursion");
                 if (pPlayer.getHealth() <= pPlayer.getMaxHealth() * 0.75 && pPlayer.tickCount % 500 == 0 && tag.getInt("chaosWalkerCombat") == 0 && tag.getBoolean("monsterChaosWalkerCombat")) {
-                    System.out.println("Started");
                     tag.putInt("chaosWalkerCombat", 300);
                     Random random = new Random();
                     int radius = Math.max(50, 200 - (sequence * 35));

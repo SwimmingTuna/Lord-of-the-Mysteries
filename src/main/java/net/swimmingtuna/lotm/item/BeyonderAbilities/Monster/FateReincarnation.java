@@ -24,7 +24,7 @@ import java.util.List;
 public class FateReincarnation extends SimpleAbilityItem {
 
     public FateReincarnation(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
+        super(properties, BeyonderClassInit.MONSTER, 1, 0, 10000);
     }
 
     @Override
@@ -33,12 +33,12 @@ public class FateReincarnation extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         addCooldown(player);
-        activateSpiritVision(player);
+        fateReincarnation(player);
         useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 
-    private void activateSpiritVision(Player player) { //add functionality for being able to control a player mob
+    private void fateReincarnation(Player player) { //add functionality for being able to control a player mob
         if (!player.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int x = (int) (player.getX() + (Math.random() * 5000) - 2500);

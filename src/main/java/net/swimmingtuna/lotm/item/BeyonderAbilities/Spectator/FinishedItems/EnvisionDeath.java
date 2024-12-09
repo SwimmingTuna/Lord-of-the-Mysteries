@@ -53,10 +53,13 @@ public class EnvisionDeath extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, all living around you with less than 100 health die\n" +
-                "Left Click for Envision Health\n" +
-                "Spirituality Used: 2000\n" +
-                "Cooldown: 2 minutes").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use, envision the death of everything around you"));
+        tooltipComponents.add(Component.literal("Left Click for Envision Health"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("2000").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("2 Minutes").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
+
 }

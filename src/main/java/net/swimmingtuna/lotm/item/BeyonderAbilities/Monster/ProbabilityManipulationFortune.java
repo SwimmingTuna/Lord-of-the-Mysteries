@@ -32,7 +32,7 @@ public class ProbabilityManipulationFortune extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public ProbabilityManipulationFortune(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 5, 0, 30, 150, 150);
+        super(properties, BeyonderClassInit.MONSTER, 0, 1000, 500, 777, 777);
     }
 
 
@@ -66,13 +66,12 @@ public class ProbabilityManipulationFortune extends SimpleAbilityItem {
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) { //add if cursor is on a projectile, lightning goes to projectile and pwoers it
-        if (!checkAll(player)) {
+        if (!checkAll(player, BeyonderClassInit.MONSTER.get(), 3500,1000)) {
             return InteractionResult.FAIL;
         }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         probabilityWipeWorld(player);
-        addCooldown(player, this, 10 + holder.getCurrentSequence());
-        useSpirituality(player, 200);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

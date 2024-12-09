@@ -21,7 +21,7 @@ import java.util.List;
 public class FortuneAppropiation extends SimpleAbilityItem {
 
     public FortuneAppropiation(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
+        super(properties, BeyonderClassInit.MONSTER, 2, 500, 400);
     }
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {

@@ -97,5 +97,4 @@ public class PotionCauldron extends BaseEntityBlock {
         BlockState currentState = level.getBlockState(pos);
         level.setBlock(pos, currentState.setValue(LIT, isLit), 3);
     }
-
 }

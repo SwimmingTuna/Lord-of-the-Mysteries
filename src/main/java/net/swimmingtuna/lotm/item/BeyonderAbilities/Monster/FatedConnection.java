@@ -25,7 +25,7 @@ import java.util.UUID;
 public class FatedConnection extends SimpleAbilityItem {
 
     public FatedConnection(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 4, 300, 20);
+        super(properties, BeyonderClassInit.MONSTER, 1, 200, 2400);
     }
 
     @Override

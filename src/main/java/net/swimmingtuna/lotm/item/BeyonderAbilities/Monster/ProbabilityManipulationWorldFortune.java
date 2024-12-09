@@ -23,7 +23,7 @@ import java.util.List;
 public class ProbabilityManipulationWorldFortune extends SimpleAbilityItem {
 
     public ProbabilityManipulationWorldFortune(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
+        super(properties, BeyonderClassInit.MONSTER, 0, 1500, 600);
     }
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {

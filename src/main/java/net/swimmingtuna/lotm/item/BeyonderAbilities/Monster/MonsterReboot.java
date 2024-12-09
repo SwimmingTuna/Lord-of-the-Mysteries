@@ -31,7 +31,7 @@ public class MonsterReboot extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public MonsterReboot(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 6, 100, 300,500,500);
+        super(properties, BeyonderClassInit.MONSTER, 1, 1500, 300,500,500);
     }
 
 

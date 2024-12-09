@@ -43,16 +43,17 @@ public class EnvisionBarrier extends SimpleAbilityItem {
         }
         useSpirituality(player, 800 / dreamIntoReality);
         generateBarrier(player, level, player.getOnPos());
+        addCooldown(player);
         return InteractionResult.SUCCESS;
     }
-
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, makes a barrier around the user\n" +
-                "Hold Shift to Increase Barrier Radius\n" +
-                "Left Click for Envision Death\n" +
-                "Spirituality Used: 800\n" +
-                "Cooldown: None ").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use, envision a nearly unbreakable barrier around you"));
+        tooltipComponents.add(Component.literal("Left Click for Envision Death. Shift to increase barrier distance"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("800").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("5 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

@@ -22,11 +22,15 @@ public class EnvisionWeather extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("While holding this item, say either Clear, Rain, or Thunder, to change the weather at your disposal\n" +
-                "Spirituality Used: 500\n" +
-                "Cooldown: 0 seconds").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("While holding this item, type in the weather you want in order to envision it."));
+        tooltipComponents.add(Component.literal("Left Click for Envision Location"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("500").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
+
     public static void setWeatherClear(Level level) {
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.setWeatherParameters(8000, 0, false, false);

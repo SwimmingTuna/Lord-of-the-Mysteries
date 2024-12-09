@@ -64,18 +64,13 @@ public class LuckPerception extends SimpleAbilityItem {
     @Override
     public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             if (!checkAll(player)) {
                 return InteractionResult.FAIL;
             }
             addCooldown(player);
             useSpirituality(player);
-            holder.useSpirituality(200);
             player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s luck value is " + interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get())).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
             player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s misfortune value is " + interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get())).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
-            if (!player.isCreative()) {
-                player.getCooldowns().addCooldown(stack.getItem(), 50);
-            }
         }
         return InteractionResult.SUCCESS;
     }

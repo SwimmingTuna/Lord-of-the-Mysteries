@@ -48,10 +48,12 @@ public class MeteorShower extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, summons a meteor shower\n" +
-                "Spirituality Used: 1500\n" +
-                "Left Click for a version that deals no block destruction\n" +
-                "Cooldown: 45 secondss").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use, summons a meteor shower in the direction you're looking"));
+        tooltipComponents.add(Component.literal("Left Click for Meteor Shower (No Block Destruction)"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("2500").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("45 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

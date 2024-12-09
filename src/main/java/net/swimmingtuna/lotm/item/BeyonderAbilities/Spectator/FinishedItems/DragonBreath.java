@@ -45,11 +45,14 @@ public class DragonBreath extends SimpleAbilityItem {
             DragonBreathEntity.shootDragonBreath(player, sequence, player.getX(), player.getY(), player.getZ());
         }
     }
+
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, shoots a dragons breath\n" +
-                "Spirituality Used: 100\n" +
-                "Cooldown: 0.5 seconds").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use, charge up a dragon breath and shoot it out in a beam, dealing damage and destroying whatever it hits."));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("500").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("5 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

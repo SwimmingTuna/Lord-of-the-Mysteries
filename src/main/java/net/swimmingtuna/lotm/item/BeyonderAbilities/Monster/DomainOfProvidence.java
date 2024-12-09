@@ -25,7 +25,7 @@ public class DomainOfProvidence extends SimpleAbilityItem {
     public static final BooleanProperty LIT = BooleanProperty.create("lit");
 
     public DomainOfProvidence(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
+        super(properties, BeyonderClassInit.MONSTER, 4, 200, 600);
     }
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {

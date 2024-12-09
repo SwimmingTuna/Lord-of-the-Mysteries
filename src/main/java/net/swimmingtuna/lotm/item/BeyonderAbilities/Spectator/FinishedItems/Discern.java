@@ -47,14 +47,13 @@ public class Discern extends SimpleAbilityItem {
             }
         }
     }
-
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level
-            level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, resets the cooldown of all your abilities\n" +
-                "Spirituality Used: 1000\n" +
-                "Cooldown: 45 seconds").withStyle(ChatFormatting.AQUA));
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use, Discern between your reality and dream self, resetting all your ability cooldowns "));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("1000").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("45 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
-
 }

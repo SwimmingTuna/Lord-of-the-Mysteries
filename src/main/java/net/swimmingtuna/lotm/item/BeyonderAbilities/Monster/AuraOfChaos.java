@@ -50,12 +50,12 @@ public class AuraOfChaos extends SimpleAbilityItem {
             return InteractionResult.FAIL;
         }
         addCooldown(player);
-        activateSpiritVision(player);
+        activateAuraOfChaos(player);
         useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 
-    private void activateSpiritVision(Player player) {
+    private void activateAuraOfChaos(Player player) {
         if (!player.level().isClientSide()) {
             CompoundTag tag = player.getPersistentData();
             boolean auraOfChaos = tag.getBoolean("monsterAuraOfChaos");
@@ -81,7 +81,7 @@ public class AuraOfChaos extends SimpleAbilityItem {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                 int sequence = holder.getCurrentSequence();
                 if (player.tickCount % 20 == 0) {
-                    holder.useSpirituality(100);
+                    holder.useSpirituality(150);
                 }
                 int enhancement = CalamityEnhancementData.getInstance((ServerLevel) entity.level()).getCalamityEnhancement();
                 for (LivingEntity livingEntity : entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(200 - (sequence * 50) + (enhancement * 50)))) {

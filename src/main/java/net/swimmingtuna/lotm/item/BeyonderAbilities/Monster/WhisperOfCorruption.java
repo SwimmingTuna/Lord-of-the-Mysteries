@@ -22,7 +22,7 @@ public class WhisperOfCorruption extends SimpleAbilityItem {
     public static final BooleanProperty LIT = BooleanProperty.create("lit");
 
     public WhisperOfCorruption(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
+        super(properties, BeyonderClassInit.MONSTER, 2, 800, 300);
     }
 
     @Override

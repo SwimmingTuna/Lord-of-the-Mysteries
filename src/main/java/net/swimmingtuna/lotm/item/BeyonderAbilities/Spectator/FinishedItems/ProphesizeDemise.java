@@ -76,12 +76,15 @@ public class ProphesizeDemise extends SimpleAbilityItem {
         return attributeBuilder.build();
     }
 
+
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use on a living entity, prophesizes their demise, making it so they have to stay still for 10 seconds out of 30 seconds, otherwise they die\n" +
-                "Left Click for Prophesize Teleport Block" +
-                "Spirituality Used: 70\n" +
-                "Cooldown: 2 seconds").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.literal("Upon use on an entity, prophesizes their demise, making it so they have to stay still for 10 seconds out of 30 seconds, otherwise they won't evade this prophecy and die"));
+        tooltipComponents.add(Component.literal("Left Click for Prophesize Teleport (Block)"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("1000").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("2.5 Minutes").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 

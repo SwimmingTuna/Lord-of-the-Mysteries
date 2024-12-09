@@ -31,7 +31,7 @@ public class ProbabilityManipulationInfiniteFortune extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public ProbabilityManipulationInfiniteFortune(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 5, 0, 30, 150, 150);
+        super(properties, BeyonderClassInit.MONSTER, 0, 4000, 2400, 777, 777);
     }
 
 
@@ -47,8 +47,8 @@ public class ProbabilityManipulationInfiniteFortune extends SimpleAbilityItem {
     private Multimap<Attribute, AttributeModifier> createAttributeMap() {
         ImmutableMultimap.Builder<Attribute, AttributeModifier> attributeBuilder = ImmutableMultimap.builder();
         attributeBuilder.putAll(super.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND));
-        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 150, AttributeModifier.Operation.ADDITION)); // adds a 12 block reach for interacting with entities
-        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 150, AttributeModifier.Operation.ADDITION)); // adds a 12 block reach for interacting with blocks, pretty much useless for this item
+        attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 777, AttributeModifier.Operation.ADDITION)); // adds a 12 block reach for interacting with entities
+        attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 777, AttributeModifier.Operation.ADDITION)); // adds a 12 block reach for interacting with blocks, pretty much useless for this item
         return attributeBuilder.build();
     }
 
@@ -68,10 +68,9 @@ public class ProbabilityManipulationInfiniteFortune extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         giveInfiniteFortune(player);
-        addCooldown(player, this, 10 + holder.getCurrentSequence());
-        useSpirituality(player, 200);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 
@@ -80,10 +79,9 @@ public class ProbabilityManipulationInfiniteFortune extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         giveInfiniteFortune(pInteractionTarget);
-        addCooldown(player, this, 10 + holder.getCurrentSequence());
-        useSpirituality(player, 200);
+        addCooldown(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 

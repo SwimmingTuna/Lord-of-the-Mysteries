@@ -35,7 +35,7 @@ import java.util.List;
 
 public class MonsterCalamityIncarnation extends SimpleAbilityItem {
     public MonsterCalamityIncarnation(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 5, 150, 60);
+        super(properties, BeyonderClassInit.MONSTER, 3, 500, 900);
     }
 
     @Override
