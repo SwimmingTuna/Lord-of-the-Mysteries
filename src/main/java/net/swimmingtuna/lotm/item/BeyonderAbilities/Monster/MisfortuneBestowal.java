@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -22,6 +23,7 @@ import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.world.worlddata.CalamityEnhancementData;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -76,10 +78,11 @@ public class MisfortuneBestowal extends SimpleAbilityItem {
 
     private static void misfortuneBestowal(LivingEntity interactionTarget, Player player) {
         if (!player.level().isClientSide()) {
+            int enhancement = CalamityEnhancementData.getInstance((ServerLevel) player.level()).getCalamityEnhancement();
             int sequence = BeyonderHolderAttacher.getHolderUnwrap(player).getCurrentSequence();
             AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
             AttributeInstance interactionMisfortune = interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get());
-            int misfortuneAddValue = 60 - (sequence * 7);
+            int misfortuneAddValue = 60 - (sequence * 7) + (enhancement * 10);
             interactionMisfortune.setBaseValue(Math.min(200,interactionMisfortune.getValue() + misfortuneAddValue));
             misfortune.setBaseValue(Math.min(0,(interactionMisfortune.getValue()) - ((double) misfortuneAddValue / 2)));
         }

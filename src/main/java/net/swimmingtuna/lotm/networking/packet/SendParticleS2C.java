@@ -2,20 +2,14 @@ package net.swimmingtuna.lotm.networking.packet;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
-import net.swimmingtuna.lotm.util.ClientSequenceData;
 
 import java.util.function.Supplier;
-import java.util.logging.Level;
 
 public class SendParticleS2C {
     private final ResourceLocation particleType;

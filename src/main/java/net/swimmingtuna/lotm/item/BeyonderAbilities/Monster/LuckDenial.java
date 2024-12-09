@@ -85,11 +85,11 @@ public class LuckDenial extends SimpleAbilityItem {
             double misfortuneAmount = misfortune.getBaseValue();
             double luckAmount = luck.getBaseValue();
             if (holder.getCurrentSequence() <= 2) {
-                tag.putDouble("luckDenialTimer", 900 - (holder.getCurrentSequence()) * 90);
+                tag.putDouble("luckDenialTimer", 1800 - (holder.getCurrentSequence()) * 150);
                 tag.putDouble("luckDenialLuck", luckAmount);
                 tag.putDouble("luckDenialMisfortune", misfortuneAmount);
             } else {
-                tag.putDouble("luckDenialTimer", 900 - (holder.getCurrentSequence()) * 90);
+                tag.putDouble("luckDenialTimer", 1800 - (holder.getCurrentSequence()) * 150);
                 tag.putDouble("luckDenialLuck", luckAmount);
             }
         }

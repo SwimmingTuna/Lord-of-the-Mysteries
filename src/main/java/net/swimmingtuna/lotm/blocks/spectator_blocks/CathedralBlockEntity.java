@@ -2,7 +2,6 @@ package net.swimmingtuna.lotm.blocks.spectator_blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -17,7 +16,6 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.BlockEntityInit;
 import net.swimmingtuna.lotm.init.BlockInit;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.TickableBlockEntity;
 
 import java.util.List;
@@ -34,7 +32,6 @@ public class CathedralBlockEntity extends BlockEntity implements TickableBlockEn
         if (this.level.isClientSide()) {
             return;
         }
-        System.out.println("ticks are " + ticks);
         ticks++;
         if (this.ticks % 20 == 0) {
             for (Player player : level.players()) {

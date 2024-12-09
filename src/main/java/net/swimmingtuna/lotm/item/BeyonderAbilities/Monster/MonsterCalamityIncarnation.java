@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -24,6 +25,7 @@ import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
+import net.swimmingtuna.lotm.world.worlddata.CalamityEnhancementData;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
@@ -111,6 +113,7 @@ public class MonsterCalamityIncarnation extends SimpleAbilityItem {
         LivingEntity entity = event.getEntity();
         CompoundTag tag = entity.getPersistentData();
         Vec3 lookVec = entity.getLookAngle();
+        int enhancement = CalamityEnhancementData.getInstance((ServerLevel) entity.level()).getCalamityEnhancement();
         int meteor = tag.getInt("calamityIncarnationInMeteor");
         int tornado = tag.getInt("calamityIncarnationInTornado");
         int lightning = tag.getInt("calamityIncarnationInLightning");
@@ -139,7 +142,7 @@ public class MonsterCalamityIncarnation extends SimpleAbilityItem {
                 MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), entity.level());
                 ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
                 if (entity instanceof Player player) {
-                    scaleData.setScale(12 - BeyonderHolderAttacher.getHolderUnwrap(player).getCurrentSequence() * 2);
+                    scaleData.setScale((enhancement + 11 - BeyonderHolderAttacher.getHolderUnwrap(player).getCurrentSequence() * 2));
                 } else {
                     scaleData.setScale(8);
                 }
@@ -180,12 +183,18 @@ public class MonsterCalamityIncarnation extends SimpleAbilityItem {
                     entity.level().addFreshEntity(lightningEntity);
                     entity.level().addFreshEntity(lightningEntity);
                     entity.level().addFreshEntity(lightningEntity);
+                    if (enhancement >= 2) {
+                        entity.level().addFreshEntity(lightningEntity);
+                    }
                 } else if (sequence >= 1) {
                     entity.level().addFreshEntity(lightningEntity);
                     entity.level().addFreshEntity(lightningEntity);
                     entity.level().addFreshEntity(lightningEntity);
                     entity.level().addFreshEntity(lightningEntity);
                     entity.level().addFreshEntity(lightningEntity);
+                    if (enhancement >= 2) {
+                        entity.level().addFreshEntity(lightningEntity);
+                    }
                 } else {
                     entity.level().addFreshEntity(lightningEntity);
                     entity.level().addFreshEntity(lightningEntity);
@@ -194,11 +203,19 @@ public class MonsterCalamityIncarnation extends SimpleAbilityItem {
                     entity.level().addFreshEntity(lightningEntity);
                     entity.level().addFreshEntity(lightningEntity);
                     entity.level().addFreshEntity(lightningEntity);
+                    if (enhancement >= 2) {
+                        entity.level().addFreshEntity(lightningEntity);
+                        entity.level().addFreshEntity(lightningEntity);
+                    }
                 }
             } else {
                 entity.level().addFreshEntity(lightningEntity);
                 entity.level().addFreshEntity(lightningEntity);
                 entity.level().addFreshEntity(lightningEntity);
+                if (enhancement >= 2) {
+                    entity.level().addFreshEntity(lightningEntity);
+                    entity.level().addFreshEntity(lightningEntity);
+                }
             }
         }
         if (plague >= 1) {
@@ -206,34 +223,34 @@ public class MonsterCalamityIncarnation extends SimpleAbilityItem {
             tag.putInt("monsterCalamityImmunity", 5);
             if (entity instanceof Player player) {
                 int sequence = BeyonderHolderAttacher.getHolderUnwrap(player).getCurrentSequence();
-                for (LivingEntity livingEntity : entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(150 - (sequence * 20)))) {
+                for (LivingEntity livingEntity : entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(150 - (sequence * 20) + (enhancement * 40)))) {
                     if (livingEntity != entity) {
                         if (sequence >= 4) {
-                            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40, 3, false, false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1, false, false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 2, false, false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 2, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40, 2 + enhancement, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, enhancement, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 1 + enhancement, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 1 + enhancement, false, false));
                         } else if (sequence >= 1) {
-                            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40, 4, false, false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 2, false, false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 3, false, false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 3, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40, 3 + enhancement, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1 + enhancement, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 2 + enhancement, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 2 + enhancement, false, false));
                         } else {
-                            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40, 5, false, false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 3, false, false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 4, false, false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 4, false, false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 40,1,false,false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40, 4 + enhancement, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 2 + enhancement, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 3 + enhancement, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 2 + enhancement, false, false));
+                            entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 40, enhancement,false,false));
                         }
                     }
                 }
             } else {
                 for (LivingEntity livingEntity : entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(80))) {
                     if (livingEntity != entity) {
-                        entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40, 3, false, false));
-                        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1, false, false));
-                        entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 2, false, false));
-                        entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 2, false, false));
+                        entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40, 2 + enhancement, false, false));
+                        entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, enhancement, false, false));
+                        entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 1 + enhancement, false, false));
+                        entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 1 + enhancement, false, false));
                     }
                 }
             }

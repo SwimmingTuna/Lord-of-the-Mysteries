@@ -6,16 +6,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.swimmingtuna.lotm.blocks.MonsterDomainBlockEntity;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.DomainOfDecay;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.DomainOfProvidence;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.MonsterDomainTeleporation;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.Hurricane;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.LightningStorm;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 
 import java.util.List;

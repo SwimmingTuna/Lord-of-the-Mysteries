@@ -11,8 +11,8 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.swimmingtuna.lotm.entity.MeteorEntity;
-import net.swimmingtuna.lotm.entity.TornadoEntity;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import org.jetbrains.annotations.NotNull;
@@ -47,15 +47,16 @@ public class MatterAccelerationEntities extends SimpleAbilityItem {
 
     public static void matterAccelerationEntities(Player player) {
         if (!player.level().isClientSide()) {
-            for (Entity entity : player.level().getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(300))) {
-                if (entity != player) {
-                    if (entity instanceof LivingEntity || entity instanceof Projectile) {
-                        entity.setDeltaMovement(entity.getDeltaMovement().x() * 10, entity.getDeltaMovement().y() * 10, entity.getDeltaMovement().z());
-                        entity.hurtMarked = true;
-                        if (!(entity instanceof MeteorEntity) || !(entity instanceof TornadoEntity)) {
-                            entity.getPersistentData().putInt("matterAccelerationEntities", 10);
-                        }
-                    }
+            AABB searchBox = player.getBoundingBox().inflate(300);
+            for (Entity entity : player.level().getEntitiesOfClass(Entity.class, searchBox)) {
+                if (entity != player && (entity instanceof LivingEntity || entity instanceof Projectile)) {
+                    Vec3 currentMovement = entity.getDeltaMovement();
+                    double speed = currentMovement.length();
+                    Vec3 normalizedMovement = currentMovement.normalize();
+                    Vec3 newMovement = normalizedMovement.scale(speed * 10);
+                    entity.setDeltaMovement(newMovement);
+                    entity.hurtMarked = true;
+                    entity.getPersistentData().putInt("matterAccelerationEntities", 10);
                 }
             }
         }

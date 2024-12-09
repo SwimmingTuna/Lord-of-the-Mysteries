@@ -17,6 +17,7 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.beyonder.api.BeyonderClass;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
+import net.swimmingtuna.lotm.networking.packet.ClearAbilitiesS2C;
 import net.swimmingtuna.lotm.networking.packet.SyncSequencePacketS2C;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.core.PlayerCapability;
 import net.swimmingtuna.lotm.util.CapabilitySyncer.network.EntityCapabilityStatusPacket;
@@ -68,6 +69,8 @@ public class BeyonderHolder extends PlayerCapability {
         if (persistentData.contains(REGISTERED_ABILITIES_KEY)) {
             persistentData.remove(REGISTERED_ABILITIES_KEY);
         }
+        LOTMNetworkHandler.sendToPlayer(new ClearAbilitiesS2C(), (ServerPlayer) player);
+
         updateTracking();
 
         LOTMNetworkHandler.sendToPlayer(new SyncSequencePacketS2C(this.currentSequence), (ServerPlayer) player);

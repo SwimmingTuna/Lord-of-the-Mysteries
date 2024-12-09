@@ -257,7 +257,6 @@ public class Configs {
                 "VoidedMC85",
                 "1um1",
                 "Rosamie",
-                "VoidedMC85",
                 "SwimmingTuna",
                 "Shineelight",
                 "Pandarion05",

@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.worldgen.portal;
+package net.swimmingtuna.lotm.world.worldgen.portal;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

@@ -13,6 +13,7 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderResetPotion;
 import net.swimmingtuna.lotm.item.OtherItems.LuckBottleItem;
+import net.swimmingtuna.lotm.item.OtherItems.LuckyGoldCoin;
 import net.swimmingtuna.lotm.item.TestItem;
 
 public class ItemInit {
@@ -23,9 +24,12 @@ public class ItemInit {
     //ABILITIES
 
 
-        //MONSTER
+    //MONSTER
+    public static final RegistryObject<Item> SPIRITVISION = ITEMS.register("spiritvision",
+            () -> new SpiritVision(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MONSTERDANGERSENSE = ITEMS.register("monsterdangersense",
             () -> new MonsterDangerSense(new Item.Properties().stacksTo(1)));
+
     public static final RegistryObject<Item> WHISPEROFCORRUPTION = ITEMS.register("whisperofcorruption",
             () -> new WhisperOfCorruption(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> CALAMITYINCARNATION = ITEMS.register("calamityincarnation",
@@ -34,6 +38,8 @@ public class ItemInit {
             () -> new EnableDisableRipple(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> AURAOFCHAOS = ITEMS.register("auraofchaos",
             () -> new AuraOfChaos(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> CHAOSWALKERCOMBAT = ITEMS.register("chaoswalkercombat",
+            () -> new ChaosWalkerDisableEnable(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MISFORTUNEREDIRECTION = ITEMS.register("misfortuneredirection",
             () -> new MisfortuneRedirection(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FORTUNEAPPROPIATION = ITEMS.register("fortuneappropiation",
@@ -41,31 +47,37 @@ public class ItemInit {
     public static final RegistryObject<Item> FALSEPROPHECY = ITEMS.register("falseprophecy",
             () -> new FalseProphecy(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MONSTERREBOOT = ITEMS.register("monsterreboot",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new MonsterReboot(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FATEREINCARNATION = ITEMS.register("fatereincarnation",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new FateReincarnation(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> CYCLEOFFATE = ITEMS.register("cycleoffate",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new CycleOfFate(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> CHAOSAMPLIFICATION = ITEMS.register("chaosamplification",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new ChaosAmplification(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FATEDCONNECTION = ITEMS.register("fatedconnection",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> REALMOFFORTUNE = ITEMS.register("realmoffortune",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> PROBABILITYBODY = ITEMS.register("probabilitybody",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> REALMOFPROBABILITY = ITEMS.register("realmofprobability",
-            () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> PROBABILITYINCREASEDECREASE = ITEMS.register("probabilitityincreasedecrease",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new FatedConnection(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> REBOOTSELF = ITEMS.register("rebootself",
+            () -> new RebootSelf(new Item.Properties().stacksTo(1)));
+
+
+    public static final RegistryObject<Item> PROBABILITYMISFORTUNEINCREASE = ITEMS.register("probabilitymanipulationworldmisfortune",
+            () -> new ProbabilityManipulationWorldMisfortune(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PROBABILITYFORTUNEINCREASE = ITEMS.register("probabilitymanipulationworldfortune",
+            () -> new ProbabilityManipulationWorldFortune(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PROBABILITYWIPE = ITEMS.register("probabilitywipe",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new ProbabilityManipulationWipe(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PROBABILITYEFFECT = ITEMS.register("probabilityeffect",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new ProbabilityManipulationImpulse(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PROBABILITYMISFORTUNE = ITEMS.register("probabilitymisfortune",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new ProbabilityManipulationMisfortune(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PROBABILITYFORTUNE = ITEMS.register("probabilityfortune",
-            () -> new Item(new Item.Properties().stacksTo(1)));
+            () -> new ProbabilityManipulationFortune(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PROBABILITYINFINITEMISFORTUNE = ITEMS.register("probabilityinfinitemisfortune",
+            () -> new ProbabilityManipulationInfiniteMisfortune(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PROBABILITYINFINITEFORTUNE = ITEMS.register("probabilityinfinitefortune",
+            () -> new ProbabilityManipulationInfiniteFortune(new Item.Properties().stacksTo(1)));
+
+
     public static final RegistryObject<Item> LUCKDENIAL = ITEMS.register("luckdenial",
             () -> new LuckDenial(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MISFORTUNEMANIPULATION = ITEMS.register("misfortunemanipulation",
@@ -84,8 +96,6 @@ public class ItemInit {
             () -> new LuckPerception(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PSYCHESTORM = ITEMS.register("psychestorm",
             () -> new PsycheStorm(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> SPIRITVISION = ITEMS.register("spiritvision",
-            () -> new SpiritVision(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> MONSTERPROJECTILECONTROL = ITEMS.register("monsterprojectilecontrol",
             () -> new MonsterProjectileControl(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LUCK_MANIPULATION = ITEMS.register("luckmanipulation",
@@ -98,8 +108,10 @@ public class ItemInit {
             () -> new MisfortuneBestowal(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LUCKFUTURETELLING = ITEMS.register("luckfuturetelling",
             () -> new LuckFutureTelling(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> MISFORTUNEIMPLOSION = ITEMS.register("misfortuneimplosion",
+            () -> new MisfortuneImplosion(new Item.Properties().stacksTo(1)));
 
-        //SAILOR
+    //SAILOR
     public static final RegistryObject<Item> TSUNAMI = ITEMS.register("tsunami",
             () -> new Tsunami(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> EARTHQUAKE = ITEMS.register("earthquake",
@@ -191,7 +203,7 @@ public class ItemInit {
     public static final RegistryObject<Item> SIREN_SONG_WEAKEN = ITEMS.register("siren_song_weaken",
             () -> new SirenSongWeaken(new Item.Properties().stacksTo(1)));
 
-        //SPECTATOR
+    //SPECTATOR
     public static final RegistryObject<Item> MIND_READING = ITEMS.register("mindreading",
             () -> new MindReading(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> AWE = ITEMS.register("awe",
@@ -260,7 +272,7 @@ public class ItemInit {
             () -> new EnvisionLocationBlink(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ALTERATION = ITEMS.register("alteration",
             () -> new Item(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> ENVISIONHEALTH = ITEMS.register("envisionhealth",
+    public static final RegistryObject<Item> ENVISION_HEALTH = ITEMS.register("envisionhealth",
             () -> new EnvisionHealth(new Item.Properties().stacksTo(1)));
 
 
@@ -277,13 +289,11 @@ public class ItemInit {
             () -> new Item(new Item.Properties().stacksTo(16)));
 
 
-
     //UTIL
     public static final RegistryObject<Item> BEYONDER_ABILITY_USER = ITEMS.register("beyonderabilityuser",
             () -> new BeyonderAbilityUser(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ICONITEM = ITEMS.register("zqdsndnkawdnsalnkw",
             () -> new Item(new Item.Properties().stacksTo(1)));
-
 
 
     //POTIONS
@@ -307,26 +317,46 @@ public class ItemInit {
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SPECTATOR, 1));
     public static final RegistryObject<Item> SPECTATOR_0_POTION = ITEMS.register("spectator_0_potion",
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SPECTATOR, 0));
-    public static final RegistryObject<Item> TYRANT_9_POTION = ITEMS.register("tyrant_9_potion",
+    public static final RegistryObject<Item> SAILOR_9_POTION = ITEMS.register("sailor_9_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 9));
+    public static final RegistryObject<Item> SAILOR_8_POTION = ITEMS.register("sailor_8_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 8));
+    public static final RegistryObject<Item> SAILOR_7_POTION = ITEMS.register("sailor_7_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 7));
+    public static final RegistryObject<Item> SAILOR_6_POTION = ITEMS.register("sailor_6_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 6));
+    public static final RegistryObject<Item> SAILOR_5_POTION = ITEMS.register("sailor_5_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 5));
+    public static final RegistryObject<Item> SAILOR_4_POTION = ITEMS.register("sailor_4_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 4));
+    public static final RegistryObject<Item> SAILOR_3_POTION = ITEMS.register("sailor_3_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 3));
+    public static final RegistryObject<Item> SAILOR_2_POTION = ITEMS.register("sailor_2_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 2));
+    public static final RegistryObject<Item> SAILOR_1_POTION = ITEMS.register("sailor_1_potion",
             () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
-    public static final RegistryObject<Item> TYRANT_8_POTION = ITEMS.register("tyrant_8_potion",
-            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
-    public static final RegistryObject<Item> TYRANT_7_POTION = ITEMS.register("tyrant_7_potion",
-            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
-    public static final RegistryObject<Item> TYRANT_6_POTION = ITEMS.register("tyrant_6_potion",
-            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
-    public static final RegistryObject<Item> TYRANT_5_POTION = ITEMS.register("tyrant_5_potion",
-            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
-    public static final RegistryObject<Item> TYRANT_4_POTION = ITEMS.register("tyrant_4_potion",
-            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
-    public static final RegistryObject<Item> TYRANT_3_POTION = ITEMS.register("tyrant_3_potion",
-            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
-    public static final RegistryObject<Item> TYRANT_2_POTION = ITEMS.register("tyrant_2_potion",
-            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
-    public static final RegistryObject<Item> TYRANT_1_POTION = ITEMS.register("tyrant_1_potion",
-            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
-    public static final RegistryObject<Item> TYRANT_0_POTION = ITEMS.register("tyrant_0_potion",
-            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 1));
+    public static final RegistryObject<Item> SAILOR_0_POTION = ITEMS.register("sailor_0_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.SAILOR, 0));
+    public static final RegistryObject<Item> MONSTER_9_POTION = ITEMS.register("monster_9_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.MONSTER, 9));
+    public static final RegistryObject<Item> MONSTER_8_POTION = ITEMS.register("monster_8_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.MONSTER, 8));
+    public static final RegistryObject<Item> MONSTER_7_POTION = ITEMS.register("monster_7_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.MONSTER, 7));
+    public static final RegistryObject<Item> MONSTER_6_POTION = ITEMS.register("monster_6_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.MONSTER, 6));
+    public static final RegistryObject<Item> MONSTER_5_POTION = ITEMS.register("monster_5_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.MONSTER, 5));
+    public static final RegistryObject<Item> MONSTER_4_POTION = ITEMS.register("monster_4_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.MONSTER, 4));
+    public static final RegistryObject<Item> MONSTER_3_POTION = ITEMS.register("monster_3_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.MONSTER, 3));
+    public static final RegistryObject<Item> MONSTER_2_POTION = ITEMS.register("monster_2_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.MONSTER, 2));
+    public static final RegistryObject<Item> MONSTER_1_POTION = ITEMS.register("monster_1_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.MONSTER, 1));
+    public static final RegistryObject<Item> MONSTER_0_POTION = ITEMS.register("monster_0_potion",
+            () -> new BeyonderPotion(new Item.Properties().stacksTo(1), BeyonderClassInit.MONSTER, 0));
     public static final RegistryObject<Item> BEYONDER_RESET_POTION = ITEMS.register("beyonder_reset_potion",
             () -> new BeyonderResetPotion(new Item.Properties().stacksTo(1)));
 
@@ -334,7 +364,8 @@ public class ItemInit {
     //OTHER
     public static final RegistryObject<Item> LUCKBOTTLEITEM = ITEMS.register("luckbottleitem",
             () -> new LuckBottleItem(new Item.Properties().stacksTo(1)));
-
+    public static final RegistryObject<Item> LUCKYGOLDCOIN = ITEMS.register("luckygoldcoin",
+            () -> new LuckyGoldCoin(new Item.Properties().stacksTo(1)));
 
 
     public static void register(IEventBus eventBus) {

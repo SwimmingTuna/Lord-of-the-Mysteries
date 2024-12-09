@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffects;
@@ -20,6 +21,7 @@ import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
+import net.swimmingtuna.lotm.world.worlddata.CalamityEnhancementData;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -46,45 +48,49 @@ public class LuckManipulation extends SimpleAbilityItem {
             CompoundTag tag = player.getPersistentData();
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
+            int enhancement = CalamityEnhancementData.getInstance((ServerLevel) player.level()).getCalamityEnhancement();
             double lotmLuckValue = luck.getValue();
             int luckManipulation = tag.getInt("luckManipulationItem");
             if (luckManipulation == 1) { //regen
-                BeyonderUtil.applyMobEffect(player, MobEffects.REGENERATION, 300 - (holder.getCurrentSequence() * 30), 2, true, true );
+                BeyonderUtil.applyMobEffect(player, MobEffects.REGENERATION, 300 - (holder.getCurrentSequence() * 30), 2, true, true);
                 luck.setBaseValue(Math.max(0, lotmLuckValue - 4));
             }
             if (luckManipulation == 2) { //diamonds
-                ItemStack diamonds = new ItemStack(Items.DIAMOND,3);
-                ItemStack diamondBlock = new ItemStack(Items.DIAMOND_BLOCK,2);
-                ItemEntity diamondEntity = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), diamonds);
-                ItemEntity diamondBlockEntity = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), diamondBlock);
-                if (holder.getCurrentSequence() >= 2) {
-                    player.level().addFreshEntity(diamondEntity);
-                } else player.level().addFreshEntity(diamondBlockEntity);
+                for (int i = 0; i < enhancement; i++) {
+                    ItemStack diamonds = new ItemStack(Items.DIAMOND, 3);
+                    ItemStack diamondBlock = new ItemStack(Items.DIAMOND_BLOCK, 2);
+                    ItemEntity diamondEntity = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), diamonds);
+                    ItemEntity diamondBlockEntity = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), diamondBlock);
+                    if (holder.getCurrentSequence() >= 2) {
+                        player.level().addFreshEntity(diamondEntity);
+                    } else player.level().addFreshEntity(diamondBlockEntity);
+                }
                 luck.setBaseValue(Math.max(0, lotmLuckValue - 4));
             }
             if (luckManipulation == 3) { //wind moving projectiles
                 int x = tag.getInt("windMovingProjectilesCounter");
-                tag.putInt("windMovingProjectilesCounter", x + 1);
+                tag.putInt("windMovingProjectilesCounter", x + enhancement);
                 luck.setBaseValue(Math.max(0, lotmLuckValue - 8));
             }
             if (luckManipulation == 4) { //halve next damage
-                tag.putInt("luckHalveDamage", tag.getInt("luckHalveDamage") + 1);
+                tag.putInt("luckHalveDamage", tag.getInt("luckHalveDamage") + enhancement);
                 luck.setBaseValue(Math.max(0, lotmLuckValue - 10));
             }
             if (luckManipulation == 5) { //mobs distracted from you
-                tag.putInt("luckIgnoreMobs", tag.getInt("luckIgnoreMobs") + 1);
+                tag.putInt("luckIgnoreMobs", tag.getInt("luckIgnoreMobs") + enhancement);
                 luck.setBaseValue(Math.max(0, lotmLuckValue - 3));
             }
             if (luckManipulation == 6) { //players that hurt you recently will get poison
-                tag.putInt("luckAttackerPoisoned", tag.getInt("luckAttackerPoisoned") + 1);
+                tag.putInt("luckAttackerPoisoned", tag.getInt("luckAttackerPoisoned") + enhancement);
                 luck.setBaseValue(Math.max(0, lotmLuckValue - 12));
             }
             if (luckManipulation == 7) { //ignore next damage
-                tag.putInt("luckIgnoreDamage", tag.getInt("luckIgnoreDamage") + 1);
+                tag.putInt("luckIgnoreDamage", tag.getInt("luckIgnoreDamage") + enhancement);
                 luck.setBaseValue(Math.max(0, lotmLuckValue - 15));
             }
         }
     }
+
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
         if (entity instanceof Player player) {
             if (player.tickCount % 2 == 0 && !level.isClientSide()) {

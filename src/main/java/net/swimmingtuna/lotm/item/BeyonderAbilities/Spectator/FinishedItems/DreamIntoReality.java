@@ -70,7 +70,7 @@ public class DreamIntoReality extends SimpleAbilityItem {
                     playerAbilities.setFlyingSpeed(0.1F);
                 }
                 ScaleData scaleData = ScaleTypes.BASE.getScaleData(player);
-                scaleData.setTargetScale(scaleData.getBaseScale() * 8);
+                scaleData.setTargetScale(scaleData.getBaseScale() * 12);
                 scaleData.markForSync(true);
                 player.onUpdateAbilities();
                 if (player instanceof ServerPlayer serverPlayer) {

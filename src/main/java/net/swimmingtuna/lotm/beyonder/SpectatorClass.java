@@ -133,7 +133,7 @@ public class SpectatorClass implements BeyonderClass {
         items.put(0, ItemInit.ENVISION_BARRIER.get());
         items.put(0, ItemInit.ENVISION_LIFE.get());
         items.put(0, ItemInit.ENVISION_DEATH.get());
-        items.put(0, ItemInit.ENVISIONHEALTH.get());
+        items.put(0, ItemInit.ENVISION_HEALTH.get());
         items.put(0, ItemInit.ENVISION_LOCATION.get());
         items.put(0, ItemInit.ENVISION_LOCATION_BLINK.get());
         items.put(0, ItemInit.ENVISION_WEATHER.get());

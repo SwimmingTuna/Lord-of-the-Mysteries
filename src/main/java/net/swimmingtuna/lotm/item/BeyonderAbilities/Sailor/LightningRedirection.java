@@ -5,9 +5,11 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -61,6 +63,16 @@ public class LightningRedirection extends SimpleAbilityItem {
         useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
+    @Override
+    public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        useSpirituality(player);
+        lightningRedirectionEntity(player, interactionTarget);
+        return InteractionResult.SUCCESS;
+    }
+
 
     private static void lightningRedirection(Player player, BlockPos pos) {
         if (!player.level().isClientSide()) {
@@ -68,6 +80,16 @@ public class LightningRedirection extends SimpleAbilityItem {
             for (Entity entity : level.getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
                 if (entity instanceof LightningEntity lightning) {
                     lightning.setTargetPos(pos.getCenter());
+                }
+            }
+        }
+    }
+    private static void lightningRedirectionEntity(Player player,LivingEntity interactionTarget) {
+        if (!player.level().isClientSide()) {
+            Level level = player.level();
+            for (Entity entity : level.getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
+                if (entity instanceof LightningEntity lightning) {
+                    lightning.setTargetEntity(interactionTarget);
                 }
             }
         }

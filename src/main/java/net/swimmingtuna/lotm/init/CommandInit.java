@@ -22,5 +22,7 @@ public class CommandInit {
         AbilitiesCommand.register(event.getDispatcher());
         AbilityRegisterCommand.register(event.getDispatcher(), event.getBuildContext());
         PlayerMobsCommand.register(event.getDispatcher());
+        FatedConnectionCommand.register(event.getDispatcher(), event.getBuildContext());
+        BeyonderRecipeCommand.register(event.getDispatcher(), event.getBuildContext());
     }
 }

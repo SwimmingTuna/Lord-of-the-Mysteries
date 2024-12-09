@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.worldgen.biome;
+package net.swimmingtuna.lotm.world.worldgen.biome;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;

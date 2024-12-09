@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.worldgen.biome;
+package net.swimmingtuna.lotm.world.worldgen.biome;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;

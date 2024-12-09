@@ -5,8 +5,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.entity.CircleEntity;
 import net.swimmingtuna.lotm.entity.WhisperOfCorruptionEntity;
 
 public class WhisperOfCorruptionEntityRenderer extends EntityRenderer<WhisperOfCorruptionEntity> {

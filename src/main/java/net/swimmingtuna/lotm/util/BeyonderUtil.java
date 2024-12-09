@@ -181,7 +181,7 @@ public class BeyonderUtil {
             if (sequence <= 0) {
                 abilityNames.add(ItemInit.ENVISION_BARRIER.get());
                 abilityNames.add(ItemInit.ENVISION_DEATH.get());
-                abilityNames.add(ItemInit.ENVISIONHEALTH.get());
+                abilityNames.add(ItemInit.ENVISION_HEALTH.get());
                 abilityNames.add(ItemInit.ENVISION_KINGDOM.get());
                 abilityNames.add(ItemInit.ENVISION_LIFE.get());
                 abilityNames.add(ItemInit.ENVISION_LOCATION.get());
@@ -287,29 +287,33 @@ public class BeyonderUtil {
                 abilityNames.add(ItemInit.CALAMITYINCARNATION.get());
                 abilityNames.add(ItemInit.ENABLEDISABLERIPPLE.get());
                 abilityNames.add(ItemInit.AURAOFCHAOS.get());
+                abilityNames.add(ItemInit.CHAOSWALKERCOMBAT.get());
                 abilityNames.add(ItemInit.MISFORTUNEREDIRECTION.get());
+                abilityNames.add(ItemInit.MONSTERDOMAINTELEPORATION.get());
             }
             if (sequence <= 2) {
                 abilityNames.add(ItemInit.WHISPEROFCORRUPTION.get());
                 abilityNames.add(ItemInit.FORTUNEAPPROPIATION.get());
                 abilityNames.add(ItemInit.FALSEPROPHECY.get());
+                abilityNames.add(ItemInit.MISFORTUNEIMPLOSION.get());
             }
             if (sequence <= 1) {
                 abilityNames.add(ItemInit.MONSTERREBOOT.get());
                 abilityNames.add(ItemInit.FATEREINCARNATION.get());
                 abilityNames.add(ItemInit.CYCLEOFFATE.get());
                 abilityNames.add(ItemInit.CHAOSAMPLIFICATION.get());
-                abilityNames.add(ItemInit.PROBABILITYBODY.get());
-                abilityNames.add(ItemInit.REALMOFFORTUNE.get());
                 abilityNames.add(ItemInit.FATEDCONNECTION.get());
+                abilityNames.add(ItemInit.REBOOTSELF.get());
             }
             if (sequence <= 0) {
-                abilityNames.add(ItemInit.REALMOFPROBABILITY.get());
-                abilityNames.add(ItemInit.PROBABILITYINCREASEDECREASE.get());
+                abilityNames.add(ItemInit.PROBABILITYMISFORTUNEINCREASE.get());
+                abilityNames.add(ItemInit.PROBABILITYFORTUNEINCREASE.get());
                 abilityNames.add(ItemInit.PROBABILITYFORTUNE.get());
                 abilityNames.add(ItemInit.PROBABILITYMISFORTUNE.get());
                 abilityNames.add(ItemInit.PROBABILITYWIPE.get());
                 abilityNames.add(ItemInit.PROBABILITYEFFECT.get());
+                abilityNames.add(ItemInit.PROBABILITYINFINITEFORTUNE.get());
+                abilityNames.add(ItemInit.PROBABILITYINFINITEMISFORTUNE.get());
             }
         }
         return abilityNames;
@@ -505,7 +509,7 @@ public class BeyonderUtil {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISION_DEATH.get())));
 
             } else if (heldItem.getItem() instanceof EnvisionDeath) {
-                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISIONHEALTH.get())));
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISION_HEALTH.get())));
 
             } else if (heldItem.getItem() instanceof EnvisionHealth) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.ENVISION_LIFE.get())));
@@ -552,6 +556,9 @@ public class BeyonderUtil {
             }
             else if (heldItem.getItem() instanceof FalseProphecy) {
                 LOTMNetworkHandler.sendToServer(new FalseProphecyLeftClickC2S());
+            }
+            else if (heldItem.getItem() instanceof ChaosAmplification) {
+                LOTMNetworkHandler.sendToServer(new CalamityEnhancementLeftClickC2S());
             }
         }
     }
@@ -629,7 +636,7 @@ public class BeyonderUtil {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISION_DEATH.get())));
                 heldItem.shrink(1);
             } else if (heldItem.getItem() instanceof EnvisionDeath) {
-                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISIONHEALTH.get())));
+                pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISION_HEALTH.get())));
                 heldItem.shrink(1);
             } else if (heldItem.getItem() instanceof EnvisionHealth) {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.ENVISION_LIFE.get())));
@@ -676,6 +683,9 @@ public class BeyonderUtil {
             }
             else if (heldItem.getItem() instanceof FalseProphecy) {
                 LOTMNetworkHandler.sendToServer(new FalseProphecyLeftClickC2S());
+            }
+            else if (heldItem.getItem() instanceof ChaosAmplification) {
+                LOTMNetworkHandler.sendToServer(new CalamityEnhancementLeftClickC2S());
             }
         }
     }

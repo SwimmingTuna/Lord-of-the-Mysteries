@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.worldgen.dimension;
+package net.swimmingtuna.lotm.world.worldgen.dimension;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.HolderGetter;

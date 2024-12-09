@@ -71,6 +71,9 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     protected boolean checkAll(Player player) {
         return checkAll(player, this.requiredClass.get(), this.requiredSequence, this.requiredSpirituality);
     }
+    public int getSpirituality() {
+        return this.requiredSpirituality;
+    }
 
     @Override
     public InteractionResult useOn(UseOnContext context) {

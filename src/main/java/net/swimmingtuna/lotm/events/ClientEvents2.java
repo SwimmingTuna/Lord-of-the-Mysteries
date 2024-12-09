@@ -9,7 +9,6 @@ import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.entity.Model.*;
 import net.swimmingtuna.lotm.entity.Renderers.*;
 import net.swimmingtuna.lotm.entity.Renderers.PlayerMobRenderer.PlayerMobRenderer;
-import net.swimmingtuna.lotm.init.BlockEntityInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.particle.AcidRainParticle;

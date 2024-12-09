@@ -11,7 +11,7 @@ import net.minecraftforge.network.NetworkEvent;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
-import net.swimmingtuna.lotm.worldgen.dimension.DimensionInit;
+import net.swimmingtuna.lotm.world.worldgen.dimension.DimensionInit;
 
 import java.util.function.Supplier;
 

@@ -20,6 +20,7 @@ import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ItemInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.ConsciousnessStroll;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLife;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocation;
@@ -95,6 +96,41 @@ public class ServerEvents {
                     event.setCanceled(true);
                 } else {
                     player.sendSystemMessage(Component.literal("Not enough spirituality").withStyle(BeyonderUtil.getStyle(player)));
+                }
+            }
+        }
+        if (!player.level().isClientSide()) {
+            String message = event.getMessage().getString().toLowerCase();
+            if (player.getMainHandItem().getItem() instanceof ProbabilityManipulationWorldFortune && holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() == 0) {
+                for (Player onlinePlayer : player.level().players()) {
+                    if (message.equals(onlinePlayer.getName().getString().toLowerCase())) {
+                        ProbabilityManipulationFortune.giveFortuneEvents(onlinePlayer);
+                        holder.useSpirituality(500);
+                    }
+                }
+            }
+            if (player.getMainHandItem().getItem() instanceof ProbabilityManipulationWorldFortune && holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() == 0) {
+                for (Player onlinePlayer : player.level().players()) {
+                    if (message.equals(onlinePlayer.getName().getString().toLowerCase())) {
+                        ProbabilityManipulationMisfortune.giveMisfortuneEvents(onlinePlayer);
+                        holder.useSpirituality(500);
+                    }
+                }
+            }
+            if (player.getMainHandItem().getItem() instanceof ProbabilityManipulationInfiniteMisfortune && holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() == 0) {
+                for (Player onlinePlayer : player.level().players()) {
+                    if (message.equals(onlinePlayer.getName().getString().toLowerCase())) {
+                        ProbabilityManipulationInfiniteFortune.giveInfiniteFortune(onlinePlayer);
+                        holder.useSpirituality(2000);
+                    }
+                }
+            }
+            if (player.getMainHandItem().getItem() instanceof ProbabilityManipulationInfiniteFortune && holder.currentClassMatches(BeyonderClassInit.MONSTER) && holder.getCurrentSequence() == 0) {
+                for (Player onlinePlayer : player.level().players()) {
+                    if (message.equals(onlinePlayer.getName().getString().toLowerCase())) {
+                        ProbabilityManipulationInfiniteMisfortune.giveInfiniteMisfortune(onlinePlayer);
+                        holder.useSpirituality(2000);
+                    }
                 }
             }
         }

@@ -89,6 +89,11 @@ public class LOTMNetworkHandler {
                 .encoder(FalseProphecyLeftClickC2S::toByte)
                 .consumerMainThread(FalseProphecyLeftClickC2S::handle)
                 .add();
+        INSTANCE.messageBuilder(CalamityEnhancementLeftClickC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CalamityEnhancementLeftClickC2S::new)
+                .encoder(CalamityEnhancementLeftClickC2S::toByte)
+                .consumerMainThread(CalamityEnhancementLeftClickC2S::handle)
+                .add();
         INSTANCE.messageBuilder(NonVisibleS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(NonVisibleS2C::decode)
                 .encoder(NonVisibleS2C::encode)
@@ -103,6 +108,16 @@ public class LOTMNetworkHandler {
                 .decoder(SendParticleS2C::new)
                 .encoder(SendParticleS2C::encode)
                 .consumerMainThread(SendParticleS2C::handle)
+                .add();
+        INSTANCE.messageBuilder(SyncAbilitiesS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SyncAbilitiesS2C::new)
+                .encoder(SyncAbilitiesS2C::encode)
+                .consumerMainThread(SyncAbilitiesS2C::handle)
+                .add();
+        INSTANCE.messageBuilder(ClearAbilitiesS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(ClearAbilitiesS2C::new)
+                .encoder(ClearAbilitiesS2C::toByte)
+                .consumerMainThread(ClearAbilitiesS2C::handle)
                 .add();
     }
 

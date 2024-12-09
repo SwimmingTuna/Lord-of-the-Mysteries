@@ -3,9 +3,9 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -15,7 +15,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,22 +23,26 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.LightningEntity;
 import net.swimmingtuna.lotm.entity.MeteorEntity;
+import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.world.worlddata.CalamityEnhancementData;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -172,6 +175,17 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
             if (misfortuneManipulation == 9) {
                 BeyonderUtil.applyMobEffect(interactionTarget, MobEffects.POISON, 300 - (holder.getCurrentSequence() * 40), 4, true, true);
             }
+            if (misfortuneManipulation == 10) {
+                tag.putInt("monsterMisfortuneManipulationGravity", 300);
+            }
+            if (misfortuneManipulation == 11) {
+                for (PlayerMobEntity playerMobEntity : interactionTarget.level().getEntitiesOfClass(PlayerMobEntity.class, interactionTarget.getBoundingBox().inflate(300))) {
+                    playerMobEntity.setTarget(interactionTarget);
+                }
+            }
+            if (misfortuneManipulation == 12) {
+                tag.putInt("abilitySelfTarget", 5);
+            }
         }
 
     }
@@ -217,6 +231,15 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
         if (luckManipulation == 9) {
             return "Poison";
         }
+        if (luckManipulation == 10) {
+            return "Gravity Press";
+        }
+        if (luckManipulation == 11) {
+            return "Rogue Beyonders will target them";
+        }
+        if (luckManipulation == 12) {
+            return "Next 5 Targeted Abilities will target the user";
+        }
         return "None";
     }
 
@@ -226,17 +249,50 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
             int y = (int) entity.getY();
             int z = (int) entity.getZ();
             Vec3 targetPos = new Vec3(x,y,z);
+            int enhancement = CalamityEnhancementData.getInstance((ServerLevel) entity.level()).getCalamityEnhancement();
             MeteorEntity meteor = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), entity.level());
             meteor.teleportTo(x + (Math.random() * 100) - 50,y + 150 + (Math.random() * 100) - 50, z+ (Math.random() * 100) - 50);
             meteor.noPhysics = true;
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteor);
-            scaleData.setScale(3);
+            scaleData.setScale(5 + (enhancement));
             scaleData.markForSync(true);
             Vec3 randomizedTargetPos = targetPos.add((Math.random() * 20 - 10), (Math.random() * 20 - 10), (Math.random() * 20 - 10));
             double speed = 4.0;
             Vec3 directionToTarget = randomizedTargetPos.subtract(meteor.position()).normalize();
             meteor.setDeltaMovement(directionToTarget.scale(speed));
             entity.level().addFreshEntity(meteor);
+        }
+    }
+    public static void livingTickMisfortuneManipulation(LivingEvent.LivingTickEvent event) {
+        LivingEntity livingEntity = event.getEntity();
+        CompoundTag tag = livingEntity.getPersistentData();
+        if (!livingEntity.level().isClientSide()) {
+            int gravity = tag.getInt("monsterMisfortuneManipulationGravity");
+            if (gravity >= 1) {
+                tag.putInt("monsterMisfortuneManipulationGravity", gravity -1 );
+                livingEntity.getDeltaMovement().add(0,-2,0);
+            }
+        }
+    }
+    public static void livingUseAbilityMisfortuneManipulation(LivingEntityUseItemEvent event) {
+        LivingEntity livingEntity = event.getEntity();
+        CompoundTag tag = livingEntity.getPersistentData();
+        if (!livingEntity.level().isClientSide() && livingEntity instanceof Player player) {
+            int selfTarget = tag.getInt("abilitySelfTarget");
+            if (selfTarget >= 1 && livingEntity.getMainHandItem().getItem() instanceof SimpleAbilityItem simpleAbilityItem) {
+                boolean hasEntityInteraction = false;
+                try {
+                    Method entityMethod = simpleAbilityItem.getClass().getDeclaredMethod("useAbilityOnEntity", ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class);
+                    hasEntityInteraction = !entityMethod.equals(SimpleAbilityItem.class.getDeclaredMethod("useAbilityOnEntity", ItemStack.class, Player.class, LivingEntity.class, InteractionHand.class));
+
+                } catch (NoSuchMethodException ignored) {
+                }
+                if (hasEntityInteraction) {
+                    ItemStack stack = simpleAbilityItem.getDefaultInstance();
+                    simpleAbilityItem.useAbilityOnEntity(stack, player, livingEntity, InteractionHand.MAIN_HAND);
+                    tag.putInt("abilitySelfTarget", selfTarget - 1);
+                }
+            }
         }
     }
 }

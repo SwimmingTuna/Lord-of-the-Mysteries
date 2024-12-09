@@ -30,18 +30,18 @@ public class LuckDeprivation extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public LuckDeprivation(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 4, 50, 10,20,20);
+        super(properties, BeyonderClassInit.MONSTER, 4, 50, 10, 20, 20);
     }
 
     @Override
     public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         if (!player.level().isClientSide()) {
-        if (!checkAll(player)) {
-            return InteractionResult.FAIL;
-        }
-        useSpirituality(player);
-        addCooldown(player);
-        giftLuck(interactionTarget, player);
+            if (!checkAll(player)) {
+                return InteractionResult.FAIL;
+            }
+            useSpirituality(player);
+            addCooldown(player);
+            giftLuck(interactionTarget, player);
         }
         return InteractionResult.SUCCESS;
     }
@@ -80,5 +80,6 @@ public class LuckDeprivation extends SimpleAbilityItem {
             AttributeInstance interactionTargetLuck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
             playerLuck.setBaseValue(playerLuck.getBaseValue() - (luckGiftingAmount / 2));
             interactionTargetLuck.setBaseValue(interactionTargetLuck.getBaseValue() + luckGiftingAmount);
-        }}
+        }
+    }
 }

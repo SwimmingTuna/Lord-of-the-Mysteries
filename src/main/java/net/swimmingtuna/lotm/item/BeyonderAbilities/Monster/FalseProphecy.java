@@ -7,7 +7,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -21,8 +20,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
-import net.swimmingtuna.lotm.caps.BeyonderHolder;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
@@ -83,36 +80,65 @@ public class FalseProphecy extends SimpleAbilityItem {
         if (!player.level().isClientSide() && !interactionTarget.level().isClientSide()) {
             CompoundTag tag = interactionTarget.getPersistentData();
             CompoundTag playerTag = player.getPersistentData();
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int falseProphecyItem = playerTag.getInt("falseProphecyItem");
             if (falseProphecyItem == 1) {
-                tag.putInt("harmfulFalseProphecyShift", 200); //not done
+                tag.putInt("harmfulFalseProphecyShift", 200);
+                if (interactionTarget instanceof Player) {
+                    interactionTarget.sendSystemMessage(Component.literal("If you shift for a while, you'll recieve great fortune").withStyle(ChatFormatting.GREEN));
+                }
             }
             if (falseProphecyItem == 2) {
-                tag.putInt("harmfulFalseProphecyStand", 200); //not done
+                tag.putInt("harmfulFalseProphecyStand", 200);
+                if (interactionTarget instanceof Player) {
+                    interactionTarget.sendSystemMessage(Component.literal("If you stand still for a while, you'll be healed to full health").withStyle(ChatFormatting.GREEN));
+                }
             }
             if (falseProphecyItem == 3) {
+                if (interactionTarget instanceof Player) {
+                    interactionTarget.sendSystemMessage(Component.literal("If you jump a few times, you'll be able to use your abilities instantly").withStyle(ChatFormatting.GREEN));
+                }
                 tag.putInt("harmfulFalseProphecyJump", 200);
             }
             if (falseProphecyItem == 4) {
+                if (interactionTarget instanceof Player) {
+                    interactionTarget.sendSystemMessage(Component.literal("If you sprint for a while, you'll become immune to the next damage you take").withStyle(ChatFormatting.GREEN));
+                }
                 tag.putInt("harmfulFalseProphecySprint", 200);
             }
             if (falseProphecyItem == 5) {
+                if (interactionTarget instanceof Player) {
+                    interactionTarget.sendSystemMessage(Component.literal("If you attack something soon, your next melee hits will deal extra damage").withStyle(ChatFormatting.GREEN));
+                }
                 tag.putInt("harmfulFalseProphecyAttack", 200);
             }
             if (falseProphecyItem == 6) {
-                tag.putInt("beneficialFalseProphecyShift", 200); //not done
+                if (interactionTarget instanceof Player) {
+                    interactionTarget.sendSystemMessage(Component.literal("If you shift for a while, you'll be granted great misfortune").withStyle(ChatFormatting.RED));
+                }
+                tag.putInt("beneficialFalseProphecyShift", 200);
             }
             if (falseProphecyItem == 7) {
-                tag.putInt("beneficialFalseProphecyStand", 200); //not done
+                if (interactionTarget instanceof Player) {
+                    interactionTarget.sendSystemMessage(Component.literal("If you stand still for a while, you'll be given a great illness").withStyle(ChatFormatting.RED));
+                }
+                tag.putInt("beneficialFalseProphecyStand", 200);
             }
             if (falseProphecyItem == 8) {
+                if (interactionTarget instanceof Player) {
+                    interactionTarget.sendSystemMessage(Component.literal("If you jump a few times, your abilities will be put on cooldown").withStyle(ChatFormatting.RED));
+                }
                 tag.putInt("beneficialFalseProphecyJump", 200);
             }
             if (falseProphecyItem == 9) {
+                if (interactionTarget instanceof Player) {
+                    interactionTarget.sendSystemMessage(Component.literal("If you sprint for a while, you'll take extra damage the next times you're hurt").withStyle(ChatFormatting.RED));
+                }
                 tag.putInt("beneficialFalseProphecySprint", 200);
             }
             if (falseProphecyItem == 10) {
+                if (interactionTarget instanceof Player) {
+                    interactionTarget.sendSystemMessage(Component.literal("If you attack something in the next 10 seconds, your subsequent melee hits wont deal damage").withStyle(ChatFormatting.RED));
+                }
                 tag.putInt("beneficialFalseProphecyAttack", 200);
             }
         }
@@ -137,28 +163,28 @@ public class FalseProphecy extends SimpleAbilityItem {
             return "Harmful: Shifting will give great misfortune";
         }
         if (falseProphecyString == 2) {
-            return "Harmful: Standing still for a Meteor to strike";
+            return "Harmful: Standing still will cause a grave illness";
         }
         if (falseProphecyString == 3) {
             return "Harmful: Jumping will cause all abilities to go on cooldown";
         }
         if (falseProphecyString == 4) {
-            return "Harmful: Sprinting will give great misfortune";
+            return "Harmful: Sprinting will cause great damage";
         }
         if (falseProphecyString == 5) {
-            return "Harmful: Attacking a mob will attract a sudden storm";
+            return "Harmful: Attacking a mob cause the next 5 damage instances the player will take to be doubled as true damage";
         }
         if (falseProphecyString == 6) {
             return "Beneficial: Shifting will give great fortune";
         }
         if (falseProphecyString == 7) {
-            return "Beneficial: Standing still will reset ability cooldowns";
+            return "Beneficial: Standing still will give many beneficial effects";
         }
         if (falseProphecyString == 8) {
             return "Beneficial: Jumping will cause their ability cooldowns to be reset";
         }
         if (falseProphecyString == 9) {
-            return "Beneficial: Sprinting will give great fortune";
+            return "Beneficial: Sprinting will cause the player to ignore the next 5 times they take damage to be nullified";
         }
         if (falseProphecyString == 10) {
             return "Beneficial: Attacking a mob will cause the next 5 melee hits to deal double damage as true damage";

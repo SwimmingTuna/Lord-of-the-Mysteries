@@ -11,11 +11,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
+import net.swimmingtuna.lotm.networking.packet.SpiritVisionC2S;
 import net.swimmingtuna.lotm.networking.packet.SpiritWorldTraversalC2S;
 import net.swimmingtuna.lotm.util.ClientSequenceData;
-import net.swimmingtuna.lotm.networking.packet.SpiritVisionC2S;
 import net.swimmingtuna.lotm.util.KeyBinding;
-import net.swimmingtuna.lotm.worldgen.dimension.DimensionInit;
+import net.swimmingtuna.lotm.world.worldgen.dimension.DimensionInit;
 
 public class KeyClientEvents {
     @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, value = Dist.CLIENT)

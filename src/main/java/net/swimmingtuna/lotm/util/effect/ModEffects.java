@@ -31,8 +31,8 @@ public class ModEffects {
             () -> new LOTMGlowingEffect(MobEffectCategory.HARMFUL, 3124687));
     public static final RegistryObject<MobEffect> PARALYSIS = MOB_EFFECTS.register("paralysis",
             () -> new ParalysisEffect(MobEffectCategory.HARMFUL, 3124687));
-
-
+    public static final RegistryObject<MobEffect> NOREGENERATION = MOB_EFFECTS.register("noregeneration",
+            () -> new NoRegenerationEffect(MobEffectCategory.HARMFUL, 3124687));
 
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);

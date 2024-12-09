@@ -1,4 +1,4 @@
-package net.swimmingtuna.lotm.worldgen;
+package net.swimmingtuna.lotm.world.worldgen;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

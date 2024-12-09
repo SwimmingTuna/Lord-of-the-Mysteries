@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -64,15 +65,26 @@ public class PsycheStorm extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        psycheStorm(player, pContext.getLevel(), pContext.getClickedPos(), holder.getCurrentSequence());
-        addCooldown(player);
+        psycheStorm(player, pContext.getLevel(), pContext.getClickedPos());
         useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
+    @Override
+    public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player);
+        psycheStorm(player, player.level(), BlockPos.containing(interactionTarget.position()));
+        return InteractionResult.SUCCESS;
+    }
 
-    private void psycheStorm(Player player, Level level, BlockPos targetPos, int sequence) {
+
+    private void psycheStorm(Player player, Level level, BlockPos targetPos){
         if (!player.level().isClientSide()) {
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            int sequence = holder.getCurrentSequence();
             double radius = (15.0 - sequence);
             float damage = (float) (25.0 - (sequence / 2));
             int corruptionAddition = 30 - (sequence / 3);
