@@ -18,8 +18,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class TsunamiSeal extends SimpleAbilityItem {
@@ -68,11 +68,15 @@ public class TsunamiSeal extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Creates a massive wave of water in front of you, trapping any entity with more than 100 health in a seal or they're a player\n" +
-                "Spirituality Used: 1100\n" +
-                "Cooldown: 90 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, summons a colossal wave in the direction you're looking that will seal any entity hit that is strong enough"));
+        tooltipComponents.add(Component.literal("Left Click for Tsunami"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("1100").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("1.5 Minutes").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
+
 
     public static void summonTsunami(Player player) {
         CompoundTag tag = player.getPersistentData();

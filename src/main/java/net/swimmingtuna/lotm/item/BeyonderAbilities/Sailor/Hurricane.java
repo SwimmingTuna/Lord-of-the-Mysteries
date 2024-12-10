@@ -18,7 +18,7 @@ import java.util.List;
 public class Hurricane extends SimpleAbilityItem {
 
     public Hurricane(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 4, 1250, 1200);
+        super(properties, BeyonderClassInit.SAILOR, 4, 1250, 1800);
     }
 
     @Override
@@ -37,11 +37,14 @@ public class Hurricane extends SimpleAbilityItem {
             pPlayer.getPersistentData().putInt("sailorHurricane", 600);
         }
     }
+
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, summons a hurricane that shoots lightning in the sky around the player and generates tornadoes\n" +
-                "Spirituality Used: 1250\n" +
-                "Cooldown: 1 minute").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, summon a hurricane which will rain down lightning and summon tornado's in a large area around you for 30 seconds"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("1250").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("1.5 Minutes").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

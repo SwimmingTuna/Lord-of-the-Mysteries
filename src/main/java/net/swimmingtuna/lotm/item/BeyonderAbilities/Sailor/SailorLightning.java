@@ -64,7 +64,7 @@ public class SailorLightning extends SimpleAbilityItem {
         tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("~1 second").withStyle(ChatFormatting.YELLOW)));
         tooltipComponents.add(SimpleAbilityItem.getPathwayText(BeyonderClassInit.SAILOR.get()));
         tooltipComponents.add(SimpleAbilityItem.getClassText(5, BeyonderClassInit.SAILOR.get()));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     @Override

@@ -80,6 +80,7 @@ public class LightningRedirection extends SimpleAbilityItem {
             for (Entity entity : level.getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
                 if (entity instanceof LightningEntity lightning) {
                     lightning.setTargetPos(pos.getCenter());
+                    lightning.setTargetEntity(null);
                 }
             }
         }
@@ -90,6 +91,7 @@ public class LightningRedirection extends SimpleAbilityItem {
             for (Entity entity : level.getEntitiesOfClass(Entity.class, player.getBoundingBox().inflate(200))) {
                 if (entity instanceof LightningEntity lightning) {
                     lightning.setTargetEntity(interactionTarget);
+                    lightning.setTargetPos(null);
                 }
             }
         }
@@ -97,9 +99,11 @@ public class LightningRedirection extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, redirects all lightning into the direction the player is looking \n" +
-                "Spirituality Used: 600\n" +
-                "Cooldown: 5 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use on a block or entity, redirects all lightning bolts to move towards it."));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("600").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("5 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

@@ -46,14 +46,17 @@ public class AqueousLightDrown extends SimpleAbilityItem {
             AqueousLightEntity.summonEntityWithSpeed(direction, initialVelocity, eyePosition, player.getX(), player.getY(), player.getZ(), player);
         }
     }
-
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, shoots a water bubble that upon hit, summons a water bubble around the target's head that causes them to drown\n" +
-                "Spirituality Used: 75\n" +
-                "Cooldown: 15 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, summons a bubble of water that on hit, summons a water bubble that stays on the hit entity's head for a while."));
+        tooltipComponents.add(Component.literal("Left Click for Water Manipulation (Push)"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("75").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("15 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
+
     public static void lightTickEvent(Entity entity) {
         Level level = entity.level();
         CompoundTag tag = entity.getPersistentData();

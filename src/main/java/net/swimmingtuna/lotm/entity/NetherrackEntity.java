@@ -26,6 +26,7 @@ import virtuoel.pehkui.api.ScaleTypes;
 import java.util.Random;
 
 public class NetherrackEntity extends AbstractArrow {
+    private static final EntityDataAccessor<Integer> DATA_NETHERRACK_DAMAGE = SynchedEntityData.defineId(NetherrackEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(NetherrackEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_NETHERRACK_XROT = SynchedEntityData.defineId(NetherrackEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_NETHERRACK_YROT = SynchedEntityData.defineId(NetherrackEntity.class, EntityDataSerializers.INT);
@@ -48,6 +49,7 @@ public class NetherrackEntity extends AbstractArrow {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
+        this.entityData.define(DATA_NETHERRACK_DAMAGE, 10);
         this.entityData.define(DATA_DANGEROUS, false);
         this.entityData.define(REMOVE_AND_HURT, false);
         this.entityData.define(SENT, false);
@@ -90,7 +92,7 @@ public class NetherrackEntity extends AbstractArrow {
             this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 5.0F, 5.0F);
             if (result.getEntity() instanceof LivingEntity entity) {
-                entity.hurt(BeyonderUtil.genericSource(this), 10.0F * scaleData.getScale());
+                entity.hurt(BeyonderUtil.genericSource(this), getDamage() * scaleData.getScale());
             }
             this.discard();
         }
@@ -152,9 +154,9 @@ public class NetherrackEntity extends AbstractArrow {
                         }
                     }
                 }
-                for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(5))) {
+                for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(10))) {
                     if (entity != this.getOwner()) {
-                        entity.hurt(BeyonderUtil.genericSource(this), 10);
+                        entity.hurt(BeyonderUtil.genericSource(this), getDamage());
                     }
                 }
                 if (this.tickCount >= 480) {
@@ -231,5 +233,13 @@ public class NetherrackEntity extends AbstractArrow {
 
     public void setTickCount(int tickCount) {
         this.tickCount = tickCount;
+    }
+
+    public void setDamage(int damage) {
+        this.entityData.set(DATA_NETHERRACK_DAMAGE, damage);
+    }
+
+    public int getDamage() {
+        return this.entityData.get(DATA_NETHERRACK_DAMAGE);
     }
 }

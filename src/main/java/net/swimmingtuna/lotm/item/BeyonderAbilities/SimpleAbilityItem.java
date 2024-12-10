@@ -94,12 +94,10 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-
         tooltipComponents.add(getSpiritualityUsedText(this.requiredSpirituality));
         tooltipComponents.add(getCooldownText(this.cooldown));
         tooltipComponents.add(getPathwayText(this.requiredClass.get()));
         tooltipComponents.add(getClassText(this.requiredSequence, this.requiredClass.get()));
-
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
     }
 
@@ -116,7 +114,7 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     }
 
     public static Component getClassText(int requiredSequence, BeyonderClass beyonderClass) {
-        return Component.literal("Class: ").append(Component.literal(requiredSequence + " - " + beyonderClass.sequenceNames().get(requiredSequence))
+        return Component.literal("Sequence: ").append(Component.literal(requiredSequence + " - " + beyonderClass.sequenceNames().get(requiredSequence))
                 .withStyle(beyonderClass.getColorFormatting()));
     }
 

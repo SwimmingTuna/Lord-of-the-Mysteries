@@ -47,7 +47,7 @@ public class ManipulateFondness extends SimpleAbilityItem {
         tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("5 Seconds").withStyle(ChatFormatting.YELLOW)));
         tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
         tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     private static void manipulateFondness(Player player) {

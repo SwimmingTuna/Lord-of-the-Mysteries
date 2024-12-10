@@ -56,7 +56,7 @@ public class ItemInit {
             () -> new ChaosAmplification(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> FATEDCONNECTION = ITEMS.register("fatedconnection",
             () -> new FatedConnection(new Item.Properties().stacksTo(1)));
-    public static final RegistryObject<Item> REBOOTSELF = ITEMS.register("rebootself",
+    public static final RegistryObject<Item> REBOOTSELF = ITEMS.register("c",
             () -> new RebootSelf(new Item.Properties().stacksTo(1)));
 
 

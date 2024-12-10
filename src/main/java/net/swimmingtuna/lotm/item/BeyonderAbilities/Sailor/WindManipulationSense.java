@@ -20,7 +20,7 @@ public class WindManipulationSense extends SimpleAbilityItem {
 
 
     public WindManipulationSense(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 7, 0, 0);
+        super(properties, BeyonderClassInit.SAILOR, 6, 0, 20);
     }
 
     @Override
@@ -43,13 +43,13 @@ public class WindManipulationSense extends SimpleAbilityItem {
         }
     }
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        tooltipComponents.add(Component.literal("Upon use, controls the surrounding wind to extend your senses, alerting you of players around you and where they are"));
-        tooltipComponents.add(Component.literal("Activation Cost: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
-        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("40 per second").withStyle(ChatFormatting.YELLOW)));
-        Component.literal("Cooldown: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW));
-        tooltipComponents.add(getPathwayText(this.requiredClass.get()));
-        tooltipComponents.add(getClassText(this.requiredSequence, this.requiredClass.get()));
-        super.baseHoverText(stack, level, tooltipComponents, isAdvanced);
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use, summon constant winds around you. While active, you'll get the location of nearby entities"));
+        tooltipComponents.add(Component.literal("Left Click for Wind Manipulation (Blade)"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("20 per second").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("1 Second").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

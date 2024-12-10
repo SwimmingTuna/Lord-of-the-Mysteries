@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -20,7 +21,7 @@ import java.util.List;
 public class WindManipulationCushion extends SimpleAbilityItem {
 
     public WindManipulationCushion(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 7, 150, 120);
+        super(properties, BeyonderClassInit.SAILOR, 6, 150, 120);
     }
 
     @Override
@@ -43,9 +44,13 @@ public class WindManipulationCushion extends SimpleAbilityItem {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.literal("Upon use, create a cushion of wind that absorbs your fall then sends you in the direction you're looking"));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Left Click for Wind Manipulation (Flight)"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("150").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("6 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
-
 
     public static void summonWindCushionParticles(LivingEntity player) {
         if (player.level() instanceof ServerLevel serverLevel) {

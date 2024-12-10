@@ -26,7 +26,7 @@ import java.util.List;
 public class MatterAccelerationBlocks extends SimpleAbilityItem {
 
     public MatterAccelerationBlocks(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 0, 1500, 3000);
+        super(properties, BeyonderClassInit.SAILOR, 0, 2000, 1200);
     }
 
     @Override
@@ -42,10 +42,13 @@ public class MatterAccelerationBlocks extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, summons 10 blocks from around the player, making the next left clicks the player does shoot them towards the direction they look at with incredible speed\n" +
-                "Spirituality Used: 2000\n" +
-                "Cooldown: 15 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, accelerates ten blocks to your side. While they're on your side, left click to shoot them out, dealing massive damage to any "));
+        tooltipComponents.add(Component.literal("Left Click for Matter Acceleration (Entities)"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("2000").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("1 Minute").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     public static void matterAccelerationBlocks(Player player) {
@@ -69,6 +72,9 @@ public class MatterAccelerationBlocks extends SimpleAbilityItem {
                         float randomStayZ = (float) ((Math.random() * 6) - 3);
                         int randomXRot = (int) ((Math.random() * 10) - 5);
                         int randomYRot = (int) ((Math.random() * 10) - 5);
+                        stoneEntity.setStoneYRot(randomYRot);
+                        stoneEntity.setStoneXRot(randomXRot);
+                        stoneEntity.setDamage(80);
                         stoneEntity.setStoneStayAtX(randomStayX);
                         stoneEntity.setStoneStayAtY(randomStayY);
                         stoneEntity.setStoneStayAtZ(randomStayZ);
@@ -91,6 +97,7 @@ public class MatterAccelerationBlocks extends SimpleAbilityItem {
                         float randomStayZ = (float) ((Math.random() * 6) - 3);
                         int randomXRot = (int) ((Math.random() * 10) - 5);
                         int randomYRot = (int) ((Math.random() * 10) - 5);
+                        stoneEntity.setDamage(80);
                         stoneEntity.setNetherrackStayAtX(randomStayX);
                         stoneEntity.setNetherrackStayAtY(randomStayY);
                         stoneEntity.setNetherrackStayAtZ(randomStayZ);
@@ -114,6 +121,7 @@ public class MatterAccelerationBlocks extends SimpleAbilityItem {
                         float randomStayZ = (float) ((Math.random() * 6) - 3);
                         int randomXRot = (int) ((Math.random() * 10) - 5);
                         int randomYRot = (int) ((Math.random() * 10) - 5);
+                        stoneEntity.setDamage(80);
                         stoneEntity.setEndstoneStayAtX(randomStayX);
                         stoneEntity.setEndstoneStayAtY(randomStayY);
                         stoneEntity.setEndstoneStayAtZ(randomStayZ);

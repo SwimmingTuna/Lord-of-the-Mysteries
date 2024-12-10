@@ -25,7 +25,7 @@ public class WindManipulationFlight extends SimpleAbilityItem {
 
 
     public WindManipulationFlight(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 7, 0, 10);
+        super(properties, BeyonderClassInit.SAILOR, 6, 0, 100);
     }
 
     @Override
@@ -102,9 +102,9 @@ public class WindManipulationFlight extends SimpleAbilityItem {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         tooltipComponents.add(Component.literal("Upon use, uses the wind to burst forward in the direction the player is looking three times or allow the user to fly, depending on the sequence"));
-        tooltipComponents.add(Component.literal("Activation Cost: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
-        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("40 per second").withStyle(ChatFormatting.YELLOW)));
-        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("after disabling, 0.5 seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Left Click for Wind Manipulation (Sense)"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("40 / 40 Per Second").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("5 Seconds").withStyle(ChatFormatting.YELLOW)));
         tooltipComponents.add(getPathwayText(this.requiredClass.get()));
         tooltipComponents.add(getClassText(this.requiredSequence, this.requiredClass.get()));
         super.baseHoverText(stack, level, tooltipComponents, isAdvanced);

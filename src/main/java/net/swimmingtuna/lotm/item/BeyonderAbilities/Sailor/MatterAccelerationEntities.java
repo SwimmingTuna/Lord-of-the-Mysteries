@@ -39,10 +39,13 @@ public class MatterAccelerationEntities extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, increases the speed of all entities, if their speed passes a certain point, they deal damage to all entities around them and destroy all blocks around them\n" +
-                "Spirituality Used: 800\n" +
-                "Cooldown: 45 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, accelerates the speed of all entities, if their speed passes a certain point, they deal damage to all entities around them and destroy all blocks around them "));
+        tooltipComponents.add(Component.literal("Left Click for Matter Acceleration (Self)"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("800").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("45 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     public static void matterAccelerationEntities(Player player) {

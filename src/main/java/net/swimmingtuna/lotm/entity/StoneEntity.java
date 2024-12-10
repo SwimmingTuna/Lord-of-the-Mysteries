@@ -26,6 +26,7 @@ import virtuoel.pehkui.api.ScaleTypes;
 import java.util.Random;
 
 public class StoneEntity extends AbstractArrow {
+    private static final EntityDataAccessor<Integer> DATA_STONE_DAMAGE = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_STONE_XROT = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_STONE_YROT = SynchedEntityData.defineId(StoneEntity.class, EntityDataSerializers.INT);
@@ -47,6 +48,7 @@ public class StoneEntity extends AbstractArrow {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
+        this.entityData.define(DATA_STONE_DAMAGE, 10);
         this.entityData.define(DATA_DANGEROUS, false);
         this.entityData.define(REMOVE_AND_HURT, false);
         this.entityData.define(SENT, false);
@@ -89,7 +91,7 @@ public class StoneEntity extends AbstractArrow {
             this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 5.0F, 5.0F);
             if (result.getEntity() instanceof LivingEntity entity) {
-                entity.hurt(BeyonderUtil.explosionSource(this), 10.0F * scaleData.getScale());
+                entity.hurt(BeyonderUtil.explosionSource(this), getDamage() * scaleData.getScale());
             }
             this.discard();
         }
@@ -154,9 +156,9 @@ public class StoneEntity extends AbstractArrow {
                         }
                     }
                 }
-                for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(5))) {
+                for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(10))) {
                     if (entity != this.getOwner()) {
-                        entity.hurt(BeyonderUtil.explosionSource(entity), 10);
+                        entity.hurt(BeyonderUtil.explosionSource(entity), getDamage());
                         this.discard();
                     }
                 }
@@ -178,6 +180,13 @@ public class StoneEntity extends AbstractArrow {
 
     public int getStoneXRot() {
         return this.entityData.get(DATA_STONE_XROT);
+    }
+    public void setDamage(int damage) {
+        this.entityData.set(DATA_STONE_DAMAGE, damage);
+    }
+
+    public int getDamage() {
+        return this.entityData.get(DATA_STONE_DAMAGE);
     }
 
     public float getStoneStayAtX() {

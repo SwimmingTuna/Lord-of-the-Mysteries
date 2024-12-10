@@ -543,7 +543,18 @@ public class BeyonderUtil {
 
             } else if (heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROPHESIZE_DEMISE.get())));
+            }
+            else if (heldItem.getItem() instanceof SirenSongHarm) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.SIREN_SONG_STRENGTHEN.get())));
 
+            } else if (heldItem.getItem() instanceof SirenSongStrengthen) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.SIREN_SONG_STUN.get())));
+
+            } else if (heldItem.getItem() instanceof SirenSongStun) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.SIREN_SONG_WEAKEN.get())));
+
+            } else if (heldItem.getItem() instanceof SirenSongWeaken) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.SIREN_SONG_HARM.get())));
             }
             else if (heldItem.getItem() instanceof LuckManipulation) {
                 LOTMNetworkHandler.sendToServer(new LuckManipulationLeftClickC2S());

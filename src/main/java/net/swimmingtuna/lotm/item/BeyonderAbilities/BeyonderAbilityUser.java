@@ -106,6 +106,6 @@ public class BeyonderAbilityUser extends SimpleAbilityItem {
         tooltipComponents.add(Component.literal("Used to use abilities more efficiently, with a combo of 5 Left and Right clicks\n" +
                 "Use /abilityput (Combination of L and R 5 time's) (ability)\n" +
                 "Example: /abilityput LLRLR lotm:mindreading").withStyle(ChatFormatting.AQUA));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

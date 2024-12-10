@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "lotm:item/spectator7potion"
+    "layer0": "lotm:item/spectator_2_potion"
   }
 }

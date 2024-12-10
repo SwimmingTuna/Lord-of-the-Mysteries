@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -42,7 +43,6 @@ public class ThunderClap extends SimpleAbilityItem {
 
     private void thunderClap(Player player) {
         if (!player.level().isClientSide()) {
-            player.level().playSound(null, player.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 30.0f, player.level().random.nextFloat() * 0.1F + 0.9F);
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int sequence = holder.getCurrentSequence();
             double radius = 300 - (sequence * 50);
@@ -52,15 +52,21 @@ public class ThunderClap extends SimpleAbilityItem {
                     entity.addEffect((new MobEffectInstance(ModEffects.STUN.get(), duration, 1, false, false)));
                 }
             }
+            if (player.level() instanceof ServerLevel serverLevel) {
+                serverLevel.playSound(null, player.getOnPos(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.PLAYERS, 20.0f, 5.0f);
+            }
         }
     }
 
+
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, claps together in order to create a thunder clap, stunning all entities freezing them in place and preventing them from using their abilities\n" +
-                "Spirituality Used: 400\n" +
-                "Cooldown: 20 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, claps together in order to create a thunder clap, stunning all entities freezing them in place and preventing them from using their abilities"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("700").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("20 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
 }

@@ -19,7 +19,7 @@ import java.util.List;
 public class WindManipulationBlade extends SimpleAbilityItem {
 
     public WindManipulationBlade(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 7, 100, 30);
+        super(properties, BeyonderClassInit.SAILOR, 6, 100, 30);
     }
 
     @Override
@@ -41,10 +41,14 @@ public class WindManipulationBlade extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, shoot out a wind blade that cuts through blocks and players\n" +
-                "Spirituality Used: 100\n" +
-                "Cooldown: 2 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, shoots out a blade of wind"));
+        tooltipComponents.add(Component.literal("Left Click for Wind Manipulation (Cushion)"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("100").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("1.5 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
+
 
 }

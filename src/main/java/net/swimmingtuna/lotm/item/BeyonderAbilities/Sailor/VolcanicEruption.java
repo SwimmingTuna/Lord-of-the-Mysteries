@@ -47,6 +47,8 @@ public class VolcanicEruption extends SimpleAbilityItem {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int sequence = holder.getCurrentSequence();
             int spawnCount = 120 - (sequence * 10);
+            double randomX = (Math.random() * 1) - 0.5;
+            double randomZ = (Math.random() * 1) - 0.5;
             Random random = new Random();
             BlockPos playerPos = player.blockPosition();
             for (int i = 0; i < spawnCount; i++) {
@@ -59,7 +61,7 @@ public class VolcanicEruption extends SimpleAbilityItem {
                 if (!level.isEmptyBlock(spawnPos) && isOnSurface(level, spawnPos)) {
                     LavaEntity lavaEntity = new LavaEntity(EntityInit.LAVA_ENTITY.get(), level);
                     lavaEntity.teleportTo(spawnPos.getX(), spawnPos.getY() + 3, spawnPos.getZ());
-                    lavaEntity.setDeltaMovement(0, 3 + (Math.random() * 3), 0); // Random vertical movement between 3 and 6
+                    lavaEntity.setDeltaMovement(randomX, 3 + (Math.random() * 3), randomZ); // Random vertical movement between 3 and 6
                     lavaEntity.setLavaXRot(random.nextInt(18)); // Random X rotation
                     lavaEntity.setLavaYRot(random.nextInt(18)); // Random Y rotation
                     ScaleData scaleData = ScaleTypes.BASE.getScaleData(lavaEntity);
@@ -72,12 +74,16 @@ public class VolcanicEruption extends SimpleAbilityItem {
     private static boolean isOnSurface(Level level, BlockPos pos) {
     return level.canSeeSky(pos.above()) || !level.getBlockState(pos.above()).isSolid();
     }
+
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, summon a volcanic spurt from the ground\n" +
-                "Spirituality Used: 600\n" +
-                "Cooldown: 20 Minutes").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, summons a volcanic eruption from under you, shooting lava into the sky"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("600").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("20 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
+
 
 }

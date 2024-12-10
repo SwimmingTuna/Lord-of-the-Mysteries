@@ -460,4 +460,7 @@ public class LightningEntity extends AbstractHurtingProjectile {
     public Vec3 getLastPos() {
         return this.lastPos;
     }
+    public void setLastPos(Vec3 lastPos) {
+        this.lastPos = lastPos;
+    }
 }

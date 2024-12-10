@@ -30,7 +30,7 @@ public class WindBladeRenderer extends EntityRenderer<WindBladeEntity> {
         float interpolatedYaw = Mth.lerp(partialTicks, entity.yRotO, entity.getYRot());
         float interpolatedPitch = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
 
-        poseStack.translate(0,-1,0);
+        poseStack.translate(0,+ 1,0);
         poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw));
         poseStack.mulPose(Axis.ZP.rotationDegrees(interpolatedPitch));
 

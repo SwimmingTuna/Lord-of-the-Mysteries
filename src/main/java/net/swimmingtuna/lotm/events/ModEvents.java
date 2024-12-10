@@ -2691,13 +2691,11 @@ public class ModEvents {
                     }
                 }
                 if (source.is(DamageTypes.EXPLOSION)) {
-                    entity.sendSystemMessage(Component.literal("explosion"));
                     if (calamityExplosionOccurrenceDamage >= 1) {
                         event.setAmount(event.getAmount() / 2);
                     }
                 }
                 if (entitySource instanceof LightningEntity) {
-                    entity.sendSystemMessage(Component.literal("lightningentity"));
                     if (lotmLightningImmunity >= 1 || lightningStormImmunity >= 1) {
                         event.setCanceled(true);
                     } else if (lotmLightningDamage >= 1 || lightningBoltResistance >= 1 || lotmLightningDamageCalamity >= 1) {
@@ -2715,12 +2713,6 @@ public class ModEvents {
                     if (flightCancel != 0 && event.getSource() == player.damageSources().fall()) {
                         event.setCanceled(true);
                         tag.putInt("sailorFlightDamageCancel", 0);
-                    }
-                }
-                if (holder.currentClassMatches(BeyonderClassInit.MONSTER)) {
-                    Random random = new Random();
-                    if (random.nextInt(10) == 0) {
-                        event.setCanceled(true);
                     }
                 }
                 rippleOfMisfortune(player);

@@ -26,6 +26,8 @@ import virtuoel.pehkui.api.ScaleTypes;
 import java.util.Random;
 
 public class EndStoneEntity extends AbstractArrow {
+
+    private static final EntityDataAccessor<Integer> DATA_ENDSTONE_DAMAGE = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_ENDSTONE_XROT = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_ENDSTONE_YROT = SynchedEntityData.defineId(EndStoneEntity.class, EntityDataSerializers.INT);
@@ -48,6 +50,7 @@ public class EndStoneEntity extends AbstractArrow {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
+        this.entityData.define(DATA_ENDSTONE_DAMAGE, 10);
         this.entityData.define(DATA_DANGEROUS, false);
         this.entityData.define(REMOVE_AND_HURT, false);
         this.entityData.define(SENT, false);
@@ -90,7 +93,7 @@ public class EndStoneEntity extends AbstractArrow {
             this.level().explode(this, hitPos.x, hitPos.y, hitPos.z, (5.0f * scaleData.getScale() / 3), Level.ExplosionInteraction.TNT);
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 5.0F, 5.0F);
             if (result.getEntity() instanceof LivingEntity entity) {
-                entity.hurt(BeyonderUtil.explosionSource(this), 10.0F * scaleData.getScale());
+                entity.hurt(BeyonderUtil.explosionSource(this), getDamage() * scaleData.getScale());
             }
             this.discard();
         }
@@ -155,7 +158,7 @@ public class EndStoneEntity extends AbstractArrow {
                 }
                 for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(3))) {
                     if (entity != this.getOwner()) {
-                        this.level().explode(this, this.getX(), this.getY(), this.getZ(), 8, Level.ExplosionInteraction.TNT);
+                        entity.hurt(BeyonderUtil.genericSource(this), getDamage());
                     }
                 }
                 if (this.tickCount >= 480) {
@@ -224,5 +227,12 @@ public class EndStoneEntity extends AbstractArrow {
     }
     public void setTickCount(int tickCount) {
         this.tickCount = tickCount;
+    }
+    public void setDamage(int damage) {
+        this.entityData.set(DATA_ENDSTONE_DAMAGE, damage);
+    }
+
+    public int getDamage() {
+        return this.entityData.get(DATA_ENDSTONE_DAMAGE);
     }
 }
