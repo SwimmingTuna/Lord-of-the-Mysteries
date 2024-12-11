@@ -245,6 +245,27 @@ public class MisfortuneRedirection extends SimpleAbilityItem {
                 }
                 if (calamityBabyZombie >= 1) {
                     Zombie zombie = new Zombie(EntityType.ZOMBIE, player.level());
+                    ItemStack netheriteHelmet = new ItemStack(Items.NETHERITE_HELMET);
+                    ItemStack netheriteChestplate = new ItemStack(Items.NETHERITE_BOOTS);
+                    ItemStack netheriteLeggings = new ItemStack(Items.NETHERITE_LEGGINGS);
+                    ItemStack netheriteBoots = new ItemStack(Items.NETHERITE_BOOTS);
+                    ItemStack netheriteSword = new ItemStack(Items.NETHERITE_SWORD);
+                    zombie.setDropChance(EquipmentSlot.MAINHAND, 0);
+                    zombie.setDropChance(EquipmentSlot.CHEST, 0);
+                    zombie.setDropChance(EquipmentSlot.LEGS, 0);
+                    zombie.setDropChance(EquipmentSlot.FEET, 0);
+                    zombie.setDropChance(EquipmentSlot.HEAD, 0);
+                    netheriteHelmet.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 5);
+                    netheriteChestplate.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 5);
+                    netheriteLeggings.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 5);
+                    netheriteBoots.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 5);
+                    netheriteSword.enchant(Enchantments.FIRE_ASPECT,2);
+                    netheriteSword.enchant(Enchantments.SHARPNESS,2);
+                    zombie.setItemSlot(EquipmentSlot.HEAD, netheriteHelmet);
+                    zombie.setItemSlot(EquipmentSlot.CHEST, netheriteChestplate);
+                    zombie.setItemSlot(EquipmentSlot.LEGS, netheriteLeggings);
+                    zombie.setItemSlot(EquipmentSlot.FEET, netheriteBoots);
+                    zombie.setItemSlot(EquipmentSlot.MAINHAND, netheriteSword);
                     zombie.setBaby(true);
                     zombie.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 100000, 3, true, true));
                     zombie.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 100000, 3, false, false));

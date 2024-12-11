@@ -20,6 +20,7 @@ import net.minecraftforge.common.util.Lazy;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,18 +31,18 @@ public class LuckGifting extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public LuckGifting(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 5, 100, 160,30,30);
+        super(properties, BeyonderClassInit.MONSTER, 5, 100, 160, 30, 30);
     }
 
     @Override
     public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         if (!player.level().isClientSide()) {
-        if (!checkAll(player)) {
-            return InteractionResult.FAIL;
-        }
-        useSpirituality(player);
-        addCooldown(player);
-        giftLuck(interactionTarget, player);
+            if (!checkAll(player)) {
+                return InteractionResult.FAIL;
+            }
+            useSpirituality(player);
+            addCooldown(player);
+            giftLuck(interactionTarget, player);
         }
         return InteractionResult.SUCCESS;
     }
@@ -76,12 +77,16 @@ public class LuckGifting extends SimpleAbilityItem {
 
 
     private static void giftLuck(LivingEntity interactionTarget, Player player) {
-        if (!player.level().isClientSide() && interactionTarget instanceof Player) {
-            AttributeInstance playerLuck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
-            int luckGiftingAmount = player.getPersistentData().getInt("monsterLuckGifting");
-            AttributeInstance interactionTargetLuck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
-            playerLuck.setBaseValue(playerLuck.getBaseValue() - (luckGiftingAmount / 2));
-            interactionTargetLuck.setBaseValue(interactionTargetLuck.getBaseValue() + luckGiftingAmount);
+        if (!player.level().isClientSide() && !interactionTarget.level().isClientSide()) {
+            if (BeyonderUtil.isBeyonderCapable(interactionTarget)) {
+                AttributeInstance playerLuck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
+                int luckGiftingAmount = player.getPersistentData().getInt("monsterLuckGifting");
+                AttributeInstance interactionTargetLuck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
+                playerLuck.setBaseValue(playerLuck.getBaseValue() - (luckGiftingAmount / 2));
+                interactionTargetLuck.setBaseValue(interactionTargetLuck.getBaseValue() + luckGiftingAmount);
+            } else {
+                player.sendSystemMessage(Component.literal("Interaction target doesn't have a luck or misfortune value."));
+            }
         }
     }
 }

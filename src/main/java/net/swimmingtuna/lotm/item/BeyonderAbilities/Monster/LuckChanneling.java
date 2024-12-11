@@ -21,6 +21,7 @@ import net.swimmingtuna.lotm.init.ItemInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.item.OtherItems.LuckBottleItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -54,7 +55,7 @@ public class LuckChanneling extends SimpleAbilityItem {
                     if (sequence <= 2) {
                         double luckBottleAmount = 0;
                         for (LivingEntity livingEntity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(100 - (sequence * 25)))) {
-                            if (livingEntity instanceof Player || livingEntity instanceof PlayerMobEntity) {
+                            if (BeyonderUtil.isBeyonderCapable(livingEntity)) {
                                 AttributeInstance newLuck = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
                                 if (newLuck != null) {
                                     if (livingEntity == player) {

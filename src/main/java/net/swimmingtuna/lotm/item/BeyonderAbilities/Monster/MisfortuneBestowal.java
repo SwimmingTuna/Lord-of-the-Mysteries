@@ -22,6 +22,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.world.worlddata.CalamityEnhancementData;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,7 @@ public class MisfortuneBestowal extends SimpleAbilityItem {
 
     @Override
     public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
-        if (!player.level().isClientSide()) {
+        if (!player.level().isClientSide() && !interactionTarget.level().isClientSide() && BeyonderUtil.isBeyonderCapable(interactionTarget)) {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }

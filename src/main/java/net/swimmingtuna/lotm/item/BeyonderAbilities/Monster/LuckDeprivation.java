@@ -78,12 +78,16 @@ public class LuckDeprivation extends SimpleAbilityItem {
 
 
     private static void giftLuck(LivingEntity interactionTarget, Player player) {
-        if (!player.level().isClientSide() && !interactionTarget.level().isClientSide() && BeyonderUtil.isBeyonderCapable(interactionTarget)) {
-            AttributeInstance playerLuck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            AttributeInstance interactionTargetLuck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
-            playerLuck.setBaseValue(playerLuck.getBaseValue() + (interactionTargetLuck.getBaseValue()));
-            interactionTargetLuck.setBaseValue(0);
+        if (!player.level().isClientSide() && !interactionTarget.level().isClientSide()) {
+            if (BeyonderUtil.isBeyonderCapable(interactionTarget)) {
+                AttributeInstance playerLuck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+                AttributeInstance interactionTargetLuck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
+                playerLuck.setBaseValue(playerLuck.getBaseValue() + (interactionTargetLuck.getBaseValue()));
+                interactionTargetLuck.setBaseValue(0);
+            } else {
+                player.sendSystemMessage(Component.literal("Interaction target doesn't have a luck or misfortune value."));
+            }
         }
     }
 }

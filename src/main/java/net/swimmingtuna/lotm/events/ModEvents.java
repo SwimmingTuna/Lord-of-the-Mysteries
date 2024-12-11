@@ -78,10 +78,7 @@ import net.swimmingtuna.lotm.commands.AbilityRegisterCommand;
 import net.swimmingtuna.lotm.entity.*;
 import net.swimmingtuna.lotm.events.custom_events.ModEventFactory;
 import net.swimmingtuna.lotm.events.custom_events.ProjectileEvent;
-import net.swimmingtuna.lotm.init.BeyonderClassInit;
-import net.swimmingtuna.lotm.init.EntityInit;
-import net.swimmingtuna.lotm.init.GameRuleInit;
-import net.swimmingtuna.lotm.init.SoundInit;
+import net.swimmingtuna.lotm.init.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
@@ -1738,6 +1735,7 @@ public class ModEvents {
             ProbabilityManipulationInfiniteMisfortune.infiniteFortuneMisfortuneTick(event);
             probabilityManipulationWorld(entity);
             CycleOfFate.tickEvent(event);
+            dodgeProjectiles(entity);
             MisfortuneManipulation.livingTickMisfortuneManipulation(event);
             FalseProphecy.falseProphecyTick(entity);
             AuraOfChaos.auraOfChaos(event);
@@ -2793,29 +2791,31 @@ public class ModEvents {
         }
     }
 
-    private static void dodgeProjectiles(Player pPlayer) {
-        if (pPlayer.getPersistentData().getInt("windMovingProjectilesCounter") >= 1) {
-            if (!pPlayer.level().isClientSide()) {
-                for (Projectile projectile : pPlayer.level().getEntitiesOfClass(Projectile.class, pPlayer.getBoundingBox().inflate(200))) {
+    private static void dodgeProjectiles(LivingEntity livingEntity) {
+        if (livingEntity.getPersistentData().getInt("windMovingProjectilesCounter") >= 1) {
+            if (!livingEntity.level().isClientSide()) {
+                for (Projectile projectile : livingEntity.level().getEntitiesOfClass(Projectile.class, livingEntity.getBoundingBox().inflate(200))) {
                     if (projectile.getPersistentData().getInt("windDodgeProjectilesCounter") == 0) {
                         if (projectile instanceof Arrow arrow && arrow.tickCount >= 100) {
                             return;
                         }
                         float scale = ScaleTypes.BASE.getScaleData(projectile).getScale();
                         double maxDistance = 6 * scale;
-                        double deltaX = Math.abs(projectile.getX() - pPlayer.getX());
-                        double deltaY = Math.abs(projectile.getY() - pPlayer.getY());
-                        double deltaZ = Math.abs(projectile.getZ() - pPlayer.getZ());
-                        if (deltaX <= maxDistance || deltaY <= maxDistance || deltaZ <= maxDistance && projectile.getOwner() != pPlayer) {
+                        double deltaX = Math.abs(projectile.getX() - livingEntity.getX());
+                        double deltaY = Math.abs(projectile.getY() - livingEntity.getY());
+                        double deltaZ = Math.abs(projectile.getZ() - livingEntity.getZ());
+                        if (deltaX <= maxDistance || deltaY <= maxDistance || deltaZ <= maxDistance && projectile.getOwner() != livingEntity) {
                             double mathRandom = (Math.random() + .4) - 0.2;
-                            double x = projectile.getDeltaMovement().x() + mathRandom;
-                            double y = projectile.getDeltaMovement().y() + mathRandom;
-                            double z = projectile.getDeltaMovement().z() + mathRandom;
+                            double x = projectile.getDeltaMovement().x() + (mathRandom * scale);
+                            double y = projectile.getDeltaMovement().y() + (mathRandom * scale);
+                            double z = projectile.getDeltaMovement().z() + (mathRandom * scale);
                             projectile.setDeltaMovement(x, y, z);
                             projectile.hurtMarked = true;
                             projectile.getPersistentData().putInt("windDodgeProjectilesCounter", 40);
-                            pPlayer.getPersistentData().putInt("windMovingProjectilesCounter", pPlayer.getPersistentData().getInt("windMovingProjectilesCounter") - 1);
-                            pPlayer.displayClientMessage(Component.literal("A gust of wind moved a projectile headed towards you").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE), true);
+                            livingEntity.getPersistentData().putInt("windMovingProjectilesCounter", livingEntity.getPersistentData().getInt("windMovingProjectilesCounter") - 1);
+                            if (livingEntity instanceof Player player) {
+                                player.displayClientMessage(Component.literal("A gust of wind moved a projectile headed towards you").withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE), true);
+                            }
                         }
                     } else
                         projectile.getPersistentData().putInt("windDodgeProjectilesCounter", projectile.getPersistentData().getInt("windDodgeProjectilesCounter") - 1);
@@ -2934,7 +2934,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.ANGRY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.CANT_USE_ABILITY_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (meteor >= 1) {
@@ -2943,7 +2943,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.METEOR_CALAMITY_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (lotmLightning >= 1) {
@@ -2952,7 +2952,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.LOTM_LIGHTNING_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (paralysis >= 1) {
@@ -2961,7 +2961,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.TRIP_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (unequipArmor >= 1) {
@@ -2970,7 +2970,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.WIND_UNEQUIP_ARMOR_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (wardenSpawn >= 1) {
@@ -2979,7 +2979,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.WARDEN_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (mcLightning >= 1) {
@@ -2987,7 +2987,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.ANGRY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.MC_LIGHTNING_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (poison >= 1) {
@@ -2996,7 +2996,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.POISON_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (tornadoInt >= 1) {
@@ -3005,7 +3005,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.TORNADO_CALAMITY_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (stone >= 1) {
@@ -3014,7 +3014,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.FALLING_STONE_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (doubleDamage >= 1) {
@@ -3022,7 +3022,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.ANGRY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.DOUBLE_DAMAGE_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityMeteor >= 1) {
@@ -3031,7 +3031,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.METEOR_CALAMITY_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityLightningStorm >= 1) {
@@ -3040,7 +3040,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.LIGHTNING_STORM_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityLightningBolt >= 1) {
@@ -3049,7 +3049,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.LOTM_LIGHTNING_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityGroundTremor >= 1) {
@@ -3058,7 +3058,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.GROUND_TREMOR_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityGaze >= 1) {
@@ -3067,7 +3067,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.GOO_GAZE_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityUndeadArmy >= 1) {
@@ -3076,7 +3076,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.UNDEAD_ARMY_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityBabyZombie >= 1) {
@@ -3085,7 +3085,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.BABY_ZOMBIE_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityWindArmorRemoval >= 1) {
@@ -3094,7 +3094,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.WIND_UNEQUIP_ARMOR_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityBreeze >= 1) {
@@ -3103,7 +3103,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.BREEZE_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityWave >= 1) {
@@ -3112,7 +3112,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.HEAT_WAVE_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityExplosion >= 1) {
@@ -3121,7 +3121,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.EXPLOSION_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (calamityTornado >= 1) {
@@ -3130,7 +3130,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.HAPPY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.TORNADO_CALAMITY_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (ignoreDamage >= 1) {
@@ -3138,7 +3138,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.ANGRY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.IGNORE_DAMAGE_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (diamonds >= 1) {
@@ -3146,7 +3146,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.ANGRY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.DIAMOND_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (regeneration >= 1) {
@@ -3154,7 +3154,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.ANGRY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.REGENERATION_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (moveProjectiles >= 1) {
@@ -3162,7 +3162,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.ANGRY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.WIND_MOVE_PROJECTILES_PARTICLES.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (halveDamage >= 1) {
@@ -3170,7 +3170,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.ANGRY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.HALF_DAMAGE_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (ignoreMobs >= 1) {
@@ -3178,7 +3178,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.ANGRY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.IGNORE_MOBS_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                         if (luckAttackerPoisoned >= 1) {
@@ -3186,7 +3186,7 @@ public class ModEvents {
                                 double offsetX = (Math.random() - 0.5) * 2;
                                 double offsetY = Math.random();
                                 double offsetZ = (Math.random() - 0.5) * 2;
-                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleTypes.ANGRY_VILLAGER, offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
+                                LOTMNetworkHandler.sendToPlayer(new SendParticleS2C(ParticleInit.ATTACKER_POISONED_PARTICLE.get(), offsetX, offsetY, offsetZ, 0, 0, 0), (ServerPlayer) livingEntity);
                             }
                         }
                     }

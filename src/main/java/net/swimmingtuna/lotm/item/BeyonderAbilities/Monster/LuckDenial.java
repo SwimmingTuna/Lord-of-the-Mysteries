@@ -23,6 +23,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,19 +80,23 @@ public class LuckDenial extends SimpleAbilityItem {
 
     private static void giftLuck(LivingEntity interactionTarget, Player player) {
         if (!player.level().isClientSide() && !interactionTarget.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            AttributeInstance luck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
-            AttributeInstance misfortune = interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get());
-            CompoundTag tag =  interactionTarget.getPersistentData();
-            double misfortuneAmount = misfortune.getBaseValue();
-            double luckAmount = luck.getBaseValue();
-            if (holder.getCurrentSequence() <= 2) {
-                tag.putDouble("luckDenialTimer", 1800 - (holder.getCurrentSequence()) * 150);
-                tag.putDouble("luckDenialLuck", luckAmount);
-                tag.putDouble("luckDenialMisfortune", misfortuneAmount);
+            if (BeyonderUtil.isBeyonderCapable(interactionTarget)) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+                AttributeInstance luck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
+                AttributeInstance misfortune = interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get());
+                CompoundTag tag = interactionTarget.getPersistentData();
+                double misfortuneAmount = misfortune.getBaseValue();
+                double luckAmount = luck.getBaseValue();
+                if (holder.getCurrentSequence() <= 2) {
+                    tag.putDouble("luckDenialTimer", 1800 - (holder.getCurrentSequence()) * 150);
+                    tag.putDouble("luckDenialLuck", luckAmount);
+                    tag.putDouble("luckDenialMisfortune", misfortuneAmount);
+                } else {
+                    tag.putDouble("luckDenialTimer", 1800 - (holder.getCurrentSequence()) * 150);
+                    tag.putDouble("luckDenialLuck", luckAmount);
+                }
             } else {
-                tag.putDouble("luckDenialTimer", 1800 - (holder.getCurrentSequence()) * 150);
-                tag.putDouble("luckDenialLuck", luckAmount);
+                player.sendSystemMessage(Component.literal("Interaction target doesn't have a luck or misfortune value."));
             }
         }
     }

@@ -183,7 +183,7 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
                 // Survival benefits
                 affectedPlayer.getFoodData().setFoodLevel(Math.min(20, affectedPlayer.getFoodData().getFoodLevel() + multiplier));
             }
-            if (ticks % 200 == 0) {
+            if (ticks % 200 == 0 && BeyonderUtil.isBeyonderCapable(affectedPlayer)) {
                 luck.setBaseValue(Math.min(100, luck.getBaseValue() + multiplier));
                 misfortune.setBaseValue(Math.max(0, misfortune.getBaseValue() - multiplier));
             }
@@ -228,7 +228,7 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
                 // Survival benefits
                 affectedPlayer.getFoodData().setFoodLevel(Math.min(20, affectedPlayer.getFoodData().getFoodLevel() + 4 * multiplier));
             }
-            if (ticks % 200 == 0) {
+            if (ticks % 200 == 0 && BeyonderUtil.isBeyonderCapable(affectedPlayer)) {
                 luck.setBaseValue(Math.min(100, luck.getBaseValue() + multiplier));
                 misfortune.setBaseValue(Math.max(0, misfortune.getBaseValue() - multiplier));
             }
@@ -333,7 +333,7 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
                         // Survival benefits
                         affectedPlayer.getFoodData().setFoodLevel(Math.min(20, affectedPlayer.getFoodData().getFoodLevel() - multiplier));
                     }
-                    if (ticks % 200 == 0) {
+                    if (ticks % 200 == 0 && BeyonderUtil.isBeyonderCapable(affectedPlayer)) {
                         luck.setBaseValue(Math.max(100, luck.getBaseValue() - multiplier));
                         misfortune.setBaseValue(Math.min(100, misfortune.getBaseValue() + multiplier));
                     }

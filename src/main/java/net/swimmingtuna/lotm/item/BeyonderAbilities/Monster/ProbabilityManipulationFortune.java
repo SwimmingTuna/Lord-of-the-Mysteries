@@ -21,6 +21,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,14 +79,17 @@ public class ProbabilityManipulationFortune extends SimpleAbilityItem {
 
     @Override
     public InteractionResult useAbilityOnEntity(ItemStack pStack, Player player, LivingEntity pInteractionTarget, InteractionHand pUsedHand) {
-        if (!checkAll(player)) {
-            return InteractionResult.FAIL;
+        if (!player.level().isClientSide() && !pInteractionTarget.level().isClientSide()) {
+            if (!checkAll(player)) {
+                return InteractionResult.FAIL;
+            }
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            probabilityWipeEntity(pInteractionTarget);
+            addCooldown(player, this, 10 + holder.getCurrentSequence());
+            useSpirituality(player, 200);
         }
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        probabilityWipeEntity(pInteractionTarget);
-        addCooldown(player, this, 10 + holder.getCurrentSequence());
-        useSpirituality(player, 200);
         return InteractionResult.SUCCESS;
+
     }
 
     public static void probabilityWipeEntity(LivingEntity pInteractionTarget) {
