@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -25,7 +26,7 @@ public class DomainOfDecay extends SimpleAbilityItem {
     public static final BooleanProperty LIT = BooleanProperty.create("lit");
 
     public DomainOfDecay(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 4, 200, 600);
+        super(properties, BeyonderClassInit.MONSTER, 4, 400, 600);
     }
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
@@ -56,9 +57,12 @@ public class DomainOfDecay extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal(
-                "Upon use, exude an aura of tyranny, not giving any entity permission to move, implanting fear strong enough to not allow them to use their abilities"
-        ).withStyle(/*ChatFormatting.BOLD, ChatFormatting.BLUE*/));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, put down a domain of decay, which will cause everything in the radius of it to encounter severe negative effects, the strength of them being stronger the smaller area. Examples include entities getting withered, ores turning to stone, crops dying, tools getting damaged, and more"));
+        tooltipComponents.add(Component.literal("Left Click to increase radius"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("400").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("30 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

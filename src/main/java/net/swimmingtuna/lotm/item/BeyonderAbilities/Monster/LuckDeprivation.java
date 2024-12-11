@@ -17,9 +17,12 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,21 +68,22 @@ public class LuckDeprivation extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use on a living entity, gives you the ability to manipulate them for 30 seconds\n" +
-                "Left Click for Manipulate Emotion\n" +
-                "Spirituality Used: 50\n" +
-                "Cooldown: None").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, siphons the target of all their luck"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("125").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("5 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
 
     private static void giftLuck(LivingEntity interactionTarget, Player player) {
-        if (!player.level().isClientSide()) {
+        if (!player.level().isClientSide() && !interactionTarget.level().isClientSide() && BeyonderUtil.isBeyonderCapable(interactionTarget)) {
             AttributeInstance playerLuck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
-            int luckGiftingAmount = player.getPersistentData().getInt("monsterLuckGifting");
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             AttributeInstance interactionTargetLuck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
-            playerLuck.setBaseValue(playerLuck.getBaseValue() - (luckGiftingAmount / 2));
-            interactionTargetLuck.setBaseValue(interactionTargetLuck.getBaseValue() + luckGiftingAmount);
+            playerLuck.setBaseValue(playerLuck.getBaseValue() + (interactionTargetLuck.getBaseValue()));
+            interactionTargetLuck.setBaseValue(0);
         }
     }
 }

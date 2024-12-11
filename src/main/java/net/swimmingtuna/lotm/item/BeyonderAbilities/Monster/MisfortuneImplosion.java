@@ -65,6 +65,7 @@ public class MisfortuneImplosion extends SimpleAbilityItem {
                             float damage = (float) ((2 * misfortune.getBaseValue()) + (enhancement * 10));
                             entity.hurt(BeyonderUtil.explosionSource(player), damage);
                             entity.level().explode(entity, entity.getX(), entity.getY(), entity.getZ(), explosionRadius, false, Level.ExplosionInteraction.TNT);
+                            misfortune.setBaseValue(0);
                         } else {
                             entity.hurt(BeyonderUtil.explosionSource(player), 40 - (sequence * 10));
                             entity.level().explode(entity, entity.getX(), entity.getY(), entity.getZ(), 5, false, Level.ExplosionInteraction.TNT);
@@ -89,6 +90,7 @@ public class MisfortuneImplosion extends SimpleAbilityItem {
                             AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
                             int duration = (int) ((5) + (misfortune.getBaseValue() / 10) + (enhancement * 3));
                             entity.getPersistentData().putInt("monsterImplosionLightning", duration);
+                            misfortune.setBaseValue(0);
                         } else {
                             entity.getPersistentData().putInt("monsterImplosionLightning", 10);
                         }
@@ -122,9 +124,11 @@ public class MisfortuneImplosion extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, makes all living entities around the user freeze in place and take damage\n" +
-                "Spirituality Used: 75\n" +
-                "Cooldown: 12 seconds").withStyle(ChatFormatting.AQUA));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, causes all entities misfortune around you to implode, causing them to deal with either an explosion which scales off their misfortune, wither and the inability to regenerate for a time dependent on their misfortunem, or lightning to be attracted to them for a time dependent on their misfortune"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("1000").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("10 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

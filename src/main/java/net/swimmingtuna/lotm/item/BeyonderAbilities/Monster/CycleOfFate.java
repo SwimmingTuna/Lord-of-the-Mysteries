@@ -38,7 +38,7 @@ public class CycleOfFate extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public CycleOfFate(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 1, 1000, 10, 35, 35);
+        super(properties, BeyonderClassInit.MONSTER, 1, 1000, 3600, 35, 35);
     }
 
     @Override
@@ -73,11 +73,12 @@ public class CycleOfFate extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use on a living entity, gives you the ability to manipulate them for 30 seconds\n" +
-                "Left Click for Manipulate Emotion\n" +
-                "Spirituality Used: 50\n" +
-                "Cooldown: None").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use on an entity traps a target in a cycle of fate. If you die near the target or 60 seconds pass, everything around them will be reset to how it was when you used the ability on them. Including cooldowns, position, potion effects, and, excluding you, spirituality. Each reset will cost you 1000 spirituality, and you can stop the cycle by clicking on the target again, or running out of spirituality"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("1000").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("3 Minutes").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
 

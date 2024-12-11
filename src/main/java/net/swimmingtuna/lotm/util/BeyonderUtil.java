@@ -556,6 +556,30 @@ public class BeyonderUtil {
             } else if (heldItem.getItem() instanceof SirenSongWeaken) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.SIREN_SONG_HARM.get())));
             }
+            else if (heldItem.getItem() instanceof ProbabilityManipulationFortune) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYMISFORTUNE.get())));
+            }
+            else if (heldItem.getItem() instanceof ProbabilityManipulationMisfortune) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYINFINITEFORTUNE.get())));
+            }
+            else if (heldItem.getItem() instanceof ProbabilityManipulationInfiniteFortune) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYINFINITEMISFORTUNE.get())));
+            }
+            else if (heldItem.getItem() instanceof ProbabilityManipulationInfiniteMisfortune) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYFORTUNEINCREASE.get())));
+            }
+            else if (heldItem.getItem() instanceof ProbabilityManipulationWorldFortune) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYMISFORTUNEINCREASE.get())));
+            }
+            else if (heldItem.getItem() instanceof ProbabilityManipulationWorldMisfortune) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYWIPE.get())));
+            }
+            else if (heldItem.getItem() instanceof ProbabilityManipulationWipe) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYEFFECT.get())));
+            }
+            else if (heldItem.getItem() instanceof ProbabilityManipulationImpulse) {
+                LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYFORTUNE.get())));
+            }
             else if (heldItem.getItem() instanceof LuckManipulation) {
                 LOTMNetworkHandler.sendToServer(new LuckManipulationLeftClickC2S());
             }

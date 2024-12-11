@@ -18,6 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
@@ -92,8 +93,8 @@ public class WhisperOfCorruptionEntity extends AbstractHurtingProjectile {
             }
             for (LivingEntity livingEntity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(scale * 1.5))) {
                 if (livingEntity.getPersistentData().getInt("corruptionWhisperCooldown") == 0) {
-                    if (livingEntity instanceof Player player) {
-                        AttributeInstance corruption = player.getAttribute(ModAttributes.CORRUPTION.get());
+                    if (BeyonderUtil.isBeyonderCapable(livingEntity)) {
+                        AttributeInstance corruption = livingEntity.getAttribute(ModAttributes.CORRUPTION.get());
                         corruption.setBaseValue(corruption.getBaseValue() + scale);
                     } else {
                         livingEntity.hurt(livingEntity.damageSources().magic(), scale);

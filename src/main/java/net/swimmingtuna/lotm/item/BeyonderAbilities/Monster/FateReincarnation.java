@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -24,7 +25,7 @@ import java.util.List;
 public class FateReincarnation extends SimpleAbilityItem {
 
     public FateReincarnation(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 1, 0, 10000);
+        super(properties, BeyonderClassInit.MONSTER, 1, 1250, 14400);
     }
 
     @Override
@@ -56,10 +57,12 @@ public class FateReincarnation extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal(
-                "Upon use, exude an aura of tyranny, not giving any entity permission to move, implanting fear strong enough to not allow them to use their abilities"
-        ).withStyle(/*ChatFormatting.BOLD, ChatFormatting.BLUE*/));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, reincarnates randomly up to 5000 blocks away in both directions, as a non-sequence player. You will automatically advance through the monster pathway over the course of two hours, until you reach your original sequence."));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("1250").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("2 Hours").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     public static void monsterReincarnationChecker(Player player) {

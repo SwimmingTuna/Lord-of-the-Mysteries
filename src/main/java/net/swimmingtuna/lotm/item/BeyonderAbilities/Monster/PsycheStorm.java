@@ -27,6 +27,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +39,7 @@ public class PsycheStorm extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public PsycheStorm(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 6, 100, 300,25,25);
+        super(properties, BeyonderClassInit.MONSTER, 6, 100, 300, 25, 25);
     }
 
 
@@ -70,6 +71,7 @@ public class PsycheStorm extends SimpleAbilityItem {
         useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
+
     @Override
     public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         if (!checkAll(player)) {
@@ -82,7 +84,7 @@ public class PsycheStorm extends SimpleAbilityItem {
     }
 
 
-    private void psycheStorm(Player player, Level level, BlockPos targetPos){
+    private void psycheStorm(Player player, Level level, BlockPos targetPos) {
         if (!player.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int sequence = holder.getCurrentSequence();
@@ -93,12 +95,12 @@ public class PsycheStorm extends SimpleAbilityItem {
             AABB boundingBox = new AABB(targetPos).inflate(radius);
             level.getEntitiesOfClass(LivingEntity.class, boundingBox, LivingEntity::isAlive).forEach(livingEntity -> {
                 if (livingEntity != player) {
-                    if (livingEntity instanceof Player pPlayer) {
-                        AttributeInstance corruption = pPlayer.getAttribute(ModAttributes.CORRUPTION.get());
+                    if (BeyonderUtil.isBeyonderCapable(livingEntity)) {
+                        AttributeInstance corruption = livingEntity.getAttribute(ModAttributes.CORRUPTION.get());
+                        livingEntity.hurt(BeyonderUtil.magicSource(player), damage);
                         double corruptionValue = corruption.getBaseValue();
-                        pPlayer.hurt(pPlayer.damageSources().magic(), damage);
                         corruption.setBaseValue(corruptionValue + corruptionAddition);
-                        pPlayer.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
+                        livingEntity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
                     } else livingEntity.hurt(livingEntity.damageSources().magic(), damage);
                 }
             });
@@ -107,9 +109,11 @@ public class PsycheStorm extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, makes all living entities around the targeted block lose control of their movement\n" +
-                "Spirituality Used: 125\n" +
-                "Cooldown: 15 seconds").withStyle(ChatFormatting.AQUA));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use on a block or entity, attacks the psyche and corrupts them. Increasing their corruption value, hurting them, and confusing them."));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("100").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("15 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

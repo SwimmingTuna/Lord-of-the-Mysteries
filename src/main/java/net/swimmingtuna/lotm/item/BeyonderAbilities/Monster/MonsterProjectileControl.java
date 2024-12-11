@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MonsterProjectileControl extends SimpleAbilityItem {
     public MonsterProjectileControl(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 8, 0, 0);
+        super(properties, BeyonderClassInit.MONSTER, 8, 0, 20);
     }
 
     @Override
@@ -26,6 +26,7 @@ public class MonsterProjectileControl extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
+        addCooldown(player);
         enableOrDisableProjectileControl(player);
         return InteractionResult.SUCCESS;
     }
@@ -40,13 +41,12 @@ public class MonsterProjectileControl extends SimpleAbilityItem {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        tooltipComponents.add(Component.literal("Upon use, haves all of your projectiles curve towards the nearest living entity, use it again to turn it off"));
-        tooltipComponents.add(Component.literal("Activation Cost: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
-        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("40 per second").withStyle(ChatFormatting.YELLOW)));
-        Component.literal("Cooldown: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW));
-        tooltipComponents.add(getPathwayText(this.requiredClass.get()));
-        tooltipComponents.add(getClassText(this.requiredSequence, this.requiredClass.get()));
-        super.baseHoverText(stack, level, tooltipComponents, isAdvanced);
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use, enables or disables your mastery with the bow. If enabled, all arrows will change trajectory to the nearest target after a few seconds"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("1 Second").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

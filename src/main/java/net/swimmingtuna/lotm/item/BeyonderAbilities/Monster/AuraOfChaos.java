@@ -66,12 +66,13 @@ public class AuraOfChaos extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal(
-                "Upon use, exude an aura of tyranny, not giving any entity permission to move, implanting fear strong enough to not allow them to use their abilities"
-        ).withStyle(/*ChatFormatting.BOLD, ChatFormatting.BLUE*/));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, enables or disables an aura of chaos around you. While enabled, it causes all entities around you to suffer a misfortunate event or calamity every two seconds. "));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("150 per second").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
-
     public static void auraOfChaos(LivingEvent.LivingTickEvent event) {
         LivingEntity entity = event.getEntity();
         Level level = entity.level();
@@ -88,7 +89,7 @@ public class AuraOfChaos extends SimpleAbilityItem {
                     CompoundTag persistentData = livingEntity.getPersistentData();
                     Random random = new Random();
                     int randomInt = random.nextInt(100);
-                    if (livingEntity != entity && entity.tickCount % 35 == 0) {
+                    if (livingEntity != entity && entity.tickCount % 40 == 0) {
                         if (randomInt >= 95) {
                             MeteorEntity.summonMeteorAtPosition(entity, (int) livingEntity.getX(), (int) livingEntity.getY(), (int) livingEntity.getZ());
                         } else if (randomInt >= 89 && randomInt <= 94) {

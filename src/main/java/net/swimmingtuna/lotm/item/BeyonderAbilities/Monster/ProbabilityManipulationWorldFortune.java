@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -58,14 +59,17 @@ public class ProbabilityManipulationWorldFortune extends SimpleAbilityItem {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal(
-                "Upon use, exude an aura of tyranny, not giving any entity permission to move, implanting fear strong enough to not allow them to use their abilities"
-        ).withStyle(/*ChatFormatting.BOLD, ChatFormatting.BLUE*/));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, increases the chances of fortunate events occuring to everything by the chosen amount"));
+        tooltipComponents.add(Component.literal("Left click for Probability Manipulation: World Misfortune. Shift to increase amount"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("1500").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("30 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     public static void probabilityManipulationWorld(LivingEntity livingEntity) {
-        if (!livingEntity.level().isClientSide() && livingEntity.tickCount % 20 == 0) {
+        if (!livingEntity.level().isClientSide() && livingEntity.tickCount % 20 == 0 && livingEntity.isShiftKeyDown()) {
             CompoundTag tag = livingEntity.getPersistentData();
             int fortune = tag.getInt("probabilityManipulationWorldFortuneValue");
             int misfortune = tag.getInt("probabilityManipulationWorldMisfortuneValue");
