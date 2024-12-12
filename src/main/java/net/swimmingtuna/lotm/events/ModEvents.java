@@ -2648,7 +2648,7 @@ public class ModEvents {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
                 if (holder.currentClassMatches(BeyonderClassInit.MONSTER)) {
                     int randomChance = (int) ((Math.random() * 20) - holder.getCurrentSequence());
-                    if (randomChance >= 15) {
+                    if (randomChance >= 13) {
                         double amount = event.getAmount();
                         double x = 0;
                         double z = 0;
@@ -2864,7 +2864,7 @@ public class ModEvents {
                                     if (projectile instanceof Arrow arrow && arrow.tickCount >= 100) {
                                         return;
                                     }
-                                    if (reverseChance >= 15) {
+                                    if (reverseChance >= 10) {
                                         float scale = ScaleTypes.BASE.getScaleData(projectile).getScale();
                                         double maxDistance = 6 * scale;
                                         double deltaX = Math.abs(projectile.getX() - livingEntity.getX());
