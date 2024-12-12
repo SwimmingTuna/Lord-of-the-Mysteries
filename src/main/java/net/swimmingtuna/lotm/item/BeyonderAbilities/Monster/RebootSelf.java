@@ -38,10 +38,10 @@ public class RebootSelf extends SimpleAbilityItem {
         if (!checkAll(player)) {
             return InteractionResult.FAIL;
         }
-        addCooldown(player);
         activateSpiritVision(player);
-        if (player.isShiftKeyDown()) {
+        if (!player.isShiftKeyDown()) {
             useSpirituality(player);
+            addCooldown(player);
         }
         return InteractionResult.SUCCESS;
     }
@@ -50,8 +50,10 @@ public class RebootSelf extends SimpleAbilityItem {
         if (!player.level().isClientSide()) {
             if (player.isShiftKeyDown()) {
                 saveDataReboot(player, player.getPersistentData());
+                player.displayClientMessage(Component.literal("Saved State.").withStyle(ChatFormatting.GREEN), true);
             } else {
                 restoreDataReboot(player, player.getPersistentData());
+                player.displayClientMessage(Component.literal("Loaded State.").withStyle(ChatFormatting.GREEN), true);
             }
         }
     }

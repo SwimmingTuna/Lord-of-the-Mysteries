@@ -2776,6 +2776,10 @@ public class ModEvents {
         LivingEntity entity = event.getEntity();
         CompoundTag tag = entity.getPersistentData();
         if (!entity.level().isClientSide()) {
+            if (entity instanceof Player pPlayer) {
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+
+            }
             CycleOfFate.cycleOfFateDeath(event);
 
 
@@ -3638,6 +3642,11 @@ public class ModEvents {
         CompoundTag persistentData = player.getPersistentData();
         BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         int sequence = holder.getCurrentSequence();
+        if (holder.getCurrentClass() != null) {
+            player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(holder.getCurrentClass().maxHealth().get(sequence));
+            player.setHealth(player.getMaxHealth());
+
+        }
         if (!persistentData.contains("keysClicked")) {
             byte[] keysClicked = new byte[5]; // Use appropriate size
             persistentData.putByteArray("keysClicked", keysClicked);

@@ -20,6 +20,7 @@ public class AttributeAdder {
         addToPlayer(event, ModAttributes.DIR);
         addToPlayer(event, ModAttributes.CORRUPTION);
         addToPlayer(event, ModAttributes.LOTM_LUCK);
+        addToPlayer(event, ModAttributes.SANITY);
     }
 
     @SafeVarargs
