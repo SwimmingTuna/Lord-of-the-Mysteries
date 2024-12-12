@@ -62,40 +62,36 @@ public class SpectatorClass implements BeyonderClass {
 
             if (sequenceLevel == 6) {
                applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 0, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
+
             }
             if (sequenceLevel == 5) {
                 applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 0, false, false);
 
             }
             if (sequenceLevel == 4) {
                 applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 0, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
 
             }
             if (sequenceLevel == 3) {
                 applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
             }
             if (sequenceLevel == 2) {
                 applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 1, false, false);
-                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
+                applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
                 applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 0, false, false);
 
             }
             if (sequenceLevel == 1) {
                 applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 2, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 1, false, false);
                 applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
                 applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 0, false, false);
 
             }
             if (sequenceLevel == 0) {
                 applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 3, false, false);
-                applyMobEffect(player,MobEffects.REGENERATION, 300, 2, false, false);
                 applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
                 applyMobEffect(player,MobEffects.FIRE_RESISTANCE, 300, 0, false, false);
             }

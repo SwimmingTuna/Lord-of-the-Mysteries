@@ -83,6 +83,7 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.BattleHypnotism;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.DreamIntoReality;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionBarrier;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.EnvisionLocationBlink;
@@ -1732,6 +1733,7 @@ public class ModEvents {
         CompoundTag tag = entity.getPersistentData();
         Level level = entity.level();
         if (!entity.level().isClientSide) {
+            BattleHypnotism.untargetMobs(event);
             ProbabilityManipulationInfiniteMisfortune.infiniteFortuneMisfortuneTick(event);
             probabilityManipulationWorld(entity);
             CycleOfFate.tickEvent(event);

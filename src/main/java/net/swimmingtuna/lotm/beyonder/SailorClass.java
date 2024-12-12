@@ -122,10 +122,9 @@ public class SailorClass implements BeyonderClass {
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
             applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
-            applyMobEffect(player,MobEffects.REGENERATION, 300, 0, false, false);
             applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 0, false, false);
             dolhpinsGrace = 1;
-            regeneration = 0;
+            regeneration = -1;
             speed = 1;
             strength = 1;
             resistance = 0;
@@ -138,10 +137,9 @@ public class SailorClass implements BeyonderClass {
             applyMobEffect(player,MobEffects.DIG_SPEED, 300, 1, false, false);
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
-            applyMobEffect(player,MobEffects.REGENERATION, 300, 0, false, false);
             applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 0, false, false);
             dolhpinsGrace = 1;
-            regeneration = 0;
+            regeneration = -1;
             speed = 1;
             strength = 1;
             resistance = 0;
@@ -154,10 +152,9 @@ public class SailorClass implements BeyonderClass {
             applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 2, false, false);
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
-            applyMobEffect(player,MobEffects.REGENERATION, 300, 1, false, false);
             applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 1, false, false);
             dolhpinsGrace = 1;
-            regeneration = 1;
+            regeneration = -1;
             speed = 1;
             strength = 2;
             resistance = 1;
@@ -170,10 +167,9 @@ public class SailorClass implements BeyonderClass {
             applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 3, false, false);
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 2, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
-            applyMobEffect(player,MobEffects.REGENERATION, 300, 2, false, false);
             applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 2, false, false);
             dolhpinsGrace = 2;
-            regeneration = 2;
+            regeneration = -1;
             speed = 2;
             strength = 3;
             resistance = 2;
@@ -186,10 +182,9 @@ public class SailorClass implements BeyonderClass {
             applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 3, false, false);
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 2, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
-            applyMobEffect(player,MobEffects.REGENERATION, 300, 3, false, false);
             applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 2, false, false);
             dolhpinsGrace = 2;
-            regeneration = 3;
+            regeneration = -1;
             speed = 2;
             strength = 3;
             resistance = 2;
@@ -202,10 +197,9 @@ public class SailorClass implements BeyonderClass {
             applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 4, false, false);
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
-            applyMobEffect(player,MobEffects.REGENERATION, 300, 3, false, false);
             applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 3, false, false);
             dolhpinsGrace = 2;
-            regeneration = 3;
+            regeneration = -1;
             speed = 3;
             strength = 4;
             resistance = 2;
@@ -219,10 +213,9 @@ public class SailorClass implements BeyonderClass {
             applyMobEffect(player,MobEffects.DIG_SPEED, 300, 4, false, false);
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
-            applyMobEffect(player,MobEffects.REGENERATION, 300, 3, false, false);
             applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 4, false, false);
             dolhpinsGrace = 2;
-            regeneration = 3;
+            regeneration = -1;
             speed = 3;
             strength = 4;
             resistance = 2;
@@ -235,14 +228,13 @@ public class SailorClass implements BeyonderClass {
             applyMobEffect(player,MobEffects.DIG_SPEED, 300, 4, false, false);
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 2, false, false);
-            applyMobEffect(player,MobEffects.REGENERATION, 300, 4, false, false);
             applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 4, false, false);
             dolhpinsGrace = 2;
-            regeneration = 4;
+            regeneration = -1;
             speed = 3;
             strength = 5;
             resistance = 2;
-            haste = 4;
+            haste = 5;
         }
     }
 

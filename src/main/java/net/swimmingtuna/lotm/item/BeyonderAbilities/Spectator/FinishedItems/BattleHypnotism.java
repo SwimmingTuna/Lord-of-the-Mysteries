@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
@@ -34,7 +36,7 @@ import java.util.List;
 public class BattleHypnotism extends SimpleAbilityItem {
 
     public BattleHypnotism(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 6, 150, 300,50,50);
+        super(properties, BeyonderClassInit.SPECTATOR, 6, 150, 300, 50, 50);
     }
 
     @Override
@@ -95,5 +97,19 @@ public class BattleHypnotism extends SimpleAbilityItem {
         attributeBuilder.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_ENTITY_REACH, "Reach modifier", 50, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with entities
         attributeBuilder.put(ForgeMod.BLOCK_REACH.get(), new AttributeModifier(ReachChangeUUIDs.BEYONDER_BLOCK_REACH, "Reach modifier", 50, AttributeModifier.Operation.ADDITION)); //adds a 12 block reach for interacting with blocks, p much useless for this item
         return attributeBuilder.build();
+    }
+
+    public static void untargetMobs(LivingEvent.LivingTickEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (!entity.level().isClientSide() && entity instanceof Mob mob) {
+            if (mob.hasEffect(ModEffects.BATTLEHYPNOTISM.get())) {
+                MobEffectInstance instance = mob.getEffect(ModEffects.BATTLEHYPNOTISM.get());
+                assert instance != null;
+                int duration = instance.getDuration();
+                if (duration <= 5 && mob.getTarget() instanceof Mob) {
+                    mob.setTarget(null);
+                }
+            }
+        }
     }
 }
