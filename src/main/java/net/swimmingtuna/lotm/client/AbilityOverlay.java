@@ -1,5 +1,6 @@
 package net.swimmingtuna.lotm.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -39,32 +40,27 @@ public class AbilityOverlay implements IGuiOverlay {
         List<Map.Entry<String, String>> displayAbilities = getDisplayAbilities(abilities);
         int maxWidth = calculateMaxWidth(gui, displayAbilities);
         int listHeight = displayAbilities.size() * LINE_HEIGHT;
-        int startX = screenWidth - maxWidth - PADDING * 2;
-        int startY = PADDING;
-        guiGraphics.fill(
-                startX - PADDING,
-                startY - PADDING,
-                startX + maxWidth + PADDING,
-                startY + listHeight + PADDING,
-                BACKGROUND_COLOR
-        );
+        int startX = screenWidth - maxWidth - PADDING * 2 + 15;
+        int startY = PADDING - 5;
+        PoseStack poseStack = guiGraphics.pose();
+        poseStack.pushPose();
+        poseStack.scale(0.7f, 0.7f, 1f);
+        int scaledStartX = (int) (startX / 0.7f);
+        int scaledStartY = (int) (startY);
+        int backgroundWidth = (int)Math.ceil((maxWidth + PADDING));
+        int backgroundHeight = (int)Math.ceil((listHeight + PADDING) / 1.1f);
 
-        // Render abilities
-        int y = startY;
+        guiGraphics.fill(scaledStartX - PADDING/2, scaledStartY - PADDING/2, scaledStartX + backgroundWidth, scaledStartY + backgroundHeight, BACKGROUND_COLOR);
+
+        int y = scaledStartY;
         for (Map.Entry<String, String> entry : displayAbilities) {
             String displayText = entry.getKey() + " : " + entry.getValue();
-            guiGraphics.drawString(
-                    gui.getFont(),
-                    displayText,
-                    startX,
-                    y,
-                    TEXT_COLOR,
-                    false
-            );
+            guiGraphics.drawString(gui.getFont(), displayText, scaledStartX, y, TEXT_COLOR, false);
             y += LINE_HEIGHT;
         }
-    }
 
+        poseStack.popPose(); //start higher and more to the right
+    }
     private void cycleThroughAbilities(int totalAbilities) {
         currentStartIndex = (currentStartIndex + MAX_DISPLAY_ABILITIES) % totalAbilities;
     }

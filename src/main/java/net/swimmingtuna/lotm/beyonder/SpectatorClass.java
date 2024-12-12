@@ -53,7 +53,7 @@ public class SpectatorClass implements BeyonderClass {
     @Override
     public void tick(Player player, int sequenceLevel) {
         if (!player.level().isClientSide() && player.isCrouching()) {
-            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 20, -1, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, -1, false, false));
         }
         if (player.level().getGameTime() % 80 == 0) {
             if (sequenceLevel >= 0) {
