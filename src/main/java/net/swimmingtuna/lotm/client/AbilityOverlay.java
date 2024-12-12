@@ -59,7 +59,7 @@ public class AbilityOverlay implements IGuiOverlay {
             y += LINE_HEIGHT;
         }
 
-        poseStack.popPose(); //start higher and more to the right
+        poseStack.popPose();
     }
     private void cycleThroughAbilities(int totalAbilities) {
         currentStartIndex = (currentStartIndex + MAX_DISPLAY_ABILITIES) % totalAbilities;

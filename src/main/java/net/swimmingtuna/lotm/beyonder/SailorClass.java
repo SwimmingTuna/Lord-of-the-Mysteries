@@ -58,7 +58,7 @@ public class SailorClass implements BeyonderClass {
 
     @Override
     public List<Double> maxHealth() {
-        return List.of(350.0, 250.0, 186.0, 136.0, 96.0, 66.0, 54.0, 48.0, 28.0, 22.0);
+        return List.of(80.0, 65.0, 60.0, 50.0, 45.0, 35.0, 30.0, 30.0, 25.0, 23.0);
     }
 
     @Override
@@ -93,11 +93,13 @@ public class SailorClass implements BeyonderClass {
         if (sequenceLevel == 9) {
             applyMobEffect(player,MobEffects.DOLPHINS_GRACE, 300, 0, false, false);
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 0, false, false);
+            applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
+            applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
             dolhpinsGrace = 0;
             regeneration = -1;
             speed = 0;
             strength = -1;
-            resistance = -1;
+            resistance = 0;
             haste = -1;
         }
         if (sequenceLevel == 8) {
@@ -105,20 +107,21 @@ public class SailorClass implements BeyonderClass {
             applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 0, false, false);
             applyMobEffect(player,MobEffects.DIG_SPEED, 300, 0, false, false);
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 0, false, false);
+            applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
             dolhpinsGrace = 0;
             regeneration = -1;
             speed = 0;
             strength = 0;
-            resistance = -1;
+            resistance = 0;
             haste = 0;
         }
         if (sequenceLevel == 7) {
             applyMobEffect(player,MobEffects.DOLPHINS_GRACE, 300, 1, false, false);
-            applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_BOOST, 300, 1, false, false);
             applyMobEffect(player,MobEffects.DIG_SPEED, 300, 0, false, false);
             applyMobEffect(player,MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
             applyMobEffect(player,MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
+            applyMobEffect(player,MobEffects.NIGHT_VISION, 300, 0, false, false);
             applyMobEffect(player,MobEffects.REGENERATION, 300, 0, false, false);
             applyMobEffect(player,MobEffects.WATER_BREATHING, 300, 0, false, false);
             dolhpinsGrace = 1;

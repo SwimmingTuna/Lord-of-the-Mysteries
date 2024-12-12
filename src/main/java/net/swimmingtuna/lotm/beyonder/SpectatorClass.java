@@ -47,7 +47,7 @@ public class SpectatorClass implements BeyonderClass {
 
     @Override
     public List<Double> maxHealth() {
-        return List.of(350.0, 250.0, 186.0, 136.0, 96.0, 66.0, 54.0, 48.0, 28.0, 22.0);
+        return List.of(45.0, 40.0, 40.0, 35.0, 32.0, 28.0, 28.0, 23.0, 20.0, 20.0);
     }
 
     @Override
