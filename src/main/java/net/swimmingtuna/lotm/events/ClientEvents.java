@@ -18,15 +18,14 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onRegisterOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAbove(VanillaGuiOverlay.EXPERIENCE_BAR.id(), "spirituality_overlay", SpiritualityBarOverlay.INSTANCE);
-        event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(), "lotm_health_overlay", HealthBarOverlay.INSTANCE);
+        //event.registerAbove(VanillaGuiOverlay.PLAYER_HEALTH.id(), "lotm_health_overlay", HealthBarOverlay.INSTANCE);
         event.registerAboveAll("ability_overlay", AbilityOverlay.INSTANCE);
     }
 
-    @SubscribeEvent
-    public static void renderCustomHealth(RenderGuiOverlayEvent.Pre event) {
-        if (VanillaGuiOverlay.PLAYER_HEALTH.type() == event.getOverlay()) {
-            event.setCanceled(true);
-        }
-    }
-
+    //@SubscribeEvent
+    //public static void renderCustomHealth(RenderGuiOverlayEvent.Pre event) {
+    //    if (VanillaGuiOverlay.PLAYER_HEALTH.type() == event.getOverlay()) {
+    //        event.setCanceled(true);
+    //    }
+    //}
 }
