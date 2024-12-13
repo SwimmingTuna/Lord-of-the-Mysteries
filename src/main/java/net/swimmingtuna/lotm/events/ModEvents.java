@@ -217,9 +217,6 @@ public class ModEvents {
                 ClientSequenceData.setCurrentSequence(-1);
             }
         }
-        AttributeInstance corruption = player.getAttribute(ModAttributes.CORRUPTION.get());
-        AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
-        AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
 
 
         Map<String, Long> times = new HashMap<>();
@@ -255,7 +252,6 @@ public class ModEvents {
         }
         {
             long startTime = System.nanoTime();
-            CorruptionAndLuckHandler.corruptionAndLuckManagers(serverLevel, misfortune, corruption, player, luck, holder, sequence);
             long endTime = System.nanoTime();
             times.put("corruptionAndLuckManagers", endTime - startTime);
         }
@@ -1176,20 +1172,18 @@ public class ModEvents {
 
     private static void luckDenial(LivingEntity livingEntity) {
         CompoundTag tag = livingEntity.getPersistentData();
-        AttributeInstance luck = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
-        AttributeInstance misfortune = livingEntity.getAttribute(ModAttributes.MISFORTUNE.get());
+        double luck = tag.getDouble("luck");
+        double misfortune = tag.getDouble("misfortune");
         double luckDenialTimer = tag.getDouble("luckDenialTimer");
         double luckDenialLuck = tag.getDouble("luckDenialLuck");
         double luckDenialMisfortune = tag.getDouble("luckDenialMisfortune");
-        double misfortuneAmount = misfortune.getBaseValue();
-        double luckAmount = luck.getBaseValue();
         if (luckDenialTimer >= 1) {
             tag.putDouble("luckDenialTimer", luckDenialTimer - 1);
-            if (luckAmount >= luckDenialLuck) {
-                luck.setBaseValue(luckAmount);
+            if (luck >= luckDenialLuck) {
+                tag.putDouble("luck", luckDenialTimer);
             }
-            if (misfortuneAmount <= luckDenialMisfortune) {
-                misfortune.setBaseValue(luckDenialMisfortune);
+            if (misfortune <= luckDenialMisfortune) {
+                tag.putDouble("misfortune", luckDenialMisfortune);
             }
         }
     }
@@ -1733,6 +1727,9 @@ public class ModEvents {
         CompoundTag tag = entity.getPersistentData();
         Level level = entity.level();
         if (!entity.level().isClientSide) {
+            if (entity.level() instanceof ServerLevel serverLevel) {
+                CorruptionAndLuckHandler.corruptionAndLuckManagers(serverLevel, entity);
+            }
             BattleHypnotism.untargetMobs(event);
             ProbabilityManipulationInfiniteMisfortune.infiniteFortuneMisfortuneTick(event);
             probabilityManipulationWorld(entity);
@@ -2455,18 +2452,30 @@ public class ModEvents {
                     }
                     if (randomInt == 8) {
                         for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(25 - (holder.getCurrentSequence() * 5) + (enhancement * 5)))) {
+                            CompoundTag tag = entity.getPersistentData();
                             if (entity instanceof Player pPlayer) {
                                 BeyonderHolder holder1 = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
-                                AttributeInstance pPlayerCorruption = pPlayer.getAttribute(ModAttributes.CORRUPTION.get());
-                                double corruptionAmount = pPlayerCorruption.getBaseValue();
+                                double corruptionAmount = pPlayer.getPersistentData().getDouble("misfortune");
                                 if (holder1.getCurrentSequence() == 3) {
-                                    pPlayerCorruption.setBaseValue(corruptionAmount + 10 + (enhancement * 3));
+                                    tag.putDouble("corruption", corruptionAmount + 10 + (enhancement * 3));
                                 } else if (holder1.getCurrentSequence() <= 2) {
                                     return;
-                                } else pPlayerCorruption.setBaseValue(corruptionAmount + 30 + (enhancement * 5));
-                            } else
+                                } else {
+                                    tag.putDouble("corruption", corruptionAmount + 30 + (enhancement * 5));
+                                }
+                            } else if (entity instanceof PlayerMobEntity pPlayer) {
+                                double corruptionAmount = pPlayer.getPersistentData().getDouble("misfortune");
+                                if (pPlayer.getCurrentSequence() == 3) {
+                                    tag.putDouble("corruption", corruptionAmount + 10 + (enhancement * 3));
+                                } else if (pPlayer.getCurrentSequence() <= 2) {
+                                    return;
+                                } else {
+                                    tag.putDouble("corruption", corruptionAmount + 30 + (enhancement * 5));
+                                }
+                            } else {
                                 entity.addEffect(new MobEffectInstance(MobEffects.WITHER, 120, 3 + enhancement, false, false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 3 + enhancement, false, false));
+                                entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 3 + enhancement, false, false));
+                            }
                         }
                     }
                     if (randomInt == 9) {
@@ -3670,10 +3679,7 @@ public class ModEvents {
 
     @SubscribeEvent
     public static void addAttributes(EntityAttributeCreationEvent event) {
-        event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.LOTM_LUCK.get()).build());
-        event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.MISFORTUNE.get()).build());
         event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.DIR.get()).build());
-        event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.CORRUPTION.get()).build());
         event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.SANITY.get()).build());
         event.put(EntityInit.PLAYER_MOB_ENTITY.get(), AttributeSupplier.builder().add(ModAttributes.NIGHTMARE.get()).build());
     }
