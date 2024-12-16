@@ -11,14 +11,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
-import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
@@ -88,17 +86,12 @@ public class WhisperOfCorruptionEntity extends AbstractHurtingProjectile {
                 double particleZ = z + scale * Math.cos(phi);
                 double random = (Math.random() * scale) - (scale / 2);
                 if (this.level() instanceof ServerLevel serverLevel) {
-                   serverLevel.sendParticles(ParticleTypes.ENCHANT, particleX, particleY, particleZ,0, random, random, random,0);
+                    serverLevel.sendParticles(ParticleTypes.ENCHANT, particleX, particleY, particleZ, 0, random, random, random, 0);
                 }
             }
             for (LivingEntity livingEntity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(scale * 1.5))) {
                 if (livingEntity.getPersistentData().getInt("corruptionWhisperCooldown") == 0) {
-                    if (BeyonderUtil.isBeyonderCapable(livingEntity)) {
-                        AttributeInstance corruption = livingEntity.getAttribute(ModAttributes.CORRUPTION.get());
-                        corruption.setBaseValue(corruption.getBaseValue() + scale);
-                    } else {
-                        livingEntity.hurt(livingEntity.damageSources().magic(), scale);
-                    }
+                    livingEntity.getPersistentData().putDouble("corruption", livingEntity.getPersistentData().getDouble("corruption" + scale));
                     livingEntity.getPersistentData().putInt("corruptionWhisperCooldown", 10);
                 }
             }
@@ -135,7 +128,7 @@ public class WhisperOfCorruptionEntity extends AbstractHurtingProjectile {
 
     public static void decrementWhisper(CompoundTag tag) {
         if (tag.getInt("corruptionWhisperCooldown") >= 1) {
-            tag.putInt("corruptionWhisperCooldonw",tag.getInt("corruptionWhisperCooldown") - 1 );
+            tag.putInt("corruptionWhisperCooldonw", tag.getInt("corruptionWhisperCooldown") - 1);
         }
     }
 }

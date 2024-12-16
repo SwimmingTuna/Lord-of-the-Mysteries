@@ -11,7 +11,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -23,10 +22,10 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
+import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.BlockEntityInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.Earthquake;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.TickableBlockEntity;
 
@@ -143,94 +142,151 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
         }
     }
 
-    private void isGoodPlayerAffect(Player affectedPlayer, int multiplier) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(affectedPlayer);
-        if (!(holder.getCurrentClass() == BeyonderClassInit.MONSTER.get() && holder.getCurrentSequence() <= 3)) {
-            AttributeInstance luck = affectedPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
-            AttributeInstance misfortune = affectedPlayer.getAttribute(ModAttributes.MISFORTUNE.get());
+    private void isGoodPlayerAffect(LivingEntity livingEntity, int multiplier) {
+        if (!livingEntity.level().isClientSide()) {
+            CompoundTag tag = livingEntity.getPersistentData();
+            double misfortune = tag.getDouble("misfortune");
+            double luck = tag.getDouble("luck");
+            if (livingEntity instanceof Player pPlayer) {
 
-            if (ticks % 40 == 0) {
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.REGENERATION, 100, 2 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.SATURATION, 100, multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
-            }
-            List<ItemStack> itemStacks = new ArrayList<>(affectedPlayer.getInventory().items);
-            itemStacks.addAll(affectedPlayer.getInventory().armor);
-            itemStacks.add(affectedPlayer.getInventory().offhand.get(0));
-            List<ItemStack> nonEmptyStacks = itemStacks.stream()
-                    .filter(stack -> !stack.isEmpty())
-                    .toList();
-            if (ticks % 10 == 0) {
-                affectedPlayer.giveExperiencePoints(8);
-                for (ItemStack stack : nonEmptyStacks) {
-                    if (stack.isDamageableItem()) {
-                        stack.setDamageValue(Math.max(0, stack.getDamageValue() - 1)); //configure this to make it scale with how small the radius is compared to max radius
+                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                if (!(holder.getCurrentClass() == BeyonderClassInit.MONSTER.get() && holder.getCurrentSequence() <= 3)) {
+                    if (ticks % 40 == 0) {
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.REGENERATION, 100, 2 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.SATURATION, 100, multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+                    }
+                    List<ItemStack> itemStacks = new ArrayList<>(pPlayer.getInventory().items);
+                    itemStacks.addAll(pPlayer.getInventory().armor);
+                    itemStacks.add(pPlayer.getInventory().offhand.get(0));
+                    List<ItemStack> nonEmptyStacks = itemStacks.stream()
+                            .filter(stack -> !stack.isEmpty())
+                            .toList();
+                    if (ticks % 10 == 0) {
+                        pPlayer.giveExperiencePoints(8);
+                        for (ItemStack stack : nonEmptyStacks) {
+                            if (stack.isDamageableItem()) {
+                                stack.setDamageValue(Math.max(0, stack.getDamageValue() - 1)); //configure this to make it scale with how small the radius is compared to max radius
+                            }
+                        }
+                        if (livingEntity.hasEffect(MobEffects.POISON)) {
+                            livingEntity.removeEffect(MobEffects.POISON);
+                        }
+                        if (livingEntity.hasEffect(MobEffects.WITHER)) {
+                            livingEntity.removeEffect(MobEffects.WITHER);
+                        }
+                        if (livingEntity.hasEffect(MobEffects.HUNGER)) {
+                            livingEntity.removeEffect(MobEffects.HUNGER);
+                        }
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DAMAGE_BOOST, 100, multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DIG_SPEED, 100, multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.MOVEMENT_SPEED, 100, multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.JUMP, 100, multiplier, false, false);
+
+                        // Survival benefits
+                        pPlayer.getFoodData().setFoodLevel(Math.min(20, pPlayer.getFoodData().getFoodLevel() + multiplier));
+                    }
+                    if (ticks % 200 == 0) {
+                        tag.putDouble("luck", (Math.min(100, luck + multiplier)));
+                        tag.putDouble("misfortune", Math.max(0, misfortune - multiplier));
+                    }
+                } else {
+                    if (ticks % 40 == 0) {
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.REGENERATION, 100, 3 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.SATURATION, 100, 2 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+                    }
+                    List<ItemStack> itemStacks = new ArrayList<>(pPlayer.getInventory().items);
+                    itemStacks.addAll(pPlayer.getInventory().armor);
+                    itemStacks.add(pPlayer.getInventory().offhand.get(0));
+                    List<ItemStack> nonEmptyStacks = itemStacks.stream()
+                            .filter(stack -> !stack.isEmpty())
+                            .toList();
+                    if (ticks % 10 == 0) {
+                        pPlayer.giveExperiencePoints(16 * multiplier);
+                        for (ItemStack stack : nonEmptyStacks) {
+                            if (stack.isDamageableItem()) {
+                                stack.setDamageValue(Math.max(0, stack.getDamageValue() - 4 * multiplier)); //configure this to make it scale with how small the radius is compared to max radius
+                            }
+                        }
+                        if (livingEntity.hasEffect(MobEffects.POISON)) {
+                            livingEntity.removeEffect(MobEffects.POISON);
+                        }
+                        if (livingEntity.hasEffect(MobEffects.WITHER)) {
+                            livingEntity.removeEffect(MobEffects.WITHER);
+                        }
+                        if (livingEntity.hasEffect(MobEffects.HUNGER)) {
+                            livingEntity.removeEffect(MobEffects.HUNGER);
+                        }
+                        if (livingEntity.hasEffect(MobEffects.CONFUSION)) {
+                            livingEntity.removeEffect(MobEffects.CONFUSION);
+                        }
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DAMAGE_BOOST, 100, 2 * multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DIG_SPEED, 100, 2 * multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.MOVEMENT_SPEED, 100, 2 * multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.JUMP, 100, 2 * multiplier, false, false);
+
+                        // Survival benefits
+                        pPlayer.getFoodData().setFoodLevel(Math.min(20, pPlayer.getFoodData().getFoodLevel() + 4 * multiplier));
+                    }
+                    if (ticks % 200 == 0) {
+                        tag.putDouble("luck", (Math.min(100, luck + multiplier)));
+                        tag.putDouble("misfortune", Math.max(0, misfortune - multiplier));
                     }
                 }
-                if (affectedPlayer.hasEffect(MobEffects.POISON)) {
-                    affectedPlayer.removeEffect(MobEffects.POISON);
-                }
-                if (affectedPlayer.hasEffect(MobEffects.WITHER)) {
-                    affectedPlayer.removeEffect(MobEffects.WITHER);
-                }
-                if (affectedPlayer.hasEffect(MobEffects.HUNGER)) {
-                    affectedPlayer.removeEffect(MobEffects.HUNGER);
-                }
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DAMAGE_BOOST, 100, multiplier, false, false);
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DIG_SPEED, 100, multiplier, false, false);
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.MOVEMENT_SPEED, 100, multiplier, false, false);
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.JUMP, 100, multiplier, false, false);
-
-                // Survival benefits
-                affectedPlayer.getFoodData().setFoodLevel(Math.min(20, affectedPlayer.getFoodData().getFoodLevel() + multiplier));
-            }
-            if (ticks % 200 == 0 && BeyonderUtil.isBeyonderCapable(affectedPlayer)) {
-                luck.setBaseValue(Math.min(100, luck.getBaseValue() + multiplier));
-                misfortune.setBaseValue(Math.max(0, misfortune.getBaseValue() - multiplier));
-            }
-        } else {
-            AttributeInstance luck = affectedPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
-            AttributeInstance misfortune = affectedPlayer.getAttribute(ModAttributes.MISFORTUNE.get());
-
-            if (ticks % 40 == 0) {
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.REGENERATION, 100, 3 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.SATURATION, 100, 2 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
-            }
-            List<ItemStack> itemStacks = new ArrayList<>(affectedPlayer.getInventory().items);
-            itemStacks.addAll(affectedPlayer.getInventory().armor);
-            itemStacks.add(affectedPlayer.getInventory().offhand.get(0));
-            List<ItemStack> nonEmptyStacks = itemStacks.stream()
-                    .filter(stack -> !stack.isEmpty())
-                    .toList();
-            if (ticks % 10 == 0) {
-                affectedPlayer.giveExperiencePoints(16 * multiplier);
-                for (ItemStack stack : nonEmptyStacks) {
-                    if (stack.isDamageableItem()) {
-                        stack.setDamageValue(Math.max(0, stack.getDamageValue() - 4 * multiplier)); //configure this to make it scale with how small the radius is compared to max radius
+            } else if (livingEntity instanceof PlayerMobEntity pPlayer) {
+                int sequence = pPlayer.getCurrentSequence();
+                boolean isMonster = pPlayer.getCurrentPathway() == BeyonderClassInit.MONSTER;
+                if (!(isMonster && pPlayer.getCurrentSequence() <= 3)) {
+                    if (ticks % 40 == 0) {
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.REGENERATION, 100, 2 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.SATURATION, 100, multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+                    }
+                    if (ticks % 10 == 0) {
+                        if (livingEntity.hasEffect(MobEffects.POISON)) {
+                            livingEntity.removeEffect(MobEffects.POISON);
+                        }
+                        if (livingEntity.hasEffect(MobEffects.WITHER)) {
+                            livingEntity.removeEffect(MobEffects.WITHER);
+                        }
+                        if (livingEntity.hasEffect(MobEffects.HUNGER)) {
+                            livingEntity.removeEffect(MobEffects.HUNGER);
+                        }
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DAMAGE_BOOST, 100, multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DIG_SPEED, 100, multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.MOVEMENT_SPEED, 100, multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.JUMP, 100, multiplier, false, false);
+                    }
+                    if (ticks % 200 == 0) {
+                        tag.putDouble("luck", (Math.min(100, luck + multiplier)));
+                        tag.putDouble("misfortune", Math.max(0, misfortune - multiplier));
+                    }
+                } else {
+                    if (ticks % 40 == 0) {
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.REGENERATION, 100, 3 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.SATURATION, 100, 2 * multiplier, false, false); //configure this to make it scale with how small the radius is compared to max radius
+                    }
+                    if (ticks % 10 == 0) {
+                        if (livingEntity.hasEffect(MobEffects.POISON)) {
+                            livingEntity.removeEffect(MobEffects.POISON);
+                        }
+                        if (livingEntity.hasEffect(MobEffects.WITHER)) {
+                            livingEntity.removeEffect(MobEffects.WITHER);
+                        }
+                        if (livingEntity.hasEffect(MobEffects.HUNGER)) {
+                            livingEntity.removeEffect(MobEffects.HUNGER);
+                        }
+                        if (livingEntity.hasEffect(MobEffects.CONFUSION)) {
+                            livingEntity.removeEffect(MobEffects.CONFUSION);
+                        }
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DAMAGE_BOOST, 100, 2 * multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DIG_SPEED, 100, 2 * multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.MOVEMENT_SPEED, 100, 2 * multiplier, false, false);
+                        BeyonderUtil.applyMobEffect(livingEntity, MobEffects.JUMP, 100, 2 * multiplier, false, false);
+                    }
+                    if (ticks % 200 == 0) {
+                        tag.putDouble("luck", (Math.min(100, luck + multiplier)));
+                        tag.putDouble("misfortune", Math.max(0, misfortune - multiplier));
                     }
                 }
-                if (affectedPlayer.hasEffect(MobEffects.POISON)) {
-                    affectedPlayer.removeEffect(MobEffects.POISON);
-                }
-                if (affectedPlayer.hasEffect(MobEffects.WITHER)) {
-                    affectedPlayer.removeEffect(MobEffects.WITHER);
-                }
-                if (affectedPlayer.hasEffect(MobEffects.HUNGER)) {
-                    affectedPlayer.removeEffect(MobEffects.HUNGER);
-                }
-                if (affectedPlayer.hasEffect(MobEffects.CONFUSION)) {
-                    affectedPlayer.removeEffect(MobEffects.CONFUSION);
-                }
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DAMAGE_BOOST, 100, 2 * multiplier, false, false);
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.DIG_SPEED, 100, 2 * multiplier, false, false);
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.MOVEMENT_SPEED, 100, 2 * multiplier, false, false);
-                BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.JUMP, 100, 2 * multiplier, false, false);
-
-                // Survival benefits
-                affectedPlayer.getFoodData().setFoodLevel(Math.min(20, affectedPlayer.getFoodData().getFoodLevel() + 4 * multiplier));
-            }
-            if (ticks % 200 == 0 && BeyonderUtil.isBeyonderCapable(affectedPlayer)) {
-                luck.setBaseValue(Math.min(100, luck.getBaseValue() + multiplier));
-                misfortune.setBaseValue(Math.max(0, misfortune.getBaseValue() - multiplier));
             }
         }
     }
@@ -247,7 +303,7 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
         }
         ticks++;
         AABB affectedArea = new AABB(worldPosition.getX() - radius, worldPosition.getY() - radius, worldPosition.getZ() - radius, worldPosition.getX() + radius, worldPosition.getY() + radius, worldPosition.getZ() + radius);
-        List<Player> players = level.getEntitiesOfClass(Player.class, affectedArea);
+        List<LivingEntity> players = level.getEntitiesOfClass(LivingEntity.class, affectedArea);
         List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, affectedArea);
         int multiplier;
         Player player = level.getPlayerByUUID(ownerUUID);
@@ -266,7 +322,7 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
                     }
                 }
             }
-            for (Player affectedPlayer : players) {
+            for (LivingEntity affectedPlayer : players) {
                 isGoodPlayerAffect(affectedPlayer, multiplier);
             }
 
@@ -295,47 +351,77 @@ public class MonsterDomainBlockEntity extends BlockEntity implements TickableBlo
             }
 
 
-            for (Player affectedPlayer : players) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(affectedPlayer);
-                if (!(holder.getCurrentClass() == BeyonderClassInit.MONSTER.get() && holder.getCurrentSequence() <= 3)) {
-                    AttributeInstance luck = affectedPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
-                    AttributeInstance misfortune = affectedPlayer.getAttribute(ModAttributes.MISFORTUNE.get());
+            for (LivingEntity affectedPlayer : players) {
+                CompoundTag tag = affectedPlayer.getPersistentData();
+                double luck = tag.getDouble("luck");
+                double misfortune = tag.getDouble("misfortune");
+                if (affectedPlayer instanceof Player pPlayer) {
+                    BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
+                    if (!(holder.getCurrentClass() == BeyonderClassInit.MONSTER.get() && holder.getCurrentSequence() <= 3)) {
+                        if (ticks % 40 == 0) {
+                            BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.WEAKNESS, 100, multiplier, false, false);
+                            BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.MOVEMENT_SLOWDOWN, 100, multiplier, false, false);
+                            BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.HUNGER, 100, multiplier, false, false);
+                            BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.POISON, 100, multiplier, false, false);
+                        }
+                        List<ItemStack> itemStacks = new ArrayList<>(pPlayer.getInventory().items);
+                        itemStacks.addAll(pPlayer.getInventory().armor);
+                        itemStacks.add(pPlayer.getInventory().offhand.get(0));
+                        List<ItemStack> nonEmptyStacks = itemStacks.stream()
+                                .filter(stack -> !stack.isEmpty())
+                                .toList();
+                        if (ticks % 10 == 0) {
+                            pPlayer.giveExperiencePoints(-5 * multiplier);
+                            for (ItemStack stack : nonEmptyStacks) {
+                                stack.setDamageValue(Math.max(0, stack.getDamageValue() + multiplier)); //configure this to make it scale with how small the radius is compared to max radius
+                            }
+                        }
+                        if (ticks % 2 == 0) {
+                            if (affectedPlayer.hasEffect(MobEffects.REGENERATION)) {
+                                affectedPlayer.removeEffect(MobEffects.REGENERATION);
+                            }
+                            if (affectedPlayer.hasEffect(MobEffects.ABSORPTION)) {
+                                affectedPlayer.removeEffect(MobEffects.ABSORPTION);
+                            }
+                            if (affectedPlayer.hasEffect(MobEffects.DIG_SPEED)) {
+                                affectedPlayer.removeEffect(MobEffects.DIG_SPEED);
+                            }
 
-                    if (ticks % 40 == 0) {
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.WEAKNESS, 100, multiplier, false, false);
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.MOVEMENT_SLOWDOWN, 100, multiplier, false, false);
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.HUNGER, 100, multiplier, false, false);
-                        BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.POISON, 100, multiplier, false, false);
-                    }
-                    List<ItemStack> itemStacks = new ArrayList<>(affectedPlayer.getInventory().items);
-                    itemStacks.addAll(affectedPlayer.getInventory().armor);
-                    itemStacks.add(affectedPlayer.getInventory().offhand.get(0));
-                    List<ItemStack> nonEmptyStacks = itemStacks.stream()
-                            .filter(stack -> !stack.isEmpty())
-                            .toList();
-                    if (ticks % 10 == 0) {
-                        affectedPlayer.giveExperiencePoints(-5 * multiplier);
-                        for (ItemStack stack : nonEmptyStacks) {
-                            stack.setDamageValue(Math.max(0, stack.getDamageValue() + multiplier)); //configure this to make it scale with how small the radius is compared to max radius
+                            // Survival benefits
+                            pPlayer.getFoodData().setFoodLevel(Math.min(20, pPlayer.getFoodData().getFoodLevel() - multiplier));
+                        }
+                        if (ticks % 200 == 0) {
+                            tag.putDouble("luck", Math.max(100, luck - multiplier));
+                            tag.putDouble("misfortune", Math.min(100, misfortune + multiplier));
                         }
                     }
-                    if (ticks % 2 == 0) {
-                        if (affectedPlayer.hasEffect(MobEffects.REGENERATION)) {
-                            affectedPlayer.removeEffect(MobEffects.REGENERATION);
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.ABSORPTION)) {
-                            affectedPlayer.removeEffect(MobEffects.ABSORPTION);
-                        }
-                        if (affectedPlayer.hasEffect(MobEffects.DIG_SPEED)) {
-                            affectedPlayer.removeEffect(MobEffects.DIG_SPEED);
-                        }
+                }
+                if (affectedPlayer instanceof PlayerMobEntity pPlayer) {
 
-                        // Survival benefits
-                        affectedPlayer.getFoodData().setFoodLevel(Math.min(20, affectedPlayer.getFoodData().getFoodLevel() - multiplier));
-                    }
-                    if (ticks % 200 == 0 && BeyonderUtil.isBeyonderCapable(affectedPlayer)) {
-                        luck.setBaseValue(Math.max(100, luck.getBaseValue() - multiplier));
-                        misfortune.setBaseValue(Math.min(100, misfortune.getBaseValue() + multiplier));
+                    if (!(pPlayer.getCurrentPathway() == BeyonderClassInit.MONSTER && pPlayer.getCurrentSequence() <= 3)) {
+                        if (ticks % 40 == 0) {
+                            BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.WEAKNESS, 100, multiplier, false, false);
+                            BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.MOVEMENT_SLOWDOWN, 100, multiplier, false, false);
+                            BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.HUNGER, 100, multiplier, false, false);
+                            BeyonderUtil.applyMobEffect(affectedPlayer, MobEffects.POISON, 100, multiplier, false, false);
+                        }
+                        if (ticks % 2 == 0) {
+                            if (affectedPlayer.hasEffect(MobEffects.REGENERATION)) {
+                                affectedPlayer.removeEffect(MobEffects.REGENERATION);
+                            }
+                            if (affectedPlayer.hasEffect(MobEffects.ABSORPTION)) {
+                                affectedPlayer.removeEffect(MobEffects.ABSORPTION);
+                            }
+                            if (affectedPlayer.hasEffect(MobEffects.DIG_SPEED)) {
+                                affectedPlayer.removeEffect(MobEffects.DIG_SPEED);
+                            }
+
+                            // Survival benefits
+                        }
+                        if (ticks % 200 == 0) {
+                            tag.putDouble("luck", Math.max(100, luck - multiplier));
+                            tag.putDouble("misfortune", Math.min(100, misfortune + multiplier));
+                        }
                     }
                 }
             }

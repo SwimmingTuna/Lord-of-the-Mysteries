@@ -209,6 +209,9 @@ public class ModEvents {
         if (!player.level().isClientSide() && holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 8 && player.tickCount % 5 == 0) {
             checkForProjectiles(player);
         }
+        if (!player.level().isClientSide() && player.tickCount % 20 == 0) {
+
+        }
 
 
         if (player.tickCount % 20 == 0 && player instanceof ServerPlayer serverPlayer) {
@@ -1677,19 +1680,20 @@ public class ModEvents {
 
         // Check if the player is holding your SimpleAbilityItem
         if (itemStack.getItem() instanceof SimpleAbilityItem) {
-            LivingEntity targetEntity = (LivingEntity) event.getTarget();
+            if (event.getTarget() instanceof LivingEntity livingEntity) {
 
-            // Execute custom interaction logic
-            InteractionResult result = ((SimpleAbilityItem) itemStack.getItem())
-                    .useAbilityOnEntity(itemStack, player, targetEntity, event.getHand());
 
-            // Cancel the default interaction if your item interaction is successful
-            if (result == InteractionResult.SUCCESS) {
-                event.setCanceled(true);  // Cancels the event, preventing default interaction
-                event.setCancellationResult(InteractionResult.SUCCESS);
+                // Execute custom interaction logic
+                InteractionResult result = ((SimpleAbilityItem) itemStack.getItem())
+                        .useAbilityOnEntity(itemStack, player, livingEntity, event.getHand());
+
+                // Cancel the default interaction if your item interaction is successful
+                if (result == InteractionResult.SUCCESS) {
+                    event.setCanceled(true);  // Cancels the event, preventing default interaction
+                    event.setCancellationResult(InteractionResult.SUCCESS);
+                }
             }
         }
-
     }
 
 
@@ -1741,6 +1745,8 @@ public class ModEvents {
             NoRegenerationEffect.preventRegeneration(entity);
             WhisperOfCorruptionEntity.decrementWhisper(tag);
             MisfortuneRedirection.misfortuneLivingTickEvent(event);
+            doubleProphecyDamageHelper(event);
+
             MonsterCalamityIncarnation.calamityTickEvent(event);
             dreamWeaving(entity);
 
@@ -2263,15 +2269,17 @@ public class ModEvents {
         }
     }
 
-    private static void monsterLuckPoisonAttacker(Player pPlayer) {
+    private static void monsterLuckPoisonAttacker(LivingEntity pPlayer) {
         if (pPlayer.tickCount % 100 == 0) {
             if (pPlayer.getPersistentData().getInt("luckAttackerPoisoned") >= 1) {
                 for (LivingEntity livingEntity : pPlayer.level().getEntitiesOfClass(LivingEntity.class, pPlayer.getBoundingBox().inflate(50))) {
-                    if (livingEntity.getPersistentData().getInt("attackedMonster") >= 1) {
-                        livingEntity.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
-                        livingEntity.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 2, true, true));
-                        livingEntity.getPersistentData().putInt("attackedMonster", 0);
-                        pPlayer.getPersistentData().putInt("luckAttackerPoisoned", pPlayer.getPersistentData().getInt("luckAttackerPoisoned") - 1);
+                    if (livingEntity != pPlayer) {
+                        if (livingEntity.getPersistentData().getInt("attackedMonster") >= 1) {
+                            livingEntity.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 60, 1, false, false));
+                            livingEntity.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 2, true, true));
+                            livingEntity.getPersistentData().putInt("attackedMonster", 0);
+                            pPlayer.getPersistentData().putInt("luckAttackerPoisoned", pPlayer.getPersistentData().getInt("luckAttackerPoisoned") - 1);
+                        }
                     }
                 }
             }
@@ -2619,17 +2627,35 @@ public class ModEvents {
                 }
                 if (attacker.getPersistentData().getInt("beneficialFalseProphecyAttack") >= 1) {
                     attacker.getPersistentData().putInt("beneficialDamageDoubled", 5);
+                    attacker.getPersistentData().putBoolean("shouldDoubleProphecyDamage", true);
                     attacker.getPersistentData().putInt("beneficialFalseProphecyAttack", 0);
                 }
-                if (attacker.getPersistentData().getInt("beneficialDamageDoubled") >= 1) {
+                if (attacker.getPersistentData().getInt("beneficialDamageDoubled") >= 1 && attacker.getPersistentData().getBoolean("shouldDoubleProphecyDamage")) {
                     attacker.getPersistentData().putInt("beneficialDamageDoubled", attacker.getPersistentData().getInt("beneficialDamageDoubled") - 1);
                     event.setCanceled(true);
+                    attacker.getPersistentData().putBoolean("shouldDoubleProphecyDamage", false);
                     attacked.hurt(BeyonderUtil.magicSource(attacker), event.getAmount() * 2);
                 }
                 if (attacker.getPersistentData().getInt("harmfulFalseProphecyAttack") >= 1) {
                     attacker.getPersistentData().putInt("luckDoubleDamage", attacker.getPersistentData().getInt("luckDoubleDamage") + 5);
                     attacker.getPersistentData().putInt("harmfulFalseProphecyAttack", 0);
                 }
+            }
+        }
+    }
+
+    public static void doubleProphecyDamageHelper(LivingEvent.LivingTickEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (entity.tickCount % 5 != 0) {
+            return;
+        } else {
+            CompoundTag tag = entity.getPersistentData();
+            boolean x = tag.getBoolean("shouldDoubleProphecyDamage");
+            int y = tag.getInt("beneficialDamageDoubled");
+            if (y < 1) {
+                return;
+            } else if (!x) {
+                tag.putBoolean("shouldDoubleProphecyDamage", true);
             }
         }
     }
@@ -2654,8 +2680,9 @@ public class ModEvents {
     public static void monsterDodgeAttack(LivingHurtEvent event) {
         LivingEntity entity = event.getEntity();
         DamageSource source = event.getSource();
+        Entity entitySource = source.getEntity();
         if (!entity.level().isClientSide() && BeyonderUtil.isBeyonderCapable(entity)) {
-            if (entity instanceof Player pPlayer && !source.is(DamageTypes.FALL) && !source.is(DamageTypes.DROWN) && !source.is(DamageTypes.FELL_OUT_OF_WORLD) && !source.is(DamageTypes.ON_FIRE)) {
+            if (entity instanceof Player pPlayer && (entitySource != null && entitySource != entity) && !source.is(DamageTypes.CRAMMING) && !source.is(DamageTypes.STARVE) && !source.is(DamageTypes.FALL) && !source.is(DamageTypes.DROWN) && !source.is(DamageTypes.FELL_OUT_OF_WORLD) && !source.is(DamageTypes.ON_FIRE)) {
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
                 if (holder.currentClassMatches(BeyonderClassInit.MONSTER)) {
                     int randomChance = (int) ((Math.random() * 20) - holder.getCurrentSequence());
@@ -2671,7 +2698,7 @@ public class ModEvents {
                             x = amount * 0.15;
                             z = amount * 0.15;
                         }
-                        entity.setDeltaMovement(x,1,z);
+                        entity.setDeltaMovement(x, 1, z);
                         entity.hurtMarked = true;
                         event.setAmount(0);
                         entity.sendSystemMessage(Component.literal("A breeze of wind moved you out of the way of damage").withStyle(ChatFormatting.GREEN));
@@ -2766,8 +2793,12 @@ public class ModEvents {
                 }
                 if (ignoreDamage >= 1) {
                     event.setCanceled(true);
+                    entity.getPersistentData().putInt("luckIgnoreDamage", entity.getPersistentData().getInt("luckIgnoreDamage") - 1);
+                    player.sendSystemMessage(Component.literal("Ignore Damage value is " + player.getPersistentData().getInt("luckIgnoreDamage")));
                 } else if (doubleDamage >= 1) {
                     event.setAmount(event.getAmount() * 2);
+                    entity.getPersistentData().putInt("luckDoubleDamage", entity.getPersistentData().getInt("luckDoubleDamage") - 1);
+
                 }
             }
 
@@ -2850,7 +2881,7 @@ public class ModEvents {
                         double deltaX = Math.abs(projectile.getX() - livingEntity.getX());
                         double deltaY = Math.abs(projectile.getY() - livingEntity.getY());
                         double deltaZ = Math.abs(projectile.getZ() - livingEntity.getZ());
-                        if (deltaX <= maxDistance || deltaY <= maxDistance || deltaZ <= maxDistance && projectile.getOwner() != livingEntity) {
+                        if ((deltaX <= maxDistance && deltaY <= maxDistance && deltaZ <= maxDistance) && projectile.getOwner() != livingEntity) {
                             double mathRandom = (Math.random() + .4) - 0.2;
                             double x = projectile.getDeltaMovement().x() + (mathRandom * scale);
                             double y = projectile.getDeltaMovement().y() + (mathRandom * scale);
@@ -2885,7 +2916,7 @@ public class ModEvents {
                                         double deltaX = Math.abs(projectile.getX() - livingEntity.getX());
                                         double deltaY = Math.abs(projectile.getY() - livingEntity.getY());
                                         double deltaZ = Math.abs(projectile.getZ() - livingEntity.getZ());
-                                        if (deltaX <= maxDistance || deltaY <= maxDistance || deltaZ <= maxDistance && projectile.getOwner() != livingEntity) {
+                                        if ((deltaX <= maxDistance && deltaY <= maxDistance && deltaZ <= maxDistance) && projectile.getOwner() != livingEntity) {
                                             double x = projectile.getDeltaMovement().x() * -1;
                                             double y = projectile.getDeltaMovement().y() * -1;
                                             double z = projectile.getDeltaMovement().z() * -1;
@@ -3724,15 +3755,15 @@ public class ModEvents {
                 if (occursion >= 1) {
                     tag.putInt("chaosWalkerCalamityOccursion", occursion - 1);
                     if (occursion % 3 == 0) {
-                        pPlayer.sendSystemMessage(Component.literal("Occursion value is " + occursion));
                         Random random = new Random();
                         int randomInt = random.nextInt(100);
                         if (randomInt >= 85) {
+                            pPlayer.sendSystemMessage(Component.literal("Meteor Summoned"));
                             int farAwayX = getCoordinateAtLeastAway(chaosWalkerSafeX, 60, radius);
                             int farAwayZ = getCoordinateAtLeastAway(chaosWalkerSafeZ, 60, radius);
-                            int randomInt2 = (int) ((Math.random() * radius) - radius);
+                            int randomInt2 = (int) ((Math.random() * radius) - (double) radius / 2);
                             int surfaceY = pPlayer.level().getHeight(Heightmap.Types.WORLD_SURFACE, farAwayX, farAwayZ) + 1;
-                            MeteorEntity.summonMeteorAtPositionWithScale(pPlayer, pPlayer.getX() + randomInt2, pPlayer.getY(), pPlayer.getZ() + randomInt2, farAwayX, surfaceY, farAwayZ, 4);
+                            MeteorEntity.summonMeteorAtPositionWithScale(pPlayer, pPlayer.getX() + randomInt2, pPlayer.getY() - 50, pPlayer.getZ() + randomInt2, farAwayX, surfaceY - 50, farAwayZ, 4);
                         }
                         if (randomInt >= 70 && randomInt <= 84) {
                             int farAwayX = getCoordinateAtLeastAway(chaosWalkerSafeX, 30, radius);
@@ -3784,6 +3815,7 @@ public class ModEvents {
                                 int surfaceY = pPlayer.level().getHeight(Heightmap.Types.WORLD_SURFACE, farAwayX, farAwayZ) + 1;
                                 StoneEntity stoneEntity = new StoneEntity(EntityInit.STONE_ENTITY.get(), pPlayer.level());
                                 stoneEntity.teleportTo(farAwayX, surfaceY + 150 + 30, farAwayZ);
+                                stoneEntity.setOwner(pPlayer);
                                 stoneEntity.setDeltaMovement(0, -4, 0);
                                 pPlayer.level().addFreshEntity(stoneEntity);
                             }
@@ -3805,6 +3837,7 @@ public class ModEvents {
                                     lavaEntity.teleportTo(spawnPos.getX(), spawnPos.getY() + 3, spawnPos.getZ());
                                     lavaEntity.setDeltaMovement(0, 3 + (Math.random() * 3), 0);
                                     lavaEntity.setLavaXRot(random1.nextInt(18));
+                                    lavaEntity.setOwner(pPlayer);
                                     lavaEntity.setLavaYRot(random1.nextInt(18));
                                     ScaleData scaleData = ScaleTypes.BASE.getScaleData(lavaEntity);
                                     scaleData.setScale(1.0f + random1.nextFloat() * 2.0f);

@@ -10,7 +10,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -22,8 +21,6 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
-import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,18 +31,18 @@ public class LuckDenial extends SimpleAbilityItem {
     private final Lazy<Multimap<Attribute, AttributeModifier>> lazyAttributeMap = Lazy.of(this::createAttributeMap);
 
     public LuckDenial(Properties properties) {
-        super(properties, BeyonderClassInit.MONSTER, 4, 175, 100,100,100);
+        super(properties, BeyonderClassInit.MONSTER, 4, 175, 100, 100, 100);
     }
 
     @Override
     public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
         if (!player.level().isClientSide()) {
-        if (!checkAll(player)) {
-            return InteractionResult.FAIL;
-        }
-        useSpirituality(player);
-        addCooldown(player);
-        giftLuck(interactionTarget, player);
+            if (!checkAll(player)) {
+                return InteractionResult.FAIL;
+            }
+            useSpirituality(player);
+            addCooldown(player);
+            giftLuck(interactionTarget, player);
         }
         return InteractionResult.SUCCESS;
     }
@@ -80,23 +77,17 @@ public class LuckDenial extends SimpleAbilityItem {
 
     private static void giftLuck(LivingEntity interactionTarget, Player player) {
         if (!player.level().isClientSide() && !interactionTarget.level().isClientSide()) {
-            if (BeyonderUtil.isBeyonderCapable(interactionTarget)) {
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                AttributeInstance luck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
-                AttributeInstance misfortune = interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get());
-                CompoundTag tag = interactionTarget.getPersistentData();
-                double misfortuneAmount = misfortune.getBaseValue();
-                double luckAmount = luck.getBaseValue();
-                if (holder.getCurrentSequence() <= 2) {
-                    tag.putDouble("luckDenialTimer", 1800 - (holder.getCurrentSequence()) * 150);
-                    tag.putDouble("luckDenialLuck", luckAmount);
-                    tag.putDouble("luckDenialMisfortune", misfortuneAmount);
-                } else {
-                    tag.putDouble("luckDenialTimer", 1800 - (holder.getCurrentSequence()) * 150);
-                    tag.putDouble("luckDenialLuck", luckAmount);
-                }
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            CompoundTag tag = interactionTarget.getPersistentData();
+            double luck = tag.getDouble("luck");
+            double misfortune = tag.getDouble("misfortune");
+            if (holder.getCurrentSequence() <= 2) {
+                tag.putDouble("luckDenialTimer", 1800 - (holder.getCurrentSequence()) * 150);
+                tag.putDouble("luckDenialLuck", luck);
+                tag.putDouble("luckDenialMisfortune", misfortune);
             } else {
-                player.sendSystemMessage(Component.literal("Interaction target doesn't have a luck or misfortune value."));
+                tag.putDouble("luckDenialTimer", 1800 - (holder.getCurrentSequence()) * 150);
+                tag.putDouble("luckDenialLuck", luck);
             }
         }
     }

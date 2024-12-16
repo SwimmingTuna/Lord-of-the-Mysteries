@@ -47,13 +47,13 @@ public class LuckManipulation extends SimpleAbilityItem {
         if (!player.level().isClientSide()) {
             CompoundTag tag = player.getPersistentData();
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
+            double luck = tag.getDouble("luck");
+            double misfortune = tag.getDouble("misfortune");
             int enhancement = CalamityEnhancementData.getInstance((ServerLevel) player.level()).getCalamityEnhancement();
-            double lotmLuckValue = luck.getValue();
             int luckManipulation = tag.getInt("luckManipulationItem");
             if (luckManipulation == 1) { //regen
                 BeyonderUtil.applyMobEffect(player, MobEffects.REGENERATION, 300 - (holder.getCurrentSequence() * 30), 2, true, true);
-                luck.setBaseValue(Math.max(0, lotmLuckValue - 4));
+                tag.putDouble("luck", Math.max(0, luck - 4));
             }
             if (luckManipulation == 2) { //diamonds
                 for (int i = 0; i < enhancement; i++) {
@@ -65,28 +65,28 @@ public class LuckManipulation extends SimpleAbilityItem {
                         player.level().addFreshEntity(diamondEntity);
                     } else player.level().addFreshEntity(diamondBlockEntity);
                 }
-                luck.setBaseValue(Math.max(0, lotmLuckValue - 4));
+                tag.putDouble("luck", Math.max(0, luck - 4));
             }
             if (luckManipulation == 3) { //wind moving projectiles
                 int x = tag.getInt("windMovingProjectilesCounter");
                 tag.putInt("windMovingProjectilesCounter", x + enhancement);
-                luck.setBaseValue(Math.max(0, lotmLuckValue - 8));
+                tag.putDouble("luck", Math.max(0, luck - 8));
             }
             if (luckManipulation == 4) { //halve next damage
                 tag.putInt("luckHalveDamage", tag.getInt("luckHalveDamage") + enhancement);
-                luck.setBaseValue(Math.max(0, lotmLuckValue - 10));
+                tag.putDouble("luck", Math.max(0, luck - 10));
             }
             if (luckManipulation == 5) { //mobs distracted from you
                 tag.putInt("luckIgnoreMobs", tag.getInt("luckIgnoreMobs") + enhancement);
-                luck.setBaseValue(Math.max(0, lotmLuckValue - 3));
+                tag.putDouble("luck", Math.max(0, luck - 3));
             }
             if (luckManipulation == 6) { //players that hurt you recently will get poison
                 tag.putInt("luckAttackerPoisoned", tag.getInt("luckAttackerPoisoned") + enhancement);
-                luck.setBaseValue(Math.max(0, lotmLuckValue - 12));
+                tag.putDouble("luck", Math.max(0, luck - 12));
             }
             if (luckManipulation == 7) { //ignore next damage
                 tag.putInt("luckIgnoreDamage", tag.getInt("luckIgnoreDamage") + enhancement);
-                luck.setBaseValue(Math.max(0, lotmLuckValue - 15));
+                tag.putDouble("luck", Math.max(0, luck - 15));
             }
         }
     }

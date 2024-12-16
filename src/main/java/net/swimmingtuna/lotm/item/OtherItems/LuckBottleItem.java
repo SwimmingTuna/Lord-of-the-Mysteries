@@ -38,8 +38,8 @@ public class LuckBottleItem extends Item {
                 luckBottleEntity.shootFromRotation(pPlayer, pPlayer.getXRot(), pPlayer.getYRot(), 0.0f, 0.5f, 1.0f);
                 pLevel.addFreshEntity(luckBottleEntity);
             } else {
-                AttributeInstance luck = pPlayer.getAttribute(ModAttributes.LOTM_LUCK.get());
-                luck.setBaseValue(Math.min(100, luck.getBaseValue() + getLuckAmount(stack)));
+                double luck = pPlayer.getPersistentData().getDouble("luck");
+                pPlayer.getPersistentData().putDouble("luck", Math.min(100, luck + getLuckAmount(stack)));
             }
             pPlayer.awardStat(Stats.ITEM_USED.get(this));
             if (!pPlayer.getAbilities().instabuild) {

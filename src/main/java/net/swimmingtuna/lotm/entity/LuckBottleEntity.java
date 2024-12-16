@@ -56,11 +56,10 @@ public class LuckBottleEntity extends ThrowableItemProjectile {
         if (!this.level().isClientSide()) {
             int entitiesHit = 0;
             for (LivingEntity livingEntity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(5))) {
-                if (livingEntity instanceof Player || livingEntity instanceof PlayerMobEntity) {
                     entitiesHit++;
-                    AttributeInstance luck = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
-                    luck.setBaseValue(luck.getBaseValue() + ((double) getLuck() / entitiesHit));
-                }
+                    double luck = livingEntity.getPersistentData().getDouble("luck");
+                    livingEntity.getPersistentData().putDouble("luck", luck + ((double) getLuck() / entitiesHit));
+
             }
             this.discard();
         }
@@ -73,8 +72,8 @@ public class LuckBottleEntity extends ThrowableItemProjectile {
             for (LivingEntity livingEntity : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(5))) {
                 if (livingEntity instanceof Player || livingEntity instanceof PlayerMobEntity) {
                     entitiesHit++;
-                    AttributeInstance luck = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
-                    luck.setBaseValue(luck.getBaseValue() + ((double) getLuck() / entitiesHit));
+                    double luck = livingEntity.getPersistentData().getDouble("luck");
+                    livingEntity.getPersistentData().putDouble("luck", luck + ((double) getLuck() / entitiesHit));
                 }
             }
             this.discard();

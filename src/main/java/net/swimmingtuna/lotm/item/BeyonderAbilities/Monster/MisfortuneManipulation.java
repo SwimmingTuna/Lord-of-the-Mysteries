@@ -102,23 +102,19 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int misfortuneManipulation = playerTag.getInt("misfortuneManipulationItem");
             if (misfortuneManipulation == 1) {
-                int random = (int) ((Math.random() * 40) - 20);
                 if (holder.getCurrentSequence() > 2) {
-                    player.sendSystemMessage(Component.literal("Meteors Summoned"));
-                    summonMeteor(interactionTarget);
+                    summonMeteor(interactionTarget, player);
                 }
                 if (holder.getCurrentSequence() == 2 || holder.getCurrentSequence() == 1) {
-                    player.sendSystemMessage(Component.literal("Meteors Summoned Angel"));
-                    summonMeteor(interactionTarget);
-                    summonMeteor(interactionTarget);
+                    summonMeteor(interactionTarget, player);
+                    summonMeteor(interactionTarget, player);
                 }
                 if (holder.getCurrentSequence() == 0) {
-                    player.sendSystemMessage(Component.literal("Meteors Summoned Deity"));
-                    summonMeteor(interactionTarget);
-                    summonMeteor(interactionTarget);
-                    summonMeteor(interactionTarget);
-                    summonMeteor(interactionTarget);
-                    summonMeteor(interactionTarget);
+                    summonMeteor(interactionTarget, player);
+                    summonMeteor(interactionTarget, player);
+                    summonMeteor(interactionTarget, player);
+                    summonMeteor(interactionTarget, player);
+                    summonMeteor(interactionTarget, player);
                 }
             }
             if (misfortuneManipulation == 2) {
@@ -245,7 +241,7 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
         return "None";
     }
 
-    public static void summonMeteor(LivingEntity entity) {
+    public static void summonMeteor(LivingEntity entity, LivingEntity player) {
         if (!entity.level().isClientSide()) {
             int x = (int) entity.getX();
             int y = (int) entity.getY();
@@ -255,6 +251,7 @@ public class MisfortuneManipulation extends SimpleAbilityItem {
             MeteorEntity meteor = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), entity.level());
             meteor.teleportTo(x + (Math.random() * 100) - 50,y + 150 + (Math.random() * 100) - 50, z+ (Math.random() * 100) - 50);
             meteor.noPhysics = true;
+            meteor.setOwner(player);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteor);
             scaleData.setScale(5 + (enhancement));
             scaleData.markForSync(true);

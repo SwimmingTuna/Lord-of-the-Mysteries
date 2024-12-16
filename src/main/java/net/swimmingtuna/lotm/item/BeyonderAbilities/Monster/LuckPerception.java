@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -66,14 +67,33 @@ public class LuckPerception extends SimpleAbilityItem {
 
     @Override
     public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand hand) {
-        if (!player.level().isClientSide() && !interactionTarget.level().isClientSide() && BeyonderUtil.isBeyonderCapable(interactionTarget)) {
+        if (!player.level().isClientSide() && !interactionTarget.level().isClientSide()) {
             if (!checkAll(player)) {
                 return InteractionResult.FAIL;
             }
             addCooldown(player);
             useSpirituality(player);
-            player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s luck value is " + interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get())).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
-            player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s misfortune value is " + interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get())).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
+            CompoundTag tag = interactionTarget.getPersistentData();
+            double luck = tag.getDouble("luck");
+            double misfortune = tag.getDouble("misfortune");
+            player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s luck value is " + luck).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
+            player.sendSystemMessage(Component.literal(interactionTarget.getName().getString() + "'s misfortune value is " + misfortune).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.WHITE));
+        }
+        return InteractionResult.SUCCESS;
+    }
+    @Override
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!player.level().isClientSide()) {
+            if (!checkAll(player)) {
+                return InteractionResult.FAIL;
+            }
+            addCooldown(player);
+            useSpirituality(player);
+            CompoundTag tag = player.getPersistentData();
+            double luck = tag.getDouble("luck");
+            double misfortune = tag.getDouble("misfortune");
+            player.sendSystemMessage(Component.literal("Your luck value is " + luck).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.GREEN));
+            player.sendSystemMessage(Component.literal("Your misfortune value is " + misfortune).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.RED));
         }
         return InteractionResult.SUCCESS;
     }

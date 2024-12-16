@@ -37,13 +37,11 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.entity.LightningEntity;
-import net.swimmingtuna.lotm.entity.PlayerMobEntity;
 import net.swimmingtuna.lotm.entity.StoneEntity;
 import net.swimmingtuna.lotm.entity.TornadoEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
@@ -144,7 +142,7 @@ public class MisfortuneRedirection extends SimpleAbilityItem {
                 int calamityExplosion = tag.getInt("calamityExplosion");
                 int calamityTornado = tag.getInt("calamityTornado");
                 if (meteor >= 1) {
-                    MisfortuneManipulation.summonMeteor(interactionTarget);
+                    MisfortuneManipulation.summonMeteor(interactionTarget,player);
                 }
                 if (lotmLightning >= 1) {
                     lotmLightningCount = lotmLightningCount + enhancement;
@@ -207,7 +205,7 @@ public class MisfortuneRedirection extends SimpleAbilityItem {
                 }
                 if (calamityMeteor >= 1) {
                     for (int i = 0; i < enhancement; i++) {
-                        MisfortuneManipulation.summonMeteor(interactionTarget);
+                        MisfortuneManipulation.summonMeteor(interactionTarget, player);
                     }
                 }
                 if (calamityLightningStorm >= 1) {
@@ -231,12 +229,8 @@ public class MisfortuneRedirection extends SimpleAbilityItem {
                     calamityGazeCounter++;
                     for (LivingEntity living : interactionTarget.level().getEntitiesOfClass(LivingEntity.class, interactionTarget.getBoundingBox().inflate(calamityGazeCounter * 5))) {
                         if (living != player) {
-                            if (living instanceof Player || living instanceof PlayerMobEntity) {
-                                AttributeInstance corruption = living.getAttribute(ModAttributes.CORRUPTION.get());
-                                if (corruption != null) {
-                                    corruption.setBaseValue(corruption.getBaseValue() + (4 * enhancement));
-                                }
-                            }
+                            double corruption = living.getPersistentData().getDouble("corruption");
+                            living.getPersistentData().putDouble("corruption", living.getPersistentData().getDouble("corruption") + (4 * enhancement));
                         }
                     }
                 }
@@ -259,8 +253,8 @@ public class MisfortuneRedirection extends SimpleAbilityItem {
                     netheriteChestplate.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 5);
                     netheriteLeggings.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 5);
                     netheriteBoots.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 5);
-                    netheriteSword.enchant(Enchantments.FIRE_ASPECT,2);
-                    netheriteSword.enchant(Enchantments.SHARPNESS,2);
+                    netheriteSword.enchant(Enchantments.FIRE_ASPECT, 2);
+                    netheriteSword.enchant(Enchantments.SHARPNESS, 2);
                     zombie.setItemSlot(EquipmentSlot.HEAD, netheriteHelmet);
                     zombie.setItemSlot(EquipmentSlot.CHEST, netheriteChestplate);
                     zombie.setItemSlot(EquipmentSlot.LEGS, netheriteLeggings);
@@ -274,7 +268,7 @@ public class MisfortuneRedirection extends SimpleAbilityItem {
                     zombie.teleportTo(interactionTarget.getX(), interactionTarget.getY(), interactionTarget.getZ());
                     zombie.setTarget(interactionTarget);
                     for (int i = 0; i < enhancement; i++) {
-                    interactionTarget.level().addFreshEntity(zombie);
+                        interactionTarget.level().addFreshEntity(zombie);
                     }
                 }
                 if (calamityWindArmorRemoval >= 1) {

@@ -51,6 +51,9 @@ public class CorruptionAndLuckHandler {
             if (corruption >= 1 && livingEntity.tickCount % 200 == 0) {
                 tag.putDouble("corruption", corruption - 1);
             }
+            if (lotmLuckValue <= 200 && livingEntity.tickCount % 200 == 0) {
+                tag.putDouble("misfortune", 0);
+            }
             CalamityEnhancementData data = CalamityEnhancementData.getInstance(serverLevel);
             int calamityEnhancement = data.getCalamityEnhancement();
             int misfortuneEnhancement = WorldMisfortuneData.getInstance(serverLevel).getWorldMisfortune();
@@ -691,7 +694,7 @@ public class CorruptionAndLuckHandler {
                         }
                     }
                     tag.putInt("luckMeteorDamage", 6);
-                    MeteorEntity.summonMeteorAtPositionWithScale(livingEntity, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), 6 + (calamityEnhancement));
+                    MeteorEntity.summonMeteorAtPositionWithScale(livingEntity, livingEntity.getX(), livingEntity.getY() - 50, livingEntity.getZ(), livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), 6 + (calamityEnhancement));
                 }
                 if (calamityTornado == 1) {
                     int tornadoX = tag.getInt("calamityTornadoX");

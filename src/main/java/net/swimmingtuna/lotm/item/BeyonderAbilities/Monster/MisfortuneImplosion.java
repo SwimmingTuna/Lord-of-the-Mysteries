@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -9,7 +10,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -18,7 +18,6 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import net.swimmingtuna.lotm.world.worlddata.CalamityEnhancementData;
@@ -53,52 +52,33 @@ public class MisfortuneImplosion extends SimpleAbilityItem {
             double radius = (250 - (sequence * 100) + (enhancement * 50));
             for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
                 if (entity != player) {
-                    if (BeyonderUtil.isBeyonderCapable(entity)) {
-                        entity.getAttribute(ModAttributes.MISFORTUNE.get()).setBaseValue(entity.getAttribute(ModAttributes.MISFORTUNE.get()).getBaseValue() + 10);
-                    }
+                    CompoundTag tag = entity.getPersistentData();
+                    double misfortune = tag.getDouble("misfortune");
                     Random random = new Random();
                     int randomInt = random.nextInt(3);
                     if (randomInt == 0) {
-                        if (BeyonderUtil.isBeyonderCapable(entity)) {
-                            AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-                            float explosionRadius = (float) (misfortune.getBaseValue() / 15) + (enhancement * 3);
-                            float damage = (float) ((2 * misfortune.getBaseValue()) + (enhancement * 10));
-                            entity.hurt(BeyonderUtil.explosionSource(player), damage);
-                            entity.level().explode(entity, entity.getX(), entity.getY(), entity.getZ(), explosionRadius, false, Level.ExplosionInteraction.TNT);
-                            misfortune.setBaseValue(0);
-                        } else {
-                            entity.hurt(BeyonderUtil.explosionSource(player), 40 - (sequence * 10));
-                            entity.level().explode(entity, entity.getX(), entity.getY(), entity.getZ(), 5, false, Level.ExplosionInteraction.TNT);
-                        }
+                        float explosionRadius = (float) (Math.max(3, misfortune / 8) + (enhancement * 3));
+                        float damage = (float) ((2 * misfortune) + (enhancement * 10));
+                        entity.hurt(BeyonderUtil.explosionSource(player), damage);
+                        entity.level().explode(entity, entity.getX(), entity.getY(), entity.getZ(), explosionRadius, false, Level.ExplosionInteraction.TNT);
+                        tag.putDouble("misfortune", 0);
                     }
                     if (randomInt == 1) {
-                        if (BeyonderUtil.isBeyonderCapable(entity)) {
-                            AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-                            float duration = (float) (100 + (misfortune.getBaseValue() * 5) * enhancement);
-                            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, (int) duration,4, false,false));
-                            entity.addEffect(new MobEffectInstance(ModEffects.NOREGENERATION.get(), (int) (duration * 0.75), 1, false,false));
-                            entity.hurt(BeyonderUtil.genericSource(player), (float) misfortune.getBaseValue() / 2);
-                            misfortune.setBaseValue(0);
-                        } else {
-                            entity.hurt(BeyonderUtil.genericSource(player), 40);
-                            entity.addEffect(new MobEffectInstance(ModEffects.NOREGENERATION.get(), (int) 200, 1, false,false));
-                            entity.addEffect(new MobEffectInstance(MobEffects.WITHER, (int) 200,4, false,false));
-                        }
+                        float duration = (float) (100 + (misfortune * 5) * enhancement);
+                        entity.addEffect(new MobEffectInstance(MobEffects.WITHER, (int) duration, 4, false, false));
+                        entity.addEffect(new MobEffectInstance(ModEffects.NOREGENERATION.get(), (int) (duration * 0.75), 1, false, false));
+                        entity.hurt(BeyonderUtil.genericSource(player), (float) misfortune / 2);
                     }
                     if (randomInt == 2) {
-                        if (BeyonderUtil.isBeyonderCapable(entity)) {
-                            AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-                            int duration = (int) ((5) + (misfortune.getBaseValue() / 10) + (enhancement * 3));
-                            entity.getPersistentData().putInt("monsterImplosionLightning", duration);
-                            misfortune.setBaseValue(0);
-                        } else {
-                            entity.getPersistentData().putInt("monsterImplosionLightning", 10);
-                        }
+                        int duration = (int) ((5) + (misfortune / 10) + (enhancement * 3));
+                        entity.getPersistentData().putInt("monsterImplosionLightning", duration);
+                        tag.putDouble("misfortune", 0);
                     }
                 }
             }
         }
     }
+
     public static void misfortuneCurse(Player player) {
         if (!player.level().isClientSide()) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
@@ -107,16 +87,12 @@ public class MisfortuneImplosion extends SimpleAbilityItem {
             double radius = (250 - (sequence * 100) + (enhancement * 50));
             for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
                 if (entity != player) {
-                    if (BeyonderUtil.isBeyonderCapable(entity)) {
-                        AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-                        float duration = (float) (100 + (misfortune.getBaseValue() * 5) * enhancement);
-                        entity.addEffect(new MobEffectInstance(MobEffects.WITHER, (int) duration,4, false,false));
-                        entity.hurt(BeyonderUtil.genericSource(player), (float) misfortune.getBaseValue() / 2);
-                        misfortune.setBaseValue(0);
-                    } else {
-                        entity.hurt(BeyonderUtil.genericSource(player), 40);
-                        entity.addEffect(new MobEffectInstance(MobEffects.WITHER, (int) 200,4, false,false));
-                    }
+                    CompoundTag tag = entity.getPersistentData();
+                    double misfortune = tag.getDouble("misfortune");
+                    float duration = (float) (100 + (misfortune * 5) * enhancement);
+                    entity.addEffect(new MobEffectInstance(MobEffects.WITHER, (int) duration, 4, false, false));
+                    entity.hurt(BeyonderUtil.genericSource(player), (float) misfortune / 2);
+                    tag.putDouble("misfortune", 0);
                 }
             }
         }

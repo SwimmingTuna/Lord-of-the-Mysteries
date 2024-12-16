@@ -25,6 +25,7 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
+import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -45,7 +46,7 @@ public class FalseProphecy extends SimpleAbilityItem {
             }
             useSpirituality(player);
             addCooldown(player);
-            manipulateMisfortune(interactionTarget, player);
+            manipulateMisfortune(player, player);
         }
         return InteractionResult.SUCCESS;
     }
@@ -146,51 +147,55 @@ public class FalseProphecy extends SimpleAbilityItem {
 
     }
 
+    //make some strings /n
+    //harmful cooldown jump is positive
+
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
         if (entity instanceof Player player) {
             if (player.tickCount % 2 == 0 && !level.isClientSide()) {
                 if (player.getMainHandItem().getItem() instanceof FalseProphecy) {
-                    player.displayClientMessage(Component.literal("Current False Prophecy  is: " + falseProphecyString(player)), true);
+                    player.displayClientMessage(falseProphecyString(player), true);
                 }
             }
         }
         super.inventoryTick(stack, level, entity, itemSlot, isSelected);
     }
 
-    public static String falseProphecyString(Player pPlayer) {
+    public static Component falseProphecyString(Player pPlayer) {
         CompoundTag tag = pPlayer.getPersistentData();
         int falseProphecyString = tag.getInt("falseProphecyItem");
         if (falseProphecyString == 1) {
-            return "Harmful: Shifting will give great misfortune";
+            return Component.literal("Shifting will give great misfortune").withStyle(ChatFormatting.RED);
         }
         if (falseProphecyString == 2) {
-            return "Harmful: Standing still will cause a grave illness";
+            return Component.literal("Standing still will cause a grave illness").withStyle(ChatFormatting.RED);
         }
         if (falseProphecyString == 3) {
-            return "Harmful: Jumping will cause all abilities to go on cooldown";
+            return Component.literal("Jumping will cause all abilities to go on cooldown").withStyle(ChatFormatting.RED);
         }
         if (falseProphecyString == 4) {
-            return "Harmful: Sprinting will cause great damage";
+            return Component.literal("Sprinting will cause great damage").withStyle(ChatFormatting.RED);
         }
         if (falseProphecyString == 5) {
-            return "Harmful: Attacking a mob cause the next 5 damage instances the player will take to be doubled as true damage";
+            return Component.literal("Attacking a mob will cause the next 5 damage instances the player takes to be doubled as true damage").withStyle(ChatFormatting.RED);
         }
         if (falseProphecyString == 6) {
-            return "Beneficial: Shifting will give great fortune";
+            return Component.literal("Shifting will give great fortune").withStyle(ChatFormatting.GREEN);
         }
         if (falseProphecyString == 7) {
-            return "Beneficial: Standing still will give many beneficial effects";
+            return Component.literal("Standing still will give many beneficial effects").withStyle(ChatFormatting.GREEN);
         }
         if (falseProphecyString == 8) {
-            return "Beneficial: Jumping will cause their ability cooldowns to be reset";
+            return Component.literal("Jumping will cause their ability cooldowns to be reset").withStyle(ChatFormatting.GREEN);
         }
         if (falseProphecyString == 9) {
-            return "Beneficial: Sprinting will cause the player to ignore the next 5 times they take damage to be nullified";
+            return Component.literal("Sprinting will cause the player to ignore the next 5 times they take damage to be nullified").withStyle(ChatFormatting.GREEN);
         }
         if (falseProphecyString == 10) {
-            return "Beneficial: Attacking a mob will cause the next 5 melee hits to deal double damage as true damage";
+            return Component.literal("Attacking a mob will cause the next 5 melee hits to deal double damage as true damage").withStyle(ChatFormatting.GREEN);
+        } else {
+            return Component.literal("None").withStyle(ChatFormatting.GRAY);
         }
-        return "None";
     }
 
     public static void falseProphecyTick(LivingEntity livingEntity) {
@@ -214,10 +219,8 @@ public class FalseProphecy extends SimpleAbilityItem {
             if (x >= 60) {
                 tag.putInt("falseProphecyShiftHarmful", 0);
                 tag.putInt("harmfulFalseProphecyShift", 0);
-                if (BeyonderUtil.isBeyonderCapable(livingEntity)) {
-                    AttributeInstance misfortune = livingEntity.getAttribute(ModAttributes.MISFORTUNE.get());
-                    misfortune.setBaseValue(misfortune.getBaseValue() + 50);
-                }
+                livingEntity.sendSystemMessage(Component.literal("Shift Harmful Activated"));
+                livingEntity.getPersistentData().putDouble("misfortune", livingEntity.getPersistentData().getDouble("misfortune") + 50);
             }
         }
         if (harmfulStand >= 1) {
@@ -230,28 +233,29 @@ public class FalseProphecy extends SimpleAbilityItem {
             double currentZ = tag.getDouble("falseProphecyCurrentZ");
             if (tickCounter == 0) {
                 prevX = livingEntity.getX();
-                tag.putDouble("prevX", prevX);
+                tag.putDouble("falseProphecyPrevX", prevX);
                 prevY = livingEntity.getY();
-                tag.putDouble("prevY", prevY);
+                tag.putDouble("falseProphecyPrevY", prevY);
                 prevZ = livingEntity.getZ();
-                tag.putDouble("prevZ", prevZ);
+                tag.putDouble("falseProphecyPrevZ", prevZ);
                 tag.putInt("tickCounter", 1);
             } else if (tickCounter == 1) {
                 currentX = livingEntity.getX();
-                tag.putDouble("currentX", currentX);
+                tag.putDouble("falseProphecyCurrentX", currentX);
                 currentY = livingEntity.getY();
-                tag.putDouble("currentY", currentY);
+                tag.putDouble("falseProphecyCurrentY", currentY);
                 currentZ = livingEntity.getZ();
-                tag.putDouble("currentZ", currentZ);
+                tag.putDouble("falseProphecyCurrentZ", currentZ);
                 tag.putInt("tickCounter", 0);
             }
-            if (Math.abs(prevX - currentX) < 0.0023 || Math.abs(prevY - currentY) < 0.0023 || Math.abs(prevZ - currentZ) < 0.0023) {
+            if (Math.abs(prevX - currentX) < 0.0123 || Math.abs(prevY - currentY) < 0.0123 || Math.abs(prevZ - currentZ) < 0.0123) {
                 tag.putInt("falseProphecyStandHarmful", tag.getInt("falseProphecyStandHarmful") + 1);
+                livingEntity.sendSystemMessage(Component.literal("value is " + tag.getInt("falseProphecyStandHarmful")));
             }
             if (tag.getInt("falseProphecyStandHarmful") >= 100) {
                 tag.putInt("falseProphecyStandHarmful", 0);
                 tag.putInt("harmfulFalseProphecyStand", 0);
-                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.WITHER, 400,7,false,false);
+                BeyonderUtil.applyMobEffect(livingEntity, ModEffects.BLEEDING.get(), 400,7,false,false);
                 BeyonderUtil.applyMobEffect(livingEntity, MobEffects.BLINDNESS, 400,5,false,false);
                 BeyonderUtil.applyMobEffect(livingEntity, MobEffects.HARM, 400,10,false,false);
                 BeyonderUtil.applyMobEffect(livingEntity, MobEffects.WEAKNESS, 400,4,false,false);
@@ -268,7 +272,8 @@ public class FalseProphecy extends SimpleAbilityItem {
             if (x >= 60) {
                 tag.putInt("falseProphecySprintHarmful", 0);
                 tag.putInt("harmfulFalseProphecySprint", 0);
-                livingEntity.hurt(BeyonderUtil.magicSource(livingEntity), 75);
+                livingEntity.hurt(BeyonderUtil.magicSource(livingEntity), 40);
+                livingEntity.sendSystemMessage(Component.literal("Sprint hurt"));
             }
         }
         if (harmfulJump >= 1) {
@@ -290,14 +295,14 @@ public class FalseProphecy extends SimpleAbilityItem {
                 tag.putInt("falseProphecyShiftBeneficial", 0);
                 tag.putInt("beneficialFalseProphecyShift", 0);
                 if (BeyonderUtil.isBeyonderCapable(livingEntity)) {
-                    AttributeInstance luck = livingEntity.getAttribute(ModAttributes.LOTM_LUCK.get());
-                    luck.setBaseValue(luck.getBaseValue() + 50);
+                    livingEntity.getPersistentData().putDouble("luck", livingEntity.getPersistentData().getDouble("luck") + 50);
                 }
             }
         }
 
 
         if (beneficialStand >= 1) {
+
             int tickCounter = tag.getInt("falseProphecyTickCounter");
             double prevX = tag.getDouble("falseProphecyPrevX");
             double prevY = tag.getDouble("falseProphecyPrevY");
@@ -305,24 +310,31 @@ public class FalseProphecy extends SimpleAbilityItem {
             double currentX = tag.getDouble("falseProphecyCurrentX");
             double currentY = tag.getDouble("falseProphecyCurrentY");
             double currentZ = tag.getDouble("falseProphecyCurrentZ");
+            if (livingEntity.tickCount %  20 == 0) {
+                livingEntity.sendSystemMessage(Component.literal("value is " + beneficialStand));
+                livingEntity.sendSystemMessage(Component.literal("value of X is " + Math.abs(prevX - currentX)));
+                livingEntity.sendSystemMessage(Component.literal("value of Y is " + Math.abs(prevY - currentY)));
+                livingEntity.sendSystemMessage(Component.literal("value of Z is " + Math.abs(prevZ - currentZ)));
+            }
             if (tickCounter == 0) {
                 prevX = livingEntity.getX();
-                tag.putDouble("prevX", prevX);
+                tag.putDouble("falseProphecyPrevX", prevX);
                 prevY = livingEntity.getY();
-                tag.putDouble("prevY", prevY);
+                tag.putDouble("falseProphecyPrevY", prevY);
                 prevZ = livingEntity.getZ();
-                tag.putDouble("prevZ", prevZ);
+                tag.putDouble("falseProphecyPrevZ", prevZ);
                 tag.putInt("tickCounter", 1);
             } else if (tickCounter == 1) {
                 currentX = livingEntity.getX();
-                tag.putDouble("currentX", currentX);
+                tag.putDouble("falseProphecyCurrentX", currentX);
                 currentY = livingEntity.getY();
-                tag.putDouble("currentY", currentY);
+                tag.putDouble("falseProphecyCurrentY", currentY);
                 currentZ = livingEntity.getZ();
-                tag.putDouble("currentZ", currentZ);
+                tag.putDouble("falseProphecyCurrentZ", currentZ);
                 tag.putInt("tickCounter", 0);
             }
-            if (Math.abs(prevX - currentX) < 0.0023 || Math.abs(prevY - currentY) < 0.0023 || Math.abs(prevZ - currentZ) < 0.0023) {
+            if (Math.abs(prevX - currentX) < 0.0123 || Math.abs(prevY - currentY) < 0.0123 || Math.abs(prevZ - currentZ) < 0.0123) {
+                livingEntity.sendSystemMessage(Component.literal("Working"));
                 tag.putInt("falseProphecyStandBeneficial", tag.getInt("falseProphecyStandBeneficial") + 1);
             }
             if (tag.getInt("falseProphecyStandBeneficial") >= 100) {
@@ -359,8 +371,13 @@ public class FalseProphecy extends SimpleAbilityItem {
 
         if (tag.getInt("falseProphecyJumpHarmful") >= 5 && livingEntity instanceof Player pPlayer) {
             for (ItemStack stack : pPlayer.getInventory().items) {
-                if (stack.getItem() instanceof SimpleAbilityItem) {
-                    pPlayer.getCooldowns().addCooldown(stack.getItem(), 0);
+                if (stack.getItem() instanceof SimpleAbilityItem simpleAbilityItem) {
+                    int currentCooldown = (int) pPlayer.getCooldowns().getCooldownPercent(stack.getItem(), 0);
+                    int cooldownToSet = simpleAbilityItem.getCooldown() * (100 - currentCooldown) / 100;
+
+                    if (currentCooldown < cooldownToSet) {
+                        pPlayer.getCooldowns().addCooldown(stack.getItem(), cooldownToSet);
+                    }
                 }
             }
             tag.putInt("falseProphecyJumpHarmful", 0);
@@ -368,12 +385,8 @@ public class FalseProphecy extends SimpleAbilityItem {
         }
         if (tag.getInt("falseProphecyJumpBeneficial") >= 5 && livingEntity instanceof Player pPlayer) {
             for (ItemStack stack : pPlayer.getInventory().items) {
-                if (stack.getItem() instanceof SimpleAbilityItem simpleAbilityItem) {
-                    int currentCooldown = (int) pPlayer.getCooldowns().getCooldownPercent(stack.getItem(), 0);
-                    int cooldownToSet = simpleAbilityItem.getCooldown() * (100 - currentCooldown);
-                    if (currentCooldown < cooldownToSet) {
-                        pPlayer.getCooldowns().addCooldown(stack.getItem(), cooldownToSet);
-                    }
+                if (stack.getItem() instanceof SimpleAbilityItem) {
+                    pPlayer.getCooldowns().addCooldown(stack.getItem(), 0);
                 }
             }
             tag.putInt("falseProphecyJumpBeneficial", 0);

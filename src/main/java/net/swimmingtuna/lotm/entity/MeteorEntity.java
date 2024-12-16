@@ -5,10 +5,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -17,6 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
@@ -145,7 +148,6 @@ public class MeteorEntity extends AbstractHurtingProjectile {
                     (int) (player.getY() + (Math.max(150,(Math.random() * 500) - 150))),
                     (int) (player.getZ() + randomZ)
             );
-
             MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), player.level());
             meteorEntity.teleportTo(meteorSpawnPos.getX(), meteorSpawnPos.getY(), meteorSpawnPos.getZ());
             meteorEntity.setOwner(player);
@@ -194,6 +196,7 @@ public class MeteorEntity extends AbstractHurtingProjectile {
             MeteorEntity meteorEntity = new MeteorEntity(EntityInit.METEOR_ENTITY.get(), player.level());
             meteorEntity.teleportTo(meteorSpawnPos.getX(), meteorSpawnPos.getY(), meteorSpawnPos.getZ());
             meteorEntity.noPhysics = true;
+            meteorEntity.setOwner(player);
             ScaleData scaleData = ScaleTypes.BASE.getScaleData(meteorEntity);
             scaleData.setScale(scale);
             scaleData.markForSync(true);
@@ -252,6 +255,16 @@ public class MeteorEntity extends AbstractHurtingProjectile {
         this.xRotO = getXRot();
         this.yRotO = this.getYRot();
         if (this.level() instanceof ServerLevel serverLevel) {
+            int chunkRadius = 5;
+            ChunkPos centerChunk = new ChunkPos(this.blockPosition());
+
+            for (int dx = -chunkRadius; dx <= chunkRadius; dx++) {
+                for (int dz = -chunkRadius; dz <= chunkRadius; dz++) {
+                    ChunkPos chunkPos = new ChunkPos(centerChunk.x + dx, centerChunk.z + dz);
+                    serverLevel.getChunkSource().addRegionTicket(TicketType.PLAYER, chunkPos, 3, chunkPos);
+                }
+            }
+
             for (int i = 0; i < 5; i++) {
                 double offsetX = (Math.random() - 0.5) * 6; // Random offset within [-3, 3]
                 double offsetY = (Math.random() - 0.5) * 6; // Random offset within [-3, 3]

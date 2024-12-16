@@ -63,7 +63,7 @@ public class AuraOfChaos extends SimpleAbilityItem {
             CompoundTag tag = player.getPersistentData();
             boolean auraOfChaos = tag.getBoolean("monsterAuraOfChaos");
             tag.putBoolean("monsterAuraOfChaos", !auraOfChaos);
-            player.displayClientMessage(Component.literal("Projectile Movement Turned " + (auraOfChaos ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.RED), true);
+            player.displayClientMessage(Component.literal("Aura of Chaos Turned " + (auraOfChaos ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.RED), true);
         }
     }
 
@@ -91,10 +91,11 @@ public class AuraOfChaos extends SimpleAbilityItem {
                 for (LivingEntity livingEntity : entity.level().getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(200 - (sequence * 50) + (enhancement * 50)))) {
                     CompoundTag persistentData = livingEntity.getPersistentData();
                     Random random = new Random();
-                    int randomInt = random.nextInt(100);
-                    if (livingEntity != entity && entity.tickCount % 40 == 0) {
-                        if (randomInt >= 95) {
-                            MeteorEntity.summonMeteorAtPosition(entity, (int) livingEntity.getX(), (int) livingEntity.getY(), (int) livingEntity.getZ());
+                    int randomInt = random.nextInt(350);
+                    if (livingEntity != entity && entity.tickCount % 200 == 0) {
+                        if (randomInt >= 95 && randomInt <= 100) {
+                            int random1 = (int) ((Math.random() * 200) - 100);
+                            MeteorEntity.summonMeteorAtPositionWithScale(entity,  livingEntity.getX() + random1, livingEntity.getY() - 25,livingEntity.getZ() + random1, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(), 6 );
                         } else if (randomInt >= 89 && randomInt <= 94) {
                             TornadoEntity tornadoEntity = new TornadoEntity(EntityInit.TORNADO_ENTITY.get(), level);
                             tornadoEntity.teleportTo(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
@@ -153,12 +154,8 @@ public class AuraOfChaos extends SimpleAbilityItem {
                                 livingEntity.hurt(livingEntity.damageSources().magic(), 15);
                             }
                         }
-                        if (livingEntity instanceof Player || livingEntity instanceof PlayerMobEntity) {
-                            AttributeInstance misfortune = livingEntity.getAttribute(ModAttributes.MISFORTUNE.get());
-                            if (misfortune != null) {
-                                misfortune.setBaseValue(misfortune.getBaseValue() + 3);
-                            }
-                        }
+                        livingEntity.getPersistentData().putDouble("misfortune", livingEntity.getPersistentData().getDouble("misfortune") + 3);
+
                     }
                 }
             }

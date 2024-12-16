@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -82,11 +83,15 @@ public class MisfortuneBestowal extends SimpleAbilityItem {
         if (!player.level().isClientSide()) {
             int enhancement = CalamityEnhancementData.getInstance((ServerLevel) player.level()).getCalamityEnhancement();
             int sequence = BeyonderHolderAttacher.getHolderUnwrap(player).getCurrentSequence();
-            AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
-            AttributeInstance interactionMisfortune = interactionTarget.getAttribute(ModAttributes.MISFORTUNE.get());
+            CompoundTag tag = player.getPersistentData();
+            CompoundTag pTag = interactionTarget.getPersistentData();
+            double luck = tag.getDouble("luck");
+            double misfortune = tag.getDouble("misfortune");
+            double pLuck = pTag.getDouble("luck");
+            double pMisfortune = pTag.getDouble("misfortune");
             int misfortuneAddValue = 60 - (sequence * 7) + (enhancement * 10);
-            interactionMisfortune.setBaseValue(Math.min(200,interactionMisfortune.getValue() + misfortuneAddValue));
-            misfortune.setBaseValue(Math.min(0,(interactionMisfortune.getValue()) - ((double) misfortuneAddValue / 2)));
+            pTag.putDouble("misfortune", Math.min(200, pMisfortune + misfortuneAddValue));
+            tag.putDouble("misfortune", Math.min(0, misfortune - ((double) misfortuneAddValue / 2)));
         }
     }
 }

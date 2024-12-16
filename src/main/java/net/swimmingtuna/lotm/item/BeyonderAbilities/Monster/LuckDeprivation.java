@@ -3,13 +3,13 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,8 +21,6 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
-import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,15 +77,15 @@ public class LuckDeprivation extends SimpleAbilityItem {
 
     private static void giftLuck(LivingEntity interactionTarget, Player player) {
         if (!player.level().isClientSide() && !interactionTarget.level().isClientSide()) {
-            if (BeyonderUtil.isBeyonderCapable(interactionTarget)) {
-                AttributeInstance playerLuck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
-                BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-                AttributeInstance interactionTargetLuck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
-                playerLuck.setBaseValue(playerLuck.getBaseValue() + (interactionTargetLuck.getBaseValue()));
-                interactionTargetLuck.setBaseValue(0);
-            } else {
-                player.sendSystemMessage(Component.literal("Interaction target doesn't have a luck or misfortune value."));
-            }
+            CompoundTag tag = player.getPersistentData();
+            CompoundTag pTag = interactionTarget.getPersistentData();
+            double luck = tag.getDouble("luck");
+            double misfortune = tag.getDouble("misfortune");
+            double pLuck = pTag.getDouble("luck");
+            double pMisfortune = pTag.getDouble("misfortune");
+            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+            tag.putDouble("luck", luck + pLuck);
+            pTag.putDouble("luck", 0);
         }
     }
 }

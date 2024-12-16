@@ -105,11 +105,11 @@ public class ProbabilityManipulationInfiniteMisfortune extends SimpleAbilityItem
             if (BeyonderUtil.isBeyonderCapable(entity)) {
                 if (x >= 1) {
                     tag.putInt("probabilityManipulationInfiniteMisfortune", x -1);
-                    entity.getAttribute(ModAttributes.MISFORTUNE.get()).setBaseValue(777);
+                    tag.putDouble("misfortune", 777);
                 }
                 if (y >= 1) {
                     tag.putInt("probabilityManipulationInfiniteFortune", y - 1);
-                    entity.getAttribute(ModAttributes.LOTM_LUCK.get()).setBaseValue(777);
+                    tag.putDouble("luck", 777);
                 }
             }
         }

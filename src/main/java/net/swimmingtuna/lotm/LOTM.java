@@ -313,6 +313,9 @@ public class LOTM {
             event.accept(BlockInit.LOTM_POLISHED_BLACKSTONE);
             event.accept(BlockInit.LOTM_SEA_LANTERN);
             event.accept(BlockInit.LOTM_OAK_LOG);
+            event.accept(ItemInit.LUCKBOTTLEITEM);
+            event.accept(ItemInit.LUCKYGOLDCOIN);
+            event.accept(ItemInit.DEATHKNELL);
 
             event.accept(BlockInit.VISIONARY_BLACK_STAINED_GLASS_PANE);
             event.accept(BlockInit.VISIONARY_WHITE_STAINED_GLASS_PANE);

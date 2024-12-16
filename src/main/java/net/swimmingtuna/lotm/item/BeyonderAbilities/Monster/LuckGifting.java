@@ -3,6 +3,7 @@ package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -17,10 +18,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
+import net.swimmingtuna.lotm.caps.BeyonderHolder;
+import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
-import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,15 +80,13 @@ public class LuckGifting extends SimpleAbilityItem {
 
     private static void giftLuck(LivingEntity interactionTarget, Player player) {
         if (!player.level().isClientSide() && !interactionTarget.level().isClientSide()) {
-            if (BeyonderUtil.isBeyonderCapable(interactionTarget)) {
-                AttributeInstance playerLuck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
-                int luckGiftingAmount = player.getPersistentData().getInt("monsterLuckGifting");
-                AttributeInstance interactionTargetLuck = interactionTarget.getAttribute(ModAttributes.LOTM_LUCK.get());
-                playerLuck.setBaseValue(playerLuck.getBaseValue() - (luckGiftingAmount / 2));
-                interactionTargetLuck.setBaseValue(interactionTargetLuck.getBaseValue() + luckGiftingAmount);
-            } else {
-                player.sendSystemMessage(Component.literal("Interaction target doesn't have a luck or misfortune value."));
-            }
+            CompoundTag tag = player.getPersistentData();
+            CompoundTag pTag = interactionTarget.getPersistentData();
+            double luck = tag.getDouble("luck");
+            double pLuck = pTag.getDouble("luck");
+            int luckGiftingAmount = player.getPersistentData().getInt("monsterLuckGifting");
+            tag.putDouble("luck", luck - ((double) luckGiftingAmount / 2));
+            pTag.putDouble("luck", pLuck + luckGiftingAmount);
         }
     }
 }

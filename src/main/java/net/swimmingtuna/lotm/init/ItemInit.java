@@ -14,6 +14,7 @@ import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderPotion;
 import net.swimmingtuna.lotm.item.BeyonderPotions.BeyonderResetPotion;
 import net.swimmingtuna.lotm.item.OtherItems.LuckBottleItem;
 import net.swimmingtuna.lotm.item.OtherItems.LuckyGoldCoin;
+import net.swimmingtuna.lotm.item.SealedArtifacts.DeathKnell;
 import net.swimmingtuna.lotm.item.TestItem;
 
 public class ItemInit {
@@ -366,6 +367,8 @@ public class ItemInit {
             () -> new LuckBottleItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LUCKYGOLDCOIN = ITEMS.register("luckygoldcoin",
             () -> new LuckyGoldCoin(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> DEATHKNELL = ITEMS.register("deathknell",
+            () -> new DeathKnell(new Item.Properties().stacksTo(1)));
 
 
     public static void register(IEventBus eventBus) {

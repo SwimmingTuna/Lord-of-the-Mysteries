@@ -79,14 +79,14 @@ public class RebootSelf extends SimpleAbilityItem {
             tag.put("monsterRebootPotionEffect_" + i, effectTag);
             i++;
         }
-        AttributeInstance luck = player.getAttribute(ModAttributes.LOTM_LUCK.get());
-        AttributeInstance misfortune = player.getAttribute(ModAttributes.MISFORTUNE.get());
+        double luck = tag.getDouble("luck");
+        double misfortune = tag.getDouble("misfortune");
         AttributeInstance sanity = player.getAttribute(ModAttributes.SANITY.get());
-        AttributeInstance corruption = player.getAttribute(ModAttributes.CORRUPTION.get());
-        tag.putInt("monsterRebootLuck", (int) luck.getBaseValue());
-        tag.putInt("monsterRebootMisfortune", (int) misfortune.getValue());
+        double corruption = tag.getDouble("corruption");
+        tag.putInt("monsterRebootLuck", (int) luck);
+        tag.putInt("monsterRebootMisfortune", (int) misfortune);
         tag.putInt("monsterRebootSanity", (int) sanity.getValue());
-        tag.putInt("monsterRebootCorruption", (int) corruption.getValue());
+        tag.putInt("monsterRebootCorruption", (int) corruption);
         tag.putInt("monsterRebootHealth", (int) player.getHealth());
         tag.putInt("monsterRebootSpirituality", holder.getCurrentSequence());
         List<Item> beyonderAbilities = BeyonderUtil.getAbilities(player);
@@ -111,10 +111,14 @@ public class RebootSelf extends SimpleAbilityItem {
                 player.addEffect(effect);
             }
         }
+        double luck = tag.getDouble("luck");
+        double misfortune = tag.getDouble("misfortune");
+        AttributeInstance sanity = player.getAttribute(ModAttributes.SANITY.get());
+        double corruption = tag.getDouble("corruption");
         player.getAttribute(ModAttributes.SANITY.get()).setBaseValue(Math.max(5, tag.getInt("monsterRebootSanity")));
-        player.getAttribute(ModAttributes.CORRUPTION.get()).setBaseValue(tag.getInt("monsterRebootCorruption"));
-        player.getAttribute(ModAttributes.LOTM_LUCK.get()).setBaseValue(tag.getInt("monsterReboot"));
-        player.getAttribute(ModAttributes.MISFORTUNE.get()).setBaseValue(tag.getInt("monsterRebootSanity"));
+        tag.putDouble("corruption", tag.getInt("monsterRebootCorruption"));
+        tag.putDouble("luck", tag.getInt("monsterRebootLuck"));
+        tag.putDouble("misfortune", tag.getInt("monsterRebootMisfortune"));
         holder.setSpirituality(tag.getInt("monsterRebootSpirituality"));
         player.setHealth(Math.max(1, player.getHealth()));
         List<Item> beyonderAbilities = BeyonderUtil.getAbilities(player);

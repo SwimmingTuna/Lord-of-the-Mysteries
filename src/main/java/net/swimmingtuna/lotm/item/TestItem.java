@@ -14,6 +14,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
+import net.swimmingtuna.lotm.entity.MeteorEntity;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
@@ -51,16 +52,16 @@ public class TestItem extends SimpleAbilityItem {
     @Override
     public InteractionResult useAbilityOnBlock(UseOnContext pContext) {
         Player player = pContext.getPlayer();
-        for (LivingEntity living : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(1000))) {
-
-        }
+        player.setHealth(10);
         return InteractionResult.SUCCESS;
     }
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
         if (!player.level().isClientSide()) {
-            BeyonderRecipeData.getInstance((ServerLevel) level).sendPlayerRecipeValues(player);
+            if (player.isShiftKeyDown()) {
+            }
+            player.setHealth(10);
         }
         return InteractionResult.SUCCESS;
     }

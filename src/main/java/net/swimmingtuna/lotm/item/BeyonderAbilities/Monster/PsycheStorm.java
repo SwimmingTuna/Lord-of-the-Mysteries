@@ -12,7 +12,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +25,6 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import org.jetbrains.annotations.NotNull;
@@ -95,13 +93,10 @@ public class PsycheStorm extends SimpleAbilityItem {
             AABB boundingBox = new AABB(targetPos).inflate(radius);
             level.getEntitiesOfClass(LivingEntity.class, boundingBox, LivingEntity::isAlive).forEach(livingEntity -> {
                 if (livingEntity != player) {
-                    if (BeyonderUtil.isBeyonderCapable(livingEntity)) {
-                        AttributeInstance corruption = livingEntity.getAttribute(ModAttributes.CORRUPTION.get());
-                        livingEntity.hurt(BeyonderUtil.magicSource(player), damage);
-                        double corruptionValue = corruption.getBaseValue();
-                        corruption.setBaseValue(corruptionValue + corruptionAddition);
-                        livingEntity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
-                    } else livingEntity.hurt(livingEntity.damageSources().magic(), damage);
+                    double corruption = livingEntity.getPersistentData().getDouble("corruption");
+                    livingEntity.hurt(BeyonderUtil.magicSource(player), damage);
+                    livingEntity.getPersistentData().putDouble("corruption", corruption + corruptionAddition);
+                    livingEntity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, duration, 1, false, false));
                 }
             });
         }
