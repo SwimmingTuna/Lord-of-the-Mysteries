@@ -6,7 +6,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.BeaconBeamBlock;
 import net.minecraft.world.level.block.StainedGlassPaneBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -14,7 +13,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class LOTMStainedGlassPane extends StainedGlassPaneBlock implements BeaconBeamBlock {
 
-    public LOTMStainedGlassPane(DyeColor color, BlockBehaviour.Properties properties) {
+    public LOTMStainedGlassPane(DyeColor color, Properties properties) {
         super(color, properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(NORTH, false)

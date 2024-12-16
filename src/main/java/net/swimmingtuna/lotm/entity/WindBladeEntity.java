@@ -2,9 +2,11 @@ package net.swimmingtuna.lotm.entity;
 
 
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,6 +22,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.SMath;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
@@ -99,7 +102,7 @@ public class WindBladeEntity extends AbstractHurtingProjectile {
                 int currentLifeCount = this.entityData.get(DATA_LIFE_COUNT);
                 int decrease = (holder.getCurrentSequence() * 9) + 30;
                 currentLifeCount = currentLifeCount - decrease;
-                entity.hurt(entity.damageSources().generic(), (float) currentLifeCount / 20);
+                entity.hurt(BeyonderUtil.genericSource(this), (float) currentLifeCount / 20);
                 this.entityData.set(DATA_LIFE_COUNT, currentLifeCount - decrease);
                 if (currentLifeCount <= 0) {
                     this.discard();

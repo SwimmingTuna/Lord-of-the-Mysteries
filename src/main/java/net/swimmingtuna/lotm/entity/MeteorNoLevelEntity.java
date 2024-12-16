@@ -3,18 +3,21 @@ package net.swimmingtuna.lotm.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.level.Explosion;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -22,9 +25,12 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
+
+import java.util.List;
 
 public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
     private static final EntityDataAccessor<Boolean> DATA_DANGEROUS = SynchedEntityData.defineId(MeteorNoLevelEntity.class, EntityDataSerializers.BOOLEAN);
@@ -47,17 +53,40 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
         return false;
     }
 
-
+    @Override
     protected void onHitEntity(EntityHitResult result) {
-        if (!this.level().isClientSide) {
-            Vec3 hitPos = result.getLocation();
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 5.0F, 5.0F);
-            if (result.getEntity() instanceof LivingEntity entity) {
-                Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
-                DamageSource damageSource = damageSources().explosion(explosion);
-                entity.hurt(damageSource, 30.0F);
+        if (!this.level().isClientSide()) {
+            this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+            Entity hitEntity = result.getEntity();
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
+            float scale = scaleData.getScale();
+            if (hitEntity instanceof LivingEntity pEntity) {
+                if (this.getOwner() != null && this.getOwner().getPersistentData().getInt("inMindscape") >= 1) {
+                    if (hitEntity.getX() > this.getOwner().getX()) {
+                        return;
+                    } else {
+                        this.explodeMeteor(pEntity, scale);
+                        this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+
+                    }
+                }
+                this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+                explodeMeteor(pEntity, scale);
             }
             this.discard();
+        }
+    }
+
+    public void explodeMeteor(LivingEntity hitEntity, float scale) {
+        BlockPos hitPos = hitEntity.blockPosition();
+        double radius = scale * 4;
+        List<Entity> entities = this.level().getEntities(this,
+                new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                        hitPos.offset((int) radius, (int) radius, (int) radius)));
+        for (Entity entity : entities) {
+            if (entity instanceof LivingEntity livingEntity) {
+                livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale);
+            }
         }
     }
 
@@ -68,19 +97,36 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
-        if (!this.level().isClientSide) {
-            Vec3 hitPos = result.getLocation();
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0F, 1.0F);
-            for (LivingEntity entity : this.getOwner().level().getEntitiesOfClass(LivingEntity.class, this.getOwner().getBoundingBox().inflate(50))) {
-                Explosion explosion = new Explosion(this.level(), this, hitPos.x, hitPos.y, hitPos.z, 30.0F, true, Explosion.BlockInteraction.DESTROY);
-                DamageSource damageSource = damageSources().explosion(explosion);
-                entity.hurt(damageSource, 30.0F);
-                entity.hurt(damageSource, 25.0F);
+        if (!this.level().isClientSide()) {
+            BlockPos hitPos = result.getBlockPos();
+            ScaleData scaleData = ScaleTypes.BASE.getScaleData(this);
+            float scale = scaleData.getScale();
+            double radius = scale * 4;
+            if (this.getOwner() != null && this.getOwner().getPersistentData().getInt("inMindscape") >= 1) {
+                if (hitPos.getX() > this.getOwner().getX()) {
+                    return;
+                } else {
+                    this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+                    this.meteorExplodeBlock(radius,hitPos, scale);
+                }
             }
+            this.level().playSound(null, this.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 30.0f, 1.0f);
+            meteorExplodeBlock(radius,hitPos,scale);
             this.discard();
         }
     }
 
+
+    public void meteorExplodeBlock(double radius, BlockPos hitPos, float scale) {
+        List<Entity> entities = this.level().getEntities(this,
+                new AABB(hitPos.offset((int) -radius, (int) -radius, (int) -radius),
+                        hitPos.offset((int) radius, (int) radius, (int) radius)));
+        for (Entity entity : entities) {
+            if (entity instanceof LivingEntity livingEntity) {
+                livingEntity.hurt(BeyonderUtil.genericSource(this), 16 * scale); // Adjust damage as needed
+            }
+        }
+    }
     public boolean isPickable() {
         return false;
     }
@@ -116,7 +162,7 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
             // Set the meteor spawn position
             BlockPos meteorSpawnPos = new BlockPos(
                     (int) (player.getX() + randomX),
-                    (int) (player.getY() + 100),
+                    (int) (player.getY() + (Math.random() * 300) - 150),
                     (int) (player.getZ() + randomZ)
             );
 
@@ -149,5 +195,37 @@ public class MeteorNoLevelEntity extends AbstractHurtingProjectile {
             // Spawn the meteor entity in the world
             player.level().addFreshEntity(meteorEntity);
         }
+    }
+    @Override
+    public void tick() {
+        super.tick();
+        ProjectileUtil.rotateTowardsMovement(this, 0.5f);
+        this.xRotO = getXRot();
+        this.yRotO = this.getYRot();
+        if (this.level() instanceof ServerLevel serverLevel) {
+            for (int i = 0; i < 5; i++) {
+                double offsetX = (Math.random() - 0.5) * 6; // Random offset within [-3, 3]
+                double offsetY = (Math.random() - 0.5) * 6; // Random offset within [-3, 3]
+                double offsetZ = (Math.random() - 0.5) * 6; // Random offset within [-3, 3]
+                serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE,
+                        this.getX() + offsetX,
+                        this.getY() + offsetY,
+                        this.getZ() + offsetZ,
+                        0, 0.0, 0.0,0,0);
+            }
+
+            // Spawn 20 fire particles randomly spread within a 10-block radius
+            for (int i = 0; i < 20; i++) {
+                double offsetX = (Math.random() - 0.5) * 20; // Random offset within [-10, 10]
+                double offsetY = (Math.random() - 0.5) * 20; // Random offset within [-10, 10]
+                double offsetZ = (Math.random() - 0.5) * 20; // Random offset within [-10, 10]
+                serverLevel.sendParticles(ParticleTypes.FLAME,
+                        this.getX() + offsetX,
+                        this.getY() + offsetY,
+                        this.getZ() + offsetZ,
+                        0, 0.0, 0.0, 0.0, 0);
+            }
+        }
+
     }
 }

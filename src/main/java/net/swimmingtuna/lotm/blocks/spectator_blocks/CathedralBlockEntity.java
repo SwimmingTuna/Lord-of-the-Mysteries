@@ -2,19 +2,20 @@ package net.swimmingtuna.lotm.blocks.spectator_blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.BlockEntityInit;
 import net.swimmingtuna.lotm.init.BlockInit;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.TickableBlockEntity;
 
 import java.util.List;
@@ -38,7 +39,6 @@ public class CathedralBlockEntity extends BlockEntity implements TickableBlockEn
                 double distanceX = player.getX() - worldPosition.getX();
                 double distanceY = player.getY() - worldPosition.getY();
                 double distanceZ = player.getZ() - worldPosition.getZ();
-                AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
                 BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
                 if (holder.getCurrentSequence() == 0 && holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
                     if (Math.abs(distanceX) <= 80 && Math.abs(distanceY) <= 100 && Math.abs(distanceZ) <= 110) {
@@ -55,15 +55,15 @@ public class CathedralBlockEntity extends BlockEntity implements TickableBlockEn
             if (ticks == 740) {
                 yStart = 91;
             }
-            for (int x = -87; x <= 87; x++) {
-                for (int y = yStart; y <= yEnd; y++) {
-                    for (int z = -80; z <= 80; z++) {
+            for (int x = -89; x <= 89; x++) {
+                for (int y = yStart; y <= yEnd + 3; y++) {
+                    for (int z = -82; z <= 82; z++) {
                         mutablePos.set(worldPosition.getX() + x, worldPosition.getY() + y, worldPosition.getZ() + z);
                         Block blockInPos = level.getBlockState(mutablePos).getBlock();
                         if (blockList.contains(blockInPos) || blockInPos == Blocks.REDSTONE_WIRE || blockInPos == Blocks.CANDLE || blockInPos == Blocks.OAK_FENCE || blockInPos == Blocks.ZOMBIE_HEAD
                                 || blockInPos == Blocks.ZOMBIE_WALL_HEAD || blockInPos == Blocks.PIGLIN_HEAD || blockInPos == Blocks.PIGLIN_WALL_HEAD
                                 || blockInPos == Blocks.CREEPER_HEAD || blockInPos == Blocks.CREEPER_WALL_HEAD || blockInPos == Blocks.PLAYER_HEAD
-                                || blockInPos == Blocks.PLAYER_WALL_HEAD || blockInPos == Blocks.NETHER_BRICK_FENCE) {
+                                || blockInPos == Blocks.PLAYER_WALL_HEAD || blockInPos == Blocks.NETHER_BRICK_FENCE || blockInPos == Blocks.WHITE_CANDLE || blockInPos == Blocks.SKELETON_SKULL || blockInPos == Blocks.WITHER_SKELETON_SKULL || blockInPos == Blocks.STONE_BRICK_STAIRS) {
                             double distance = worldPosition.distSqr(mutablePos);
                             if (distance <= 250 * 250) {
                                 level.removeBlock(mutablePos, false);
@@ -74,7 +74,16 @@ public class CathedralBlockEntity extends BlockEntity implements TickableBlockEn
             }
         }
         if (ticks >= 800) {
+            int radius = 300;
             level.setBlock(this.getBlockPos(), Blocks.AIR.defaultBlockState(), 3);
+            List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class,
+                    new AABB(worldPosition.offset(-radius, -radius, -radius), worldPosition.offset(radius, radius, radius)));
+
+            for (ItemEntity itemEntity : items) {
+                if (itemEntity.getItem().getItem() == Items.REDSTONE || itemEntity.getItem().getItem() == Items.TWISTING_VINES) {
+                    itemEntity.discard(); // Remove the item entity from the world
+                }
+            }
         }
 
     }

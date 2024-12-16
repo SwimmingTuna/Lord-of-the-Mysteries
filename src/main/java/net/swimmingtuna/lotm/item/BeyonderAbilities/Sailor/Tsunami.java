@@ -5,62 +5,50 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.fml.common.Mod;
-import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.caps.BeyonderHolder;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class Tsunami extends Item {
-    public Tsunami(Properties properties) {
-        super(properties);
+public class Tsunami extends SimpleAbilityItem {
+
+    public Tsunami(Properties properties) { //fix cooldown and spirituality
+        super(properties, BeyonderClassInit.SAILOR, 4, 500, 900);
     }
 
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-                return super.use(level, player, hand);
-            }
-            if (holder.getSpirituality() < 500) {
-                player.displayClientMessage(Component.literal("You need 500 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-                return super.use(level, player, hand);
-            }
 
-            if (holder.getCurrentSequence() <= 4 && holder.useSpirituality(500)) {
-                startTsunami(player);
-            }
-            if (!player.getAbilities().instabuild)
-                player.getCooldowns().addCooldown(this, 900); // 60 seconds cooldown
+    @Override
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
-        return super.use(level, player, hand);
+        addCooldown(player);
+        useSpirituality(player);
+        startTsunami(player);
+        return InteractionResult.SUCCESS;
     }
 
     public static void startTsunami(Player player) {
-        player.getPersistentData().putInt("sailorTsunami", 600);
-        float yaw = player.getYRot();
-        String direction = getDirectionFromYaw(yaw);
-        player.getPersistentData().putString("sailorTsunamiDirection", direction);
-        player.getPersistentData().putInt("sailorTsunamiX", (int) player.getX());
-        player.getPersistentData().putInt("sailorTsunamiY", (int) player.getY());
-        player.getPersistentData().putInt("sailorTsunamiZ", (int) player.getZ());
+        if (!player.level().isClientSide()) {
+            player.getPersistentData().putInt("sailorTsunami", 600);
+            float yaw = player.getYRot();
+            String direction = getDirectionFromYaw(yaw);
+            player.getPersistentData().putString("sailorTsunamiDirection", direction);
+            player.getPersistentData().putInt("sailorTsunamiX", (int) player.getX());
+            player.getPersistentData().putInt("sailorTsunamiY", (int) player.getY());
+            player.getPersistentData().putInt("sailorTsunamiZ", (int) player.getZ());
+        }
     }
 
-    private static String getDirectionFromYaw(float yaw) {
+    public static String getDirectionFromYaw(float yaw) {
         if (yaw < 0) {
             yaw += 360;
         }
@@ -78,10 +66,13 @@ public class Tsunami extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Creates a massive wave of water in front of you\n" +
-                "Spirituality Used: 500\n" +
-                "Cooldown: 45 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, summons a colossal wave in the direction you're looking"));
+        tooltipComponents.add(Component.literal("Left Click for Tsunami (Seal)"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("500").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("45 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     public static void summonTsunami(Player player) {

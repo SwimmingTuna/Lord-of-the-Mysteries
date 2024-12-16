@@ -16,7 +16,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Ability;
+import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
+import net.swimmingtuna.lotm.networking.packet.ClearAbilitiesS2C;
+import net.swimmingtuna.lotm.networking.packet.SyncAbilitiesS2C;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 
 import java.util.HashMap;
@@ -27,6 +31,7 @@ public class AbilityRegisterCommand {
 
     private static final String REGISTERED_ABILITIES_KEY = "RegisteredAbilities";
     private static final Map<String, Integer> COMBINATION_MAP = new HashMap<>();
+    private static final Map<String, String> abilitiesToSync = new HashMap<>();
 
     private static final DynamicCommandExceptionType NOT_ABILITY = new DynamicCommandExceptionType(o -> Component.literal("Not an ability: " + o));
 
@@ -59,13 +64,10 @@ public class AbilityRegisterCommand {
 
     private static int registerAbility(CommandSourceStack source, String combination, Holder.Reference<Item> itemReference) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
-
-        // Validate combination
         if (!COMBINATION_MAP.containsKey(combination)) {
             source.sendFailure(Component.literal("Invalid combination. Please use a valid 5-character combination of L and R."));
             return 0;
         }
-
         int combinationNumber = COMBINATION_MAP.get(combination);
         List<Item> availableAbilities = BeyonderUtil.getAbilities(player);
 
@@ -93,5 +95,47 @@ public class AbilityRegisterCommand {
         source.sendSuccess(() -> Component.literal("Added ability: ").append(Component.translatable(item.getDescriptionId())).append(Component.literal(" for combination " + combination)), true);
 
         return 1;
+    }
+
+    public static void syncRegisteredAbilitiesToClient(ServerPlayer player) {
+        CompoundTag tag = player.getPersistentData();
+        if (tag.contains(REGISTERED_ABILITIES_KEY, Tag.TAG_COMPOUND)) {
+            CompoundTag registeredAbilities = tag.getCompound(REGISTERED_ABILITIES_KEY);
+            Map<String, String> abilitiesToSync = new HashMap<>();
+
+            for (String combinationNumber : registeredAbilities.getAllKeys()) {
+                String abilityResourceLocationString = registeredAbilities.getString(combinationNumber);
+                ResourceLocation resourceLocation = new ResourceLocation(abilityResourceLocationString);
+                Item item = ForgeRegistries.ITEMS.getValue(resourceLocation);
+                if (item != null) {
+                    String combination = findCombinationForNumber(Integer.parseInt(combinationNumber));
+                    if (!combination.isEmpty()) {
+                        String localizedName = Component.translatable(item.getDescriptionId()).getString();
+                        abilitiesToSync.put(combination, localizedName);
+                    }
+                }
+            }
+
+            if (!abilitiesToSync.isEmpty()) {
+                LOTMNetworkHandler.sendToPlayer(new SyncAbilitiesS2C(abilitiesToSync), player);
+            }
+            if (abilitiesToSync.isEmpty()) {
+                LOTMNetworkHandler.sendToPlayer(new ClearAbilitiesS2C(), player);
+                player.sendSystemMessage(Component.literal("Cleared Abilities"));
+            }
+        }
+    }
+
+
+    public static void tickEvent(ServerPlayer player) {
+        syncRegisteredAbilitiesToClient(player);
+    }
+    private static String findCombinationForNumber(int number) {
+        for (Map.Entry<String, Integer> entry : COMBINATION_MAP.entrySet()) {
+            if (entry.getValue() == number) {
+                return entry.getKey();
+            }
+        }
+        return "";
     }
 }

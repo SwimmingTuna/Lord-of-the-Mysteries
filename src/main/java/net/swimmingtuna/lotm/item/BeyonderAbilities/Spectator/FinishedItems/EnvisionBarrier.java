@@ -5,21 +5,16 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fml.common.Mod;
-import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.caps.BeyonderHolder;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.init.BlockInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,48 +24,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class EnvisionBarrier extends Item {
+public class EnvisionBarrier extends SimpleAbilityItem {
 
     private final Map<BlockPos, BlockState> replacedBlocks = new HashMap<>();
     private final List<BlockPos> replacedAirBlocks = new ArrayList<>();
     private BlockPos domeCenter = null;
 
     public EnvisionBarrier(Properties properties) {
-        super(properties);
+        super(properties, BeyonderClassInit.SPECTATOR, 0, 0, 100);
     }
 
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        AttributeInstance dreamIntoReality = player.getAttribute(ModAttributes.DIR.get());
-        if (!player.level().isClientSide()) {
-            BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-            if (!holder.currentClassMatches(BeyonderClassInit.SPECTATOR)) {
-                player.displayClientMessage(Component.literal("You are not of the Spectator pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
-            if (holder.getSpirituality() < (int) (800 / dreamIntoReality.getValue())) {
-                player.displayClientMessage(Component.literal("You need " + (800 / dreamIntoReality.getValue()) + " spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.AQUA), true);
-            }
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        int dreamIntoReality = (int) player.getAttribute(ModAttributes.DIR.get()).getValue();
+        if (!checkAll(player, BeyonderClassInit.SPECTATOR.get(), 0, 800 / dreamIntoReality)) {
+            return InteractionResult.FAIL;
         }
-        BlockPos playerPos = player.getOnPos();
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (holder.currentClassMatches(BeyonderClassInit.SPECTATOR) && !player.level().isClientSide() && holder.getCurrentSequence() <= 0 && holder.useSpirituality((int) (800 / dreamIntoReality.getValue()))) {
-            generateBarrier(player, level, playerPos);
-            if (!player.getAbilities().instabuild)
-                player.getCooldowns().addCooldown(this, 100);
-        }
-        return super.use(level, player, hand);
+        useSpirituality(player, 800 / dreamIntoReality);
+        generateBarrier(player, level, player.getOnPos());
+        addCooldown(player);
+        return InteractionResult.SUCCESS;
     }
-
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, makes a barrier around the user\n" +
-                "Hold Shift to Increase Barrier Radius\n" +
-                "Left Click for Envision Death\n" +
-                "Spirituality Used: 800\n" +
-                "Cooldown: 5 seconds ").withStyle(ChatFormatting.AQUA));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, envision a nearly unbreakable barrier around you"));
+        tooltipComponents.add(Component.literal("Left Click for Envision Death. Shift to increase barrier distance"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("800").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("5 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 
     private void generateBarrier(Player player, Level level, BlockPos playerPos) {

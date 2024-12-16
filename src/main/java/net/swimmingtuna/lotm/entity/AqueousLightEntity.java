@@ -20,6 +20,7 @@ import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.EntityInit;
 import net.swimmingtuna.lotm.init.ParticleInit;
+import net.swimmingtuna.lotm.util.BeyonderUtil;
 import org.jetbrains.annotations.NotNull;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
@@ -68,7 +69,7 @@ public class AqueousLightEntity extends AbstractHurtingProjectile {
         if (entity.level().isClientSide() || owner.level().isClientSide()) {
             return;
         }
-        entity.hurt(damageSources().fall(), damage);
+        entity.hurt(BeyonderUtil.genericSource(this), damage);
         if (holder.getCurrentSequence() > 7) {
             return;
         }

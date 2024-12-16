@@ -1,4 +1,4 @@
-package assets.lotm.textures.worldgen.portal;
+package main.resources.assets.lotm.textures.worldgen.portal;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

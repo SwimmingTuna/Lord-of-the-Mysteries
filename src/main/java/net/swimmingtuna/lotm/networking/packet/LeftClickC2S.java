@@ -49,8 +49,8 @@ public class LeftClickC2S {
                 CompoundTag tag = player.getPersistentData();
                 double distance = tag.getDouble("sailorLightningStormDistance");
                 tag.putDouble("sailorLightningStormDistance", (int) (distance + 30));
-                player.sendSystemMessage(Component.literal("Storm Radius Is " + distance).withStyle(BeyonderUtil.getStyle(player)));
-                if (distance > 300) {
+                player.displayClientMessage(Component.literal("Storm Radius Is " + distance).withStyle(BeyonderUtil.getStyle(player)),true);
+                if (distance >= 301) {
                     tag.putDouble("sailorLightningStormDistance", 0);
                 }
             }

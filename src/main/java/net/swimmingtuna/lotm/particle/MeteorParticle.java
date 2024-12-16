@@ -5,7 +5,6 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class MeteorParticle extends TextureSheetParticle {
@@ -35,11 +34,6 @@ public class MeteorParticle extends TextureSheetParticle {
         return this.quadSize * 10;
     }
 
-    public static void addSizeParticle(ClientLevel level, Player entity, SpriteSet spriteSet, float size) {
-        MeteorParticle particle = new MeteorParticle(level, entity.getX(), entity.getY(), entity.getZ(), spriteSet, 0, 0, 0);
-        particle.scale(size);
-//        level.addParticle(particle, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-    }
 
 
     @Override

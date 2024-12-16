@@ -14,7 +14,7 @@ public class CustomRenderType extends RenderType {
         return create("lightning_glow",
                 DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256,
                 true, true,
-                RenderType.CompositeState.builder()
+                CompositeState.builder()
                         .setShaderState(RENDERTYPE_LIGHTNING_SHADER)
                         .setTextureState(NO_TEXTURE)
                         .setTransparencyState(LIGHTNING_TRANSPARENCY)

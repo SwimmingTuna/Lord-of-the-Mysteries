@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Monster;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -18,28 +19,32 @@ import java.util.List;
 public class SpiritVision extends SimpleAbilityItem {
 
     public SpiritVision(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 0, 3500, 2400);
+        super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
     }
-                                                                    //required class            required sequence   how much "mana"     how long the cooldown is in ticks (20 ticks = 1 second)
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
-        useSpirituality(player);
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
         addCooldown(player);
         activateSpiritVision(player);
+        useSpirituality(player);
         return InteractionResult.SUCCESS;
     }
 
     private void activateSpiritVision(Player player) {
+        if (!player.level().isClientSide()) {
 
+        }
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal(
-                "Upon use, exude an aura of tyranny, not giving any entity permission to move, implanting fear strong enough to not allow them to use their abilities"
-        ).withStyle(/*ChatFormatting.BOLD, ChatFormatting.BLUE*/));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, enables or disables spirit vision. WORK IN PROGRESS!!!!!"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("0").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("1 Second").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
-        //the description of the item, don't worry about this yet though
 }

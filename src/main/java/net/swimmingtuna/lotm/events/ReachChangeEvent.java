@@ -1,5 +1,4 @@
 package net.swimmingtuna.lotm.events;
-
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -8,11 +7,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.MindReading;
+import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 
 import java.util.UUID;
 
 public class ReachChangeEvent {
-
     public static void checkEntityTooFar(PlayerInteractEvent event, Entity entity, Player player, InteractionHand usedHand) {
         if (!MindReading.usedHand(player)) {
             return;

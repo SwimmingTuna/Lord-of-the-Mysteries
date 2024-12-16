@@ -36,7 +36,7 @@ public class LOTMRenderTypes extends RenderType {
                     .setWriteMaskState(COLOR_WRITE)
                     .createCompositeState(false)));
     private static final RenderType LIGHTNING = create("lightning", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256,
-            false, true, RenderType.CompositeState.builder()
+            false, true, CompositeState.builder()
                     .setShaderState(RENDERTYPE_LIGHTNING_SHADER)
                     .setTransparencyState(LIGHTNING_TRANSPARENCY)
                     .createCompositeState(false));

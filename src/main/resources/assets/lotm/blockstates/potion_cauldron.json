@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "model": "lotm:block/potion_cauldron"
+    },
+    "facing=south,lit=false": {
+      "model": "lotm:block/potion_cauldron",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "lotm:block/potion_cauldron",
+      "y": 270
+    },
+    "facing=east,lit=false": {
+      "model": "lotm:block/potion_cauldron",
+      "y": 90
+    },
+    "facing=north,lit=true": {
+      "model": "lotm:block/potion_cauldron_with_potion"
+    },
+    "facing=south,lit=true": {
+      "model": "lotm:block/potion_cauldron_with_potion",
+      "y": 180
+    },
+    "facing=west,lit=true": {
+      "model": "lotm:block/potion_cauldron_with_potion",
+      "y": 270
+    },
+    "facing=east,lit=true": {
+      "model": "lotm:block/potion_cauldron_with_potion",
+      "y": 90
+    }
+  }
+}
