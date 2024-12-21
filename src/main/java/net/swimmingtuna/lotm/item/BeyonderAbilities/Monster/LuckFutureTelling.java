@@ -238,7 +238,7 @@ public class LuckFutureTelling extends SimpleAbilityItem {
             pPlayer.sendSystemMessage(Component.literal("Your next damage will be doubled").withStyle(ChatFormatting.RED));
         }
         if (doubleDamage >= 2) {
-            pPlayer.sendSystemMessage(Component.literal("Your next " + doubleDamage + "damage instances will be doubled").withStyle(ChatFormatting.RED));
+            pPlayer.sendSystemMessage(Component.literal("Your next " + doubleDamage + " damage instances will be doubled").withStyle(ChatFormatting.RED));
         }
         if (ignoreDamage == 1) {
             pPlayer.sendSystemMessage(Component.literal("You will ignore your next damage").withStyle(ChatFormatting.GREEN));

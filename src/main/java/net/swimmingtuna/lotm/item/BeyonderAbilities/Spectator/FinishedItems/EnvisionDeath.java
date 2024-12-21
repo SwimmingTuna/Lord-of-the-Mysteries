@@ -43,8 +43,8 @@ public class EnvisionDeath extends SimpleAbilityItem {
             for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
                 if (entity != player) {
                     int entityHealth = (int) entity.getHealth();
-                    if (entityHealth <= 100 + (20 * dir)) {
-                        entity.hurt(entity.damageSources().magic(), 100);
+                    if (entityHealth <= 40 + (5 * dir)) {
+                        entity.hurt(entity.damageSources().magic(), 40 + (5 * dir));
                     }
                 }
             }

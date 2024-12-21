@@ -44,7 +44,7 @@ public class FateReincarnation extends SimpleAbilityItem {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
             int x = (int) (player.getX() + (Math.random() * 5000) - 2500);
             int z = (int) (player.getZ() + (Math.random() * 5000) - 2500);
-            int surfaceY = player.level().getHeight(Heightmap.Types.WORLD_SURFACE, x, z) + 1;
+            int surfaceY = player.level().getHeight(Heightmap.Types.WORLD_SURFACE, x, z) + 4;
             player.teleportTo(x, surfaceY, z);
             player.getPersistentData().putInt("monsterReincarnationCounter", 7200);
             if (holder.getCurrentSequence() == 0) {
@@ -80,40 +80,31 @@ public class FateReincarnation extends SimpleAbilityItem {
                 if (x >= 7100) {
                     scaleData.setScale(0.2f);
                     holder.removeClass();
-                }
-                if (x >= 6900 && x <= 7099) {
+                } else if (x >= 6900) {
                     scaleData.setScale(0.25f);
                     holder.setClassAndSequence(BeyonderClassInit.MONSTER.get(), 9);
-                }
-                if (x >= 6600 && x <= 6899) {
+                } else if (x >= 6600) {
                     scaleData.setScale(0.35f);
                     holder.setClassAndSequence(BeyonderClassInit.MONSTER.get(), 8);
-                }
-                if (x >= 6050 && x <= 6599) {
+                } else if (x >= 6050) {
                     scaleData.setScale(0.5f);
                     holder.setClassAndSequence(BeyonderClassInit.MONSTER.get(), 7);
-                }
-                if (x >= 5300 && x <= 6049) {
+                } else if (x >= 5300) {
                     scaleData.setScale(0.6f);
                     holder.setClassAndSequence(BeyonderClassInit.MONSTER.get(), 6);
-                }
-                if (x >= 4200 && x <= 5299) {
+                } else if (x >= 4200) {
                     scaleData.setScale(0.7f);
                     holder.setClassAndSequence(BeyonderClassInit.MONSTER.get(), 5);
-                }
-                if (x >= 3200 && x <= 4199) {
+                } else if (x >= 3200) {
                     scaleData.setScale(0.85f);
                     holder.setClassAndSequence(BeyonderClassInit.MONSTER.get(), 4);
-                }
-                if (x >= 1800 && x <= 3199) {
+                } else if (x >= 1800) {
                     scaleData.setScale(0.9f);
                     holder.setClassAndSequence(BeyonderClassInit.MONSTER.get(), 3);
-                }
-                if (x >= 2 && x <= 1799) {
+                } else if (x >= 2) {
                     scaleData.setScale(1.0f);
                     holder.setClassAndSequence(BeyonderClassInit.MONSTER.get(), 2);
-                }
-                if (x == 1) {
+                } else if (x == 1) {
                     holder.setClassAndSequence(BeyonderClassInit.MONSTER.get(), 1);
                 }
             } else {

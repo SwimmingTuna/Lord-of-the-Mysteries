@@ -39,6 +39,11 @@ public class LOTMNetworkHandler {
                 .encoder(LuckManipulationLeftClickC2S::toByte)
                 .consumerMainThread(LuckManipulationLeftClickC2S::handle)
                 .add();
+        INSTANCE.messageBuilder(DeathKnellLeftClickC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(DeathKnellLeftClickC2S::new)
+                .encoder(DeathKnellLeftClickC2S::toByte)
+                .consumerMainThread(DeathKnellLeftClickC2S::handle)
+                .add();
         INSTANCE.messageBuilder(MonsterLeftClickC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(MonsterLeftClickC2S::new)
                 .encoder(MonsterLeftClickC2S::toByte)
@@ -98,6 +103,11 @@ public class LOTMNetworkHandler {
                 .decoder(NonVisibleS2C::decode)
                 .encoder(NonVisibleS2C::encode)
                 .consumerMainThread(NonVisibleS2C::handle)
+                .add();
+        INSTANCE.messageBuilder(DeathKnellBulletLocationS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(DeathKnellBulletLocationS2C::decode)
+                .encoder(DeathKnellBulletLocationS2C::encode)
+                .consumerMainThread(DeathKnellBulletLocationS2C::handle)
                 .add();
         INSTANCE.messageBuilder(SyncSequencePacketS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(SyncSequencePacketS2C::new)

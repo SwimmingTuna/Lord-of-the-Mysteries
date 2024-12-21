@@ -493,17 +493,17 @@ public class ModEvents {
     private static void psychologicalInvisibility(Player player, CompoundTag playerPersistentData, BeyonderHolder holder) {
         //PSYCHOLOGICAL INVISIBILITY
 
-        AttributeInstance armorInvisAttribute = player.getAttribute(ModAttributes.ARMORINVISIBLITY.get());
-        if (armorInvisAttribute.getValue() > 0 && !player.hasEffect(MobEffects.INVISIBILITY)) {
-            removeArmor(player);
-            armorInvisAttribute.setBaseValue(0);
-
-        }
         if (playerPersistentData.getBoolean("armorStored")) {
             player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 5, 1, false, false));
             if (player.tickCount % 10 == 0) {
                 holder.useSpirituality((int) holder.getMaxSpirituality() / 100);
             }
+        }
+    }
+
+    private static void psychologicalInvisibilityHurt(LivingEntity entity) {
+        if (entity.getPersistentData().getBoolean("armorStored")) {
+            entity.getPersistentData().putBoolean("armorStored", false);
         }
     }
 
@@ -2716,7 +2716,10 @@ public class ModEvents {
         DamageSource source = event.getSource();
         Entity entitySource = source.getEntity();
         if (!event.getEntity().level().isClientSide()) {
-            if (entity instanceof LivingEntity) {
+            if (entity instanceof LivingEntity living) {
+                if (BeyonderUtil.isBeyonderCapable(living)) {
+                    psychologicalInvisibilityHurt(living);
+                }
                 monsterDodgeAttack(event);
                 int stoneImmunity = tag.getInt("luckStoneDamageImmunity");
                 int stoneDamage = tag.getInt("luckStoneDamage");

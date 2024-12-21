@@ -21,6 +21,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -46,12 +47,14 @@ import net.swimmingtuna.lotm.item.BeyonderAbilities.BeyonderAbilityUser;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Monster.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor.*;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.Spectator.FinishedItems.*;
+import net.swimmingtuna.lotm.item.SealedArtifacts.DeathKnell;
 import net.swimmingtuna.lotm.networking.LOTMNetworkHandler;
 import net.swimmingtuna.lotm.networking.packet.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class BeyonderUtil {
@@ -68,6 +71,7 @@ public class BeyonderUtil {
         }
         return null;
     }
+
     public static Projectile getLivingEntitiesProjectile(LivingEntity player) {
         if (player.level().isClientSide()) {
             return null;
@@ -86,6 +90,7 @@ public class BeyonderUtil {
         Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.GENERIC);
         return new DamageSource(damageTypeHolder, entity, entity, entity.getOnPos().getCenter());
     }
+
     public static DamageSource magicSource(Entity entity) {
         Level level = entity.level();
         Holder<DamageType> damageTypeHolder = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MAGIC);
@@ -543,8 +548,7 @@ public class BeyonderUtil {
 
             } else if (heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROPHESIZE_DEMISE.get())));
-            }
-            else if (heldItem.getItem() instanceof SirenSongHarm) {
+            } else if (heldItem.getItem() instanceof SirenSongHarm) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.SIREN_SONG_STRENGTHEN.get())));
 
             } else if (heldItem.getItem() instanceof SirenSongStrengthen) {
@@ -555,45 +559,34 @@ public class BeyonderUtil {
 
             } else if (heldItem.getItem() instanceof SirenSongWeaken) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.SIREN_SONG_HARM.get())));
-            }
-            else if (heldItem.getItem() instanceof ProbabilityManipulationFortune) {
+            } else if (heldItem.getItem() instanceof ProbabilityManipulationFortune) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYMISFORTUNE.get())));
-            }
-            else if (heldItem.getItem() instanceof ProbabilityManipulationMisfortune) {
+            } else if (heldItem.getItem() instanceof ProbabilityManipulationMisfortune) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYINFINITEFORTUNE.get())));
-            }
-            else if (heldItem.getItem() instanceof ProbabilityManipulationInfiniteFortune) {
+            } else if (heldItem.getItem() instanceof ProbabilityManipulationInfiniteFortune) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYINFINITEMISFORTUNE.get())));
-            }
-            else if (heldItem.getItem() instanceof ProbabilityManipulationInfiniteMisfortune) {
+            } else if (heldItem.getItem() instanceof ProbabilityManipulationInfiniteMisfortune) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYFORTUNEINCREASE.get())));
-            }
-            else if (heldItem.getItem() instanceof ProbabilityManipulationWorldFortune) {
+            } else if (heldItem.getItem() instanceof ProbabilityManipulationWorldFortune) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYMISFORTUNEINCREASE.get())));
-            }
-            else if (heldItem.getItem() instanceof ProbabilityManipulationWorldMisfortune) {
+            } else if (heldItem.getItem() instanceof ProbabilityManipulationWorldMisfortune) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYWIPE.get())));
-            }
-            else if (heldItem.getItem() instanceof ProbabilityManipulationWipe) {
+            } else if (heldItem.getItem() instanceof ProbabilityManipulationWipe) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYEFFECT.get())));
-            }
-            else if (heldItem.getItem() instanceof ProbabilityManipulationImpulse) {
+            } else if (heldItem.getItem() instanceof ProbabilityManipulationImpulse) {
                 LOTMNetworkHandler.sendToServer(new UpdateItemInHandC2S(activeSlot, new ItemStack(ItemInit.PROBABILITYFORTUNE.get())));
-            }
-            else if (heldItem.getItem() instanceof LuckManipulation) {
+            } else if (heldItem.getItem() instanceof LuckManipulation) {
                 LOTMNetworkHandler.sendToServer(new LuckManipulationLeftClickC2S());
-            }
-            else if (heldItem.getItem() instanceof MisfortuneManipulation) {
+            } else if (heldItem.getItem() instanceof MisfortuneManipulation) {
                 LOTMNetworkHandler.sendToServer(new MisfortuneManipulationLeftClickC2S());
-            }
-            else if (heldItem.getItem() instanceof MonsterCalamityIncarnation) {
+            } else if (heldItem.getItem() instanceof MonsterCalamityIncarnation) {
                 LOTMNetworkHandler.sendToServer(new MonsterCalamityIncarnationLeftClickC2S());
-            }
-            else if (heldItem.getItem() instanceof FalseProphecy) {
+            } else if (heldItem.getItem() instanceof FalseProphecy) {
                 LOTMNetworkHandler.sendToServer(new FalseProphecyLeftClickC2S());
-            }
-            else if (heldItem.getItem() instanceof ChaosAmplification) {
+            } else if (heldItem.getItem() instanceof ChaosAmplification) {
                 LOTMNetworkHandler.sendToServer(new CalamityEnhancementLeftClickC2S());
+            } else if (heldItem.getItem() instanceof DeathKnell) {
+                LOTMNetworkHandler.sendToServer(new DeathKnellLeftClickC2S());
             }
         }
     }
@@ -643,7 +636,7 @@ public class BeyonderUtil {
             } else if (heldItem.getItem() instanceof MatterAccelerationSelf) {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.MATTER_ACCELERATION_BLOCKS.get())));
                 heldItem.shrink(1);
-            }  else if (heldItem.getItem() instanceof WindManipulationBlade) {
+            } else if (heldItem.getItem() instanceof WindManipulationBlade) {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.WIND_MANIPULATION_CUSHION.get())));
                 heldItem.shrink(1);
             } else if (heldItem.getItem() instanceof WindManipulationCushion) {
@@ -706,24 +699,22 @@ public class BeyonderUtil {
             } else if (heldItem.getItem() instanceof ProphesizeTeleportPlayer) {
                 pPlayer.getInventory().setItem(activeSlot, new ItemStack((ItemInit.PROPHESIZE_DEMISE.get())));
                 heldItem.shrink(1);
-            }
-            else if (heldItem.getItem() instanceof LuckManipulation) {
+            } else if (heldItem.getItem() instanceof LuckManipulation) {
                 LOTMNetworkHandler.sendToServer(new LuckManipulationLeftClickC2S());
-            }
-            else if (heldItem.getItem() instanceof MisfortuneManipulation) {
+            } else if (heldItem.getItem() instanceof MisfortuneManipulation) {
                 LOTMNetworkHandler.sendToServer(new MisfortuneManipulationLeftClickC2S());
-            }
-            else if (heldItem.getItem() instanceof MonsterCalamityIncarnation) {
+            } else if (heldItem.getItem() instanceof MonsterCalamityIncarnation) {
                 LOTMNetworkHandler.sendToServer(new MonsterCalamityIncarnationLeftClickC2S());
-            }
-            else if (heldItem.getItem() instanceof FalseProphecy) {
+            } else if (heldItem.getItem() instanceof FalseProphecy) {
                 LOTMNetworkHandler.sendToServer(new FalseProphecyLeftClickC2S());
-            }
-            else if (heldItem.getItem() instanceof ChaosAmplification) {
+            } else if (heldItem.getItem() instanceof ChaosAmplification) {
                 LOTMNetworkHandler.sendToServer(new CalamityEnhancementLeftClickC2S());
+            } else if (heldItem.getItem() instanceof DeathKnell) {
+                LOTMNetworkHandler.sendToServer(new DeathKnellLeftClickC2S());
             }
         }
     }
+
     public static void spawnParticlesInSphere(ServerLevel level, double x, double y, double z, int maxRadius, int maxParticles, float xSpeed, float ySpeed, float zSpeed, ParticleOptions particle) {
         for (int i = 0; i < maxParticles; i++) {
             double dx = level.random.nextGaussian() * maxRadius;
@@ -733,11 +724,12 @@ public class BeyonderUtil {
             if (distance < maxRadius) {
                 double density = 1.0 - (distance / maxRadius);
                 if (level.random.nextDouble() < density) {
-                    level.sendParticles(particle, x + dx, y + dy, z + dz, 0, xSpeed, ySpeed, zSpeed,1);
+                    level.sendParticles(particle, x + dx, y + dy, z + dz, 0, xSpeed, ySpeed, zSpeed, 1);
                 }
             }
         }
     }
+
     public static void applyMobEffect(LivingEntity pPlayer, MobEffect mobEffect, int duration, int amplifier, boolean ambient, boolean visible) {
         MobEffectInstance currentEffect = pPlayer.getEffect(mobEffect);
         MobEffectInstance newEffect = new MobEffectInstance(mobEffect, duration, amplifier, ambient, visible);
@@ -749,9 +741,11 @@ public class BeyonderUtil {
             pPlayer.addEffect(newEffect);
         }
     }
+
     public static boolean isBeyonderCapable(LivingEntity living) {
         return living instanceof Player || living instanceof PlayerMobEntity;
     }
+
     public static @Nullable BeyonderClass getPathway(LivingEntity living) {
         if (living instanceof Player player) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
@@ -761,6 +755,7 @@ public class BeyonderUtil {
         }
         return null;
     }
+
     public static int getSequence(LivingEntity living) {
         if (living instanceof Player player) {
             BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
@@ -769,5 +764,48 @@ public class BeyonderUtil {
             return playerMobEntity.getCurrentSequence();
         }
         return -1;
+    }
+
+
+    public static boolean isLivingEntityMoving(LivingEntity entity) {
+        CompoundTag tag = entity.getPersistentData();
+        updatePositions(entity, tag);
+        double MOVEMENT_THRESHOLD = 0.0023;
+        double prevX = tag.getDouble("prevX");
+        double prevY = tag.getDouble("prevY");
+        double prevZ = tag.getDouble("prevZ");
+        double currentX = tag.getDouble("currentX");
+        double currentY = tag.getDouble("currentY");
+        double currentZ = tag.getDouble("currentZ");
+
+        // Check if movement exceeds threshold in any direction
+        return Math.abs(prevX - currentX) > MOVEMENT_THRESHOLD ||
+                Math.abs(prevY - currentY) > MOVEMENT_THRESHOLD ||
+                Math.abs(prevZ - currentZ) > MOVEMENT_THRESHOLD;
+    }
+
+    private static void updatePositions(Entity entity, CompoundTag tag) {
+        int tickCounter = tag.getInt("tickCounter");
+
+        if (tickCounter == 0) {
+            // Store previous position
+            tag.putDouble("prevX", entity.getX());
+            tag.putDouble("prevY", entity.getY());
+            tag.putDouble("prevZ", entity.getZ());
+            tag.putInt("tickCounter", 1);
+        } else {
+            // Store current position
+            tag.putDouble("currentX", entity.getX());
+            tag.putDouble("currentY", entity.getY());
+            tag.putDouble("currentZ", entity.getZ());
+            tag.putInt("tickCounter", 0);
+        }
+    }
+    public static void setTargetToHighestHP(Mob mob, int searchRange) {
+        List<LivingEntity> nearbyEntities = mob.level().getEntitiesOfClass(LivingEntity.class, mob.getBoundingBox().inflate(searchRange), entity -> entity != mob && entity.isAlive() && mob.canAttack(entity));
+        if (nearbyEntities.isEmpty()) {
+            return;
+        }
+        nearbyEntities.stream().max(Comparator.comparingDouble(LivingEntity::getMaxHealth)).ifPresent(mob::setTarget);
     }
 }

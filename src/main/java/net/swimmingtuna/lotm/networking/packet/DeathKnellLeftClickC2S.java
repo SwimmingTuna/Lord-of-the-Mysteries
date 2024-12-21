@@ -2,6 +2,7 @@ package net.swimmingtuna.lotm.networking.packet;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -26,11 +27,11 @@ public class DeathKnellLeftClickC2S {
         context.enqueueWork(() -> {
             if (player == null) return;
             CompoundTag tag = player.getPersistentData();
-            int x = tag.getInt("falseProphecyItem");
-            if (x <= 9) {
-                tag.putInt("falseProphecyItem", x + 1);
+            int x = tag.getInt("deathKnell");
+            if (x <= 2) {
+                tag.putInt("deathKnell", x + 1);
             } else {
-                tag.putInt("falseProphecyItem", 1);
+                tag.putInt("deathKnell", 1);
             }
             });
         return true;

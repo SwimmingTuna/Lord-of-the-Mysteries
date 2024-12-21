@@ -2,9 +2,12 @@ package net.swimmingtuna.lotm.util;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -13,13 +16,15 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Ravager;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.animal.horse.SkeletonHorse;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -33,6 +38,7 @@ import net.swimmingtuna.lotm.util.effect.ModEffects;
 import net.swimmingtuna.lotm.world.worlddata.CalamityEnhancementData;
 import net.swimmingtuna.lotm.world.worlddata.WorldFortuneValue;
 import net.swimmingtuna.lotm.world.worlddata.WorldMisfortuneData;
+import org.joml.Vector3f;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
@@ -50,6 +56,222 @@ public class CorruptionAndLuckHandler {
             double lotmMisfortuneValue = tag.getDouble("misfortune");
             if (corruption >= 1 && livingEntity.tickCount % 200 == 0) {
                 tag.putDouble("corruption", corruption - 1);
+            }
+            if (livingEntity.tickCount % 20 == 0) {
+                if (corruption >= 60) {
+                    livingEntity.addEffect(new MobEffectInstance(MobEffects.WITHER, 40, 2, false, false));
+                }
+                if (corruption >= 70) {
+                    if (Math.random() <= 0.10 && livingEntity.tickCount % 100 == 0) {
+                        livingEntity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 40, 2, false, false));
+                    }
+                    if (Math.random() <= 0.40 && livingEntity.tickCount % 60 == 0) {
+                        livingEntity.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 40, 2, false, false));
+                    }
+                }
+                if (corruption >= 80 && livingEntity.tickCount % 200 == 0) {
+                    if (Math.random() <= .50) {
+                        livingEntity.addEffect(new MobEffectInstance(ModEffects.FRENZY.get(), 40, 2, false, false));
+                    } else {
+                        livingEntity.addEffect(new MobEffectInstance(ModEffects.PARALYSIS.get(), 40, 2, false, false));
+                    }
+                }
+                if (corruption >= 90) {
+                    if (Math.random() >= 0.15) {
+                        if (livingEntity instanceof Player player) {
+                            int sequence = BeyonderHolderAttacher.getHolderUnwrap(player).getCurrentSequence();
+                            float maxHp = player.getMaxHealth();
+                            if (sequence == 9 || sequence == 8) {
+                                WitherSkeleton witherSkeleton = new WitherSkeleton(EntityType.WITHER_SKELETON, player.level());
+                                witherSkeleton.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                witherSkeleton.setHealth(maxHp);
+                                witherSkeleton.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                witherSkeleton.getPersistentData().putBoolean("corruptedEntityLow", true);
+                                BeyonderUtil.setTargetToHighestHP(witherSkeleton, 30);
+                                player.level().addFreshEntity(witherSkeleton);
+
+                            } else if (sequence == 7 || sequence == 6 || sequence == 5) {
+                                SkeletonHorse skeletonHorse = new SkeletonHorse(EntityType.SKELETON_HORSE, player.level());
+                                skeletonHorse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                skeletonHorse.setHealth(maxHp);
+                                skeletonHorse.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                skeletonHorse.getPersistentData().putBoolean("corruptedEntityMid", true);
+                                BeyonderUtil.setTargetToHighestHP(skeletonHorse, 50);
+                                Skeleton skeleton = new Skeleton(EntityType.SKELETON, player.level());
+                                skeleton.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                skeleton.setHealth(maxHp);
+                                skeleton.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                skeleton.getPersistentData().putBoolean("corruptedEntityMid", true);
+                                BeyonderUtil.setTargetToHighestHP(skeleton, 50);
+                                skeleton.startRiding(skeletonHorse, true);
+                                player.level().addFreshEntity(skeletonHorse);
+                                player.level().addFreshEntity(skeleton);
+                            } else if (sequence == 4 || sequence == 3) {
+                                Vex vex = new Vex(EntityType.VEX, player.level());
+                                vex.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                vex.setHealth(maxHp);
+                                vex.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                vex.getPersistentData().putBoolean("corruptedEntitySaint", true);
+                                BeyonderUtil.setTargetToHighestHP(vex, 70);
+                                player.level().addFreshEntity(vex);
+                            } else if (sequence == 2 || sequence == 1) {
+                                Phantom phantom = new Phantom(EntityType.PHANTOM, player.level());
+                                phantom.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                phantom.setHealth(maxHp);
+                                phantom.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                phantom.getPersistentData().putBoolean("corruptedEntityAngel", true);
+                                BeyonderUtil.setTargetToHighestHP(phantom, 100);
+                                player.level().addFreshEntity(phantom);
+
+                            } else if (sequence == 0) {
+                                WitherBoss wither = new WitherBoss(EntityType.WITHER, player.level());
+                                wither.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                wither.setHealth(maxHp);
+                                wither.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                wither.getPersistentData().putBoolean("corruptedEntityDeity", true);
+                                BeyonderUtil.setTargetToHighestHP(wither, 150);
+                                player.level().addFreshEntity(wither);
+                            }
+                        } else if (livingEntity instanceof PlayerMobEntity player) {
+                            int sequence = player.getCurrentSequence();
+                            int maxHp = (int) player.getAttribute(Attributes.MAX_HEALTH).getBaseValue();
+                            if (sequence == 9 || sequence == 8) {
+                                WitherSkeleton witherSkeleton = new WitherSkeleton(EntityType.WITHER_SKELETON, player.level());
+                                witherSkeleton.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                witherSkeleton.setHealth(maxHp);
+                                witherSkeleton.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                witherSkeleton.getPersistentData().putBoolean("corruptedEntityLow", true);
+                                BeyonderUtil.setTargetToHighestHP(witherSkeleton, 30);
+                                player.level().addFreshEntity(witherSkeleton);
+
+                            } else if (sequence == 7 || sequence == 6 || sequence == 5) {
+                                SkeletonHorse skeletonHorse = new SkeletonHorse(EntityType.SKELETON_HORSE, player.level());
+                                skeletonHorse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                skeletonHorse.setHealth(maxHp);
+                                skeletonHorse.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                skeletonHorse.getPersistentData().putBoolean("corruptedEntityMid", true);
+                                BeyonderUtil.setTargetToHighestHP(skeletonHorse, 50);
+                                Skeleton skeleton = new Skeleton(EntityType.SKELETON, player.level());
+                                skeleton.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                skeleton.setHealth(maxHp);
+                                skeleton.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                skeleton.getPersistentData().putBoolean("corruptedEntityMid", true);
+                                BeyonderUtil.setTargetToHighestHP(skeleton, 50);
+                                skeleton.startRiding(skeletonHorse, true);
+                                player.level().addFreshEntity(skeletonHorse);
+                                player.level().addFreshEntity(skeleton);
+                            } else if (sequence == 4 || sequence == 3) {
+                                Vex vex = new Vex(EntityType.VEX, player.level());
+                                vex.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                vex.setHealth(maxHp);
+                                vex.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                vex.getPersistentData().putBoolean("corruptedEntitySaint", true);
+                                BeyonderUtil.setTargetToHighestHP(vex, 70);
+                                player.level().addFreshEntity(vex);
+                            } else if (sequence == 2 || sequence == 1) {
+                                Phantom phantom = new Phantom(EntityType.PHANTOM, player.level());
+                                phantom.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                phantom.setHealth(maxHp);
+                                phantom.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                phantom.getPersistentData().putBoolean("corruptedEntityAngel", true);
+                                BeyonderUtil.setTargetToHighestHP(phantom, 100);
+                                player.level().addFreshEntity(phantom);
+
+                            } else if (sequence == 0) {
+                                WitherBoss wither = new WitherBoss(EntityType.WITHER, player.level());
+                                wither.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                wither.setHealth(maxHp);
+                                wither.teleportTo(player.getX(), player.getY() + 1, player.getZ());
+                                wither.getPersistentData().putBoolean("corruptedEntityDeity", true);
+                                BeyonderUtil.setTargetToHighestHP(wither, 150);
+                                player.level().addFreshEntity(wither);
+                            }
+                        } else {
+                            int sequence = -1;
+                            float maxHp = livingEntity.getMaxHealth();
+                            if (maxHp >= 20) {
+                                sequence = 9;
+                            } else if (maxHp >= 35) {
+                                sequence = 8;
+                            }
+                            else if (maxHp >= 70) {
+                                sequence = 7;
+                            }
+                            else if (maxHp >= 120) {
+                                sequence = 6;
+                            }
+                            else if (maxHp >= 190) {
+                                sequence = 5;
+                            }
+                            else if (maxHp >= 300) {
+                                sequence = 4;
+                            }
+                            else if (maxHp >= 450) {
+                                sequence = 3;
+                            }
+                            else if (maxHp >= 700) {
+                                sequence = 2;
+                            }
+                            else if (maxHp >= 999) {
+                                sequence = 1;
+                            }
+                            else {
+                                sequence = 0;
+                            }
+                            if (sequence == 9 || sequence == 8) {
+                                WitherSkeleton witherSkeleton = new WitherSkeleton(EntityType.WITHER_SKELETON, livingEntity.level());
+                                witherSkeleton.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                witherSkeleton.setHealth(maxHp);
+                                witherSkeleton.teleportTo(livingEntity.getX(), livingEntity.getY() + 1, livingEntity.getZ());
+                                witherSkeleton.getPersistentData().putBoolean("corruptedEntityLow", true);
+                                BeyonderUtil.setTargetToHighestHP(witherSkeleton, 30);
+                                livingEntity.level().addFreshEntity(witherSkeleton);
+
+                            } else if (sequence == 7 || sequence == 6 || sequence == 5) {
+                                SkeletonHorse skeletonHorse = new SkeletonHorse(EntityType.SKELETON_HORSE, livingEntity.level());
+                                skeletonHorse.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                skeletonHorse.setHealth(maxHp);
+                                skeletonHorse.teleportTo(livingEntity.getX(), livingEntity.getY() + 1, livingEntity.getZ());
+                                skeletonHorse.getPersistentData().putBoolean("corruptedEntityMid", true);
+                                BeyonderUtil.setTargetToHighestHP(skeletonHorse, 50);
+                                Skeleton skeleton = new Skeleton(EntityType.SKELETON, livingEntity.level());
+                                skeleton.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                skeleton.setHealth(maxHp);
+                                skeleton.teleportTo(livingEntity.getX(), livingEntity.getY() + 1, livingEntity.getZ());
+                                skeleton.getPersistentData().putBoolean("corruptedEntityMid", true);
+                                BeyonderUtil.setTargetToHighestHP(skeleton, 50);
+                                skeleton.startRiding(skeletonHorse, true);
+                                livingEntity.level().addFreshEntity(skeletonHorse);
+                                livingEntity.level().addFreshEntity(skeleton);
+                            } else if (sequence == 4 || sequence == 3) {
+                                Vex vex = new Vex(EntityType.VEX, livingEntity.level());
+                                vex.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                vex.setHealth(maxHp);
+                                vex.teleportTo(livingEntity.getX(), livingEntity.getY() + 1, livingEntity.getZ());
+                                vex.getPersistentData().putBoolean("corruptedEntitySaint", true);
+                                BeyonderUtil.setTargetToHighestHP(vex, 70);
+                                livingEntity.level().addFreshEntity(vex);
+                            } else if (sequence == 2 || sequence == 1) {
+                                Phantom phantom = new Phantom(EntityType.PHANTOM, livingEntity.level());
+                                phantom.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                phantom.setHealth(maxHp);
+                                phantom.teleportTo(livingEntity.getX(), livingEntity.getY() + 1, livingEntity.getZ());
+                                phantom.getPersistentData().putBoolean("corruptedEntityAngel", true);
+                                BeyonderUtil.setTargetToHighestHP(phantom, 100);
+                                livingEntity.level().addFreshEntity(phantom);
+
+                            } else if (sequence == 0) {
+                                WitherBoss wither = new WitherBoss(EntityType.WITHER, livingEntity.level());
+                                wither.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHp);
+                                wither.setHealth(maxHp);
+                                wither.teleportTo(livingEntity.getX(), livingEntity.getY() + 1, livingEntity.getZ());
+                                wither.getPersistentData().putBoolean("corruptedEntityDeity", true);
+                                BeyonderUtil.setTargetToHighestHP(wither, 150);
+                                livingEntity.level().addFreshEntity(wither);
+                            }
+                        }
+                    }
+                }
             }
             if (lotmLuckValue <= 200 && livingEntity.tickCount % 200 == 0) {
                 tag.putDouble("misfortune", 0);
@@ -1163,9 +1385,9 @@ public class CorruptionAndLuckHandler {
                 LightningEntity lightningEntity = new LightningEntity(EntityInit.LIGHTNING_ENTITY.get(), serverLevel);
                 lightningEntity.setSpeed(6.0f);
                 lightningEntity.setTargetEntity(livingEntity);
-                lightningEntity.setMaxLength(15);
+                lightningEntity.setMaxLength(60);
                 lightningEntity.setDeltaMovement(0, -3, 0);
-                lightningEntity.teleportTo(livingEntity.getX() + (Math.random() * 60) - 30, livingEntity.getY() + 100, livingEntity.getZ() + (Math.random() * 60) - 30);
+                lightningEntity.teleportTo(livingEntity.getX(), livingEntity.getY() + 100, livingEntity.getZ());
                 for (int i = 0; i < calamityEnhancement; i++) {
                     livingEntity.level().addFreshEntity(lightningEntity);
                 }
@@ -1224,49 +1446,53 @@ public class CorruptionAndLuckHandler {
                     BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(pPlayer);
                     int sequence = holder.getCurrentSequence();
                     List<EquipmentSlot> armorSlots = Arrays.asList(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET);
-                    List<EquipmentSlot> equippedArmor = armorSlots.stream()
-                            .filter(slot -> !livingEntity.getItemBySlot(slot).isEmpty())
-                            .toList();
-                    if (!equippedArmor.isEmpty()) {
-                        EquipmentSlot randomArmorSlot = equippedArmor.get(random.nextInt(equippedArmor.size()));
-                        ItemStack armorPiece = livingEntity.getItemBySlot(randomArmorSlot);
-                        if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
-                            if (random.nextInt(2) == 1) {
+                    for (EquipmentSlot slot : armorSlots) {
+                        ItemStack armorPiece = livingEntity.getItemBySlot(slot);
+                        if (!armorPiece.isEmpty()) {
+                            if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
+                                if (random.nextInt(2) == 1) {
+                                    livingEntity.spawnAtLocation(armorPiece);
+                                    livingEntity.setItemSlot(slot, ItemStack.EMPTY);
+                                }
+                            } else if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
+                                continue;
+                            } else {
                                 livingEntity.spawnAtLocation(armorPiece);
-                                livingEntity.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
+                                livingEntity.setItemSlot(slot, ItemStack.EMPTY);
                             }
-                        } else if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
-                            return;
-                        } else livingEntity.spawnAtLocation(armorPiece);
-                        livingEntity.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
+                        }
                     }
                     tag.putInt("luckUnequipArmor", 0);
                 } else if (livingEntity instanceof PlayerMobEntity playerMobEntity) {
                     int sequence = playerMobEntity.getCurrentSequence();
                     List<EquipmentSlot> armorSlots = Arrays.asList(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET);
-                    List<EquipmentSlot> equippedArmor = armorSlots.stream()
-                            .filter(slot -> !livingEntity.getItemBySlot(slot).isEmpty())
-                            .toList();
-                    if (!equippedArmor.isEmpty()) {
-                        EquipmentSlot randomArmorSlot = equippedArmor.get(random.nextInt(equippedArmor.size()));
-                        ItemStack armorPiece = livingEntity.getItemBySlot(randomArmorSlot);
-                        if (playerMobEntity.getCurrentPathway() == BeyonderClassInit.MONSTER && sequence <= 6 && sequence >= 4) {
-                            if (random.nextInt(2) == 1) {
+                    for (EquipmentSlot slot : armorSlots) {
+                        ItemStack armorPiece = livingEntity.getItemBySlot(slot);
+                        if (!armorPiece.isEmpty()) {
+                            if (playerMobEntity.getCurrentPathway() == BeyonderClassInit.MONSTER && sequence <= 6 && sequence >= 4) {
+                                if (random.nextInt(2) == 1) {
+                                    livingEntity.spawnAtLocation(armorPiece);
+                                    livingEntity.setItemSlot(slot, ItemStack.EMPTY);
+                                }
+                            } else if (playerMobEntity.getCurrentPathway() == BeyonderClassInit.MONSTER && sequence <= 3) {
+                                continue;
+                            } else {
                                 livingEntity.spawnAtLocation(armorPiece);
-                                livingEntity.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
+                                livingEntity.setItemSlot(slot, ItemStack.EMPTY);
                             }
-                        } else if (playerMobEntity.getCurrentPathway() == BeyonderClassInit.MONSTER && sequence <= 3) {
-                            return;
-                        } else livingEntity.spawnAtLocation(armorPiece);
-                        livingEntity.setItemSlot(randomArmorSlot, ItemStack.EMPTY);
+                        }
                     }
                     tag.putInt("luckUnequipArmor", 0);
                 }
             }
             if (wardenSpawn == 1 && livingEntity.onGround()) {
+                livingEntity.sendSystemMessage(Component.literal("Warden is 1"));
                 Warden warden = new Warden(EntityType.WARDEN, livingEntity.level());
-                warden.setAttackTarget(livingEntity);
+                warden.setLastHurtByMob(livingEntity);
+                warden.setTarget(livingEntity);
                 warden.setAggressive(true);
+                warden.teleportTo(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
+                warden.setNoAi(false);
                 AttributeInstance maxHP = warden.getAttribute(Attributes.MAX_HEALTH);
                 maxHP.setBaseValue(60);
                 if (calamityEnhancement >= 2) {
@@ -1278,6 +1504,7 @@ public class CorruptionAndLuckHandler {
                     if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 6 && sequence >= 4) {
                         Ravager ravager = new Ravager(EntityType.RAVAGER, livingEntity.level());
                         ravager.setTarget(livingEntity);
+                        ravager.teleportTo(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
                         ravager.setAggressive(true);
                         livingEntity.level().addFreshEntity(ravager);
                     } else if (holder.currentClassMatches(BeyonderClassInit.MONSTER) && sequence <= 3) {
@@ -1291,6 +1518,7 @@ public class CorruptionAndLuckHandler {
                         Ravager ravager = new Ravager(EntityType.RAVAGER, livingEntity.level());
                         ravager.setTarget(livingEntity);
                         ravager.setAggressive(true);
+                        ravager.teleportTo(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
                         livingEntity.level().addFreshEntity(ravager);
                     } else if (player.getCurrentPathway() == BeyonderClassInit.MONSTER && sequence <= 3) {
                         return;
@@ -1299,7 +1527,7 @@ public class CorruptionAndLuckHandler {
                 }
             }
 
-            if (mcLightning >= 1 && livingEntity.getHealth() <= 5 + (calamityEnhancement * 3)) {
+            if (mcLightning >= 1 && livingEntity.getHealth() <= 15 + (calamityEnhancement * 3)) {
                 tag.putInt("luckLightningMC", mcLightning - 1);
                 LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, livingEntity.level());
                 lightningBolt.teleportTo(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
@@ -1348,6 +1576,7 @@ public class CorruptionAndLuckHandler {
                 }
             }
             if (tornadoInt == 1) {
+                livingEntity.sendSystemMessage(Component.literal("Tornado is CURRENTLYYYYYYYYYYY 1"));
                 TornadoEntity tornado = new TornadoEntity(EntityInit.TORNADO_ENTITY.get(), livingEntity.level());
                 tornado.setTornadoLifecount(120 + (calamityEnhancement * 30));
                 tornado.setTornadoPickup(true);
@@ -1559,6 +1788,50 @@ public class CorruptionAndLuckHandler {
                 tag.putInt("calamityLightningBoltMonsterResistance", 0);
                 tag.putInt("calamityLightningStormImmunity", 0);
                 tag.putInt("calamityLightningStormResistance", 0);
+            }
+        }
+    }
+    public void spawnCorruptionParticles(LivingEntity entity, double corruption) {
+        Level level = entity.level();
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        RandomSource random = level.getRandom();
+        double x = entity.getX();
+        double y = entity.getY() + 0.5;
+        double z = entity.getZ();
+        long gameTime = level.getGameTime();
+        if (corruption >= 1 && corruption < 30 && gameTime % 100 == 0) {
+            for (int i = 0; i < 10; i++) {
+                double offsetX = random.nextDouble() - 0.5;
+                double offsetY = random.nextDouble() - 0.5;
+                double offsetZ = random.nextDouble() - 0.5;
+                serverLevel.sendParticles(ParticleTypes.ASH, x + offsetX, y + offsetY, z + offsetZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            }
+        }
+        else if (corruption >= 30 && corruption < 60 && gameTime % 100 == 0) {
+            DustParticleOptions orangeDust = new DustParticleOptions(new Vector3f(1.0F, 0.5F, 0.0F), 1.0F);
+            for (int i = 0; i < 20; i++) {
+                double offsetX = random.nextDouble() - 0.5;
+                double offsetY = random.nextDouble() - 0.5;
+                double offsetZ = random.nextDouble() - 0.5;
+                serverLevel.sendParticles(orangeDust, x + offsetX, y + offsetY, z + offsetZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            }
+        }
+        else if (corruption >= 60 && corruption < 80 && gameTime % 60 == 0) {
+            for (int i = 0; i < 30; i++) {
+                double offsetX = random.nextDouble() - 0.5;
+                double offsetY = random.nextDouble() - 0.5;
+                double offsetZ = random.nextDouble() - 0.5;
+                serverLevel.sendParticles(ParticleTypes.PORTAL, x + offsetX, y + offsetY, z + offsetZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+            }
+        }
+        else if (corruption >= 80 && gameTime % 20 == 0) {
+            for (int i = 0; i < 20; i++) {
+                double offsetX = random.nextDouble() - 0.5;
+                double offsetY = random.nextDouble() - 0.5;
+                double offsetZ = random.nextDouble() - 0.5;
+                serverLevel.sendParticles(ParticleTypes.SOUL, x + offsetX, y + offsetY, z + offsetZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
             }
         }
     }

@@ -17,6 +17,9 @@ public class EntityInit {
     public static final RegistryObject<EntityType<AqueousLightEntity>> AQUEOUS_LIGHT_ENTITY =
             ENTITIES.register("aqueous_light", () -> EntityType.Builder.<AqueousLightEntity>of(AqueousLightEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build(new ResourceLocation(LOTM.MOD_ID, "aqueous_light").toString()));
+    public static final RegistryObject<EntityType<DeathKnellBulletEntity>> DEATH_KNELL_BULLET_ENTITY =
+            ENTITIES.register("death_knell_bullet", () -> EntityType.Builder.<DeathKnellBulletEntity>of(DeathKnellBulletEntity::new, MobCategory.MISC)
+                    .sized(0.5f,0.5f).build(new ResourceLocation(LOTM.MOD_ID, "death_knell_bullet").toString()));
     public static final RegistryObject<EntityType<MCLightningBoltEntity>> MC_LIGHTNING_BOLT =
             ENTITIES.register("mc_lightning_bolt", () -> EntityType.Builder.<MCLightningBoltEntity>of(MCLightningBoltEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build(new ResourceLocation(LOTM.MOD_ID, "mc_lightning_bolt").toString()));

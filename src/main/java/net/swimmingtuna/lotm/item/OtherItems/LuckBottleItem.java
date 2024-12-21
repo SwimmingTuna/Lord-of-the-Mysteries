@@ -60,7 +60,7 @@ public class LuckBottleItem extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Luck Amount:" + getLuckAmount(stack) + "\n" +
+        tooltipComponents.add(Component.literal("Luck Amount: " + getLuckAmount(stack) + "\n" +
                 "Shift to break in your hand and give all luck to yourself").withStyle(ChatFormatting.GREEN));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }

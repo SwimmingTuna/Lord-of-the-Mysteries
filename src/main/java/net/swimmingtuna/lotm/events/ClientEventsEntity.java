@@ -13,6 +13,7 @@ public class ClientEventsEntity {
     @SubscribeEvent
     public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(MeteorModel.METEOR_LOCATION, MeteorModel::createBodyLayer);
+        event.registerLayerDefinition(BulletModel.BULLET_LOCATION, BulletModel::createBodyLayer);
         event.registerLayerDefinition(MeteorNoLevelModel.METEOR_LOCATION, MeteorNoLevelModel::createBodyLayer);
         event.registerLayerDefinition(DragonBreathModel.LAYER, DragonBreathModel::createBodyLayer);
         event.registerLayerDefinition(WindBladeModel.WIND_BLADE_LOCATION, WindBladeModel::createBodyLayer);
@@ -26,6 +27,7 @@ public class ClientEventsEntity {
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(EntityInit.METEOR_ENTITY.get(), MeteorEntityRenderer::new);
+        event.registerEntityRenderer(EntityInit.DEATH_KNELL_BULLET_ENTITY.get(), BulletEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.CIRCLE_ENTITY.get(), CircleEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.ENDSTONE_ENTITY.get(), EndstoneEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.PLAYER_MOB_ENTITY.get(), PlayerMobRenderer::new);

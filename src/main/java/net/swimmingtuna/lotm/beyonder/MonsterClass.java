@@ -157,8 +157,7 @@ public class MonsterClass implements BeyonderClass {
                 resistance = 0;
                 regen = -1;
                 strength = 0;
-            }
-            if (sequenceLevel == 7) {
+            }else if (sequenceLevel == 7) {
                 applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300300, 1, false, false);
@@ -168,8 +167,7 @@ public class MonsterClass implements BeyonderClass {
                 resistance = 0;
                 regen = -1;
                 strength = 1;
-            }
-            if (sequenceLevel == 6) {
+            }else if (sequenceLevel == 6) {
                 applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 1, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 1, false, false);
@@ -180,8 +178,7 @@ public class MonsterClass implements BeyonderClass {
                 resistance = 0;
                 regen = -1;
                 strength = 1;
-            }
-            if (sequenceLevel == 5) {
+            }else if (sequenceLevel == 5) {
                 applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 2, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 2, false, false);
@@ -193,8 +190,7 @@ public class MonsterClass implements BeyonderClass {
                 resistance = 0;
                 regen = -1;
                 strength = 2;
-            }
-            if (sequenceLevel == 4) {
+            } else if (sequenceLevel == 4) {
                 applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 2, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 3, false, false);
@@ -206,8 +202,7 @@ public class MonsterClass implements BeyonderClass {
                 resistance = 0;
                 regen = -1;
                 strength = 3;
-            }
-            if (sequenceLevel == 3) {
+            } else if (sequenceLevel == 3) {
                 applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 2, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 0, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 3, false, false);
@@ -219,8 +214,7 @@ public class MonsterClass implements BeyonderClass {
                 resistance = 0;
                 regen = -1;
                 strength = 3;
-            }
-            if (sequenceLevel == 2) {
+            } else if (sequenceLevel == 2) {
                 applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 3, false, false);
@@ -232,8 +226,7 @@ public class MonsterClass implements BeyonderClass {
                 resistance = 1;
                 regen = -1;
                 strength = 3;
-            }
-            if (sequenceLevel == 1) {
+            } else if (sequenceLevel == 1) {
                 applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 4, false, false);
@@ -245,8 +238,7 @@ public class MonsterClass implements BeyonderClass {
                 resistance = 1;
                 regen = -1;
                 strength = 4;
-            }
-            if (sequenceLevel == 0) {
+            } else if (sequenceLevel == 0) {
                 applyMobEffect(player, MobEffects.MOVEMENT_SPEED, 300, 3, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_RESISTANCE, 300, 1, false, false);
                 applyMobEffect(player, MobEffects.DAMAGE_BOOST, 300, 4, false, false);

@@ -12,7 +12,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +21,6 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Lazy;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
-import net.swimmingtuna.lotm.spirituality.ModAttributes;
 import net.swimmingtuna.lotm.util.BeyonderUtil;
 import net.swimmingtuna.lotm.util.ReachChangeUUIDs;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
@@ -46,7 +44,7 @@ public class FalseProphecy extends SimpleAbilityItem {
             }
             useSpirituality(player);
             addCooldown(player);
-            manipulateMisfortune(player, player);
+            manipulateMisfortune(interactionTarget, player);
         }
         return InteractionResult.SUCCESS;
     }
@@ -224,42 +222,17 @@ public class FalseProphecy extends SimpleAbilityItem {
             }
         }
         if (harmfulStand >= 1) {
-            int tickCounter = tag.getInt("falseProphecyTickCounter");
-            double prevX = tag.getDouble("falseProphecyPrevX");
-            double prevY = tag.getDouble("falseProphecyPrevY");
-            double prevZ = tag.getDouble("falseProphecyPrevZ");
-            double currentX = tag.getDouble("falseProphecyCurrentX");
-            double currentY = tag.getDouble("falseProphecyCurrentY");
-            double currentZ = tag.getDouble("falseProphecyCurrentZ");
-            if (tickCounter == 0) {
-                prevX = livingEntity.getX();
-                tag.putDouble("falseProphecyPrevX", prevX);
-                prevY = livingEntity.getY();
-                tag.putDouble("falseProphecyPrevY", prevY);
-                prevZ = livingEntity.getZ();
-                tag.putDouble("falseProphecyPrevZ", prevZ);
-                tag.putInt("tickCounter", 1);
-            } else if (tickCounter == 1) {
-                currentX = livingEntity.getX();
-                tag.putDouble("falseProphecyCurrentX", currentX);
-                currentY = livingEntity.getY();
-                tag.putDouble("falseProphecyCurrentY", currentY);
-                currentZ = livingEntity.getZ();
-                tag.putDouble("falseProphecyCurrentZ", currentZ);
-                tag.putInt("tickCounter", 0);
-            }
-            if (Math.abs(prevX - currentX) < 0.0123 || Math.abs(prevY - currentY) < 0.0123 || Math.abs(prevZ - currentZ) < 0.0123) {
+            if (!BeyonderUtil.isLivingEntityMoving(livingEntity)) {
                 tag.putInt("falseProphecyStandHarmful", tag.getInt("falseProphecyStandHarmful") + 1);
-                livingEntity.sendSystemMessage(Component.literal("value is " + tag.getInt("falseProphecyStandHarmful")));
             }
             if (tag.getInt("falseProphecyStandHarmful") >= 100) {
                 tag.putInt("falseProphecyStandHarmful", 0);
                 tag.putInt("harmfulFalseProphecyStand", 0);
-                BeyonderUtil.applyMobEffect(livingEntity, ModEffects.BLEEDING.get(), 400,7,false,false);
-                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.BLINDNESS, 400,5,false,false);
-                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.HARM, 400,10,false,false);
-                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.WEAKNESS, 400,4,false,false);
-                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.MOVEMENT_SLOWDOWN, 400,4,false,false);
+                BeyonderUtil.applyMobEffect(livingEntity, ModEffects.BLEEDING.get(), 400, 7, false, false);
+                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.BLINDNESS, 400, 5, false, false);
+                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.HARM, 400, 10, false, false);
+                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.WEAKNESS, 400, 4, false, false);
+                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.MOVEMENT_SLOWDOWN, 400, 4, false, false);
             }
             tag.putInt("harmfulFalseProphecyStand", harmfulStand - 1);
         }
@@ -302,49 +275,22 @@ public class FalseProphecy extends SimpleAbilityItem {
 
 
         if (beneficialStand >= 1) {
-
-            int tickCounter = tag.getInt("falseProphecyTickCounter");
-            double prevX = tag.getDouble("falseProphecyPrevX");
-            double prevY = tag.getDouble("falseProphecyPrevY");
-            double prevZ = tag.getDouble("falseProphecyPrevZ");
-            double currentX = tag.getDouble("falseProphecyCurrentX");
-            double currentY = tag.getDouble("falseProphecyCurrentY");
-            double currentZ = tag.getDouble("falseProphecyCurrentZ");
-            if (livingEntity.tickCount %  20 == 0) {
+            if (livingEntity.tickCount % 20 == 0) {
                 livingEntity.sendSystemMessage(Component.literal("value is " + beneficialStand));
-                livingEntity.sendSystemMessage(Component.literal("value of X is " + Math.abs(prevX - currentX)));
-                livingEntity.sendSystemMessage(Component.literal("value of Y is " + Math.abs(prevY - currentY)));
-                livingEntity.sendSystemMessage(Component.literal("value of Z is " + Math.abs(prevZ - currentZ)));
             }
-            if (tickCounter == 0) {
-                prevX = livingEntity.getX();
-                tag.putDouble("falseProphecyPrevX", prevX);
-                prevY = livingEntity.getY();
-                tag.putDouble("falseProphecyPrevY", prevY);
-                prevZ = livingEntity.getZ();
-                tag.putDouble("falseProphecyPrevZ", prevZ);
-                tag.putInt("tickCounter", 1);
-            } else if (tickCounter == 1) {
-                currentX = livingEntity.getX();
-                tag.putDouble("falseProphecyCurrentX", currentX);
-                currentY = livingEntity.getY();
-                tag.putDouble("falseProphecyCurrentY", currentY);
-                currentZ = livingEntity.getZ();
-                tag.putDouble("falseProphecyCurrentZ", currentZ);
-                tag.putInt("tickCounter", 0);
-            }
-            if (Math.abs(prevX - currentX) < 0.0123 || Math.abs(prevY - currentY) < 0.0123 || Math.abs(prevZ - currentZ) < 0.0123) {
-                livingEntity.sendSystemMessage(Component.literal("Working"));
+            if (!BeyonderUtil.isLivingEntityMoving(livingEntity)) {
                 tag.putInt("falseProphecyStandBeneficial", tag.getInt("falseProphecyStandBeneficial") + 1);
             }
+
             if (tag.getInt("falseProphecyStandBeneficial") >= 100) {
+                livingEntity.sendSystemMessage(Component.literal("Worked"));
                 tag.putInt("falseProphecyStandBeneficial", 0);
                 tag.putInt("beneficialFalseProphecyStand", 0);
-                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.ABSORPTION, 1200,20,false,false);
-                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DAMAGE_BOOST, 600,5,false,false);
-                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DIG_SPEED, 600,4,false,false);
-                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.MOVEMENT_SPEED, 600,3,false,false);
-                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.REGENERATION, 600,5,false,false);
+                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.ABSORPTION, 1200, 20, false, false);
+                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DAMAGE_BOOST, 600, 5, false, false);
+                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.DIG_SPEED, 600, 4, false, false);
+                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.MOVEMENT_SPEED, 600, 3, false, false);
+                BeyonderUtil.applyMobEffect(livingEntity, MobEffects.REGENERATION, 600, 5, false, false);
             }
             tag.putInt("beneficialFalseProphecyStand", beneficialStand - 1);
         }

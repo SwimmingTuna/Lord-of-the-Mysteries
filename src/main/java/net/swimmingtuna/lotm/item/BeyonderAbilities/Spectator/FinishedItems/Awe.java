@@ -26,7 +26,7 @@ import java.util.List;
 public class Awe extends SimpleAbilityItem {
 
     public Awe(Properties properties) {
-        super(properties, BeyonderClassInit.SPECTATOR, 7, 75, 240);
+        super(properties, BeyonderClassInit.SPECTATOR, 7, 75, 300);
     }
 
     @Override

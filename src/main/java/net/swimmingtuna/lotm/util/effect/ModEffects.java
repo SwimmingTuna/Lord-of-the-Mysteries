@@ -35,6 +35,8 @@ public class ModEffects {
             () -> new ParalysisEffect(MobEffectCategory.HARMFUL, 3124687));
     public static final RegistryObject<MobEffect> NOREGENERATION = MOB_EFFECTS.register("noregeneration",
             () -> new NoRegenerationEffect(MobEffectCategory.HARMFUL, 3124687));
+    public static final RegistryObject<MobEffect> ARMOR_WEAKNESS = MOB_EFFECTS.register("armor_weakness",
+            ArmorWeaknessEffect::new);
 
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);
