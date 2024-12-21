@@ -18,31 +18,36 @@ import java.util.List;
 
 public class MonsterDangerSense extends SimpleAbilityItem {
     public MonsterDangerSense(Properties properties) {
-        super(properties, BeyonderClassInit.SAILOR, 9, 0, 0);
+        super(properties, BeyonderClassInit.MONSTER, 9, 0, 20);
     }
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
-        changeBoolean(player);
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player);
+        enableOrDisableDangerSense(player);
         return InteractionResult.SUCCESS;
     }
 
-    public static void changeBoolean(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean monsterDangerSense = tag.getBoolean("monsterDangerSense");
-        tag.putBoolean("monsterDangerSense", !monsterDangerSense);
-        player.displayClientMessage(Component.literal("Danger Sense Turned " + (monsterDangerSense ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+    public static void enableOrDisableDangerSense(Player player) {
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean monsterDangerSense = tag.getBoolean("monsterDangerSense");
+            tag.putBoolean("monsterDangerSense", !monsterDangerSense);
+            player.displayClientMessage(Component.literal("Danger Sense Turned " + (monsterDangerSense ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE), true);
+        }
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-        tooltipComponents.add(Component.literal("Upon use, activates your danger sense, alerting you of players around you and where they are"));
-        tooltipComponents.add(Component.literal("Activation Cost: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
-        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("40 per second").withStyle(ChatFormatting.YELLOW)));
-        Component.literal("Cooldown: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW));
-        tooltipComponents.add(getPathwayText(this.requiredClass.get()));
-        tooltipComponents.add(getClassText(this.requiredSequence, this.requiredClass.get()));
-        super.baseHoverText(stack, level, tooltipComponents, isAdvanced);
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.literal("Upon use, enable or disable your danger sense. If enabled, it will alert you of all players nearby holding weapons and of all projectory's trajectory"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("1 Second").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

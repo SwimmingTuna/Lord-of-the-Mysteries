@@ -33,6 +33,7 @@ public class BeyonderCommand {
                                     }
                                     BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(context.getSource().getPlayerOrException());
                                     holder.setClassAndSequence(result, level);
+
                                     String sequenceName = result.sequenceNames().get(level);
                                     context.getSource().getPlayerOrException().sendSystemMessage(Component.translatable("item.lotm.beholder_potion.alert", sequenceName)
                                             .withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.BOLD));

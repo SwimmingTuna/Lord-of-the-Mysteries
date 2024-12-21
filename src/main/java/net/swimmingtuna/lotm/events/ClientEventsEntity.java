@@ -1,5 +1,4 @@
 package net.swimmingtuna.lotm.events;
-
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -9,14 +8,12 @@ import net.swimmingtuna.lotm.entity.Model.*;
 import net.swimmingtuna.lotm.entity.Renderers.*;
 import net.swimmingtuna.lotm.entity.Renderers.PlayerMobRenderer.PlayerMobRenderer;
 import net.swimmingtuna.lotm.init.EntityInit;
-
-
 @Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientEventsEntity {
-
     @SubscribeEvent
     public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(MeteorModel.METEOR_LOCATION, MeteorModel::createBodyLayer);
+        event.registerLayerDefinition(BulletModel.BULLET_LOCATION, BulletModel::createBodyLayer);
         event.registerLayerDefinition(MeteorNoLevelModel.METEOR_LOCATION, MeteorNoLevelModel::createBodyLayer);
         event.registerLayerDefinition(DragonBreathModel.LAYER, DragonBreathModel::createBodyLayer);
         event.registerLayerDefinition(WindBladeModel.WIND_BLADE_LOCATION, WindBladeModel::createBodyLayer);
@@ -27,10 +24,10 @@ public class ClientEventsEntity {
         event.registerLayerDefinition(LavaEntityModel.LAVA_ENTITY_LOCATION, LavaEntityModel::createBodyLayer);
         event.registerLayerDefinition(LightningBallModel.LIGHTNING_BALL_LOCATION, LightningBallModel::createBodyLayer);
     }
-
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(EntityInit.METEOR_ENTITY.get(), MeteorEntityRenderer::new);
+        event.registerEntityRenderer(EntityInit.DEATH_KNELL_BULLET_ENTITY.get(), BulletEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.CIRCLE_ENTITY.get(), CircleEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.ENDSTONE_ENTITY.get(), EndstoneEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.PLAYER_MOB_ENTITY.get(), PlayerMobRenderer::new);
@@ -42,6 +39,7 @@ public class ClientEventsEntity {
         event.registerEntityRenderer(EntityInit.TORNADO_ENTITY.get(), TornadoEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.METEOR_NO_LEVEL_ENTITY.get(), MeteorNoLevelEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.ROAR_ENTITY.get(), RoarEntityRenderer::new);
+        event.registerEntityRenderer(EntityInit.WHISPERS_OF_CORRUPTION_ENTITY.get(), WhisperOfCorruptionEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.STORM_SEAL_ENTITY.get(), StormSealEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.WATER_COLUMN_ENTITY.get(), WaterColumnEntityRenderer::new);
         event.registerEntityRenderer(EntityInit.DRAGON_BREATH_ENTITY.get(), DragonBreathRenderer::new);

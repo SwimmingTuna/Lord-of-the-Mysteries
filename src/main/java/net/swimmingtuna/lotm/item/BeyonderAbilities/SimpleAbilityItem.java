@@ -19,30 +19,49 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Supplier;
-
 public abstract class SimpleAbilityItem extends Item implements Ability {
 
     protected final Supplier<? extends BeyonderClass> requiredClass;
     protected final int requiredSequence;
     protected final int requiredSpirituality;
     protected final int cooldown;
+    protected final double entityReach;
+    protected final double blockReach;
 
     protected SimpleAbilityItem(Properties properties, BeyonderClass requiredClass, int requiredSequence, int requiredSpirituality, int cooldown) {
-        this(properties, () -> requiredClass, requiredSequence, requiredSpirituality, cooldown);
+        this(properties, () -> requiredClass, requiredSequence, requiredSpirituality, cooldown, 3.0, 4.5);
     }
 
     protected SimpleAbilityItem(Properties properties, Supplier<? extends BeyonderClass> requiredClass, int requiredSequence, int requiredSpirituality, int cooldown) {
+        this(properties, requiredClass, requiredSequence, requiredSpirituality, cooldown, 3.0, 4.5);
+    }
+    protected SimpleAbilityItem(Properties properties, BeyonderClass requiredClass, int requiredSequence, int requiredSpirituality, int cooldown, double entityReach, double blockReach) {
+        this(properties, () -> requiredClass, requiredSequence, requiredSpirituality, cooldown, entityReach, blockReach);
+    }
+
+    protected SimpleAbilityItem(Properties properties, Supplier<? extends BeyonderClass> requiredClass, int requiredSequence, int requiredSpirituality, int cooldown, double entityReach, double blockReach) {
         super(properties);
         this.requiredClass = requiredClass;
         this.requiredSequence = requiredSequence;
         this.requiredSpirituality = requiredSpirituality;
         this.cooldown = cooldown;
+        this.entityReach = entityReach;
+        this.blockReach = blockReach;
+    }
+
+    @Override
+    public double getBlockReach() {
+        return blockReach;
+    }
+
+    @Override
+    public double getEntityReach() {
+        return entityReach;
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide()) {
-
             InteractionResult interactionResult = useAbility(level, player, hand);
             return new InteractionResultHolder<>(interactionResult, player.getItemInHand(hand));
         }
@@ -51,6 +70,9 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
 
     protected boolean checkAll(Player player) {
         return checkAll(player, this.requiredClass.get(), this.requiredSequence, this.requiredSpirituality);
+    }
+    public int getSpirituality() {
+        return this.requiredSpirituality;
     }
 
     @Override
@@ -63,21 +85,19 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     }
 
     @Override
-    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
+    public InteractionResult useAbilityOnEntity(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand) {
         if (!player.level().isClientSide()) {
-            return useAbilityOnEntity(stack, player, interactionTarget, usedHand);
+            return interactLivingEntity(stack, player, interactionTarget, usedHand);
         }
         return InteractionResult.PASS;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
-
         tooltipComponents.add(getSpiritualityUsedText(this.requiredSpirituality));
         tooltipComponents.add(getCooldownText(this.cooldown));
         tooltipComponents.add(getPathwayText(this.requiredClass.get()));
         tooltipComponents.add(getClassText(this.requiredSequence, this.requiredClass.get()));
-
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
     }
 
@@ -94,7 +114,7 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     }
 
     public static Component getClassText(int requiredSequence, BeyonderClass beyonderClass) {
-        return Component.literal("Class: ").append(Component.literal(requiredSequence + " - " + beyonderClass.sequenceNames().get(requiredSequence))
+        return Component.literal("Sequence: ").append(Component.literal(requiredSequence + " - " + beyonderClass.sequenceNames().get(requiredSequence))
                 .withStyle(beyonderClass.getColorFormatting()));
     }
 
@@ -106,6 +126,9 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
 
     protected void addCooldown(Player player) {
         addCooldown(player, this, this.cooldown);
+    }
+    public int getCooldown() {
+        return this.cooldown;
     }
 
     protected void baseHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
@@ -182,4 +205,5 @@ public abstract class SimpleAbilityItem extends Item implements Ability {
     protected boolean useSpirituality(Player player) {
         return useSpirituality(player, this.requiredSpirituality);
     }
+
 }

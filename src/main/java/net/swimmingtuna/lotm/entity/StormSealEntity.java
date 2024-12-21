@@ -106,7 +106,9 @@ public class StormSealEntity extends AbstractHurtingProjectile {
                 double angle = i * 10 * Math.PI / 180;
                 double x = this.getX() + radius * Math.cos(angle);
                 double z = this.getZ() + radius * Math.sin(angle);
-                this.level().addParticle(ParticleTypes.ELECTRIC_SPARK, x, this.getY(), z, 0, 0, 0);
+                if (this.level() instanceof ServerLevel serverLevel) {
+                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, x, this.getY(),z, 0, 0,0,0, 1);
+                }
             }
 
             // Spawn 4 lightning bolts around the entity
@@ -117,6 +119,9 @@ public class StormSealEntity extends AbstractHurtingProjectile {
                 BlockPos strikePos = new BlockPos((int) x, (int) this.getY(), (int) z);
                 EntityType.LIGHTNING_BOLT.spawn((ServerLevel) this.level(), (ItemStack) null, null, strikePos,
                         MobSpawnType.TRIGGERED, true, true);
+            }
+            if (this.tickCount >= 300) {
+                this.discard();
             }
         }
     }

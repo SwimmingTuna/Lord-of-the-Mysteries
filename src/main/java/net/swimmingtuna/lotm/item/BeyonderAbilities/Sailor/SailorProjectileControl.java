@@ -23,23 +23,28 @@ public class SailorProjectileControl extends SimpleAbilityItem {
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
-        changeBoolean(player);
+        if (!checkAll(player)){
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player);
+        projectileControl(player);
         return InteractionResult.SUCCESS;
     }
 
-    public static void changeBoolean(Player player) {
-        CompoundTag tag = player.getPersistentData();
-        boolean sailorProjectileMovement = tag.getBoolean("sailorProjectileMovement");
-        tag.putBoolean("sailorProjectileMovement", !sailorProjectileMovement);
-        player.displayClientMessage(Component.literal("Projectile Movement Turned " + (sailorProjectileMovement ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+    public static void projectileControl(Player player) {
+        if (!player.level().isClientSide()) {
+            CompoundTag tag = player.getPersistentData();
+            boolean sailorProjectileMovement = tag.getBoolean("sailorProjectileMovement");
+            tag.putBoolean("sailorProjectileMovement", !sailorProjectileMovement);
+            player.displayClientMessage(Component.literal("Projectile Movement Turned " + (sailorProjectileMovement ? "Off" : "On")).withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
+        }
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         tooltipComponents.add(Component.literal("Upon use, haves all of your projectiles curve towards the nearest living entity, use it again to turn it off"));
-        tooltipComponents.add(Component.literal("Activation Cost: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
-        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("40 per second").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW)));
         Component.literal("Cooldown: ").append(Component.literal("None").withStyle(ChatFormatting.YELLOW));
         tooltipComponents.add(getPathwayText(this.requiredClass.get()));
         tooltipComponents.add(getClassText(this.requiredSequence, this.requiredClass.get()));

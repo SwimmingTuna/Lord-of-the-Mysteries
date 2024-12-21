@@ -10,6 +10,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.swimmingtuna.lotm.LOTM;
+import net.swimmingtuna.lotm.blocks.MonsterDomainBlock;
+import net.swimmingtuna.lotm.blocks.PotionCauldron;
 import net.swimmingtuna.lotm.blocks.glass_pane.LOTMGlassPane;
 import net.swimmingtuna.lotm.blocks.glass_pane.LOTMStainedGlassPane;
 import net.swimmingtuna.lotm.blocks.spectator_blocks.*;
@@ -39,7 +41,15 @@ public class BlockInit {
                 .strength(15).noLootTable()));
 
     public static final RegistryObject<Block> CATHEDRAL_BLOCK = registerBlock("cathedral_block",
-            () -> new CathedralBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noLootTable()));
+            () -> new CathedralBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)
+                    .destroyTime(100)
+                    .strength(100)
+                    .noLootTable()));
+    public static final RegistryObject<Block> MONSTER_DOMAIN_BLOCK = registerBlock("monster_domain_block",
+            () -> new MonsterDomainBlock(BlockBehaviour.Properties.copy(Blocks.OBSIDIAN)
+                    .destroyTime(100)
+                    .strength(100)
+                    .noLootTable()));
 
     public static final RegistryObject<Block> MINDSCAPE_BLOCK = registerBlock("mindscape_block",
             () -> new MindscapeBlock(BlockBehaviour.Properties.copy(Blocks.GLASS)
@@ -203,6 +213,8 @@ public class BlockInit {
             () -> lotmStainedGlassPane(DyeColor.RED));
     public static final RegistryObject<Block> VISIONARY_LIME_STAINED_GLASS_PANE = registerBlock("lotm_lime_stained_pane",
             () -> lotmStainedGlassPane(DyeColor.LIME));
+    public static final RegistryObject<Block> POTION_CAULDRON = registerBlock("potion_cauldron",
+            () -> new PotionCauldron(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE_BRICKS).noOcclusion()));
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {

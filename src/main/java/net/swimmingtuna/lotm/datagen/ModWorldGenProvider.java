@@ -6,7 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.worldgen.dimension.DimensionInit;
+import net.swimmingtuna.lotm.world.worldgen.dimension.DimensionInit;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

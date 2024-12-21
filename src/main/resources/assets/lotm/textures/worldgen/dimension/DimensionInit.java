@@ -1,4 +1,4 @@
-package assets.lotm.textures.worldgen.dimension;
+package main.resources.assets.lotm.textures.worldgen.dimension;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.HolderGetter;

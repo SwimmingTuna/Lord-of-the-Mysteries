@@ -6,10 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ClipContext;
@@ -20,12 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.common.Mod;
-import net.swimmingtuna.lotm.LOTM;
-import net.swimmingtuna.lotm.caps.BeyonderHolder;
-import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
-import net.swimmingtuna.lotm.item.BeyonderAbilities.Ability;
 import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,42 +28,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class MatterAccelerationSelf extends Item implements Ability {
+public class MatterAccelerationSelf extends SimpleAbilityItem {
 
     public MatterAccelerationSelf(Properties properties) {
-        super(properties);
-    }
-
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!player.level().isClientSide()) {
-            useItem(player);
-
-            InteractionResult interactionResult = useAbility(level, player, hand);
-            return new InteractionResultHolder<>(interactionResult, player.getItemInHand(hand));
-        }
-        return InteractionResultHolder.pass(player.getItemInHand(hand));
+        super(properties, BeyonderClassInit.SAILOR, 0, 0, 300); //cooldown fix for all items that rely on smth
     }
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        return useItem(player);
+        int matterAccelerationDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
+        if (!checkAll(player, BeyonderClassInit.SAILOR.get(), 0, matterAccelerationDistance * 10)) {
+            return InteractionResult.FAIL;
+        }
+        addCooldown(player);
+        useSpirituality(player, matterAccelerationDistance * 10);
+        matterAccelerationSelf(player);
+        return InteractionResult.SUCCESS;
     }
 
-    public InteractionResult useItem(Player player) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-
-        int matterAccelerationDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
-
-        if (!SimpleAbilityItem.checkAll(player, BeyonderClassInit.SAILOR.get(), 0, matterAccelerationDistance * 10)) return InteractionResult.FAIL;
-        holder.useSpirituality(matterAccelerationDistance * 10);
-
-        if (!player.isCreative()) {
-            player.getCooldowns().addCooldown(this, 300);
-        }
-
-        int sequence = holder.getCurrentSequence();
+    public void matterAccelerationSelf(Player player) {
         Level level = player.level();
         int blinkDistance = player.getPersistentData().getInt("tyrantSelfAcceleration");
         Vec3 lookVector = player.getLookAngle();
@@ -120,7 +96,7 @@ public class MatterAccelerationSelf extends Item implements Ability {
             List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, boundingBox);
             for (LivingEntity entity : entities) {
                 if (entity != player) {
-                    entity.hurt(level.damageSources().magic(), 10.0f); // Adjust damage amount as needed
+                    entity.hurt(level.damageSources().lightningBolt(), 60.0f); // Adjust damage amount as needed
                 }
             }
         }
@@ -128,17 +104,16 @@ public class MatterAccelerationSelf extends Item implements Ability {
         BlockHitResult blockHitResult = level.clip(new ClipContext(player.getEyePosition(), new Vec3(endPos.getX() + 0.5, endPos.getY(), endPos.getZ() + 0.5), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
         BlockPos teleportLocation = blockHitResult.getBlockPos().relative(blockHitResult.getDirection());
         player.teleportTo(teleportLocation.getX() + 0.5, teleportLocation.getY(), teleportLocation.getZ() + 0.5);
-        return InteractionResult.SUCCESS;
     }
 
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, moves you at an inhuman speed, instantly getting you to your destination and leaving behind destruction in your path"));
-        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("2500").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Upon use, accelerates you to the speed of light, instantly getting you to your destination and leaving behind destruction in your path"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("5 x Distance Traveled").withStyle(ChatFormatting.YELLOW)));
         tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("15 seconds").withStyle(ChatFormatting.YELLOW)));
         tooltipComponents.add(SimpleAbilityItem.getPathwayText(BeyonderClassInit.SAILOR.get()));
         tooltipComponents.add(SimpleAbilityItem.getClassText(0, BeyonderClassInit.SAILOR.get()));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

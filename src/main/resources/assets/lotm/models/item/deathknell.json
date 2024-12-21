@@ -1,0 +1,18 @@
+{
+  "parent": "minecraft:item/handheld",
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "lotm:item/deathknell3d"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "lotm:item/deathknell3d"
+    },
+    "ground": {
+      "parent": "lotm:item/deathknell3d"
+    },
+    "fixed": {
+      "parent": "lotm:item/deathknell3d"
+    }
+  }
+}

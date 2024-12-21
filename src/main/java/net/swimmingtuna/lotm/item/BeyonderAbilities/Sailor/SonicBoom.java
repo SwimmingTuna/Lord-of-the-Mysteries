@@ -8,20 +8,18 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.common.Mod;
-import net.swimmingtuna.lotm.LOTM;
 import net.swimmingtuna.lotm.caps.BeyonderHolder;
 import net.swimmingtuna.lotm.caps.BeyonderHolderAttacher;
 import net.swimmingtuna.lotm.init.BeyonderClassInit;
+import net.swimmingtuna.lotm.item.BeyonderAbilities.SimpleAbilityItem;
 import net.swimmingtuna.lotm.util.ExplosionUtil;
 import net.swimmingtuna.lotm.util.effect.ModEffects;
 import org.jetbrains.annotations.NotNull;
@@ -29,44 +27,34 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = LOTM.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class SonicBoom extends Item {
+public class SonicBoom extends SimpleAbilityItem {
 
-    public SonicBoom(Properties properties) { //IMPORTANT!!!! FIGURE OUT HOW TO MAKE THIS WORK BY CLICKING ON A
-        super(properties);
+    public SonicBoom(Properties properties) {
+        super(properties, BeyonderClassInit.SAILOR, 3, 600, 60);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
-        if (!holder.currentClassMatches(BeyonderClassInit.SAILOR)) {
-            player.displayClientMessage(Component.literal("You are not of the Sailor pathway").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            return InteractionResultHolder.fail(player.getItemInHand(hand));
+    public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
         }
-        if (holder.getSpirituality() < 600) {
-            player.displayClientMessage(Component.literal("You need 600 spirituality in order to use this").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE), true);
-            return InteractionResultHolder.fail(player.getItemInHand(hand));
-        }
-        if (holder.getCurrentSequence() <= 3 && holder.useSpirituality(600)) {
-            sonicBoom(player, holder.getCurrentSequence());
-
-            if (!player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(this, 30);
-            }
-        }
-        return super.use(level, player, hand);
+        addCooldown(player);
+        useSpirituality(player);
+        sonicBoom(player);
+        return InteractionResult.SUCCESS;
     }
 
-    public static void sonicBoom(Player player, int sequence) {
+    public static void sonicBoom(Player player) {
         if (!(player.level() instanceof ServerLevel serverLevel)) {
             return;
         }
+        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
+        int sequence = holder.getCurrentSequence();
         Vec3 lookVec = player.getLookAngle().scale(100);
         player.hurtMarked = true;
         player.setDeltaMovement(lookVec.x(), lookVec.y(), lookVec.z());
-        player.level().playSound(null, player.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 30.0f, 1.0f);
+        serverLevel.playSound(null, player.getOnPos(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 30.0f, 5.0f);
         ExplosionUtil.createNoKnockbackExplosion(player.level(), player, 40 - (sequence * 5), false);
-        BeyonderHolder holder = BeyonderHolderAttacher.getHolderUnwrap(player);
         for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(30 - (sequence * 5)))) {
             if (entity == player) {
                 continue;
@@ -93,11 +81,14 @@ public class SonicBoom extends Item {
             serverLevel.sendParticles(ParticleTypes.EXPLOSION, x, y, z, 0, 0, 0, 0, 0);
         }
     }
+
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("Upon use, compresses air and releases it in order to create a sonic boom, causing an explosion that propels you in the direction you're looking\n" +
-                "Spirituality Used: 600\n" +
-                "Cooldown: 1.5 seconds").withStyle(ChatFormatting.BOLD, ChatFormatting.BLUE));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, compresses air and releases it in order to create a sonic boom, causing an explosion that propels you in the direction you're looking"));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("600").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("3 Seconds").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

@@ -17,6 +17,9 @@ public class EntityInit {
     public static final RegistryObject<EntityType<AqueousLightEntity>> AQUEOUS_LIGHT_ENTITY =
             ENTITIES.register("aqueous_light", () -> EntityType.Builder.<AqueousLightEntity>of(AqueousLightEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build(new ResourceLocation(LOTM.MOD_ID, "aqueous_light").toString()));
+    public static final RegistryObject<EntityType<DeathKnellBulletEntity>> DEATH_KNELL_BULLET_ENTITY =
+            ENTITIES.register("death_knell_bullet", () -> EntityType.Builder.<DeathKnellBulletEntity>of(DeathKnellBulletEntity::new, MobCategory.MISC)
+                    .sized(0.5f,0.5f).build(new ResourceLocation(LOTM.MOD_ID, "death_knell_bullet").toString()));
     public static final RegistryObject<EntityType<MCLightningBoltEntity>> MC_LIGHTNING_BOLT =
             ENTITIES.register("mc_lightning_bolt", () -> EntityType.Builder.<MCLightningBoltEntity>of(MCLightningBoltEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build(new ResourceLocation(LOTM.MOD_ID, "mc_lightning_bolt").toString()));
@@ -75,8 +78,14 @@ public class EntityInit {
             ENTITIES.register("wind_cushion", () -> EntityType.Builder.<WindCushionEntity>of(WindCushionEntity::new, MobCategory.MISC)
                     .sized(0.5f,0.5f).build("wind_cushion"));
     public static final RegistryObject<EntityType<LightningEntity>> LIGHTNING_ENTITY =
-            ENTITIES.register("line_entity", () -> EntityType.Builder.<LightningEntity>of(LightningEntity::new, MobCategory.MISC)
-                    .sized(0.5f,0.5f).build("line_entity"));
+            ENTITIES.register("lightning_entity", () -> EntityType.Builder.<LightningEntity>of(LightningEntity::new, MobCategory.MISC)
+                    .sized(0.5f,0.5f).build("lightning_entity"));
+    public static final RegistryObject<EntityType<WhisperOfCorruptionEntity>> WHISPERS_OF_CORRUPTION_ENTITY =
+            ENTITIES.register("whisperofcorruption", () -> EntityType.Builder.<WhisperOfCorruptionEntity>of(WhisperOfCorruptionEntity::new, MobCategory.MISC)
+                    .sized(1.0f,1.0f).build("whisperofcorruption"));
+    public static final RegistryObject<EntityType<LuckBottleEntity>> LUCK_BOTTLE_ENTITY =
+            ENTITIES.register("luck_bottle_entity", () -> EntityType.Builder.<LuckBottleEntity>of(LuckBottleEntity::new, MobCategory.MISC)
+                    .sized(0.5f,0.5f).build("luck_bottle_entity"));
     public static final RegistryObject<EntityType<PlayerMobEntity>> PLAYER_MOB_ENTITY = ENTITIES.register("player_mob", () ->
             EntityType.Builder.<PlayerMobEntity>of(PlayerMobEntity::new, MobCategory.MONSTER)
                     .sized(0.6F, 1.8F)

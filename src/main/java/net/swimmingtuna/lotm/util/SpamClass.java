@@ -1,7 +1,9 @@
 package net.swimmingtuna.lotm.util;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+
 import java.util.List;
 import java.util.Random;
 public class SpamClass {

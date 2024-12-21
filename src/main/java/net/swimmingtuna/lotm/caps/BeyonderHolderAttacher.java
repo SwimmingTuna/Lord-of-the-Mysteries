@@ -20,7 +20,12 @@ public class BeyonderHolderAttacher extends CapabilityAttacher {
 
     @NotNull
     public static BeyonderHolder getHolderUnwrap(Player player) {
-        return getHolder(player).resolve().orElseThrow();
+        LazyOptional<BeyonderHolder> holder = getHolder(player);
+        if (holder.isPresent()) {
+            return holder.resolve().get();
+        } else {
+            return new BeyonderHolder(player);
+        }
     }
 
     public static LazyOptional<BeyonderHolder> getHolder(Player player) {

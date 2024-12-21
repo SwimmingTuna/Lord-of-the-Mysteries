@@ -5,6 +5,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 
 public class BattleHypnotismEffect extends MobEffect {
@@ -15,11 +16,9 @@ public class BattleHypnotismEffect extends MobEffect {
     public void applyEffectTick(LivingEntity livingEntity, int amplifier) {
         if (!livingEntity.level().isClientSide) {
             double radius = 5.0 + amplifier;
-            for (LivingEntity entity : livingEntity.level().getEntitiesOfClass(LivingEntity.class, livingEntity.getBoundingBox().inflate(radius))) {
-                if (entity instanceof Player && entity != livingEntity) {
-                    entity.setLastHurtByMob(livingEntity);
-                } else if (entity instanceof LivingEntity && entity != livingEntity) {
-                    entity.setLastHurtByMob(livingEntity);
+            for (Mob mob : livingEntity.level().getEntitiesOfClass(Mob.class, livingEntity.getBoundingBox().inflate(radius * 2))) {
+                if (mob != livingEntity) {
+                    mob.setTarget(livingEntity);
                 }
             }
             if (!(livingEntity instanceof Player)) {

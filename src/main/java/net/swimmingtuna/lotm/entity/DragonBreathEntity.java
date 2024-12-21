@@ -39,11 +39,6 @@ public class DragonBreathEntity extends BeamEntity {
     }
 
     @Override
-    protected float getDamage() {
-        return 20.0F;
-    }
-
-    @Override
     protected boolean breaksBlocks() {
         return true;
     }
@@ -73,6 +68,7 @@ public class DragonBreathEntity extends BeamEntity {
     public static void shootDragonBreath(Player player, int power, double x, double y, double z) {
         DragonBreathEntity dragonBreath = new DragonBreathEntity(player, power);
         dragonBreath.teleportTo(x,y+1,z);
+        dragonBreath.setDamage(power * 0.5f);
         player.level().addFreshEntity(dragonBreath);
     }
 

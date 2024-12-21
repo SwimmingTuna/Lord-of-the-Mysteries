@@ -21,8 +21,8 @@
   "item.lotm.prophesizeplayer": "Prophesize: Teleport to Player",
   "item.lotm.prophesizedemise": "Prophesize Demise",
   "item.lotm.envisionlife": "Envision Life",
-  "item.lotm.envisionnature": "Meteor Shower",
-  "item.lotm.envisionnature1": "Meteor Shower: No Block Destruction",
+  "item.lotm.meteorshower": "Meteor Shower",
+  "item.lotm.meteorshowernoblockdestruction": "Meteor Shower: No Block Destruction",
   "item.lotm.envisionweather": "Envision Weather",
   "item.lotm.envisionbarrier": "Envision Barrier",
   "item.lotm.envisiondeath": "Envision Death",
@@ -32,11 +32,14 @@
   "item.lotm.dreamwalking": "Dream Walking",
   "item.lotm.nightmare": "Nightmare",
   "item.lotm.lightningredirection": "Lightning Redirection",
+  "item.lotm.deathknell": "Death Knell",
+
 
   "item.lotm.applymanipulation": "Apply Manipulation",
   "item.lotm.envisionlocationblink": "Envision Location (Blink)",
   "item.lotm.beyonderabilityuser": "Ability User",
   "item.lotm.Alteration": "Alteration",
+
 
 
 
@@ -133,6 +136,42 @@
   "block.lotm.cathedral_block": "Cathedral Block",
   "block.lotm.mindscape_block": "Mindscape Block",
   "block.lotm.mindscape_outside": "Mindscape Outside",
+  "block.lotm.potion_cauldron": "Potion Cauldron",
+
+  "item.lotm.luckdenial": "Luck Denial",
+  "item.lotm.misfortunemanipulation": "Misfortune Manipulation",
+  "item.lotm.providencedomain": "Domain of Providence",
+  "item.lotm.misfortunedomain": "Domain of Decay",
+  "item.lotm.luckchanneling": "Luck Channeling",
+  "item.lotm.choiceofcalamity": "Disable/Enable Calamities",
+
+  "item.lotm.whisperofcorruption": "Whispers of Corruption",
+  "item.lotm.calamityincarnation": "Calamity Incarnation",
+  "item.lotm.enabledisableripple": "Enable/Disable Ripple of Calamity",
+  "item.lotm.auraofchaos": "Aura of Chaos",
+  "item.lotm.misfortuneredirection": "Misfortune Redirection",
+  "item.lotm.fortuneappropiation": "Fortune Appropiation",
+  "item.lotm.falseprophecy": "False Prophecy",
+  "item.lotm.monsterreboot": "Monster Reboot",
+  "item.lotm.fatereincarnation": "Fate Reincarnation",
+  "item.lotm.rebootself": "Self Reboot",
+  "item.lotm.cycleoffate": "Cycle of Fate",
+  "item.lotm.chaosamplification": "Chaos Amplification",
+  "item.lotm.chaoswalkercombat" : "Enable/Disable Chaos Walker Combat",
+  "item.lotm.fatedconnection": "Fated Connection",
+  "item.lotm.probabilitymanipulationworldfortune": "Probability Manipulation: World Fortune",
+  "item.lotm.probabilitymanipulationworldmisfortune": "Probability Manipulation: World Misfortune",
+  "item.lotm.probabilitywipe": "Probability Manipulation: Wipe",
+  "item.lotm.probabilityeffect": "Probability Manipulation: Instantaneous",
+  "item.lotm.probabilitymisfortune": "Probability Manipulation: Unluck Granting",
+  "item.lotm.probabilityfortune": "Probability Manipulation: Luck Granting",
+  "item.lotm.probabilityinfinitemisfortune": "Probability Manipulation: Infinite Unluck",
+  "item.lotm.probabilityinfinitefortune": "Probability Manipulation: Infinite Luck",
+
+  "item.lotm.monsterdomainteleportation": "Domain Teleporation",
+
+  "item.lotm.luckbottleitem": "Bottle o' Luck",
+
 
   "item.lotm.windmanipulationflight": "Wind Manipulation: Flight",
   "item.lotm.enableordisablelightning": "Enable/Disable Lightning",
@@ -158,7 +197,7 @@
   "item.lotm.sailorlightningstorm": "Lightning: Storm",
   "item.lotm.roar": "Roar",
   "item.lotm.tsunami": "Tsunami",
-
+  "item.lotm.sailorprojectilecontrol": "Sailor Projectile Control",
   "item.lotm.tyranttornado": "Tornado: Empowered",
   "item.lotm.calamityincarnationtornado": "Calamity Incarnation: Tornado",
   "item.lotm.calamityincarnationtsunami": "Calamity Incarnation: Tsunami",
@@ -180,34 +219,64 @@
   "item.lotm.hurricane": "Hurricane",
   "item.lotm.tornado": "Tornado",
 
+  "item.lotm.monsterdangersense": "Monster Danger Sense",
+  "item.lotm.monstercalamityattraction": "Monster Calamity Attraction",
+  "item.lotm.luckperception": "Luck Perception",
+  "item.lotm.psychestorm": "Psyche Storm",
+  "item.lotm.spiritvision": "Spirit Vision",
+  "item.lotm.monsterprojectilecontrol": "Monster Projectile Control",
+  "item.lotm.luckmanipulation": "Luck Manipulation",
+  "item.lotm.luckgifting": "Luck Gifting",
+  "item.lotm.misfortunebestowal": "Misfortune Bestowal",
+  "item.lotm.luckfuturetelling": "Luck Prophesize",
+  "item.lotm.misfortuneimplosion": "Misfortune Implosion",
 
 
-  "item.lotm.spectator_9_potion": "Spectator 9 Potion",
-  "item.lotm.spectator_8_potion": "Spectator 8 Potion",
-  "item.lotm.spectator_7_potion": "Spectator 7 Potion",
-  "item.lotm.spectator_6_potion": "Spectator 6 Potion",
-  "item.lotm.spectator_5_potion": "Spectator 5 Potion",
-  "item.lotm.spectator_4_potion": "Spectator 4 Potion",
-  "item.lotm.spectator_3_potion": "Spectator 3 Potion",
-  "item.lotm.spectator_2_potion": "Spectator 2 Potion",
-  "item.lotm.spectator_1_potion": "Spectator 1 Potion",
-  "item.lotm.spectator_0_potion": "Spectator 0 Potion",
-  "item.lotm.tyrant_9_potion": "Spectator 9 Potion",
-  "item.lotm.tyrant_8_potion": "Spectator 8 Potion",
-  "item.lotm.tyrant_7_potion": "Spectator 7 Potion",
-  "item.lotm.tyrant_6_potion": "Spectator 6 Potion",
-  "item.lotm.tyrant_5_potion": "Spectator 5 Potion",
-  "item.lotm.tyrant_4_potion": "Spectator 4 Potion",
-  "item.lotm.tyrant_3_potion": "Spectator 3 Potion",
-  "item.lotm.tyrant_2_potion": "Spectator 2 Potion",
-  "item.lotm.tyrant_1_potion": "Spectator 1 Potion",
-  "item.lotm.tyrant_0_potion": "Spectator 0 Potion",
+
+
+
+
+  "item.lotm.spectator_9_potion": "Spectator Potion",
+  "item.lotm.spectator_8_potion": "Telepathist Potion",
+  "item.lotm.spectator_7_potion": "Psychiatrist Potion",
+  "item.lotm.spectator_6_potion": "Hypnotist Potion",
+  "item.lotm.spectator_5_potion": "Dreamwalker Potion",
+  "item.lotm.spectator_4_potion": "Manipulator Potion",
+  "item.lotm.spectator_3_potion": "Dream Weaver Potion",
+  "item.lotm.spectator_2_potion": "Discerner Potion",
+  "item.lotm.spectator_1_potion": "Author Potion",
+  "item.lotm.spectator_0_potion": "Visionary Potion",
+  "item.lotm.sailor_9_potion": "Sailor Potion",
+  "item.lotm.sailor_8_potion": "Folk of Rage Potion",
+  "item.lotm.sailor_7_potion": "Storm Priest Potion",
+  "item.lotm.sailor_6_potion": "Wind-Blessed Potion",
+  "item.lotm.sailor_5_potion": "Ocean Songster Potion",
+  "item.lotm.sailor_4_potion": "Cataclysmic Interrer Potion",
+  "item.lotm.sailor_3_potion": "Sea King Potion",
+  "item.lotm.sailor_2_potion": "Calamity Potion",
+  "item.lotm.sailor_1_potion": "Thunder God Potion",
+  "item.lotm.sailor_0_potion": "Tyrant Potion",
+  "item.lotm.monster_9_potion": "Monster Potion",
+  "item.lotm.monster_8_potion": "Robot Potion",
+  "item.lotm.monster_7_potion": "Lucky One Potion",
+  "item.lotm.monster_6_potion": "Calamity Priest Potion",
+  "item.lotm.monster_5_potion": "Winner Potion",
+  "item.lotm.monster_4_potion": "Misfortune Mage Potion",
+  "item.lotm.monster_3_potion": "Chaoswalker Potion",
+  "item.lotm.monster_2_potion": "Soothsayer Potion",
+  "item.lotm.monster_1_potion": "Snake of Fate Potion",
+  "item.lotm.monster_0_potion": "Wheel of Fortune Potion",
+
+  "item.lotm.zqdsndnkawdnsalnkw": "Icon for the Mod - Useless",
+
 
 
 
   "item.lotm.beyonder_reset_potion": "Beyonder Reset Potion",
 
   "key.category.lotm.mystery": "LOTM",
+  "key.lotm.spirit_traversal_key": "Spirit World Traversal",
+  "key.lotm.ability_check": "Ability Key",
   "key.lotm.spirituality_check": "Ability GUI",
   "effects.lotm.advancement9": "Advancement 9",
   "effects.lotm.advancement8": "Advancement 8",
@@ -244,5 +313,7 @@
   "lotm.beyonder.spectator2": "Discerner",
   "lotm.beyonder.spectator1": "Author",
   "lotm.beyonder.spectator0": "Visionary",
-  "creativetab.abilities_tab": "Beyonder Abilities"
+  "creativetab.abilities_tab": "Beyonder Abilities",
+  "creativetab.ingredients_tab": "Beyonder Ingredients"
+
 }

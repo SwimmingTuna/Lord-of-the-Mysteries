@@ -14,22 +14,11 @@ public class AttributeAdder {
     @SubscribeEvent
     public static void modifyAttributes(EntityAttributeModificationEvent event) {
         addToPlayer(event, ModAttributes.SOUL_BODY);
-        addToPlayer(event, ModAttributes.MISFORTUNE);
         addToPlayer(event, ModAttributes.NIGHTMARE);
         addToPlayer(event, ModAttributes.ARMORINVISIBLITY);
         addToPlayer(event, ModAttributes.DIR);
-        addToPlayer(event, ModAttributes.PARTICLE_HELPER);
-        addToPlayer(event, ModAttributes.PARTICLE_HELPER1);
-        addToPlayer(event, ModAttributes.PARTICLE_HELPER2);
-        addToPlayer(event, ModAttributes.PARTICLE_HELPER3);
-        addToPlayer(event, ModAttributes.PARTICLE_HELPER4);
-        addToPlayer(event, ModAttributes.PARTICLE_HELPER5);
-        addToPlayer(event, ModAttributes.PARTICLE_HELPER6);
-        addToPlayer(event, ModAttributes.PARTICLE_HELPER7);
-        addToPlayer(event, ModAttributes.PARTICLE_HELPER8);
-        addToPlayer(event, ModAttributes.PARTICLE_HELPER9);
-        addToPlayer(event, ModAttributes.CORRUPTION);
-        addToPlayer(event, ModAttributes.LOTM_LUCK);
+
+        addToPlayer(event, ModAttributes.SANITY);
     }
 
     @SafeVarargs

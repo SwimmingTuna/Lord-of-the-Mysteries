@@ -1,6 +1,7 @@
 package net.swimmingtuna.lotm.item.BeyonderAbilities.Sailor;
 
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -26,29 +27,36 @@ public class Tyranny extends SimpleAbilityItem {
 
     @Override
     public InteractionResult useAbility(Level level, Player player, InteractionHand hand) {
-        if (!checkAll(player)) return InteractionResult.FAIL;
-        useSpirituality(player);
+        if (!checkAll(player)) {
+            return InteractionResult.FAIL;
+        }
         addCooldown(player);
-        applyPotionEffectToEntities(player);
+        useSpirituality(player);
+        tyranny(player);
         return InteractionResult.SUCCESS;
     }
 
-    private void applyPotionEffectToEntities(Player player) {
-        double radius = 500;
-        int duration = 250;
-        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
-            if (entity != player) {
-                entity.addEffect(new MobEffectInstance(ModEffects.STUN.get(), duration, 1, false, false));
+    private void tyranny(Player player) {
+        if (!player.level().isClientSide()) {
+            double radius = 500;
+            int duration = 250;
+            for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius))) {
+                if (entity != player) {
+                    entity.addEffect(new MobEffectInstance(ModEffects.STUN.get(), duration, 1, false, false));
+                }
             }
         }
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal(
-                "Upon use, exude an aura of tyranny, not giving any entity permission to move, implanting fear strong enough to not allow them to use their abilities"
-        ).withStyle(/*ChatFormatting.BOLD, ChatFormatting.BLUE*/));
-        super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Upon use, exudes an aura of tyranny in a huge area around you which doesn't allow any entity to move or use abilities for a long time."));
+        tooltipComponents.add(Component.literal("Spirituality Used: ").append(Component.literal("3500").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(Component.literal("Cooldown: ").append(Component.literal("2 Minutes").withStyle(ChatFormatting.YELLOW)));
+        tooltipComponents.add(SimpleAbilityItem.getPathwayText(this.requiredClass.get()));
+        tooltipComponents.add(SimpleAbilityItem.getClassText(this.requiredSequence, this.requiredClass.get()));
+        super.baseHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
+
 
 }
