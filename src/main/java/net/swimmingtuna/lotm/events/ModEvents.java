@@ -1746,6 +1746,7 @@ public class ModEvents {
             WhisperOfCorruptionEntity.decrementWhisper(tag);
             MisfortuneRedirection.misfortuneLivingTickEvent(event);
             doubleProphecyDamageHelper(event);
+            showMonsterParticles(entity);
 
             MonsterCalamityIncarnation.calamityTickEvent(event);
             dreamWeaving(entity);
